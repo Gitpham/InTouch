@@ -27,16 +27,14 @@ export default function HomeScreen() {
   return (
     <>
     <SafeAreaView style = {styles.stepContainer}>
-     <ThemedText>Home</ThemedText>
-
-    <Link href="../createGroupScreen" asChild>
+    <Link href="../createGroupModal" asChild>
     <Pressable >
-        <ThemedText type="title">Test Button 1</ThemedText>
+        <ThemedText type="title">Get in Touch</ThemedText>
      </Pressable>
     </Link>
    
     </SafeAreaView>
-     {drawerLayout()}
+     {/* {drawerLayout()} */}
      </>
 
     
