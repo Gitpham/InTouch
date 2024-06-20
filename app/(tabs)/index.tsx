@@ -29,7 +29,7 @@ export default function HomeScreen() {
     <SafeAreaView style = {styles.stepContainer}>
     <Link href="../createGroupModal" asChild>
     <Pressable >
-        <ThemedText type="title">Get in Touch</ThemedText>
+        <ThemedText type="title" darkColor="black" >Get in Touch</ThemedText>
      </Pressable>
     </Link>
    
@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
   },
   stepContainer: {
     flex: 1,
-    backgroundColor: 'green',
+    backgroundColor: 'white',
     gap: 8,
     marginBottom: 8,
     flexDirection: 'column',
