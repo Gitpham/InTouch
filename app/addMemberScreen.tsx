@@ -7,8 +7,11 @@ import { BottomSheet, Button, ListItem } from '@rneui/themed';
 import { StyleSheet } from 'react-native';
 import { Link } from 'expo-router';
 import { member, group } from './createGroupModal'
+import { useRouter } from 'expo-router';
 
 export default function addMemberScreen() {
+  const router = useRouter();
+
     // Member information
     const [memberFirstName, memFirstNameChange] = useState(""); 
     const [memberLastName, memLastNameChange] = useState(""); 
@@ -45,13 +48,11 @@ export default function addMemberScreen() {
               keyboardType = "numeric"
               style = {{height: 40, margin: 13, borderWidth: 1, padding: 10, color: "white", backgroundColor: "gray"}}>
             </TextInput>
-            <Link href="createGroupModal" asChild>
-    `          <Button
-                title="Add Member"
-                onPress={() => {addGroupMember()}}
-                buttonStyle={styles.button}
-            />`
-            </Link>
+            <Button
+              title="Add Member"
+              onPress={() => {addGroupMember(); router.push('/createGroupModal');}}
+              buttonStyle={styles.button}
+            />
 
     </SafeAreaView>
 }
