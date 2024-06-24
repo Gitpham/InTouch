@@ -5,9 +5,10 @@ import { ScrollView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { BottomSheet, Button, Dialog, ListItem } from '@rneui/themed';
 import { StyleSheet } from 'react-native';
-import { Link } from 'expo-router';
+import { Link, router } from 'expo-router';
 import { requestPermissionsAsync } from "expo-contacts";
 import { useRouter } from 'expo-router';
+
 
 
 // const groupList : Group[] = [];
@@ -28,9 +29,6 @@ export const member : Member = {firstName: "",
 
 
 export default function createGroupScreen() {
-    // For navigation purposes
-    const router = useRouter();
-
     // For Bottom Sheet
     const [isVisible, setIsVisible] = useState(false);
 
@@ -101,19 +99,13 @@ export default function createGroupScreen() {
             style = {{height: 40, margin: 13, borderWidth: 1, padding: 10, color: "white", backgroundColor: "gray"}}>
           </TextInput>
 
-          <Button
+       
+           <Button
             title="Add Group Member"
             onPress={() => router.push("./addMemberScreen")}
             buttonStyle={styles.button}
             titleStyle={styles.title}
           />
-
-          <Link href="./(tabs)" asChild>
-            <Pressable
-              onPress={() => {saveGroup(); resetGroup();}}>
-              <ThemedText type="title">Done</ThemedText>
-           </Pressable>
-          </Link>
 
         </SafeAreaView>
 
