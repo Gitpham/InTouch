@@ -1,21 +1,35 @@
 import { ThemedText } from "@/components/ThemedText";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Pressable, TextInput } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { BottomSheet, Button, ListItem } from '@rneui/themed';
 import { StyleSheet } from 'react-native';
 import { Link } from 'expo-router';
-import { member, group } from './createGroupModal'
-import { useRouter } from 'expo-router';
+import { member, group } from "./createGroupModal";
+import * as Contacts from 'expo-contacts';
 
 export default function addMemberScreen() {
-  const router = useRouter();
-
     // Member information
     const [memberFirstName, memFirstNameChange] = useState(""); 
     const [memberLastName, memLastNameChange] = useState(""); 
     const [memberNumber, memNumberChange] = useState("");
+
+    useEffect(() => {
+      (async () => {
+        const { status } = await Contacts.requestPermissionsAsync();
+        if (status === 'granted') {
+          const { data } = await Contacts.getContactsAsync({
+            fields: [Contacts.Fields.Emails],
+          });
+  
+          if (data.length > 0) {
+            const contact = data[0];
+            console.log(contact);
+          }
+        }
+      })();
+    }, []);
     
     function addGroupMember() {
         member.firstName = memberFirstName;
@@ -25,7 +39,13 @@ export default function addMemberScreen() {
   
       }
 
-    return <SafeAreaView>
+    function importFromContacts() {
+      console.log("import from contacts")
+
+    }
+
+    return (<SafeAreaView>
+            <Button onPress={importFromContacts}>Import From Contacts</Button>
             <ThemedText>First Name</ThemedText>
             <TextInput 
               onChangeText = {memFirstNameChange}
@@ -48,13 +68,15 @@ export default function addMemberScreen() {
               keyboardType = "numeric"
               style = {{height: 40, margin: 13, borderWidth: 1, padding: 10, color: "white", backgroundColor: "gray"}}>
             </TextInput>
-            <Button
-              title="Add Member"
-              onPress={() => {addGroupMember(); router.push('/createGroupModal');}}
-              buttonStyle={styles.button}
-            />
+            <Link href="createGroupModal" asChild>
+    {/* `          <Button
+                title="Add Member"
+                onPress={() => {addGroupMember()}}
+                buttonStyle={styles.button}
+            /> */}
+            </Link>
 
-    </SafeAreaView>
+    </SafeAreaView>)
 }
 
 const styles = StyleSheet.create({
