@@ -9,22 +9,16 @@ import { Link } from 'expo-router';
 import { requestPermissionsAsync } from "expo-contacts";
 
 
-// Member to be added
-interface Member {firstName: string, lastName: string, number: string}
-
-// Group to be saved
-interface Group { name: string, members: Member[], schedule: string, typeOfCall: string}
-
 // const groupList : Group[] = [];
 
 
-const group : Group = {name: "", 
+export const group : Group = {name: "", 
   members: [], 
   schedule: "", 
   typeOfCall: ""
 };
 
-const member : Member = {firstName: "",
+export const member : Member = {firstName: "",
   lastName: "",
   number: ""
 };
