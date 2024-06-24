@@ -3,9 +3,11 @@ import { useState } from "react";
 import { Pressable, TextInput } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { BottomSheet, Button, ListItem } from '@rneui/themed';
+import { BottomSheet, Button, Dialog, ListItem } from '@rneui/themed';
 import { StyleSheet } from 'react-native';
 import { Link } from 'expo-router';
+import { requestPermissionsAsync } from "expo-contacts";
+
 
 // Member to be added
 interface Member {firstName: string, lastName: string, number: string}
@@ -28,9 +30,24 @@ const member : Member = {firstName: "",
 };
 
 
+
+
 export default function createGroupScreen() {
     // For Bottom Sheet
     const [isVisible, setIsVisible] = useState(false);
+
+    //for dialog
+    const [addMemberVisible, setAddMemberVisible] = useState(false);
+    
+    // async function  addFromContacts() {
+    //   const {status} = await requestPermissionsAsync();
+    //   if (status == 'granted') {
+    //     console.log("Got permission!")
+    //   } else {
+    //     console.log("No Permisson")
+    //   }
+    // }
+
 
 
   // Data to be stored in record
@@ -88,10 +105,25 @@ export default function createGroupScreen() {
 
           <Button
             title="Add Group Member"
-            onPress={() => setIsVisible(true)}
+            onPress={() => setAddMemberVisible(true)}
             buttonStyle={styles.button}
           />
-          <BottomSheet modalProps={{}} isVisible={isVisible}>
+
+          <Dialog
+            isVisible={addMemberVisible}
+            onBackdropPress={() => setAddMemberVisible(false)}
+            >
+              <Dialog.Title title="Add Member"></Dialog.Title>
+              <ThemedText darkColor="black">Test</ThemedText>
+              <Dialog.Button title="Add from contacts" 
+              // onPress={addFromContacts}
+              ></Dialog.Button>
+              <Dialog.Button title="Add Manually"></Dialog.Button>
+
+          </Dialog>
+
+
+          {/* <BottomSheet modalProps={{}} isVisible={isVisible}>
             <ThemedText>First Name</ThemedText>
             <TextInput 
               onChangeText = {memFirstNameChange}
@@ -120,7 +152,7 @@ export default function createGroupScreen() {
               onPress={() => {addGroupMember();setIsVisible(false);}}
               buttonStyle={styles.button}
             />
-          </BottomSheet>
+          </BottomSheet> */}
           <Link href="./(tabs)" asChild>
             <Pressable
               onPress={() => {saveGroup(); resetGroup();}}>
