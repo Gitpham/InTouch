@@ -101,9 +101,16 @@ export default function createGroupScreen() {
           </TextInput>
 
        
-           <Button
+          <Button
             title="Add Group Member"
             onPress={() => router.push("./addMemberScreen")}
+            buttonStyle={styles.button}
+            titleStyle={styles.title}
+          />
+
+          <Button
+            title="Done"
+            onPress={() => router.push("./(tabs)")}
             buttonStyle={styles.button}
             titleStyle={styles.title}
           />
