@@ -39,9 +39,12 @@ export default function addMemberScreen() {
   
       }
 
-    function importFromContacts() {
+    async function importFromContacts() {
       console.log("import from contacts")
-
+      const person = await Contacts.presentContactPickerAsync()
+      console.log(person?.firstName)
+      console.log(person?.lastName)
+      console.log(person?.phoneNumbers)
     }
 
     return (<SafeAreaView>
