@@ -5,60 +5,41 @@ import { ScrollView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { BottomSheet, Button, ListItem } from '@rneui/themed';
 import { StyleSheet } from 'react-native';
-import { Link } from 'expo-router';
 import { member, group } from './createGroupModal'
 import { useRouter } from 'expo-router';
 
 export default function addMemberScreen() {
-  const router = useRouter();
+    // For navigation
+    const router = useRouter();
 
-    // Member information
-    const [memberFirstName, memFirstNameChange] = useState(""); 
-    const [memberLastName, memLastNameChange] = useState(""); 
-    const [memberNumber, memNumberChange] = useState("");
-    
-    function addGroupMember() {
-        member.firstName = memberFirstName;
-        member.lastName = memberLastName;
-        member.number = memberNumber;
-        group.members.push(member);
-  
-      }
 
     return <SafeAreaView>
-            <ThemedText>First Name</ThemedText>
-            <TextInput 
-              onChangeText = {memFirstNameChange}
-              value = {memberFirstName}
-              placeholder = "e.g. John"
-              style = {{height: 40, margin: 13, borderWidth: 1, padding: 10, color: "white", backgroundColor: "gray"}}>
-            </TextInput>
-            <ThemedText>Last Name</ThemedText>
-            <TextInput 
-              onChangeText = {memLastNameChange}
-              value = {memberLastName}
-              placeholder = "e.g. Doe"
-              style = {{height: 40, margin: 13, borderWidth: 1, padding: 10, color: "white", backgroundColor: "gray"}}>
-            </TextInput>
-            <ThemedText>Phone Number</ThemedText>
-            <TextInput 
-              onChangeText = {memNumberChange}
-              value = {memberNumber}
-              placeholder = "e.g. (111)-111-1111"
-              keyboardType = "numeric"
-              style = {{height: 40, margin: 13, borderWidth: 1, padding: 10, color: "white", backgroundColor: "gray"}}>
-            </TextInput>
-            <Button
-              title="Add Member"
-              onPress={() => {addGroupMember(); router.push('/createGroupModal');}}
-              buttonStyle={styles.button}
-            />
-
-    </SafeAreaView>
+        <ThemedText darkColor="black">"Add Member"</ThemedText>
+        
+        <Button 
+            title="Enter Contact Manually" 
+            onPress={() => {router.push('/addMemberManualScreen');}}
+            buttonStyle={styles.button}
+            titleStyle={styles.title}
+        />
+        <Button
+            title="Add from Contacts"
+            // onPress={addFromContacts}
+            buttonStyle={styles.button}
+            titleStyle={styles.title}
+        />
+  </SafeAreaView>
 }
 
 const styles = StyleSheet.create({
     button: {
-      margin: 10,
+        margin: 10,
+        backgroundColor: 'white',
     },
+    title: {
+        color: "black",
+    },
+    stepContainer: {
+        backgroundColor: 'white',
+      }
   });
