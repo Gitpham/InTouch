@@ -7,6 +7,7 @@ import { BottomSheet, Button, Dialog, ListItem } from '@rneui/themed';
 import { StyleSheet } from 'react-native';
 import { Link } from 'expo-router';
 import { requestPermissionsAsync } from "expo-contacts";
+import { useRouter } from 'expo-router';
 
 
 // const groupList : Group[] = [];
@@ -27,6 +28,9 @@ export const member : Member = {firstName: "",
 
 
 export default function createGroupScreen() {
+    // For navigation purposes
+    const router = useRouter();
+
     // For Bottom Sheet
     const [isVisible, setIsVisible] = useState(false);
 
@@ -112,7 +116,7 @@ export default function createGroupScreen() {
               <Dialog.Button title="Add from contacts" 
               // onPress={addFromContacts}
               ></Dialog.Button>
-              <Dialog.Button title="Add Manually"></Dialog.Button>
+              <Dialog.Button title="Add Manually" onPress={() => {setAddMemberVisible(false); router.push('/addMemberScreen');}}></Dialog.Button>
 
           </Dialog>
 
