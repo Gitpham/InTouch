@@ -31,11 +31,8 @@ export default function RootLayout() {
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="+not-found" />
-        <Stack.Screen name="createGroupModal"
-              //  options={{
-              //   presentation: 'modal', 
-              // }}
-                />
+        <Stack.Screen name="createGroupModal"/>
+        
       </Stack>
     </ThemeProvider>
   );
