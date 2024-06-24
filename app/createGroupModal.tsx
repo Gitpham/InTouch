@@ -103,54 +103,11 @@ export default function createGroupScreen() {
 
           <Button
             title="Add Group Member"
-            onPress={() => setAddMemberVisible(true)}
+            onPress={() => router.push("./addMemberScreen")}
             buttonStyle={styles.button}
+            titleStyle={styles.title}
           />
 
-          <Dialog
-            isVisible={addMemberVisible}
-            onBackdropPress={() => setAddMemberVisible(false)}
-            >
-              <Dialog.Title title="Add Member"></Dialog.Title>
-              <ThemedText darkColor="black">Test</ThemedText>
-              <Dialog.Button title="Add from contacts" 
-              // onPress={addFromContacts}
-              ></Dialog.Button>
-              <Dialog.Button title="Add Manually" onPress={() => {setAddMemberVisible(false); router.push('/addMemberScreen');}}></Dialog.Button>
-
-          </Dialog>
-
-
-          {/* <BottomSheet modalProps={{}} isVisible={isVisible}>
-            <ThemedText>First Name</ThemedText>
-            <TextInput 
-              onChangeText = {memFirstNameChange}
-              value = {memberFirstName}
-              placeholder = "e.g. John"
-              style = {{height: 40, margin: 13, borderWidth: 1, padding: 10, color: "white", backgroundColor: "gray"}}>
-            </TextInput>
-            <ThemedText>Last Name</ThemedText>
-            <TextInput 
-              onChangeText = {memLastNameChange}
-              value = {memberLastName}
-              placeholder = "e.g. Doe"
-              style = {{height: 40, margin: 13, borderWidth: 1, padding: 10, color: "white", backgroundColor: "gray"}}>
-            </TextInput>
-            <ThemedText>Phone Number</ThemedText>
-            <TextInput 
-              onChangeText = {memNumberChange}
-              value = {memberNumber}
-              placeholder = "e.g. (111)-111-1111"
-              keyboardType = "numeric"
-              style = {{height: 40, margin: 13, borderWidth: 1, padding: 10, color: "white", backgroundColor: "gray"}}>
-            </TextInput>
-
-            <Button
-              title="Add Member"
-              onPress={() => {addGroupMember();setIsVisible(false);}}
-              buttonStyle={styles.button}
-            />
-          </BottomSheet> */}
           <Link href="./(tabs)" asChild>
             <Pressable
               onPress={() => {saveGroup(); resetGroup();}}>
@@ -167,5 +124,12 @@ export default function createGroupScreen() {
 const styles = StyleSheet.create({
   button: {
     margin: 10,
+    backgroundColor: 'white',
   },
+  title: {
+    color: "black",
+ },
+  stepContainer: {
+    backgroundColor: 'white',
+  }
 });
