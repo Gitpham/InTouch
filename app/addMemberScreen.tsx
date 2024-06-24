@@ -4,25 +4,13 @@ import { Pressable, TextInput } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { BottomSheet, Button, ListItem } from '@rneui/themed';
-import { StyleSheet } from 'react-native';
-import { Link, router } from 'expo-router';
+import { StyleSheet, View } from 'react-native';
+import { router } from 'expo-router';
 import { member, group } from "./createGroupModal";
 import * as Contacts from 'expo-contacts';
 import { useRouter } from 'expo-router';
 
 export default function addMemberScreen() {
-  const styles = StyleSheet.create({
-    button: {
-        margin: 10,
-        backgroundColor: 'white',
-    },
-    title: {
-        color: "black",
-    },
-    stepContainer: {
-        backgroundColor: 'white',
-      }
-  });
 
     // Member information
     const [memberFirstName, setMemFirstName] = useState(""); 
@@ -48,10 +36,13 @@ export default function addMemberScreen() {
       
     }
 
-    return (<SafeAreaView>
-        
-        <ThemedText darkColor="black">"Add Member"</ThemedText>
-        
+    return (<SafeAreaView style = {styles.stepContainer}>
+        <View style = {styles.centeredView}>
+        <ThemedText type="subtitle" 
+            style={styles.title}>
+            Add Group Member
+        </ThemedText>
+        </View>
         <Button 
             title="Enter Contact Manually" 
             onPress={() => {router.push('/addMemberManualScreen');}}
@@ -65,7 +56,27 @@ export default function addMemberScreen() {
             titleStyle={styles.title}
         />
   </SafeAreaView>)
-
-
 }
 
+const styles = StyleSheet.create({
+    button: {
+      margin: 10,
+      backgroundColor: 'white',
+      borderColor: 'black',
+      borderWidth: 2, 
+    },
+    title: {
+      color: "black",
+   },
+    stepContainer: {
+      flex: 1,
+      backgroundColor: 'white',
+      gap: 8,
+      marginBottom: 8,
+      flexDirection: 'column',
+      paddingTop: 50
+    },
+    centeredView : {
+        alignItems: "center"
+    }
+  });

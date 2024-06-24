@@ -30,10 +30,10 @@ export default function RootLayout() {
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-        <Stack.Screen name="createGroupModal"/>
-        <Stack.Screen name="addMemberScreen"/>
-        <Stack.Screen name="addMemberManualScreen"/>
+        <Stack.Screen name="+not-found" options={{ headerShown: false }}/>
+        <Stack.Screen name="createGroupModal" options={{ headerShown: false }}/>
+        <Stack.Screen name="addMemberScreen" options={{ headerShown: false }}/>
+        <Stack.Screen name="addMemberManualScreen" options={{ headerShown: false }}/>
       </Stack>
     </ThemeProvider>
   );

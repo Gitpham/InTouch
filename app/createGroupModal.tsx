@@ -4,7 +4,7 @@ import { Pressable, TextInput } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { BottomSheet, Button, Dialog, ListItem } from '@rneui/themed';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { Link, router } from 'expo-router';
 import { requestPermissionsAsync } from "expo-contacts";
 import { useRouter } from 'expo-router';
@@ -89,8 +89,9 @@ export default function createGroupScreen() {
     }
 
     return (
-        <SafeAreaView>
-          <ThemedText type = "title"> Create Group </ThemedText>
+        <SafeAreaView style = {styles.stepContainer}>
+          
+          <View style = {styles.centeredView}><ThemedText type = "title" style = {styles.title} > Create Group </ThemedText></View>
         
           <TextInput 
             onChangeText = {groupNameChange}
@@ -100,9 +101,16 @@ export default function createGroupScreen() {
           </TextInput>
 
        
-           <Button
+          <Button
             title="Add Group Member"
             onPress={() => router.push("./addMemberScreen")}
+            buttonStyle={styles.button}
+            titleStyle={styles.title}
+          />
+
+          <Button
+            title="Done"
+            onPress={() => router.push("./(tabs)")}
             buttonStyle={styles.button}
             titleStyle={styles.title}
           />
@@ -117,11 +125,21 @@ const styles = StyleSheet.create({
   button: {
     margin: 10,
     backgroundColor: 'white',
+    borderColor: 'black',
+    borderWidth: 2, 
   },
   title: {
     color: "black",
  },
   stepContainer: {
+    flex: 1,
     backgroundColor: 'white',
+    gap: 8,
+    marginBottom: 8,
+    flexDirection: 'column',
+    paddingTop: 50
+  },
+  centeredView : {
+    alignItems: "center"
   }
 });
