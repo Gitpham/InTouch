@@ -30,7 +30,7 @@ export const connectToDatabase = async () => {
 
     
 
-    const personGroupQuery = `
+    const personBondQuery = `
         CREATE TABLE IF NOT EXISTS person_bond (
             person_id INTEGER,
             bond_id INTEGER,
@@ -51,7 +51,7 @@ export const connectToDatabase = async () => {
         // console.log("person table")
         await db.execAsync(groupQuery);
         // console.log("group table")
-        await db.execAsync(personGroupQuery);
+        await db.execAsync(personBondQuery);
         // console.log("personGroup")
     } catch (error) {
         console.error(error);
@@ -86,5 +86,17 @@ export const connectToDatabase = async () => {
     }
   }
 
+  export type Table = "person" | "bond" | "person_bond";
+
+  export const removeTable = async (db: SQLite.SQLiteDatabase, tableName: Table) => {
+    const query = `DROP TABLE IF EXISTS ${tableName}`;
+    try {
+        await db.execAsync(query)
+    } catch (error) {
+        console.error(error);
+        throw Error(`failed to drop table ${tableName}`)
+    }
+    
+  }
 
   //test

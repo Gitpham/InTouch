@@ -9,7 +9,7 @@ import { ThemedView } from '@/components/ThemedView';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Link } from 'expo-router';
 import React, { useCallback, useEffect } from 'react';
-import { connectToDatabase, createTables, getTableNames } from '../db/db';
+import { connectToDatabase, createTables, getTableNames, removeTable } from '../db/db';
 import { SQLiteDatabase } from 'expo-sqlite';
 
 
@@ -21,8 +21,12 @@ export default function HomeScreen() {
     try {
       const db =  await connectToDatabase();
       createTables(db)
-      const tables = await getTableNames(db)
+      let tables = await getTableNames(db)
       console.log(tables)
+
+      // await removeTable(db, "person");
+      // tables = await getTableNames(db)
+      // console.log(tables)
 
 
     } catch (error){
