@@ -1,74 +1,49 @@
+import { ThemedText } from "@/components/ThemedText";
+import { useState } from "react";
+import { Pressable, TextInput } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { BottomSheet, Button, Dialog, ListItem } from '@rneui/themed';
+import { StyleSheet, View } from 'react-native';
+import { router } from 'expo-router';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Drawer } from 'expo-router/drawer';
-import { Image, StyleSheet, Platform, Button, Touchable, Pressable, Alert } from 'react-native';
-
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Link } from 'expo-router';
-import React from 'react';
 
 
-export default function HomeScreen() {
+export default function homeScreen() {
 
-  function testButton() {
-    Alert.alert("Test Button Pressed!")
-  }
+    return <SafeAreaView style = {styles.stepContainer}>
+        <View style = {styles.centeredView}><ThemedText style = {styles.title} type = "title">My Groups</ThemedText></View>
 
-  const drawerLayout = () => {
-    return <GestureHandlerRootView>
-      <Drawer></Drawer>
-    </GestureHandlerRootView>
+        <Button buttonStyle = {styles.button}
+        titleStyle = {styles.title}
+        title = {"+Add Group"}
+        onPress = {() => router.push("./createGroupModal")}
+        />
 
-  }
-
-  return (
-    <>
-    <SafeAreaView style = {styles.stepContainer}>
-    <Link href="../createGroupModal" asChild>
-    <Pressable >
-        <ThemedText type="title" darkColor="black" >Get in Touch</ThemedText>
-     </Pressable>
-    </Link>
-   
     </SafeAreaView>
-     {/* {drawerLayout()} */}
-     </>
 
-    
-  )
 }
 
-
-
-
-
-const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    flex: 1,
-    backgroundColor: 'white',
-    gap: 8,
-    marginBottom: 8,
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
-  testButton: {
-    color: 'red'
-  }
-});
+const styles= StyleSheet.create({
+    button: {
+      margin: 10,
+      backgroundColor: 'white',
+      borderColor: 'black',
+      borderWidth: 2, 
+    },
+    title: {
+      color: "black",
+   },
+    stepContainer: {
+      flex: 1,
+      backgroundColor: 'white',
+      gap: 8,
+      marginBottom: 8,
+      flexDirection: 'column',
+      paddingTop: 50
+    },
+    centeredView : {
+      alignItems: "center"
+    }
+  });

@@ -5,9 +5,7 @@ import { ScrollView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { BottomSheet, Button, Dialog, ListItem } from '@rneui/themed';
 import { StyleSheet, View } from 'react-native';
-import { Link, router } from 'expo-router';
-import { requestPermissionsAsync } from "expo-contacts";
-import { useRouter } from 'expo-router';
+import { router } from 'expo-router';
 
 
 
