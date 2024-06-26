@@ -13,9 +13,9 @@ import { useRouter } from 'expo-router';
 export default function addMemberScreen() {
 
     // Member information
-    const [memberFirstName, memFirstNameChange] = useState(""); 
-    const [memberLastName, memLastNameChange] = useState(""); 
-    const [memberNumber, memNumberChange] = useState("");
+    const [memberFirstName, setMemFirstName] = useState(""); 
+    const [memberLastName, setMemLastName] = useState(""); 
+    const [memberNumber, setMemNumber] = useState("");
     
     function addGroupMember() {
         member.firstName = memberFirstName;
@@ -28,9 +28,12 @@ export default function addMemberScreen() {
     async function importFromContacts() {
       console.log("import from contacts")
       const person = await Contacts.presentContactPickerAsync()
+      
+      console.log(person)
       console.log(person?.firstName)
       console.log(person?.lastName)
-      console.log(person?.phoneNumbers)
+      console.log(person?.phoneNumbers?.[0]?.number)
+      
     }
 
     return (<SafeAreaView style = {styles.stepContainer}>
