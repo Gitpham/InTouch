@@ -9,7 +9,7 @@ import { router } from 'expo-router';
 
 
 
-// const groupList : Group[] = [];
+export const groupList : Group[] = [];
 
 
 export const group : Group = {name: "", 
@@ -29,20 +29,6 @@ export const member : Member = {firstName: "",
 export default function createGroupScreen() {
     // For Bottom Sheet
     const [isVisible, setIsVisible] = useState(false);
-
-    //for dialog
-    const [addMemberVisible, setAddMemberVisible] = useState(false);
-    
-    // async function  addFromContacts() {
-    //   const {status} = await requestPermissionsAsync();
-    //   if (status == 'granted') {
-    //     console.log("Got permission!")
-    //   } else {
-    //     console.log("No Permisson")
-    //   }
-    // }
-
-
 
   // Data to be stored in record
     const [groupName, groupNameChange] = useState("");

@@ -1,13 +1,13 @@
 import { ThemedText } from "@/components/ThemedText";
 import { useState } from "react";
-import { Pressable, TextInput } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { BottomSheet, Button, Dialog, ListItem } from '@rneui/themed';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, FlatList} from 'react-native';
 import { router } from 'expo-router';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Drawer } from 'expo-router/drawer';
+import { groupList } from '../createGroupModal'
 
 
 export default function homeScreen() {
@@ -18,7 +18,7 @@ export default function homeScreen() {
         <Button buttonStyle = {styles.button}
         titleStyle = {styles.title}
         title = {"+Add Group"}
-        onPress = {() => router.push("./createGroupModal")}
+        onPress = {() => router.push("../createGroupModal")}
         />
 
     </SafeAreaView>
