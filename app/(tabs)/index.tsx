@@ -8,10 +8,31 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Link } from 'expo-router';
-import React from 'react';
+import React, { useCallback, useEffect } from 'react';
+import { connectToDatabase, createTables } from '../db/db';
+import { SQLiteDatabase } from 'expo-sqlite';
 
 
 export default function HomeScreen() {
+
+  // connectToDatabase();
+
+  const loadData = useCallback(async () => {
+    try {
+      const db =  await connectToDatabase();
+      createTables(db)
+
+    } catch (error){
+      console.error(error)
+    }
+  }, [])
+
+  useEffect(() => {
+    loadData()
+  }, [loadData])
+
+
+
 
   function testButton() {
     Alert.alert("Test Button Pressed!")
@@ -32,7 +53,6 @@ export default function HomeScreen() {
         <ThemedText type="title" darkColor="black" >Get in Touch</ThemedText>
      </Pressable>
     </Link>
-   
     </SafeAreaView>
      {/* {drawerLayout()} */}
      </>
