@@ -48,15 +48,41 @@ export const connectToDatabase = async () => {
 
     try {
         await db.execAsync(personQuery);
-        console.log("person table")
+        // console.log("person table")
         await db.execAsync(groupQuery);
-        console.log("group table")
-
+        // console.log("group table")
         await db.execAsync(personGroupQuery);
-        console.log("personGroup")
+        // console.log("personGroup")
     } catch (error) {
         console.error(error);
         throw Error(`failed to create tables`)
+    }
+  }
+
+  export const getTableNames = async (db: SQLite.SQLiteDatabase): Promise<string[]> => {
+    try {
+        const tableNames: string[] = [];
+        const results = await db.getAllAsync(
+            "SELECT name FROM sqlite_master WHERE type ='table' and name NOT LIKE 'sqlite_%'"
+        )
+        results?.forEach( result => {
+            // // console.log(result)
+            // console.log(result)
+            // for (let index = 0; index < results)
+            interface table {
+                name: string
+            }
+            let r = result as table
+            // console.log(r.name)
+            tableNames.push(r.name as string)
+
+        })
+        // console.log("tablename", tableNames)
+        return tableNames
+        
+    } catch (error) {
+        console.error(error);
+        throw Error("Failed to get table names from database")
     }
   }
 
