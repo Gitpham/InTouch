@@ -11,11 +11,17 @@ import { Link } from 'expo-router';
 import React, { useCallback, useEffect } from 'react';
 import { connectToDatabase, createTables, getTableNames, removeTable } from '../db/db';
 import { SQLiteDatabase } from 'expo-sqlite';
-
+import { addPerson, getAllPersons, Person } from '../db/PersonRepo';
 
 export default function HomeScreen() {
 
   // connectToDatabase();
+
+  const dummyPerson: Person = {
+    firstName: "Phoenix",
+    lastName: "PHam", 
+    phoneNumber: "612-8812-3740"
+  }
 
   const loadData = useCallback(async () => {
     try {
@@ -28,6 +34,9 @@ export default function HomeScreen() {
       // tables = await getTableNames(db)
       // console.log(tables)
 
+      // await addPerson(db, dummyPerson);
+      await getAllPersons(db, dummyPerson)
+      
 
     } catch (error){
       console.error(error)
@@ -60,6 +69,10 @@ export default function HomeScreen() {
         <ThemedText type="title" darkColor="black" >Get in Touch</ThemedText>
      </Pressable>
     </Link>
+
+    <Button title="Add Person">
+
+    </Button>
     </SafeAreaView>
      {/* {drawerLayout()} */}
      </>
