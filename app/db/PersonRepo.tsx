@@ -9,6 +9,7 @@ export type Person = {
 
 export const addPerson = async (db: SQLite.SQLiteDatabase, person:Person) =>{
 
+
     const statement = await db.prepareAsync(`INSERT INTO person (firstName, lastName, phoneNumber) VALUES (?, ?, ?)`)
 
     const value: string[] = [person.firstName, person.lastName, person.phoneNumber];
@@ -20,27 +21,19 @@ export const addPerson = async (db: SQLite.SQLiteDatabase, person:Person) =>{
     } catch (error) {
         console.error(error);
         throw Error("failed to upload person")
+    } finally {
+        console.log("finalize person async")
+        statement.finalizeAsync()
     }
 
 }
 
 export const getAllPersons = async (db: SQLite.SQLiteDatabase) =>{
 
-    const people = await db.getFirstAsync(`SELECT * FROM person`)
-    console.log(people)
+    const people = await db.getAllAsync(`SELECT * FROM person`)
+    // const people 
+    console.log("All persons in person", people)
 
     return null;
-
-    // const value: string[] = [person.firstName];
-
-    // try {
-    //     console.log("show person person")
-    //     return await statement.executeAsync(value);
-
-    // } catch (error) {
-    //     console.error(error);
-    //     throw Error("failed to upload person")
-    // }
-
 }
 

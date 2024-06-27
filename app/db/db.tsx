@@ -5,7 +5,7 @@ import { SQLiteAnyDatabase } from 'expo-sqlite/build/NativeStatement';
 
 export const connectToDatabase = async () => {
 
-    const db = await SQLite.openDatabaseAsync("InTouchDB");
+    const db = await SQLite.openDatabaseAsync("InTouchDB_1");
     console.log("Successfully opened db");
     return db
   }
@@ -14,7 +14,7 @@ export const connectToDatabase = async () => {
     const groupQuery = `
         CREATE TABLE IF NOT EXISTS bond (
             bond_id INTEGER PRIMARY KEY AUTOINCREMENT,
-            bondName TEXT NOT NULL
+            bondName TEXT NOT NULL UNIQUE
             );
             `
 
@@ -65,6 +65,10 @@ export const connectToDatabase = async () => {
         const results = await db.getAllAsync(
             "SELECT name FROM sqlite_master WHERE type ='table' and name NOT LIKE 'sqlite_%'"
         )
+
+        const results2 = await db.getAllAsync("PRAGMA table_info(bond);")
+        console.log("table columns", results2)
+
         results?.forEach( result => {
             // // console.log(result)
             // console.log(result)
@@ -73,6 +77,7 @@ export const connectToDatabase = async () => {
                 name: string
             }
             let r = result as table
+            
             // console.log(r.name)
             tableNames.push(r.name as string)
 

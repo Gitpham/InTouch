@@ -12,6 +12,7 @@ import React, { useCallback, useEffect } from 'react';
 import { connectToDatabase, createTables, getTableNames, removeTable } from '../db/db';
 import { SQLiteDatabase } from 'expo-sqlite';
 import { addPerson, getAllPersons, Person } from '../db/PersonRepo';
+import { Bond, addBond, getAllBonds } from '../db/BondRepo';
 
 export default function HomeScreen() {
 
@@ -35,7 +36,13 @@ export default function HomeScreen() {
       // console.log(tables)
 
       // await addPerson(db, dummyPerson);
-      await getAllPersons(db, dummyPerson)
+      // await getAllPersons(db)
+
+      const dummyBond: Bond = {
+        bondName: "Homies"
+      }
+      await addBond(db, dummyBond);
+      await getAllBonds(db)
       
 
     } catch (error){
