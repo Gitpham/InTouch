@@ -5,6 +5,7 @@ export type Person = {
     firstName: string,
     lastName: string,
     phoneNumber: string,
+    id: string,
 }
 
 export const addPerson = async (db: SQLite.SQLiteDatabase, person:Person) =>{
@@ -46,9 +47,28 @@ export const updatePerson = async (db: SQLite.SQLiteDatabase, updatedPerson: Per
         // console.log("finalize updatePerson async")
         statement.finalizeAsync()
     }
-
-
 }
+
+export const deletePerson = async (db: SQLite.SQLiteDatabase, person: Person) => {
+
+    const statement = await db.prepareAsync(`
+       DELETE FROM Contacts
+      WHERE id = ?
+        `);
+
+    const value: string[] = [person.id]
+    
+    try {
+        return await statement.executeAsync(value)
+    } catch (error) {
+        console.error(error)
+        throw Error("Failed to delete person")
+    } finally {
+        // console.log("finalize updatePerson async")
+        statement.finalizeAsync()
+    }
+  }
+
 
 export const getAllPersons = async (db: SQLite.SQLiteDatabase) =>{
 
