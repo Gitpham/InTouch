@@ -1,6 +1,6 @@
 import { ThemedText } from "@/components/ThemedText";
 import { useEffect, useState } from "react";
-import { Pressable, TextInput } from "react-native";
+import { Alert, Pressable, TextInput } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { BottomSheet, Button, ListItem } from '@rneui/themed';
@@ -9,6 +9,9 @@ import { router } from 'expo-router';
 import { member, group } from "./createGroupModal";
 import * as Contacts from 'expo-contacts';
 import { useRouter } from 'expo-router';
+import * as SQLite from 'expo-sqlite'
+import { Person, addPerson } from "./db/PersonRepo";
+
 
 export default function addMemberScreen() {
 
@@ -16,6 +19,10 @@ export default function addMemberScreen() {
     const [memberFirstName, setMemFirstName] = useState(""); 
     const [memberLastName, setMemLastName] = useState(""); 
     const [memberNumber, setMemNumber] = useState("");
+
+
+    const db = SQLite.useSQLiteContext();
+  
     
     function addGroupMember() {
         member.firstName = memberFirstName;
@@ -27,12 +34,29 @@ export default function addMemberScreen() {
 
     async function importFromContacts() {
       console.log("import from contacts")
+
+      const permission = await Contacts.getPermissionsAsync();
+      console.log("getpermission", permission)
+      
       const person = await Contacts.presentContactPickerAsync()
       
-      console.log(person)
-      console.log(person?.firstName)
-      console.log(person?.lastName)
-      console.log(person?.phoneNumbers?.[0]?.number)
+      // console.log(person)
+      // console.log(person?.firstName)
+      // console.log(person?.lastName)
+      // console.log(person?.phoneNumbers?.[0]?.number)
+
+      if (person) {
+        const newContact: Person = {
+          firstName: person?.firstName as string,
+          lastName: person?.lastName as string,
+          phoneNumber: person?.phoneNumbers?.[0]?.number as string,
+          id: ""
+        }
+        await addPerson(db, newContact);
+      } else {
+        Alert.alert("unable to add from contacts")
+      }
+      
       
     }
 
