@@ -7,28 +7,43 @@ import { BottomSheet, Button, ListItem } from '@rneui/themed';
 import { StyleSheet, View } from 'react-native';
 import { member, group } from './createGroupModal'
 import { useRouter } from 'expo-router';
+import * as SQLite from 'expo-sqlite'
+import { Person, addPerson, getAllPersons } from "./db/PersonRepo";
+
 
 export default function addMemberManualScreen() {
   const router = useRouter();
+  const db = SQLite.useSQLiteContext();
 
     // Member information
     const [memberFirstName, memFirstNameChange] = useState(""); 
     const [memberLastName, memLastNameChange] = useState(""); 
     const [memberNumber, memNumberChange] = useState("");
     
-    function addGroupMember() {
+    async function createPerson() {
         member.firstName = memberFirstName;
         member.lastName = memberLastName;
         member.number = memberNumber;
         group.members.push(member);
-  
+
+        const newContact: Person = {
+          firstName: memberFirstName,
+          lastName: memberLastName,
+          phoneNumber: memberNumber,
+          id: null
+        }
+        
+        console.log(newContact)
+        await addPerson(db, newContact);
+        const allContacts = await getAllPersons(db);
+        console.log("all contacts", allContacts)
       }
 
     return <SafeAreaView style = {styles.stepContainer}>
             <View style = {styles.centeredView}>
               <ThemedText type="subtitle" 
                   style={styles.title}>
-                  Enter Member Information
+                  Enter Contact Information
               </ThemedText>
             </View>
 
@@ -63,8 +78,8 @@ export default function addMemberManualScreen() {
               style = {{height: 40, margin: 13, borderWidth: 1, padding: 10, color: "white", backgroundColor: "gray"}}>
             </TextInput>
             <Button
-              title="Add Member"
-              onPress={() => {addGroupMember(); router.push('/createGroupModal');}}
+              title="Create Contact"
+              onPress={() => {createPerson(); router.push('/createGroupModal');}}
               buttonStyle={styles.button}
               titleStyle={styles.title}
             />
