@@ -10,7 +10,7 @@ import { member, group } from "./createGroupModal";
 import * as Contacts from 'expo-contacts';
 import { useRouter } from 'expo-router';
 import * as SQLite from 'expo-sqlite'
-import { Person, addPerson } from "./db/PersonRepo";
+import { Person, addPerson, getAllPersons } from "./db/PersonRepo";
 
 
 export default function addMemberScreen() {
@@ -19,9 +19,17 @@ export default function addMemberScreen() {
     const [memberFirstName, setMemFirstName] = useState(""); 
     const [memberLastName, setMemLastName] = useState(""); 
     const [memberNumber, setMemNumber] = useState("");
+    const [contacts, setContacts] = useState([""])
 
 
     const db = SQLite.useSQLiteContext();
+    
+
+    // useEffect(async () => {
+    //   const people = await getAllPersons(db)
+
+
+    // }, [])
   
     
     function addGroupMember() {
@@ -32,32 +40,25 @@ export default function addMemberScreen() {
   
       }
 
+    
+
     async function importFromContacts() {
-      console.log("import from contacts")
 
-      const permission = await Contacts.getPermissionsAsync();
-      console.log("getpermission", permission)
-      
-      const person = await Contacts.presentContactPickerAsync()
-      
-      // console.log(person)
-      // console.log(person?.firstName)
-      // console.log(person?.lastName)
-      // console.log(person?.phoneNumbers?.[0]?.number)
-
-      if (person) {
-        const newContact: Person = {
-          firstName: person?.firstName as string,
-          lastName: person?.lastName as string,
-          phoneNumber: person?.phoneNumbers?.[0]?.number as string,
-          id: ""
+      const { status } = await Contacts.requestPermissionsAsync();
+      if (status === 'granted') {
+        const person = await Contacts.presentContactPickerAsync()
+        if (person) {
+          const newContact: Person = {
+            firstName: person?.firstName as string,
+            lastName: person?.lastName as string,
+            phoneNumber: person?.phoneNumbers?.[0]?.number as string,
+            id: ""
+          }
+          await addPerson(db, newContact);
+        } else {
+          Alert.alert("unable to add from contacts")
         }
-        await addPerson(db, newContact);
-      } else {
-        Alert.alert("unable to add from contacts")
-      }
-      
-      
+      };
     }
 
     return (<SafeAreaView style = {styles.stepContainer}>
