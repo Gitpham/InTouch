@@ -40,17 +40,26 @@ export default function addMemberScreen() {
         <View style = {styles.centeredView}>
         <ThemedText type="subtitle" 
             style={styles.title}>
-            Add Group Member
+            Choose from InTouch contacts
+        </ThemedText>
+        <Button 
+            title="Search Contacts (dummy button)" 
+            buttonStyle={styles.button}
+            titleStyle={styles.title}
+        />
+        <ThemedText type="subtitle" 
+            style={styles.title}>
+            Create new contact
         </ThemedText>
         </View>
         <Button 
-            title="Enter Contact Manually" 
+            title="Create Contact Manually" 
             onPress={() => {router.push('/addMemberManualScreen');}}
             buttonStyle={styles.button}
             titleStyle={styles.title}
         />
         <Button
-            title="Add from Contacts"
+            title="Import from Contacts"
             onPress={importFromContacts}
             buttonStyle={styles.button}
             titleStyle={styles.title}
