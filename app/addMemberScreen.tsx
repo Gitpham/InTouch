@@ -1,6 +1,6 @@
 import { ThemedText } from "@/components/ThemedText";
 import { useEffect, useState } from "react";
-import { Alert, Pressable, TextInput } from "react-native";
+import { Alert, FlatList, Pressable, TextInput } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { BottomSheet, Button, ListItem } from '@rneui/themed';
@@ -19,17 +19,32 @@ export default function addMemberScreen() {
     const [memberFirstName, setMemFirstName] = useState(""); 
     const [memberLastName, setMemLastName] = useState(""); 
     const [memberNumber, setMemNumber] = useState("");
-    const [contacts, setContacts] = useState([""])
+    const [contacts, setContacts] = useState<Person[]>();
 
 
     const db = SQLite.useSQLiteContext();
     
 
-    // useEffect(async () => {
-    //   const people = await getAllPersons(db)
+    useEffect( () => {
 
+      console.log("useEffect()");
+      (async ()  => {
+        try {
+          const persons: Person[] = await getAllPersons(db)
+          // console.log("all people", persons[0])
+          const p: Person = persons[0];
+          console.log(p)
+          await setContacts(persons)
+    
+        } catch (error) {
+          console.error(error)
+          console.log("faild to load contacts", error)
+        }
+        
+      })();
 
-    // }, [])
+      console.log("contact state variable", contacts)
+    }, [])
   
     
     function addGroupMember() {
@@ -67,6 +82,15 @@ export default function addMemberScreen() {
             style={styles.title}>
             Choose from InTouch contacts
         </ThemedText>
+
+        <FlatList 
+        data={contacts}
+        renderItem={({ item }) => <ListItem>
+            <ListItem.Title>{item.firstName}</ListItem.Title>
+        </ListItem>}
+        keyExtractor={(item) => item.id}
+      />
+      
         <Button 
             title="Search Contacts (dummy button)" 
             buttonStyle={styles.button}

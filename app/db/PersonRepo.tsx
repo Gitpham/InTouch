@@ -72,7 +72,7 @@ export const deletePerson = async (db: SQLite.SQLiteDatabase, person: Person) =>
 
 export const getAllPersons = async (db: SQLite.SQLiteDatabase) => {
 
-    const people = await db.getAllAsync(`SELECT * FROM person`)
+    const people = await db.getAllAsync<Person>(`SELECT * FROM person`)
     // const people 
     // console.log("All persons in person", people)
 
