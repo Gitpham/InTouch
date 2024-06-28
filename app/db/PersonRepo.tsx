@@ -8,8 +8,7 @@ export type Person = {
     id: string,
 }
 
-export const addPerson = async (db: SQLite.SQLiteDatabase, person:Person) =>{
-
+export const addPerson = async (db: SQLite.SQLiteDatabase, person: Person) => {
 
     const statement = await db.prepareAsync(`INSERT INTO person (firstName, lastName, phoneNumber) VALUES (?, ?, ?)`)
 
@@ -37,7 +36,7 @@ export const updatePerson = async (db: SQLite.SQLiteDatabase, updatedPerson: Per
         `);
 
     const value: string[] = [updatedPerson.firstName, updatedPerson.lastName, updatedPerson.phoneNumber, '1']
-    
+
     try {
         return await statement.executeAsync(value)
     } catch (error) {
@@ -57,7 +56,7 @@ export const deletePerson = async (db: SQLite.SQLiteDatabase, person: Person) =>
         `);
 
     const value: string[] = [person.id]
-    
+
     try {
         return await statement.executeAsync(value)
     } catch (error) {
@@ -67,10 +66,11 @@ export const deletePerson = async (db: SQLite.SQLiteDatabase, person: Person) =>
         // console.log("finalize updatePerson async")
         statement.finalizeAsync()
     }
-  }
+}
 
 
-export const getAllPersons = async (db: SQLite.SQLiteDatabase) =>{
+
+export const getAllPersons = async (db: SQLite.SQLiteDatabase) => {
 
     const people = await db.getAllAsync(`SELECT * FROM person`)
     // const people 
