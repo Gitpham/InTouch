@@ -25,27 +25,6 @@ export default function addMemberScreen() {
     const db = SQLite.useSQLiteContext();
     
 
-    useEffect( () => {
-
-      console.log("useEffect()");
-      (async ()  => {
-        try {
-          const persons: Person[] = await getAllPersons(db)
-          // console.log("all people", persons[0])
-          const p: Person = persons[0];
-          console.log(p)
-          await setContacts(persons)
-    
-        } catch (error) {
-          console.error(error)
-          console.log("faild to load contacts", error)
-        }
-        
-      })();
-
-      console.log("contact state variable", contacts)
-    }, [])
-  
     
     function addGroupMember() {
         member.firstName = memberFirstName;
@@ -83,14 +62,8 @@ export default function addMemberScreen() {
             Choose from InTouch contacts
         </ThemedText>
 
-        <FlatList 
-        data={contacts}
-        renderItem={({ item }) => <ListItem>
-            <ListItem.Title>{item.firstName}</ListItem.Title>
-        </ListItem>}
-        keyExtractor={(item) => item.id}
-      />
-      
+        
+
         <Button 
             title="Search Contacts (dummy button)" 
             buttonStyle={styles.button}
