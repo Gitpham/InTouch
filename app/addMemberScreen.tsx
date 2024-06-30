@@ -63,18 +63,7 @@ export default function addMemberScreen() {
 
     return (<SafeAreaView style = {styles.stepContainer}>
         <View style = {styles.centeredView}>
-        <ThemedText type="subtitle" 
-            style={styles.title}>
-            Choose from InTouch contacts
-        </ThemedText>
-
         
-
-        <Button 
-            title="Search Contacts (dummy button)" 
-            buttonStyle={styles.button}
-            titleStyle={styles.title}
-        />
         <ThemedText type="subtitle" 
             style={styles.title}>
             Create new contact
@@ -82,7 +71,9 @@ export default function addMemberScreen() {
         </View>
         <Button 
             title="Create Contact Manually" 
-            onPress={() => {router.push('/addMemberManualScreen');}}
+            onPress={() => {
+              router.push('/addMemberManualScreen')
+            }}
             buttonStyle={styles.button}
             titleStyle={styles.title}
         />

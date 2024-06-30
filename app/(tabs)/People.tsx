@@ -6,6 +6,7 @@ import * as SQLite from "expo-sqlite";
 import { Person, getAllPersons } from "../db/PersonRepo";
 import { useContext, useEffect, useState } from "react";
 import { RefreshContactsContext } from "@/context/RefreshContactsContext";
+import { router } from "expo-router";
 
 export default function PeopleScreen() {
   const db = SQLite.useSQLiteContext();
@@ -41,29 +42,21 @@ export default function PeopleScreen() {
   };
 
    const renderContacts = ({item}: {item: Person}) => {
-    return  (<ListItem >
+    return  (
+      <ListItem bottomDivider>
     <ListItem.Content id ={item.id} >
     <ListItem.Title>{item.firstName} {item.lastName}</ListItem.Title>
     <ListItem.Title>Phone Number: {item.phoneNumber} id: {item.id}</ListItem.Title>
     </ListItem.Content>
-  </ListItem>)
+
+  </ListItem>
+
+  )
 
    }
-
-  // const testPerson: Person = {
-  //      firstName: "Alex",
-  //      lastName: "Aaron",
-  //      phoneNumber: "111-111-1111"
-  // }
-
-  // const addPerson =  async () => {
-  //      console.log("add Person")
-  //      const people = await getAllPersons(db)
-  //      console.log(people)
-  // }
-
   return (
     <SafeAreaView style={styles.stepContainer}>
+            <ThemedText type="title"> People Screen </ThemedText>
 
       <FlatList
         data={contacts}
@@ -71,10 +64,9 @@ export default function PeopleScreen() {
         keyExtractor={(item) => item.id}
       />
 
-      <ThemedText type="title"> People Screen </ThemedText>
       <Button
         title="Add New Contact"
-        onPress={showPeople}
+        onPress={() => router.push("../addMemberScreen")}
         buttonStyle={styles.button}
         titleStyle={styles.title}
       />

@@ -42,7 +42,9 @@ export default function addMemberManualScreen() {
         const allContacts = await getAllPersons(db);
         // console.log("all contacts", allContacts)
         refreshContacts();
-        router.push('/createGroupModal')
+        router.back();
+
+        // router.push('/createGroupModal')
       }
 
     return <SafeAreaView style = {styles.stepContainer}>
