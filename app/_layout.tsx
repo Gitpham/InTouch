@@ -22,9 +22,9 @@ export default function RootLayout() {
   const [isRefreshingContacts, setIsRefreshingContacts] = useState(true);
 
   const refreshContacts = () => {
-      console.log("refesh contacts")
+      // console.log("refesh contacts")
       setIsRefreshingContacts((cur) => !cur);
-      console.log("isRefreshingContacts", isRefreshingContacts)
+      // console.log("isRefreshingContacts", isRefreshingContacts)
       // setIsRefreshingContacts(false);
   }
 

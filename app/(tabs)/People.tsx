@@ -31,7 +31,7 @@ export default function PeopleScreen() {
     })();
 
     // console.log("contact state variable", contacts);
-    console.log("people updated")
+    // console.log("people updated")
   }, [isRefreshingContacts]);
 
   const showPeople = async () => {
@@ -41,10 +41,10 @@ export default function PeopleScreen() {
   };
 
    const renderContacts = ({item}: {item: Person}) => {
-    return  (<ListItem id ={item.id}>
-    <ListItem.Content >
+    return  (<ListItem >
+    <ListItem.Content id ={item.id} >
     <ListItem.Title>{item.firstName} {item.lastName}</ListItem.Title>
-    {/* <ListItem.Title>Phone Number: {item.phoneNumber} id: {item.id}</ListItem.Title> */}
+    <ListItem.Title>Phone Number: {item.phoneNumber} id: {item.id}</ListItem.Title>
     </ListItem.Content>
   </ListItem>)
 

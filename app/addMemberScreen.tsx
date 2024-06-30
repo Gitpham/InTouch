@@ -22,7 +22,7 @@ export default function addMemberScreen() {
     const [memberLastName, setMemLastName] = useState(""); 
     const [memberNumber, setMemNumber] = useState("");
 
-    const {isRefreshingContacts} = useContext(RefreshContactsContext);
+    // const {isRefreshingContacts} = useContext(RefreshContactsContext);
     const { refreshContacts} = useContext(RefreshContactsContext);
 
 
@@ -53,13 +53,12 @@ export default function addMemberScreen() {
             id: ""
           }
           await addPerson(db, newContact);
-          // setRefreshContacts(true)
+          refreshContacts();
         } else {
           Alert.alert("unable to add from contacts")
         }
       };
 
-      refreshContacts();
     }
 
     return (<SafeAreaView style = {styles.stepContainer}>

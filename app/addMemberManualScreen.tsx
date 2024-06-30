@@ -1,5 +1,5 @@
 import { ThemedText } from "@/components/ThemedText";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Pressable, TextInput } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -9,11 +9,15 @@ import { member, group } from './createGroupModal'
 import { useRouter } from 'expo-router';
 import * as SQLite from 'expo-sqlite'
 import { Person, addPerson, getAllPersons } from "./db/PersonRepo";
+import { RefreshContactsContext } from "@/context/RefreshContactsContext";
 
 
 export default function addMemberManualScreen() {
+
   const router = useRouter();
   const db = SQLite.useSQLiteContext();
+  const { refreshContacts} = useContext(RefreshContactsContext);
+
 
     // Member information
     const [memberFirstName, memFirstNameChange] = useState(""); 
@@ -36,7 +40,9 @@ export default function addMemberManualScreen() {
         console.log(newContact)
         await addPerson(db, newContact);
         const allContacts = await getAllPersons(db);
-        console.log("all contacts", allContacts)
+        // console.log("all contacts", allContacts)
+        refreshContacts();
+        router.push('/createGroupModal')
       }
 
     return <SafeAreaView style = {styles.stepContainer}>
@@ -79,7 +85,9 @@ export default function addMemberManualScreen() {
             </TextInput>
             <Button
               title="Create Contact"
-              onPress={() => {createPerson(); router.push('/createGroupModal');}}
+              onPress={() => {createPerson();
+                //  router.push('/createGroupModal');
+                }}
               buttonStyle={styles.button}
               titleStyle={styles.title}
             />

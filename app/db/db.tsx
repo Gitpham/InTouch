@@ -6,7 +6,7 @@ import { SQLiteAnyDatabase } from 'expo-sqlite/build/NativeStatement';
 export const connectToDatabase = async () => {
 
     const db = await SQLite.openDatabaseAsync("InTouchDB_1");
-    console.log("Successfully opened db");
+    // console.log("Successfully opened db");
     return db
   }
 
