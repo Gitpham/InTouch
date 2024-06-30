@@ -6,19 +6,27 @@ import {
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import "react-native-reanimated";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
 import homeScreen from "./(tabs)";
 import { SQLiteProvider } from "expo-sqlite";
 import { connectToDatabase, createTables } from "./db/db";
-
+import { RefreshContactsContext } from "@/context/RefreshContactsContext";
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 
 export default function RootLayout() {
+  const [isRefreshingContacts, setIsRefreshingContacts] = useState(true);
+
+  const refreshContacts = () => {
+      console.log("refesh contacts")
+      setIsRefreshingContacts((cur) => !cur);
+      console.log("isRefreshingContacts", isRefreshingContacts)
+      // setIsRefreshingContacts(false);
+  }
 
   const loadData = useCallback(async () => {
     try {
@@ -29,7 +37,6 @@ export default function RootLayout() {
     }
   }, []);
 
-  
 
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
@@ -41,8 +48,6 @@ export default function RootLayout() {
   },[loadData])
 
   useEffect(() => {
-
-   
     if (loaded) {
       SplashScreen.hideAsync();
     }
@@ -54,6 +59,9 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+   
+      <RefreshContactsContext.Provider value ={{isRefreshingContacts, refreshContacts}}>
+
       <SQLiteProvider databaseName="InTouchDB_1">
         <Stack>
           <Stack.Screen name="index" options={{ headerShown: false }} />
@@ -73,6 +81,8 @@ export default function RootLayout() {
           />
         </Stack>
       </SQLiteProvider>
+
+      </RefreshContactsContext.Provider>
     </ThemeProvider>
   );
 }

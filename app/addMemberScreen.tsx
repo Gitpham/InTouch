@@ -1,5 +1,5 @@
 import { ThemedText } from "@/components/ThemedText";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Alert, FlatList, Pressable, TextInput } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -11,15 +11,19 @@ import * as Contacts from 'expo-contacts';
 import { useRouter } from 'expo-router';
 import * as SQLite from 'expo-sqlite'
 import { Person, addPerson, getAllPersons } from "./db/PersonRepo";
-
+import { RefreshContactsContext} from "@/context/RefreshContactsContext";
 
 export default function addMemberScreen() {
+
+  // const {refreshContacts, setRefreshContacts} = useContext<ContactsContextType>(RefreshContactsContext)
 
     // Member information
     const [memberFirstName, setMemFirstName] = useState(""); 
     const [memberLastName, setMemLastName] = useState(""); 
     const [memberNumber, setMemNumber] = useState("");
-    const [contacts, setContacts] = useState<Person[]>();
+
+    const {isRefreshingContacts} = useContext(RefreshContactsContext);
+    const { refreshContacts} = useContext(RefreshContactsContext);
 
 
     const db = SQLite.useSQLiteContext();
@@ -49,10 +53,13 @@ export default function addMemberScreen() {
             id: ""
           }
           await addPerson(db, newContact);
+          // setRefreshContacts(true)
         } else {
           Alert.alert("unable to add from contacts")
         }
       };
+
+      refreshContacts();
     }
 
     return (<SafeAreaView style = {styles.stepContainer}>

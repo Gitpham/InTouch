@@ -4,24 +4,25 @@ import { FlatList, StyleSheet, View } from "react-native";
 import { Button, ListItem } from "@rneui/themed";
 import * as SQLite from "expo-sqlite";
 import { Person, getAllPersons } from "../db/PersonRepo";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { RefreshContactsContext } from "@/context/RefreshContactsContext";
 
 export default function PeopleScreen() {
   const db = SQLite.useSQLiteContext();
   const [contacts, setContacts] = useState<Person[]>();
-
-  const [refreshing, setRefreshing] = useState(false)
+  const {isRefreshingContacts} = useContext(RefreshContactsContext);
+  // const { refreshContacts} = useContext(RefreshContactsContext);
 
 
 
   useEffect(() => {
-    console.log("useEffect()");
+    // console.log("useEffect()");
 
     (async () => {
       try {
         const persons: Person[] = await getAllPersons(db);
         // console.log("all people", persons[0])
-        console.log(persons);
+        // console.log(persons);
         await setContacts(persons);
       } catch (error) {
         console.error(error);
@@ -29,8 +30,9 @@ export default function PeopleScreen() {
       }
     })();
 
-    console.log("contact state variable", contacts);
-  }, []);
+    // console.log("contact state variable", contacts);
+    console.log("people updated")
+  }, [isRefreshingContacts]);
 
   const showPeople = async () => {
     console.log("showPeople");
@@ -40,9 +42,9 @@ export default function PeopleScreen() {
 
    const renderContacts = ({item}: {item: Person}) => {
     return  (<ListItem id ={item.id}>
-    <ListItem.Content>
+    <ListItem.Content >
     <ListItem.Title>{item.firstName} {item.lastName}</ListItem.Title>
-    <ListItem.Title>Phone Number: {item.phoneNumber} id: {item.id}</ListItem.Title>
+    {/* <ListItem.Title>Phone Number: {item.phoneNumber} id: {item.id}</ListItem.Title> */}
     </ListItem.Content>
   </ListItem>)
 
