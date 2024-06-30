@@ -61,7 +61,7 @@ export default function createGroupScreen() {
         }
 
       // Saving to Repo
-      // groupList.push(group);
+      groupList.push({name: group.name, members: group.members, schedule: group.schedule, typeOfCall: group.typeOfCall});
       }
     }
 
@@ -94,7 +94,7 @@ export default function createGroupScreen() {
 
           <Button
             title="Done"
-            onPress={() => router.push("./(tabs)")}
+            onPress={() => {saveGroup(); router.push("./(tabs)"); }}
             buttonStyle={styles.button}
             titleStyle={styles.title}
           />
