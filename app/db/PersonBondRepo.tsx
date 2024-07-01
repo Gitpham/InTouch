@@ -2,7 +2,7 @@ import * as SQLite from "expo-sqlite";
 import { Bond } from "./BondRepo";
 import { Person } from "./PersonRepo";
 
-export const addGroupMember = async (db: SQLite.SQLiteDatabase, person: Person, bond: Bond) => {
+export const addBondMember = async (db: SQLite.SQLiteDatabase, person: Person, bond: Bond) => {
 
     const statement = await db.prepareAsync(`INSERT INTO person_bond (person_id, bond_id) VALUES (?, ?)`)
 
@@ -21,7 +21,7 @@ export const addGroupMember = async (db: SQLite.SQLiteDatabase, person: Person, 
 
 }
 
-export const deleteGroupMember = async (db: SQLite.SQLiteDatabase, person: Person, bond: Bond) => {
+export const deleteBondMember = async (db: SQLite.SQLiteDatabase, person: Person, bond: Bond) => {
 
     const statement = await db.prepareAsync(`
        DELETE FROM person_bond
@@ -49,7 +49,7 @@ export const getAllGroupMembers = async (db: SQLite.SQLiteDatabase, bond: Bond) 
     const statement = await db.prepareAsync(
         `SELECT person.firstName, person.lastName, person.phoneNumber, person.id
         FROM person 
-        INNER JOIN person_bond 
+        INNER JOIN person_bond ON person_bond.person_id = person.person_id
         WHERE person_bond.group_id = ?
         `);
     

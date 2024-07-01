@@ -13,7 +13,7 @@ import { useColorScheme } from "@/hooks/useColorScheme";
 import homeScreen from "./(tabs)";
 import { SQLiteProvider } from "expo-sqlite";
 import { connectToDatabase, createTables } from "./db/db";
-import { getAllBonds } from "./db/BondRepo"
+import { inTouchContext } from "@/context/InTouchContext";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
