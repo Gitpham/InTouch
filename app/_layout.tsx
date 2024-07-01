@@ -13,7 +13,7 @@ import { useColorScheme } from "@/hooks/useColorScheme";
 import homeScreen from "./(tabs)";
 import { SQLiteProvider } from "expo-sqlite";
 import { connectToDatabase, createTables } from "./db/db";
-import { inTouchContext } from "@/context/InTouchContext";
+import { InTouchContextProvider } from "@/context/InTouchContext";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -55,6 +55,7 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+      <InTouchContextProvider>
       <SQLiteProvider databaseName="InTouchDB_1">
         <Stack>
           <Stack.Screen name="index" options={{ headerShown: false }} />
@@ -74,6 +75,7 @@ export default function RootLayout() {
           />
         </Stack>
       </SQLiteProvider>
+      </InTouchContextProvider>
     </ThemeProvider>
   );
 }

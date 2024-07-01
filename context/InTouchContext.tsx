@@ -2,11 +2,22 @@ import { Bond, addBond, deleteBond, getAllBonds } from "@/app/db/BondRepo";
 import { addBondMember, deleteBondMember } from "@/app/db/PersonBondRepo";
 import { Person, addPerson, deletePerson, getAllPersons } from "@/app/db/PersonRepo";
 import { useSQLiteContext } from "expo-sqlite";
-import { createContext, useEffect, useState } from "react";
+import { createContext, useEffect, useState, ReactNode } from "react";
 
-export const inTouchContext = createContext({});
+type InTouchContextType = {
+    peopleList: Person[];
+    bondList: Bond[];
+    createPerson: (person: Person) => Promise<void>;
+    removePerson: (person: Person) => Promise<void>;
+    createBond: (bond: Bond) => Promise<void>;
+    removeBond: (bond: Bond) => Promise<void>;
+    createBondMember: (bond: Bond, person: Person) => Promise<void>;
+    removeBondMember: (bond: Bond, person: Person) => Promise<void>;
+};
 
-const inTouchContextProvider = ({children}) => {
+export const InTouchContext = createContext<InTouchContextType | undefined>(undefined);
+
+export const InTouchContextProvider : React.FC<{children: React.ReactNode}>= ({children}) => {
     const [peopleList, setPeopleList] = useState<Person[]>([]);
     const [bondList, setBondList] = useState<Bond[]>([]);
     const [personBondList, setPersonBondList] = useState<Bond[]>([]);
@@ -23,6 +34,7 @@ const inTouchContextProvider = ({children}) => {
             console.error(e)
             throw Error("Could not fetch people");
         }
+    }
 
     async function initializeBondList() {
         try {
@@ -105,5 +117,9 @@ const inTouchContextProvider = ({children}) => {
         initializeBondList();
     }, [])
 
-    }
+    return <><InTouchContext.Provider value = {{peopleList, bondList, createPerson, removePerson, createBond, removeBond, createBondMember, removeBondMember}}>
+        {children}
+        </InTouchContext.Provider>
+        </>
+
 } 
