@@ -51,7 +51,7 @@ export const updatePerson = async (db: SQLite.SQLiteDatabase, updatedPerson: Per
 export const deletePerson = async (db: SQLite.SQLiteDatabase, person: Person) => {
 
     const statement = await db.prepareAsync(`
-       DELETE FROM Contacts
+       DELETE FROM person
       WHERE id = ?
         `);
 

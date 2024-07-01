@@ -4,6 +4,8 @@ import * as SQLite from "expo-sqlite";
 export type Bond = {
     bondName: string,
     id: string,
+    schedule: string, 
+    typeOfCall: string,
 }
 
 export const addBond = async (db: SQLite.SQLiteDatabase, bond:Bond) =>{
@@ -70,7 +72,7 @@ export const deleteBond = async (db: SQLite.SQLiteDatabase, bond: Bond) => {
 
 export const getAllBonds = async (db: SQLite.SQLiteDatabase) =>{
 
-    const bonds = await db.getAllAsync(`SELECT * FROM bond`)
+    const bonds = await db.getAllAsync<Bond>(`SELECT * FROM bond`)
     // const people 
     console.log("All persons in person", bonds)
 

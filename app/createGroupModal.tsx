@@ -6,21 +6,24 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { BottomSheet, Button, Dialog, ListItem } from '@rneui/themed';
 import { StyleSheet, View } from 'react-native';
 import { router } from 'expo-router';
+import { Person } from "./db/PersonRepo";
+import { Bond } from "./db/BondRepo";
 
 
 
 export const groupList : Group[] = [];
 
 
-export const group : Group = {name: "", 
-  members: [], 
+export const group : Bond = {bondName: "", 
   schedule: "", 
-  typeOfCall: ""
+  typeOfCall: "",
+  id: ""
 };
 
-export const member : Member = {firstName: "",
+export const member : Person = {firstName: "",
   lastName: "",
-  number: ""
+  phoneNumber: "",
+  id: ""
 };
 
 
@@ -37,40 +40,40 @@ export default function createGroupScreen() {
     const [memberNumber, memNumberChange] = useState("");
 
 
-    function addGroupMember() {
-      member.firstName = memberFirstName;
-      member.lastName = memberLastName;
-      member.number = memberNumber;
-      group.members.push(member);
+    // function addGroupMember() {
+    //   member.firstName = memberFirstName;
+    //   member.lastName = memberLastName;
+    //   member.phoneNumber = memberNumber;
+    //   group.members.push(member);
 
-    }
+    // }
       
-    function saveGroup() {
-      group.name = groupName; 
+    // function saveGroup() {
+    //   group.name = groupName; 
 
-      // Testing purpo
-      console.log(group.members.length);
+    //   // Testing purpo
+    //   console.log(group.members.length);
   
-      if (group.name) {
-        const testMember = group.members[0];
-        if (testMember) {
-          console.log("Group " + group.name + " includes: " + testMember.firstName);
-        }
-        else {
-          console.log("Group " + group.name + " is empty");
-        }
+    //   if (group.name) {
+    //     const testMember = group.members[0];
+    //     if (testMember) {
+    //       console.log("Group " + group.name + " includes: " + testMember.firstName);
+    //     }
+    //     else {
+    //       console.log("Group " + group.name + " is empty");
+    //     }
 
-      // Saving to Repo
-      groupList.push({name: group.name, members: group.members, schedule: group.schedule, typeOfCall: group.typeOfCall});
-      }
-    }
+    //   // Saving to Repo
+    //   groupList.push({name: group.name, members: group.members, schedule: group.schedule, typeOfCall: group.typeOfCall});
+    //   }
+    // }
 
-    function resetGroup() {
-      group.name = ""; 
-      group.members = [];
-      group.schedule = "";
+    // function resetGroup() {
+    //   group.name = ""; 
+    //   group.members = [];
+    //   group.schedule = "";
 
-    }
+    // }
 
     return (
         <SafeAreaView style = {styles.stepContainer}>
@@ -94,7 +97,7 @@ export default function createGroupScreen() {
 
           <Button
             title="Done"
-            onPress={() => {saveGroup(); router.push("./(tabs)"); }}
+            onPress={() => {router.push("./(tabs)"); }}
             buttonStyle={styles.button}
             titleStyle={styles.title}
           />

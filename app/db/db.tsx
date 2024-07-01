@@ -6,7 +6,7 @@ import { SQLiteAnyDatabase } from 'expo-sqlite/build/NativeStatement';
 export const connectToDatabase = async () => {
 
     const db = await SQLite.openDatabaseAsync("InTouchDB_1");
-    // console.log("Successfully opened db");
+    console.log("Successfully opened db");
     return db
   }
 
@@ -14,7 +14,9 @@ export const connectToDatabase = async () => {
     const groupQuery = `
         CREATE TABLE IF NOT EXISTS bond (
             bond_id INTEGER PRIMARY KEY AUTOINCREMENT,
-            bondName TEXT NOT NULL UNIQUE
+            bondName TEXT NOT NULL UNIQUE,
+            schedule TEXT,
+            type_of_call TEXT
             );
             `
 

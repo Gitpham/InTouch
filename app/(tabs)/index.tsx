@@ -1,5 +1,5 @@
 import { ThemedText } from "@/components/ThemedText";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ScrollView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { BottomSheet, Button, Dialog, ListItem } from '@rneui/themed';
@@ -8,14 +8,30 @@ import { router } from 'expo-router';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Drawer } from 'expo-router/drawer';
 import { groupList } from '../createGroupModal'
+import { connectToDatabase } from "../db/db";
+import { Bond, getAllBonds } from "../db/BondRepo";
 
 
 export default function homeScreen() {
+    const [groupList, setGroupList] = useState<Bond[]>();
+
+    useEffect(() => {
+      (async () => {
+        try {
+          const db = await connectToDatabase();
+          const groups: Bond[] = await getAllBonds(db);
+          setGroupList(groups);
+        } catch (e) {
+          console.error(e);
+          console.log("failed to load bonds", e);
+        }
+      })();
+    })
 
     return <SafeAreaView style = {styles.stepContainer}>
         <View style = {styles.centeredView}><ThemedText style = {styles.title} type = "title">My Groups</ThemedText></View>
         <FlatList data = {groupList}
-          renderItem = {({item}) => <ListItem bottomDivider><ListItem.Title>{item.name}</ListItem.Title></ListItem>}
+          renderItem = {({item}) => <ListItem bottomDivider><ListItem.Title>{item.bondName}</ListItem.Title></ListItem>}
         />
         <Button buttonStyle = {styles.button}
         titleStyle = {styles.title}
