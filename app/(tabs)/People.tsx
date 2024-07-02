@@ -7,33 +7,34 @@ import { Person, getAllPersons } from "../db/PersonRepo";
 import { useContext, useEffect, useState } from "react";
 import { RefreshContactsContext } from "@/context/RefreshContactsContext";
 import { router } from "expo-router";
+import { InTouchContext } from "@/context/InTouchContext";
 
 export default function PeopleScreen() {
   const db = SQLite.useSQLiteContext();
   const [contacts, setContacts] = useState<Person[]>();
   const {isRefreshingContacts} = useContext(RefreshContactsContext);
+
+  const { peopleList } = useContext(InTouchContext)
   // const { refreshContacts} = useContext(RefreshContactsContext);
 
 
 
   useEffect(() => {
-    // console.log("useEffect()");
+    // // console.log("useEffect()");
 
-    (async () => {
-      try {
-        const persons: Person[] = await getAllPersons(db);
-        // console.log("all people", persons)
-        // console.log(persons);
-        await setContacts(persons);
-      } catch (error) {
-        console.error(error);
-        console.log("faild to load contacts", error);
-      }
-    })();
+    // (async () => {
+    //   try {
+    //     setContacts(peopleList)
+
+    //   } catch (error) {
+    //     console.error(error);
+    //     console.log("faild to load contacts", error);
+    //   }
+    // })();
 
     // console.log("contact state variable", contacts);
-    // console.log("people updated")
-  }, [isRefreshingContacts]);
+    console.log("people updated", peopleList)
+  }, [peopleList]);
 
   const showPeople = async () => {
     console.log("showPeople");
@@ -59,7 +60,7 @@ export default function PeopleScreen() {
             <ThemedText type="title"> People Screen </ThemedText>
 
       <FlatList
-        data={contacts}
+        data={peopleList}
         renderItem={renderContacts}
         keyExtractor={(item) => item.id}
       />

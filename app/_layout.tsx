@@ -18,9 +18,7 @@ import { InTouchContextProvider } from "@/context/InTouchContext";
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
-
 export default function RootLayout() {
-
   // const loadData = useCallback(async () => {
   //   try {
   //     const db = await connectToDatabase();
@@ -29,8 +27,6 @@ export default function RootLayout() {
   //     console.error(error);
   //   }
   // }, []);
-
-  
 
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
@@ -42,8 +38,6 @@ export default function RootLayout() {
   // },[loadData])
 
   useEffect(() => {
-
-   
     if (loaded) {
       SplashScreen.hideAsync();
     }
@@ -55,28 +49,29 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <SQLiteProvider databaseName="Test_DataBase_1.db" assetSource={{ assetId: require('./../Test_DataBase_1.db') }}>
-      <InTouchContextProvider>
-
-        <Stack>
-          <Stack.Screen name="index" options={{ headerShown: false }} />
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="+not-found" options={{ headerShown: false }} />
-          <Stack.Screen
-            name="createGroupModal"
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="addMemberScreen"
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="addMemberManualScreen"
-            options={{ headerShown: false }}
-          />
-        </Stack>
+      <SQLiteProvider
+        databaseName="Test_DataBase_1.db"
+        assetSource={{ assetId: require("./../Test_DataBase_1.db") }}
+      >
+        <InTouchContextProvider>
+          <Stack>
+            <Stack.Screen name="index" options={{ headerShown: false }} />
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="+not-found" options={{ headerShown: false }} />
+            <Stack.Screen
+              name="createGroupModal"
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="addMemberScreen"
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="addMemberManualScreen"
+              options={{ headerShown: false }}
+            />
+          </Stack>
         </InTouchContextProvider>
-
       </SQLiteProvider>
     </ThemeProvider>
   );

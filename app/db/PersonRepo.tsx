@@ -8,6 +8,9 @@ export type Person = {
     id: string,
 }
 
+// INSERT INTO person (firstName, lastName, phoneNumber) VALUES ('Aaron', 'Howitzer', '000-000-0003');
+
+
 export const addPerson = async (db: SQLite.SQLiteDatabase, person: Person) => {
 
     const statement = await db.prepareAsync(`INSERT INTO person (firstName, lastName, phoneNumber) VALUES (?, ?, ?)`)
@@ -72,10 +75,12 @@ export const deletePerson = async (db: SQLite.SQLiteDatabase, person: Person) =>
 
 export const getAllPersons = async (db: SQLite.SQLiteDatabase) => {
 
-    const people = await db.getAllAsync<Person>(`SELECT * FROM person`)
-    // const people 
-    // console.log("All persons in person", people)
-
-    return people;
+    try {
+        console.log("getAllPersons()")
+        return await db.getAllAsync<Person>(`SELECT * FROM person`)
+    } catch (error) {
+        console.error(error)
+        throw Error("Failed to getAllPersons()")
+    }
 }
 
