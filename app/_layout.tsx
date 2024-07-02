@@ -43,13 +43,14 @@ export default function RootLayout() {
         assetSource={{ assetId: require("./../Test_DataBase_1.db") }}
       >
         <InTouchContextProvider>
+
           <Stack screenOptions={{ headerShown: false }}>
             <Stack.Screen name="index" />
-            <Stack.Screen name="./screens/(tabs)" />
-            <Stack.Screen name="./screens/not-found" />
-            <Stack.Screen name="./screens/createGroupScreen" />
-            <Stack.Screen name="./screens/addMemberScreen" />
-            <Stack.Screen name="./screens/addMemberManualScreen" />
+            <Stack.Screen name="(tabs)" />
+            <Stack.Screen name="not-found" />
+            <Stack.Screen name="./createGroupScreen" />
+            <Stack.Screen name="addMemberScreen" />
+            <Stack.Screen name="addMemberManualScreen" />
           </Stack>
         </InTouchContextProvider>
       </SQLiteProvider>

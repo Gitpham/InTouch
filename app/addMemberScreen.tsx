@@ -1,8 +1,8 @@
 import { ThemedText } from "@/components/ThemedText";
-import { useContext, } from "react";
-import { Alert} from "react-native";
+import { useContext } from "react";
+import { Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import {  Button,  } from "@rneui/themed";
+import { Button } from "@rneui/themed";
 import { StyleSheet, View } from "react-native";
 import { router } from "expo-router";
 import * as Contacts from "expo-contacts";
@@ -40,24 +40,24 @@ export default function addMemberScreen() {
         </ThemedText>
       </View>
 
-      <StandardButton  
-      title="Create Contact Manually"
+      <StandardButton
+        title="Create Contact Manually"
         onPress={() => {
-          router.push("/addMemberManualScreen");
-        }}/>
+          router.push("./addMemberManualScreen");
+        }}
+      />
 
-      <StandardButton  
-       title="Import from Contacts"
-       onPress={importFromContacts}/>
-
-
+      <StandardButton
+        title="Import from Contacts"
+        onPress={importFromContacts}
+      />
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   title: {
-    color: "black"
+    color: "black",
   },
   stepContainer: {
     flex: 1,

@@ -1,8 +1,8 @@
 import { ThemedText } from "@/components/ThemedText";
 import { useContext, useState } from "react";
-import {  TextInput } from "react-native";
+import { TextInput } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import {  Button } from "@rneui/themed";
+import { Button } from "@rneui/themed";
 import { StyleSheet, View } from "react-native";
 import { useRouter } from "expo-router";
 import * as SQLite from "expo-sqlite";
@@ -93,6 +93,7 @@ export default function addMemberManualScreen() {
           backgroundColor: "gray",
         }}
       ></TextInput>
+
       <Button
         title="Create Contact"
         onPress={() => {
@@ -102,6 +103,7 @@ export default function addMemberManualScreen() {
         buttonStyle={styles.button}
         titleStyle={styles.title}
       />
+
     </SafeAreaView>
   );
 }

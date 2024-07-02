@@ -1,6 +1,6 @@
 import { ThemedText } from "@/components/ThemedText";
 import { useContext, useState } from "react";
-import { Pressable, TextInput } from "react-native";
+import { Alert, Pressable, TextInput } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { BottomSheet, Button, Dialog, ListItem } from "@rneui/themed";
@@ -10,6 +10,7 @@ import { router } from "expo-router";
 import { InTouchContext } from "@/context/InTouchContext";
 import { Bond } from "@/constants/types";
 import { Group } from "expo-contacts";
+import { StandardButton } from "@/components/ButtonStandard";
 
 export const groupList: Group[] = [];
 
@@ -31,6 +32,11 @@ export default function createGroupScreen() {
   const { createBond } = useContext(InTouchContext);
 
   function onDonePress() {
+
+    if (!bondName) {
+      Alert.alert("Must enter a Bond name")
+      return;
+    }
     const bondToAdd: Bond = {
       bondName: bondName,
       typeOfCall: "",
@@ -77,6 +83,15 @@ export default function createGroupScreen() {
         buttonStyle={styles.button}
         titleStyle={styles.title}
       />
+
+      <StandardButton
+      title="Cancel"
+      onPress={router.back()}
+      >
+      </StandardButton>
+
+
+      
     </SafeAreaView>
   );
 }

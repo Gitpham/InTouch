@@ -38,7 +38,7 @@ export default function homeScreen() {
 
       <StandardButton
       title={"+Add Group"}
-      onPress={() => router.push("../createGroupScreen")}>
+      onPress={() => router.push("./createGroupScreen")}>
 
       </StandardButton>
 
