@@ -1,11 +1,11 @@
-import { Bond, addBond, deleteBond, getAllBonds } from "@/app/db/BondRepo";
+import { addBond, deleteBond, getAllBonds } from "@/app/db/BondRepo";
 import { addBondMember, deleteBondMember } from "@/app/db/PersonBondRepo";
 import {
-  Person,
   addPerson,
   deletePerson,
   getAllPersons,
 } from "@/app/db/PersonRepo";
+import { Person, Bond } from "@/constants/types";
 import { useSQLiteContext } from "expo-sqlite";
 import { createContext, useEffect, useState, ReactNode } from "react";
 

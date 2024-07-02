@@ -1,12 +1,7 @@
+import { Bond } from "@/constants/types";
 import * as SQLite from "expo-sqlite";
 
 
-export type Bond = {
-    bondName: string,
-    id: string,
-    schedule: string, 
-    typeOfCall: string,
-}
 
 export const addBond = async (db: SQLite.SQLiteDatabase, bond:Bond) =>{
 
