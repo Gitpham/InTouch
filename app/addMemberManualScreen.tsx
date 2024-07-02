@@ -11,7 +11,6 @@ import { Person } from "@/constants/types";
 
 export default function addMemberManualScreen() {
   const router = useRouter();
-  const db = SQLite.useSQLiteContext();
   const { createPerson } = useContext(InTouchContext);
 
   // Member information
@@ -28,7 +27,6 @@ export default function addMemberManualScreen() {
     };
 
     createPerson(newContact);
-
     router.back();
   }
 
