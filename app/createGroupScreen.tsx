@@ -1,9 +1,9 @@
 import { ThemedText } from "@/components/ThemedText";
 import { useContext, useState } from "react";
-import { Alert, Pressable, TextInput } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
+import { Alert, TextInput } from "react-native";
+import { } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { BottomSheet, Button, Dialog, ListItem } from "@rneui/themed";
+import {  Button, } from "@rneui/themed";
 import { StyleSheet, View } from "react-native";
 import { router } from "expo-router";
 

@@ -44,13 +44,17 @@ export default function RootLayout() {
       >
         <InTouchContextProvider>
 
-          <Stack screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="index" />
-            <Stack.Screen name="(tabs)" />
+          <Stack 
+          // screenOptions={{ headerShown: false }}
+          >
+            <Stack.Screen name="index" options={{headerShown: false}}/>
+            <Stack.Screen name="(tabs)" options={{headerShown: false}}/>
             <Stack.Screen name="+not-found" />
-            {/* <Stack.Screen name="createGroupScreen" /> */}
-            <Stack.Screen name="addMemberScreen" />
-            <Stack.Screen name="addMemberManualScreen" />
+            <Stack.Screen name="createGroupScreen" options={{headerBackTitle:'home', headerTitle: ""}}/>
+            <Stack.Screen name="addMemberScreen" options={{headerTitle: ""}}/>
+            <Stack.Screen name="addMemberManualScreen" options={{headerShown: false}}/>
+            <Stack.Screen name="personScreen" options={{headerTitle: "Person"}}/>
+
           </Stack>
         </InTouchContextProvider>
       </SQLiteProvider>

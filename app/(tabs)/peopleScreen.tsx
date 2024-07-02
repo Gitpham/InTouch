@@ -1,6 +1,6 @@
 import { ThemedText } from "@/components/ThemedText";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { FlatList, StyleSheet, View } from "react-native";
+import { FlatList, Pressable, StyleSheet, View } from "react-native";
 import { Button, ListItem } from "@rneui/themed";
 import { useContext, useEffect, useState } from "react";
 import { router } from "expo-router";
@@ -11,10 +11,16 @@ import { Person } from "@/constants/types";
 export default function PeopleScreen() {
   const { peopleList } = useContext(InTouchContext);
 
+  const onPersonPress = () => {
+    router.navigate({pathname: "../personScreen"} )
+  }
+
 
   const renderContacts = ({ item }: { item: Person }) => {
     return (
       <ListItem bottomDivider>
+        <Pressable onPress={onPersonPress}>
+
         <ListItem.Content id={item.id}>
           <ListItem.Title>
             {item.firstName} {item.lastName}
@@ -23,6 +29,8 @@ export default function PeopleScreen() {
             Phone Number: {item.phoneNumber} id: {item.id}
           </ListItem.Title>
         </ListItem.Content>
+        </Pressable>
+
       </ListItem>
     );
   };
