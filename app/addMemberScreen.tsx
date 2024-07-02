@@ -8,6 +8,7 @@ import { router } from "expo-router";
 import * as Contacts from "expo-contacts";
 import { Person, } from "./db/PersonRepo";
 import { InTouchContext } from "@/context/InTouchContext";
+import { StandardButton } from "@/components/ButtonStandard";
 
 export default function addMemberScreen() {
   const { createPerson } = useContext(InTouchContext);
@@ -38,33 +39,25 @@ export default function addMemberScreen() {
           Create new contact
         </ThemedText>
       </View>
-      <Button
-        title="Create Contact Manually"
+
+      <StandardButton  
+      title="Create Contact Manually"
         onPress={() => {
           router.push("/addMemberManualScreen");
-        }}
-        buttonStyle={styles.button}
-        titleStyle={styles.title}
-      />
-      <Button
-        title="Import from Contacts"
-        onPress={importFromContacts}
-        buttonStyle={styles.button}
-        titleStyle={styles.title}
-      />
+        }}/>
+
+      <StandardButton  
+       title="Import from Contacts"
+       onPress={importFromContacts}/>
+
+
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  button: {
-    margin: 10,
-    backgroundColor: "white",
-    borderColor: "black",
-    borderWidth: 2,
-  },
   title: {
-    color: "black",
+    color: "black"
   },
   stepContainer: {
     flex: 1,

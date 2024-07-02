@@ -7,6 +7,7 @@ import { StyleSheet, View, FlatList } from "react-native";
 import { router } from "expo-router";
 import { Bond } from "../db/BondRepo";
 import { InTouchContext } from "@/context/InTouchContext";
+import { StandardButton } from "@/components/ButtonStandard";
 
 export default function homeScreen() {
   const { bondList } = useContext(InTouchContext);
@@ -35,23 +36,17 @@ export default function homeScreen() {
         keyExtractor={(item) => item.id}
       />
 
-      <Button
-        buttonStyle={styles.button}
-        titleStyle={styles.title}
-        title={"+Add Group"}
-        onPress={() => router.push("../createGroupScreen")}
-      />
+      <StandardButton
+      title={"+Add Group"}
+      onPress={() => router.push("../createGroupScreen")}>
+
+      </StandardButton>
+
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  button: {
-    margin: 10,
-    backgroundColor: "white",
-    borderColor: "black",
-    borderWidth: 2,
-  },
   title: {
     color: "black",
   },

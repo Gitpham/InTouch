@@ -8,6 +8,7 @@ import { useContext, useEffect, useState } from "react";
 import { RefreshContactsContext } from "@/context/RefreshContactsContext";
 import { router } from "expo-router";
 import { InTouchContext } from "@/context/InTouchContext";
+import { StandardButton } from "@/components/ButtonStandard";
 
 export default function PeopleScreen() {
   const { peopleList } = useContext(InTouchContext);
@@ -37,12 +38,10 @@ export default function PeopleScreen() {
         keyExtractor={(item) => item.id}
       />
 
-      <Button
-        title="Add New Contact"
-        onPress={() => router.push("../addMemberScreen")}
-        buttonStyle={styles.button}
-        titleStyle={styles.title}
-      />
+      <StandardButton 
+       title="Add New Contact"
+       onPress={() => router.push("../addMemberScreen")}/>
+
     </SafeAreaView>
   );
 }
@@ -53,9 +52,6 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderColor: "black",
     borderWidth: 2,
-  },
-  title: {
-    color: "black",
   },
   stepContainer: {
     flex: 1,
