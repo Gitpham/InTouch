@@ -6,14 +6,12 @@ import { Button } from "@rneui/themed";
 import { StyleSheet, View } from "react-native";
 import { useRouter } from "expo-router";
 import * as SQLite from "expo-sqlite";
-import { RefreshContactsContext } from "@/context/RefreshContactsContext";
 import { InTouchContext } from "@/context/InTouchContext";
 import { Person } from "@/constants/types";
 
 export default function addMemberManualScreen() {
   const router = useRouter();
   const db = SQLite.useSQLiteContext();
-  const { refreshContacts } = useContext(RefreshContactsContext);
   const { createPerson } = useContext(InTouchContext);
 
   // Member information
