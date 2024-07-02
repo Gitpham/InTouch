@@ -1,32 +1,19 @@
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Drawer } from 'expo-router/drawer';
-import { Image, StyleSheet, Platform, Button, Touchable, Pressable, Alert } from 'react-native';
+import { StyleSheet,  Pressable, Alert } from 'react-native';
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Link } from 'expo-router';
-import React from 'react';
+import React, { useContext } from 'react';
+
 
 
 export default function greetingScreen() {
-
-  function testButton() {
-    Alert.alert("Test Button Pressed!")
-  }
-
-  const drawerLayout = () => {
-    return <GestureHandlerRootView>
-      <Drawer></Drawer>
-    </GestureHandlerRootView>
-
-  }
-
   return (
     <>
     <SafeAreaView style = {styles.stepContainer}>
+ 
     <Link href="../(tabs)" asChild>
     <Pressable>
         <ThemedText type="title" darkColor="black" >Get in Touch</ThemedText>

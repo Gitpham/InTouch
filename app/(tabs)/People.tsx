@@ -10,54 +10,26 @@ import { router } from "expo-router";
 import { InTouchContext } from "@/context/InTouchContext";
 
 export default function PeopleScreen() {
-  const db = SQLite.useSQLiteContext();
-  const [contacts, setContacts] = useState<Person[]>();
-  const {isRefreshingContacts} = useContext(RefreshContactsContext);
-
-  const { peopleList } = useContext(InTouchContext)
-  // const { refreshContacts} = useContext(RefreshContactsContext);
+  const { peopleList } = useContext(InTouchContext);
 
 
-
-  useEffect(() => {
-    // // console.log("useEffect()");
-
-    // (async () => {
-    //   try {
-    //     setContacts(peopleList)
-
-    //   } catch (error) {
-    //     console.error(error);
-    //     console.log("faild to load contacts", error);
-    //   }
-    // })();
-
-    // console.log("contact state variable", contacts);
-    console.log("people updated", peopleList)
-  }, [peopleList]);
-
-  const showPeople = async () => {
-    console.log("showPeople");
-    const people = await getAllPersons(db);
-    console.log(people);
-  };
-
-   const renderContacts = ({item}: {item: Person}) => {
-    return  (
+  const renderContacts = ({ item }: { item: Person }) => {
+    return (
       <ListItem bottomDivider>
-    <ListItem.Content id ={item.id} >
-    <ListItem.Title>{item.firstName} {item.lastName}</ListItem.Title>
-    <ListItem.Title>Phone Number: {item.phoneNumber} id: {item.id}</ListItem.Title>
-    </ListItem.Content>
-
-  </ListItem>
-
-  )
-
-   }
+        <ListItem.Content id={item.id}>
+          <ListItem.Title>
+            {item.firstName} {item.lastName}
+          </ListItem.Title>
+          <ListItem.Title>
+            Phone Number: {item.phoneNumber} id: {item.id}
+          </ListItem.Title>
+        </ListItem.Content>
+      </ListItem>
+    );
+  };
   return (
     <SafeAreaView style={styles.stepContainer}>
-            <ThemedText type="title"> People Screen </ThemedText>
+      <ThemedText type="title"> People Screen </ThemedText>
 
       <FlatList
         data={peopleList}

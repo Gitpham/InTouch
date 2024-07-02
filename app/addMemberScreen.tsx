@@ -1,17 +1,12 @@
 import { ThemedText } from "@/components/ThemedText";
-import { useContext, useEffect, useState } from "react";
-import { Alert, FlatList, Pressable, TextInput } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
+import { useContext, } from "react";
+import { Alert} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { BottomSheet, Button, ListItem } from "@rneui/themed";
+import {  Button,  } from "@rneui/themed";
 import { StyleSheet, View } from "react-native";
 import { router } from "expo-router";
-import { member, group } from "./createGroupModal";
 import * as Contacts from "expo-contacts";
-import { useRouter } from "expo-router";
-import * as SQLite from "expo-sqlite";
-import { Person, addPerson, getAllPersons } from "./db/PersonRepo";
-import { RefreshContactsContext } from "@/context/RefreshContactsContext";
+import { Person, } from "./db/PersonRepo";
 import { InTouchContext } from "@/context/InTouchContext";
 
 export default function addMemberScreen() {
