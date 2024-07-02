@@ -1,12 +1,8 @@
+import { Person } from "@/constants/types";
 import * as SQLite from "expo-sqlite";
 
 
-export type Person = {
-    firstName: string,
-    lastName: string,
-    phoneNumber: string,
-    id: string,
-}
+
 
 // INSERT INTO person (firstName, lastName, phoneNumber) VALUES ('Aaron', 'Howitzer', '000-000-0003');
 

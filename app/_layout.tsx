@@ -10,24 +10,13 @@ import { useCallback, useEffect } from "react";
 import "react-native-reanimated";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
-import homeScreen from "./(tabs)";
 import { SQLiteProvider } from "expo-sqlite";
-import { connectToDatabase, createTables } from "./db/db";
 import { InTouchContextProvider } from "@/context/InTouchContext";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  // const loadData = useCallback(async () => {
-  //   try {
-  //     const db = await connectToDatabase();
-  //     await createTables(db);
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // }, []);
-
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
@@ -54,22 +43,13 @@ export default function RootLayout() {
         assetSource={{ assetId: require("./../Test_DataBase_1.db") }}
       >
         <InTouchContextProvider>
-          <Stack>
-            <Stack.Screen name="index" options={{ headerShown: false }} />
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="+not-found" options={{ headerShown: false }} />
-            <Stack.Screen
-              name="createGroupScreen"
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="addMemberScreen"
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="addMemberManualScreen"
-              options={{ headerShown: false }}
-            />
+          <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="index" />
+            <Stack.Screen name="./screens/(tabs)" />
+            <Stack.Screen name="./screens/not-found" />
+            <Stack.Screen name="./screens/createGroupScreen" />
+            <Stack.Screen name="./screens/addMemberScreen" />
+            <Stack.Screen name="./screens/addMemberManualScreen" />
           </Stack>
         </InTouchContextProvider>
       </SQLiteProvider>

@@ -1,6 +1,6 @@
+import { Person, Bond } from "@/constants/types";
 import * as SQLite from "expo-sqlite";
-import { Bond } from "./BondRepo";
-import { Person } from "./PersonRepo";
+
 
 export const addBondMember = async (db: SQLite.SQLiteDatabase, person: Person, bond: Bond) => {
 

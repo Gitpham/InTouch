@@ -14,7 +14,7 @@ export default function greetingScreen() {
     <>
     <SafeAreaView style = {styles.stepContainer}>
  
-    <Link href="../(tabs)" asChild>
+    <Link href="./screens/(tabs)" asChild>
     <Pressable>
         <ThemedText type="title" darkColor="black" >Get in Touch</ThemedText>
      </Pressable>
