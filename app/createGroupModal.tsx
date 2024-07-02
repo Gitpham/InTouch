@@ -1,132 +1,104 @@
 import { ThemedText } from "@/components/ThemedText";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Pressable, TextInput } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { BottomSheet, Button, Dialog, ListItem } from '@rneui/themed';
-import { StyleSheet, View } from 'react-native';
-import { router } from 'expo-router';
+import { BottomSheet, Button, Dialog, ListItem } from "@rneui/themed";
+import { StyleSheet, View } from "react-native";
+import { router } from "expo-router";
 import { Person } from "./db/PersonRepo";
 import { Bond } from "./db/BondRepo";
+import { InTouchContext } from "@/context/InTouchContext";
 
+export const groupList: Group[] = [];
 
-
-export const groupList : Group[] = [];
-
-
-export const group : Bond = {bondName: "", 
-  schedule: "", 
+export const group: Bond = {
+  bondName: "",
+  schedule: "",
   typeOfCall: "",
-  id: ""
+  id: "",
 };
-
-export const member : Person = {firstName: "",
-  lastName: "",
-  phoneNumber: "",
-  id: ""
-};
-
 
 
 
 export default function createGroupScreen() {
-    // For Bottom Sheet
-    const [isVisible, setIsVisible] = useState(false);
+  // For Bottom Sheet
+  const [isVisible, setIsVisible] = useState(false);
 
   // Data to be stored in record
-    const [groupName, groupNameChange] = useState("");
-    const [memberFirstName, memFirstNameChange] = useState(""); 
-    const [memberLastName, memLastNameChange] = useState(""); 
-    const [memberNumber, memNumberChange] = useState("");
+  const [bondName, groupNameChange] = useState("");
+  const { createBond } = useContext(InTouchContext);
 
+  function onDonePress() {
+    const bondToAdd: Bond = {
+      bondName: bondName,
+      typeOfCall: "",
+      schedule: "",
+      id: "",
+    };
+    createBond(bondToAdd);
+    router.push("./(tabs)");
+  }
 
-    // function addGroupMember() {
-    //   member.firstName = memberFirstName;
-    //   member.lastName = memberLastName;
-    //   member.phoneNumber = memberNumber;
-    //   group.members.push(member);
+  return (
+    <SafeAreaView style={styles.stepContainer}>
+      <View style={styles.centeredView}>
+        <ThemedText type="title" style={styles.title}>
+          {" "}
+          Create Group{" "}
+        </ThemedText>
+      </View>
 
-    // }
-      
-    // function saveGroup() {
-    //   group.name = groupName; 
+      <TextInput
+        onChangeText={groupNameChange}
+        value={bondName}
+        placeholder="Enter Group Name"
+        style={{
+          height: 40,
+          margin: 13,
+          borderWidth: 1,
+          padding: 10,
+          color: "white",
+          backgroundColor: "gray",
+        }}
+      ></TextInput>
 
-    //   // Testing purpo
-    //   console.log(group.members.length);
-  
-    //   if (group.name) {
-    //     const testMember = group.members[0];
-    //     if (testMember) {
-    //       console.log("Group " + group.name + " includes: " + testMember.firstName);
-    //     }
-    //     else {
-    //       console.log("Group " + group.name + " is empty");
-    //     }
+      <Button
+        title="Add Group Member"
+        onPress={() => router.push("./addMemberScreen")}
+        buttonStyle={styles.button}
+        titleStyle={styles.title}
+      />
 
-    //   // Saving to Repo
-    //   groupList.push({name: group.name, members: group.members, schedule: group.schedule, typeOfCall: group.typeOfCall});
-    //   }
-    // }
-
-    // function resetGroup() {
-    //   group.name = ""; 
-    //   group.members = [];
-    //   group.schedule = "";
-
-    // }
-
-    return (
-        <SafeAreaView style = {styles.stepContainer}>
-          
-          <View style = {styles.centeredView}><ThemedText type = "title" style = {styles.title} > Create Group </ThemedText></View>
-        
-          <TextInput 
-            onChangeText = {groupNameChange}
-            value = {groupName}
-            placeholder = "Enter Group Name"
-            style = {{height: 40, margin: 13, borderWidth: 1, padding: 10, color: "white", backgroundColor: "gray"}}>
-          </TextInput>
-
-       
-          <Button
-            title="Add Group Member"
-            onPress={() => router.push("./addMemberScreen")}
-            buttonStyle={styles.button}
-            titleStyle={styles.title}
-          />
-
-          <Button
-            title="Done"
-            onPress={() => {router.push("./(tabs)"); }}
-            buttonStyle={styles.button}
-            titleStyle={styles.title}
-          />
-
-        </SafeAreaView>
-
-       )
-
+      <Button
+        title="Done"
+        onPress={onDonePress}
+        buttonStyle={styles.button}
+        titleStyle={styles.title}
+      />
+    </SafeAreaView>
+  );
 }
 
 const styles = StyleSheet.create({
   button: {
     margin: 10,
-    backgroundColor: 'white',
-    borderColor: 'black',
-    borderWidth: 2, 
+    backgroundColor: "white",
+    borderColor: "black",
+    borderWidth: 2,
   },
   title: {
     color: "black",
- },
+  },
   stepContainer: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: "white",
     gap: 8,
     marginBottom: 8,
-    flexDirection: 'column',
-    paddingTop: 50
+    flexDirection: "column",
+    paddingTop: 50,
   },
-  centeredView : {
-    alignItems: "center"
-  }
+  centeredView: {
+    alignItems: "center",
+  },
 });

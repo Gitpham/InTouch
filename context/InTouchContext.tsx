@@ -20,9 +20,37 @@ type InTouchContextType = {
   removeBondMember: (bond: Bond, person: Person) => Promise<void>;
 };
 
-export const InTouchContext = createContext<InTouchContextType | undefined>(
-  undefined
+
+/**
+ * This is initalized with an empty InTouchContextType. These are essentailly placeholder functions that we replace
+ * upon providing values to the InTouchContext.Provider
+ */
+export const InTouchContext = createContext<InTouchContextType>(
+  {
+    peopleList: [],
+    bondList: [],
+    createPerson: function (person: Person): Promise<void> {
+      throw new Error("Function not implemented.");
+    },
+    removePerson: function (person: Person): Promise<void> {
+      throw new Error("Function not implemented.");
+    },
+    createBond: function (bond: Bond): Promise<void> {
+      throw new Error("Function not implemented.");
+    },
+    removeBond: function (bond: Bond): Promise<void> {
+      throw new Error("Function not implemented.");
+    },
+    createBondMember: function (bond: Bond, person: Person): Promise<void> {
+      throw new Error("Function not implemented.");
+    },
+    removeBondMember: function (bond: Bond, person: Person): Promise<void> {
+      throw new Error("Function not implemented.");
+    }
+  }
 );
+
+
 
 export const InTouchContextProvider: React.FC<{
   children: React.ReactNode;
@@ -34,7 +62,6 @@ export const InTouchContextProvider: React.FC<{
 
   const db = useSQLiteContext();
 
-  console.log("InTOuchContextProvider Rendered");
 
   useEffect(() => {
     console.log("database name:", db.databaseName)
