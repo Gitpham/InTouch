@@ -1,74 +1,67 @@
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { Drawer } from 'expo-router/drawer';
-import { Image, StyleSheet, Platform, Button, Touchable, Pressable, Alert } from 'react-native';
+import { ThemedText } from "@/components/ThemedText";
+import React, { useState, useEffect, useContext } from "react";
+import { ScrollView } from "react-native-gesture-handler";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { BottomSheet, Button, Dialog, ListItem } from "@rneui/themed";
+import { StyleSheet, View, FlatList } from "react-native";
+import { router } from "expo-router";
+import { InTouchContext } from "@/context/InTouchContext";
+import { StandardButton } from "@/components/ButtonStandard";
+import { Bond } from "@/constants/types";
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Link } from 'expo-router';
-import React from 'react';
+export default function homeScreen() {
+  const { bondList } = useContext(InTouchContext);
 
-
-export default function HomeScreen() {
-
-  function testButton() {
-    Alert.alert("Test Button Pressed!")
-  }
-
-  const drawerLayout = () => {
-    return <GestureHandlerRootView>
-      <Drawer></Drawer>
-    </GestureHandlerRootView>
-
-  }
+  const renderBonds = ({ item }: { item: Bond }) => {
+    return (
+      <ListItem bottomDivider>
+        <ListItem.Content id={item.id}>
+          <ListItem.Title>{item.bondName} </ListItem.Title>
+        </ListItem.Content>
+      </ListItem>
+    );
+  };
 
   return (
-    <>
-    <SafeAreaView style = {styles.stepContainer}>
-    <Link href="../createGroupModal" asChild>
-    <Pressable >
-        <ThemedText type="title">Get in Touch</ThemedText>
-     </Pressable>
-    </Link>
-   
-    </SafeAreaView>
-     {/* {drawerLayout()} */}
-     </>
+    <SafeAreaView style={styles.stepContainer}>
+      <View style={styles.centeredView}>
+        <ThemedText style={styles.title} type="title">
+          My Groups
+        </ThemedText>
+      </View>
 
-    
-  )
+      <FlatList
+        data={bondList}
+        renderItem={renderBonds}
+        keyExtractor={(item) => item.id}
+      />
+
+      <StandardButton
+      title={"+Add Group"}
+      onPress={() => router.push("../createGroupScreen")}>
+      </StandardButton>
+
+    </SafeAreaView>
+  );
 }
 
-
-
-
-
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+  title: {
+    color: "black",
+  },
+  items: {
+    color: "black",
+    margin: 25,
   },
   stepContainer: {
     flex: 1,
-    backgroundColor: 'green',
+    backgroundColor: "white",
     gap: 8,
     marginBottom: 8,
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-
+    flexDirection: "column",
+    paddingTop: 50,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  centeredView: {
+    alignItems: "center",
   },
-  testButton: {
-    color: 'red'
-  }
 });
