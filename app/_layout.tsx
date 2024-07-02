@@ -21,14 +21,14 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
 
-  const loadData = useCallback(async () => {
-    try {
-      const db = await connectToDatabase();
-      await createTables(db);
-    } catch (error) {
-      console.error(error);
-    }
-  }, []);
+  // const loadData = useCallback(async () => {
+  //   try {
+  //     const db = await connectToDatabase();
+  //     await createTables(db);
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // }, []);
 
   
 
@@ -37,9 +37,9 @@ export default function RootLayout() {
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
 
-  useEffect(() => {
-    loadData();
-  },[loadData])
+  // useEffect(() => {
+  //   loadData();
+  // },[loadData])
 
   useEffect(() => {
 
@@ -55,8 +55,9 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+      <SQLiteProvider databaseName="Test_DataBase_1.db" assetSource={{ assetId: require('./../Test_DataBase_1.db') }}>
       <InTouchContextProvider>
-      <SQLiteProvider databaseName="InTouchDB_1">
+
         <Stack>
           <Stack.Screen name="index" options={{ headerShown: false }} />
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
@@ -74,8 +75,9 @@ export default function RootLayout() {
             options={{ headerShown: false }}
           />
         </Stack>
+        </InTouchContextProvider>
+
       </SQLiteProvider>
-      </InTouchContextProvider>
     </ThemeProvider>
   );
 }

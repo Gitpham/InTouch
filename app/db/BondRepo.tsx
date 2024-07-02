@@ -10,9 +10,10 @@ export type Bond = {
 
 export const addBond = async (db: SQLite.SQLiteDatabase, bond:Bond) =>{
 
-    const statement = await db.prepareAsync(`INSERT INTO bond (bondName) VALUES (?)`)
+    const statement = await db.prepareAsync(`INSERT INTO bond (bondName, schedule, type_of_call)
+         VALUES (?, ?, ?);`)
 
-    const value: string[] = [bond.bondName];
+    const value: string[] = [bond.bondName, bond.schedule, bond.typeOfCall];
 
     try {
         console.log("add bond")

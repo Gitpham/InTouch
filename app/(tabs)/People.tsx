@@ -22,7 +22,7 @@ export default function PeopleScreen() {
     (async () => {
       try {
         const persons: Person[] = await getAllPersons(db);
-        // console.log("all people", persons[0])
+        // console.log("all people", persons)
         // console.log(persons);
         await setContacts(persons);
       } catch (error) {

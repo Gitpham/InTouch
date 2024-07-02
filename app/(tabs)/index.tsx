@@ -15,18 +15,18 @@ import { Bond, getAllBonds } from "../db/BondRepo";
 export default function homeScreen() {
     const [groupList, setGroupList] = useState<Bond[]>();
 
-    useEffect(() => {
-      (async () => {
-        try {
-          const db = await connectToDatabase();
-          const groups: Bond[] = await getAllBonds(db);
-          setGroupList(groups);
-        } catch (e) {
-          console.error(e);
-          console.log("failed to load bonds", e);
-        }
-      })();
-    })
+    // useEffect(() => {
+    //   (async () => {
+    //     try {
+    //       const db = await connectToDatabase();
+    //       const groups: Bond[] = await getAllBonds(db);
+    //       setGroupList(groups);
+    //     } catch (e) {
+    //       console.error(e);
+    //       console.log("failed to load bonds", e);
+    //     }
+    //   })();
+    // })
 
     return <SafeAreaView style = {styles.stepContainer}>
         <View style = {styles.centeredView}><ThemedText style = {styles.title} type = "title">My Groups</ThemedText></View>
