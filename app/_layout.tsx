@@ -47,8 +47,8 @@ export default function RootLayout() {
           <Stack screenOptions={{ headerShown: false }}>
             <Stack.Screen name="index" />
             <Stack.Screen name="(tabs)" />
-            <Stack.Screen name="not-found" />
-            <Stack.Screen name="./createGroupScreen" />
+            <Stack.Screen name="+not-found" />
+            {/* <Stack.Screen name="createGroupScreen" /> */}
             <Stack.Screen name="addMemberScreen" />
             <Stack.Screen name="addMemberManualScreen" />
           </Stack>

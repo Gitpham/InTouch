@@ -12,14 +12,8 @@ import { Bond } from "@/constants/types";
 import { Group } from "expo-contacts";
 import { StandardButton } from "@/components/ButtonStandard";
 
-export const groupList: Group[] = [];
 
-export const group: Bond = {
-  bondName: "",
-  schedule: "",
-  typeOfCall: "",
-  id: "",
-};
+console.log("createGroupScreen")
 
 
 
@@ -77,6 +71,8 @@ export default function createGroupScreen() {
         titleStyle={styles.title}
       />
 
+
+
       <Button
         title="Done"
         onPress={onDonePress}
@@ -86,7 +82,7 @@ export default function createGroupScreen() {
 
       <StandardButton
       title="Cancel"
-      onPress={router.back()}
+      onPress={() => router.back()}
       >
       </StandardButton>
 
