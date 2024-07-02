@@ -5,9 +5,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { BottomSheet, Button, Dialog, ListItem } from "@rneui/themed";
 import { StyleSheet, View, FlatList } from "react-native";
 import { router } from "expo-router";
-import { Bond } from "../db/BondRepo";
 import { InTouchContext } from "@/context/InTouchContext";
 import { StandardButton } from "@/components/ButtonStandard";
+import { Bond } from "@/constants/types";
 
 export default function homeScreen() {
   const { bondList } = useContext(InTouchContext);

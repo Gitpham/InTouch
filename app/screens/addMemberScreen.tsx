@@ -6,9 +6,9 @@ import {  Button,  } from "@rneui/themed";
 import { StyleSheet, View } from "react-native";
 import { router } from "expo-router";
 import * as Contacts from "expo-contacts";
-import { Person, } from "./db/PersonRepo";
 import { InTouchContext } from "@/context/InTouchContext";
 import { StandardButton } from "@/components/ButtonStandard";
+import { Person } from "@/constants/types";
 
 export default function addMemberScreen() {
   const { createPerson } = useContext(InTouchContext);

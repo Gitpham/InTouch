@@ -6,9 +6,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { BottomSheet, Button, Dialog, ListItem } from "@rneui/themed";
 import { StyleSheet, View } from "react-native";
 import { router } from "expo-router";
-import { Person } from "./db/PersonRepo";
-import { Bond } from "./db/BondRepo";
+
 import { InTouchContext } from "@/context/InTouchContext";
+import { Bond } from "@/constants/types";
+import { Group } from "expo-contacts";
 
 export const groupList: Group[] = [];
 

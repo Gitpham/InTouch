@@ -2,13 +2,11 @@ import { ThemedText } from "@/components/ThemedText";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FlatList, StyleSheet, View } from "react-native";
 import { Button, ListItem } from "@rneui/themed";
-import * as SQLite from "expo-sqlite";
-import { Person, getAllPersons } from "../db/PersonRepo";
 import { useContext, useEffect, useState } from "react";
-import { RefreshContactsContext } from "@/context/RefreshContactsContext";
 import { router } from "expo-router";
 import { InTouchContext } from "@/context/InTouchContext";
 import { StandardButton } from "@/components/ButtonStandard";
+import { Person } from "@/constants/types";
 
 export default function PeopleScreen() {
   const { peopleList } = useContext(InTouchContext);

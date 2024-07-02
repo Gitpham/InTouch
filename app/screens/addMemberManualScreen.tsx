@@ -6,9 +6,9 @@ import {  Button } from "@rneui/themed";
 import { StyleSheet, View } from "react-native";
 import { useRouter } from "expo-router";
 import * as SQLite from "expo-sqlite";
-import { Person } from "./db/PersonRepo";
 import { RefreshContactsContext } from "@/context/RefreshContactsContext";
 import { InTouchContext } from "@/context/InTouchContext";
+import { Person } from "@/constants/types";
 
 export default function addMemberManualScreen() {
   const router = useRouter();
