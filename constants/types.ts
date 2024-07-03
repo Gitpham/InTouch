@@ -9,5 +9,5 @@ export type Person = {
     firstName: string,
     lastName: string,
     phoneNumber: string,
-    id: string,
+    person_id: string,
 }

@@ -11,22 +11,22 @@ import { Person } from "@/constants/types";
 export default function PeopleScreen() {
   const { peopleList } = useContext(InTouchContext);
 
-  const onPersonPress = () => {
-    router.navigate({pathname: "../personScreen"} )
+  function onPersonPress (person_id: string) {
+    router.navigate({pathname: "../personScreen", params: {id: `${person_id}`} })
   }
 
 
   const renderContacts = ({ item }: { item: Person }) => {
     return (
       <ListItem bottomDivider>
-        <Pressable onPress={onPersonPress}>
+        <Pressable onPress={() => onPersonPress(item.person_id)}>
 
-        <ListItem.Content id={item.id}>
+        <ListItem.Content id={item.person_id}>
           <ListItem.Title>
             {item.firstName} {item.lastName}
           </ListItem.Title>
           <ListItem.Title>
-            Phone Number: {item.phoneNumber} id: {item.id}
+            Phone Number: {item.phoneNumber} id: {item.person_id}
           </ListItem.Title>
         </ListItem.Content>
         </Pressable>
@@ -41,7 +41,7 @@ export default function PeopleScreen() {
       <FlatList
         data={peopleList}
         renderItem={renderContacts}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.person_id}
       />
 
       <StandardButton 

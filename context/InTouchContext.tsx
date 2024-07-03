@@ -112,7 +112,7 @@ export const InTouchContextProvider: React.FC<{
   async function removePerson(person: Person) {
     try {
       await deletePerson(db, person);
-      setPeopleList(peopleList.filter((item) => item.id != person.id));
+      setPeopleList(peopleList.filter((item) => item.person_id != person.person_id));
     } catch (e) {
       console.error(e);
       throw Error("Could not remove person");
