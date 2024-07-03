@@ -102,7 +102,10 @@ export const InTouchContextProvider: React.FC<{
   async function createPerson(person: Person) {
     try {
       await addPerson(db, person);
-      setPeopleList([...peopleList, person]);
+      // this assumes that all people in db have a id from 1 to size of table -1
+      const toAddPersonId = peopleList.length + 1;
+      const toAddPerson: Person = {...person, person_id: `${toAddPersonId}`}
+      setPeopleList([...peopleList, toAddPerson]);
     } catch (e) {
       console.error(e);
       throw Error("Could not create person");
