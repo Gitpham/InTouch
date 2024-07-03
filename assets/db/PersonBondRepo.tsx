@@ -6,7 +6,7 @@ export const addBondMember = async (db: SQLite.SQLiteDatabase, person: Person, b
 
     const statement = await db.prepareAsync(`INSERT INTO person_bond (person_id, bond_id) VALUES (?, ?)`)
 
-    const value: string[] = [person.id, bond.id];
+    const value: string[] = [person.person_id, bond.id];
 
     try {
         console.log("adding group member")
@@ -28,7 +28,7 @@ export const deleteBondMember = async (db: SQLite.SQLiteDatabase, person: Person
         WHERE person_id = ? & bond_id = ?
         `);
 
-    const value: string[] = [person.id, bond.id]
+    const value: string[] = [person.person_id, bond.id]
 
     try {
         console.log('removing group member')
@@ -44,7 +44,7 @@ export const deleteBondMember = async (db: SQLite.SQLiteDatabase, person: Person
 
 
 
-export const getAllGroupMembers = async (db: SQLite.SQLiteDatabase, bond: Bond) => {
+export const getAllPersonBonds = async (db: SQLite.SQLiteDatabase, bond: Bond) => {
 
     const statement = await db.prepareAsync(
         `SELECT person.firstName, person.lastName, person.phoneNumber, person.id

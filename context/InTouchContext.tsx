@@ -99,6 +99,18 @@ export const InTouchContextProvider: React.FC<{
     }
   }
 
+
+  /**
+   * creates a 2 local hashmaps for the bondmember lisst, A, B. A's keys are the person_id, values are the bonds
+   * bonds associated with that person. B is vice versa.
+   */
+  async function initializeBondMemberLists() {
+ 
+
+
+
+  }
+
   async function createPerson(person: Person) {
     try {
       await addPerson(db, person);

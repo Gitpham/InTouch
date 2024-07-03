@@ -19,7 +19,6 @@ export default function PersonScreen() {
 
        return (
         <SafeAreaView>
-             <ThemedText type= 'title'> Person Screen </ThemedText>
              <Card>
                <Card.Title>Name: {person?.firstName} {person?.lastName} </Card.Title>
                <Card.Divider></Card.Divider>
