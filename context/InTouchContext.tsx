@@ -1,6 +1,6 @@
 
 import { getAllBonds, addBond, deleteBond } from "@/assets/db/BondRepo";
-import { addBondMember, deleteBondMember } from "@/assets/db/PersonBondRepo";
+import { addPersonBond, deletePersonBond, getAllPersonBonds} from "@/assets/db/PersonBondRepo";
 import { getAllPersons, addPerson, deletePerson } from "@/assets/db/PersonRepo";
 import { Person, Bond } from "@/constants/types";
 import { useSQLiteContext } from "expo-sqlite";
@@ -61,13 +61,12 @@ export const InTouchContextProvider: React.FC<{
 
 
   useEffect(() => {
-    console.log("database name:", db.databaseName)
 
     const initalize = async () => {
       try {
         await initializePeopleList();
         await initializeBondList();
-        console.log("successfully ran intialize")
+        await initializePersonBondLists();
       } catch (error) {
         console.error(error);
         throw Error("failed to initialize db");
@@ -81,7 +80,7 @@ export const InTouchContextProvider: React.FC<{
   async function initializePeopleList() {
     try {
       const initialized_peopleList = await getAllPersons(db);
-      console.log("initialized peopleList:", initialized_peopleList)
+      // console.log("initialized peopleList:", initialized_peopleList)
       setPeopleList(initialized_peopleList);
     } catch (e) {
       console.error(e);
@@ -104,8 +103,14 @@ export const InTouchContextProvider: React.FC<{
    * creates a 2 local hashmaps for the bondmember lisst, A, B. A's keys are the person_id, values are the bonds
    * bonds associated with that person. B is vice versa.
    */
-  async function initializeBondMemberLists() {
- 
+  async function initializePersonBondLists() {
+    try {
+      const dbBondPersonList = await getAllPersonBonds(db)
+      console.log("personBond", dbBondPersonList)
+    } catch (e) {
+      console.error(e);
+      throw Error("Could not fetch all BondPersons");
+    }
 
 
 
@@ -156,7 +161,7 @@ export const InTouchContextProvider: React.FC<{
 
   async function createBondMember(bond: Bond, person: Person) {
     try {
-      await addBondMember(db, person, bond);
+      await addPersonBond(db, person, bond);
     } catch (e) {
       console.error(e);
       throw Error("Could not create bond member");
@@ -165,7 +170,7 @@ export const InTouchContextProvider: React.FC<{
 
   async function removeBondMember(bond: Bond, person: Person) {
     try {
-      await deleteBondMember(db, person, bond);
+      await deletePersonBond(db, person, bond);
     } catch (e) {
       console.error(e);
       throw Error("Could not delete bond member");
