@@ -36,7 +36,7 @@ export default function PeopleScreen() {
   };
   return (
     <SafeAreaView style={styles.stepContainer}>
-      <ThemedText type="title"> People Screen </ThemedText>
+      <View style = {styles.centeredView}><ThemedText type="title" style = {styles.title}> People Screen </ThemedText></View>
 
       <FlatList
         data={peopleList}
@@ -58,6 +58,9 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderColor: "black",
     borderWidth: 2,
+  },
+  title: {
+    color: "black",
   },
   stepContainer: {
     flex: 1,
