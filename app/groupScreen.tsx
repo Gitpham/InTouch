@@ -5,26 +5,26 @@ import { useLocalSearchParams } from "expo-router";
 import { useContext, useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { InTouchContext } from "@/context/InTouchContext";
-import { Person } from "@/constants/types";
+import { Bond } from "@/constants/types";
 
 export default function PersonScreen() {
 
-  const {peopleList} = useContext(InTouchContext)
+  const {bondList} = useContext(InTouchContext)
   const localParams = useLocalSearchParams();
-  const [person, setPerson] = useState<Person>()
+  const [bond, setBond] = useState<Bond>()
 
   useEffect(() => {
-    const personId: number = Number(localParams.id)
-    setPerson(peopleList[personId -1]);
+    const bondId: number = Number(localParams.id)
+    setBond(bondList[bondId -1]);
   }, [])
 
        return (
         <SafeAreaView>
              <Card>
-               <Card.Title>Name: {person?.firstName} {person?.lastName} </Card.Title>
+               <Card.Title>Name: {bond?.bondName}</Card.Title>
                <Card.Divider></Card.Divider>
                <ThemedText>Number: </ThemedText>
-               <ThemedText>{person?.phoneNumber}</ThemedText>
+               {/* <ThemedText>{person?.phoneNumber}</ThemedText> */}
              </Card>
 
              <Card>
@@ -32,7 +32,7 @@ export default function PersonScreen() {
              </Card>
 
              <Card>
-              <Card.Title>Groups</Card.Title>
+              <Card.Title>Members</Card.Title>
              </Card>
 
 

@@ -23,7 +23,7 @@ export default function addMemberManualScreen() {
       firstName: memberFirstName,
       lastName: memberLastName,
       phoneNumber: memberNumber,
-      id: "",
+      person_id: "",
     };
 
     createPerson(newContact);

@@ -52,10 +52,14 @@ export const InTouchContext = createContext<InTouchContextType>(
 export const InTouchContextProvider: React.FC<{
   children: React.ReactNode;
 }> = ({ children }) => {
+  // Hashmaps for cross referencing groups and members
+  let bondHashmap: Map<String, Person[]> = new Map();
+  let personHashmap: Map<String, Bond[]> = new Map();
+
   const [peopleList, setPeopleList] = useState<Person[]>([]);
   const [bondList, setBondList] = useState<Bond[]>([]);
-  const [personBondList, setPersonBondList] = useState<Bond[]>([]);
-  const [bondPersonList, setBondPersonList] = useState<Bond[]>([]);
+  const [personBondList, setPersonBondList] = useState(personHashmap);
+  const [bondPersonList, setBondPersonList] = useState(bondHashmap);
 
   const db = useSQLiteContext();
 
