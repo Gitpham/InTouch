@@ -54,7 +54,7 @@ export const deletePerson = async (db: SQLite.SQLiteDatabase, person: Person) =>
       WHERE id = ?
         `);
 
-    const value: string[] = [person.id]
+    const value: string[] = [person.person_id]
 
     try {
         return await statement.executeAsync(value)
@@ -72,7 +72,6 @@ export const deletePerson = async (db: SQLite.SQLiteDatabase, person: Person) =>
 export const getAllPersons = async (db: SQLite.SQLiteDatabase) => {
 
     try {
-        console.log("getAllPersons()")
         return await db.getAllAsync<Person>(`SELECT * FROM person`)
     } catch (error) {
         console.error(error)

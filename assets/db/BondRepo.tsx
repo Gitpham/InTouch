@@ -31,7 +31,7 @@ export const updateBond = async (db: SQLite.SQLiteDatabase, updatedBond: Bond) =
         WHERE bond_id = ?
         `);
 
-    const value: string[] = [updatedBond.bondName, updatedBond.id]
+    const value: string[] = [updatedBond.bondName, updatedBond.bond_id]
     
     try {
         return await statement.executeAsync(value)
@@ -48,10 +48,10 @@ export const deleteBond = async (db: SQLite.SQLiteDatabase, bond: Bond) => {
 
     const statement = await db.prepareAsync(`
        DELETE FROM bond
-      WHERE id = ?
+      WHERE bond_id = ?
         `);
 
-    const value: string[] = [bond.id]
+    const value: string[] = [bond.bond_id]
     
     try {
         return await statement.executeAsync(value)
@@ -70,7 +70,7 @@ export const getAllBonds = async (db: SQLite.SQLiteDatabase) =>{
 
     const bonds = await db.getAllAsync<Bond>(`SELECT * FROM bond`)
     // const people 
-    console.log("All persons in person", bonds)
+    // console.log("All persons in person", bonds)
 
     return bonds;
 }
