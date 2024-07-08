@@ -1,8 +1,9 @@
+/* eslint-disable react/react-in-jsx-scope */
 import { ThemedText } from "@/components/ThemedText";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { FlatList, Pressable, StyleSheet, View } from "react-native";
-import { Button, ListItem } from "@rneui/themed";
-import { useContext, useEffect, useState } from "react";
+import { FlatList, Pressable, StyleSheet } from "react-native";
+import { ListItem } from "@rneui/themed";
+import { useContext } from "react";
 import { router } from "expo-router";
 import { InTouchContext } from "@/context/InTouchContext";
 import { StandardButton } from "@/components/ButtonStandard";

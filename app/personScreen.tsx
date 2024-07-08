@@ -1,3 +1,4 @@
+/* eslint-disable react/react-in-jsx-scope */
 import { ThemedText } from "@/components/ThemedText";
 import { Bond, Person } from "@/constants/types";
 import { Card, ListItem } from "@rneui/themed";

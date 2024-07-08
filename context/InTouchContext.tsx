@@ -7,13 +7,13 @@ import {
 import { getAllPersons, addPerson, deletePerson } from "@/assets/db/PersonRepo";
 import { Person, Bond } from "@/constants/types";
 import { useSQLiteContext } from "expo-sqlite";
-import { createContext, useEffect, useState, ReactNode } from "react";
-
+import { createContext, useEffect, useState, } from "react";
+import React from "react";
 type InTouchContextType = {
   peopleList: Person[];
   bondList: Bond[];
-  personBondMap: Map<Number, Set<Number>>;
-  bondPersonMap: Map<Number, Set<Number>>;
+  personBondMap: Map<number, Set<number>>;
+  bondPersonMap: Map<number, Set<number>>;
   createPerson: (person: Person) => Promise<void>;
   removePerson: (person: Person) => Promise<void>;
   createBond: (bond: Bond) => Promise<void>;
@@ -29,11 +29,15 @@ type InTouchContextType = {
  * This is initalized with an empty InTouchContextType. These are essentailly placeholder functions that we replace
  * upon providing values to the InTouchContext.Provider
  */
+
 export const InTouchContext = createContext<InTouchContextType>({
   peopleList: [],
   bondList: [],
-  personBondMap: new Map<Number, Set<Number>>(),
-  bondPersonMap: new Map<Number, Set<Number>>(),
+  personBondMap: new Map<number, Set<number>>(),
+  bondPersonMap: new Map<number, Set<number>>(),
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  /* eslint-disable @typescript-eslint/no-unused-vars */
   createPerson: function (person: Person): Promise<void> {
     throw new Error("Function not implemented.");
   },
@@ -61,20 +65,23 @@ export const InTouchContext = createContext<InTouchContextType>({
   getBondsOfPerson: function (person: Person): Array<Bond> {
     throw new Error("Function not implemented.");
   },
+    /* eslint-enable @typescript-eslint/no-unused-vars */
+
 });
 
 export const InTouchContextProvider: React.FC<{
   children: React.ReactNode;
+// eslint-disable-next-line react/prop-types
 }> = ({ children }) => {
   const [peopleList, setPeopleList] = useState<Person[]>([]);
   const [bondList, setBondList] = useState<Bond[]>([]);
 
-  const [personBondMap, setPersonBondMap] = useState<Map<Number, Set<Number>>>(
-    new Map<Number, Set<Number>>()
+  const [personBondMap, setPersonBondMap] = useState<Map<number, Set<number>>>(
+    new Map<number, Set<number>>()
   );
 
-  const [bondPersonMap, setBondPersonMap] = useState<Map<Number, Set<Number>>>(
-    new Map<Number, Set<Number>>()
+  const [bondPersonMap, setBondPersonMap] = useState<Map<number, Set<number>>>(
+    new Map<number, Set<number>>()
   );
 
   const db = useSQLiteContext();
@@ -124,12 +131,12 @@ export const InTouchContextProvider: React.FC<{
       const dbBondPersonList = await getAllPersonBonds(db);
       // console.log("personBond", dbBondPersonList);
 
-      const peopleHash: Map<Number, Set<Number>> = new Map();
+      const peopleHash: Map<number, Set<number>> = new Map();
 
       // console.log("init peopleHash")
       dbBondPersonList.forEach((p) => {
-        let personId: Number = p.person_id as Number;
-        let bondId: Number = p.bond_id as Number;
+        const personId: number = p.person_id as number;
+        const bondId: number = p.bond_id as number;
         if (!personId || !bondId) {
           // console.log("person or bond id is null");
           // console.log("bond", bondId);
@@ -138,13 +145,13 @@ export const InTouchContextProvider: React.FC<{
         }
 
         if (peopleHash.has(personId)) {
-          const groupIds: Set<Number> = peopleHash.get(personId) as Set<Number>;
+          const groupIds: Set<number> = peopleHash.get(personId) as Set<number>;
           groupIds.add(bondId);
           peopleHash.set(personId, groupIds);
           return;
         }
 
-        const pGroup: Set<Number> = new Set();
+        const pGroup: Set<number> = new Set();
         pGroup.add(bondId);
         peopleHash.set(personId, pGroup);
         return;
@@ -152,24 +159,24 @@ export const InTouchContextProvider: React.FC<{
 
       setPersonBondMap(peopleHash);
 
-      const bondHash: Map<Number, Set<Number>> = new Map();
+      const bondHash: Map<number, Set<number>> = new Map();
 
       dbBondPersonList.forEach((p) => {
-        let personId: Number = p.person_id as Number;
-        let bondId: Number = p.bond_id as Number;
+        const personId: number = p.person_id as number;
+        const bondId: number = p.bond_id as number;
 
         if (!personId || !bondId) {
           return;
         }
 
         if (bondHash.has(bondId)) {
-          const personIds: Set<Number> = bondHash.get(bondId) as Set<Number>;
+          const personIds: Set<number> = bondHash.get(bondId) as Set<number>;
           personIds.add(bondId);
           bondHash.set(bondId, personIds);
           return;
         }
 
-        const pIdSet: Set<Number> = new Set();
+        const pIdSet: Set<number> = new Set();
         pIdSet.add(personId);
         bondHash.set(bondId, pIdSet);
         return;
@@ -242,18 +249,18 @@ export const InTouchContextProvider: React.FC<{
   async function createBondMember(person: Person, bond: Bond) {
     try {
       await addPersonBond(db, person, bond);
-      const pID: Number = Number(person.person_id);
-      const bID: Number = Number(bond.bond_id);
+      const pID: number = Number(person.person_id);
+      const bID: number = Number(bond.bond_id);
       const bondHash = new Map(bondPersonMap);
       const personHash = new Map(personBondMap);
 
       // UPDATE PERSON-BOND MAP
       if (!personBondMap.has(pID)) {
-        const bondIds: Set<Number> = new Set();
+        const bondIds: Set<number> = new Set();
         bondIds.add(bID);
         personHash.set(pID, bondIds);
       } else {
-        const bondIds: Set<Number> = personHash.get(pID) as Set<Number>;
+        const bondIds: Set<number> = personHash.get(pID) as Set<number>;
         bondIds.add(bID);
         personHash.set(pID, bondIds);
         setPersonBondMap(personHash);
@@ -262,11 +269,11 @@ export const InTouchContextProvider: React.FC<{
       //UDPATE BOND-PERSON MAP
 
       if (!bondPersonMap.has(bID)) {
-        const personIds: Set<Number> = new Set();
+        const personIds: Set<number> = new Set();
         personIds.add(pID);
         bondHash.set(bID, personIds);
       } else {
-        const personIds: Set<Number> = bondPersonMap.get(bID) as Set<Number>;
+        const personIds: Set<number> = bondPersonMap.get(bID) as Set<number>;
         personIds.add(pID);
         bondHash.set(bID, personIds);
         setBondPersonMap(bondHash);
@@ -307,7 +314,7 @@ export const InTouchContextProvider: React.FC<{
     try {
       const bondIDs = personBondMap.get(personID);
       const bonds = bondList.filter((b) => {
-        const bID: Number = Number(b.bond_id);
+        const bID: number = Number(b.bond_id);
         if (bondIDs?.has(bID)) {
           return b;
         }
