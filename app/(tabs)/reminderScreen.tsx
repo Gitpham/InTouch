@@ -10,14 +10,19 @@ import { getAllPersonBonds } from "@/assets/db/PersonBondRepo";
 
 export default function ReminderScreen() {
 
-     const {createBondMember, peopleList, bondList, } = useContext(InTouchContext)
+     const {createBondMember, peopleList, bondList, getBondPersonMap, getPersonBondMap } = useContext(InTouchContext)
 
 
 
-      
+
 
      function onTestAddMember() {
-          createBondMember(bondList[2], peopleList[3])
+
+
+          createBondMember(peopleList[5], bondList[5]);
+          getBondPersonMap();
+          getPersonBondMap();
+          
 
      }
        return (

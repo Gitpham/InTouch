@@ -18,8 +18,10 @@ type InTouchContextType = {
   removePerson: (person: Person) => Promise<void>;
   createBond: (bond: Bond) => Promise<void>;
   removeBond: (bond: Bond) => Promise<void>;
-  createBondMember: (bond: Bond, person: Person) => Promise<void>;
+  createBondMember: ( person: Person, bond: Bond) => Promise<void>;
   removeBondMember: (bond: Bond, person: Person) => Promise<void>;
+  getBondPersonMap: () => void;
+  getPersonBondMap: () => void;
 };
 
 /**
@@ -30,7 +32,7 @@ export const InTouchContext = createContext<InTouchContextType>({
   peopleList: [],
   bondList: [],
   personBondMap: new Map<Number, Set<Number>>(),
-  bondPersonMap:  new Map<Number, Set<Number>>(),
+  bondPersonMap: new Map<Number, Set<Number>>(),
   createPerson: function (person: Person): Promise<void> {
     throw new Error("Function not implemented.");
   },
@@ -43,10 +45,16 @@ export const InTouchContext = createContext<InTouchContextType>({
   removeBond: function (bond: Bond): Promise<void> {
     throw new Error("Function not implemented.");
   },
-  createBondMember: function (bond: Bond, person: Person): Promise<void> {
+  createBondMember: function (person: Person, bond: Bond): Promise<void> {
     throw new Error("Function not implemented.");
   },
   removeBondMember: function (bond: Bond, person: Person): Promise<void> {
+    throw new Error("Function not implemented.");
+  },
+  getBondPersonMap: function (): void {
+    throw new Error("Function not implemented.");
+  },
+  getPersonBondMap: function (): void {
     throw new Error("Function not implemented.");
   }
 });
@@ -70,7 +78,7 @@ export const InTouchContextProvider: React.FC<{
       try {
         await initializePeopleList();
         await initializeBondList();
-        await initializePersonBondLists();
+        await initializePersonBondMaps();
       } catch (error) {
         console.error(error);
         throw Error("failed to initialize db");
@@ -105,7 +113,7 @@ export const InTouchContextProvider: React.FC<{
    * creates a 2 local hashmaps for the bondmember lisst, A, B. A's keys are the person_id, values are the bonds
    * bonds associated with that person. B is vice versa.
    */
-  async function initializePersonBondLists() {
+  async function initializePersonBondMaps() {
     try {
       const dbBondPersonList = await getAllPersonBonds(db);
       console.log("personBond", dbBondPersonList);
@@ -113,14 +121,14 @@ export const InTouchContextProvider: React.FC<{
 
       const peopleHash: Map<Number, Set<Number>> = new Map();
 
-      console.log("init peopleHash")
+      // console.log("init peopleHash")
       dbBondPersonList.forEach((p) => {
         let personId: Number = p.person_id as Number;
         let bondId: Number = p.bond_id as Number;
         if (!personId || !bondId ) {
-          console.log("person or bond id is null");
-          console.log("bond", bondId);
-          console.log("person", personId)
+          // console.log("person or bond id is null");
+          // console.log("bond", bondId);
+          // console.log("person", personId)
           return;
         }
 
@@ -147,7 +155,6 @@ export const InTouchContextProvider: React.FC<{
         let bondId: Number = p.bond_id as Number;
 
         if (!personId || !bondId ) {
-
           return;
         }
 
@@ -167,17 +174,17 @@ export const InTouchContextProvider: React.FC<{
 
       setBondPersonMap(bondHash);
 
-      // console.log("People: BOnds")
-      // const person_iter = peopleHash.entries();
-      // peopleHash.forEach(() => {
-      //   console.log(person_iter.next().value)
-      // })
+      console.log("People: BOnds")
+      const person_iter = peopleHash.entries();
+      peopleHash.forEach(() => {
+        console.log(person_iter.next().value)
+      })
 
-      // console.log("Bonds: people")
-      // const bond_iter = bondHash.entries();
-      // bondHash.forEach(() => {
-      //   console.log(bond_iter.next().value)
-      // })
+      console.log("Bonds: people")
+      const bond_iter = bondHash.entries();
+      bondHash.forEach(() => {
+        console.log(bond_iter.next().value)
+      })
 
       
 
@@ -232,14 +239,69 @@ export const InTouchContextProvider: React.FC<{
     }
   }
 
-  async function createBondMember(bond: Bond, person: Person) {
+  async function createBondMember(person: Person, bond: Bond, ) {
     try {
       await addPersonBond(db, person, bond);
+      const pID: Number = Number(person.person_id);
+      const bID: Number = Number(bond.bond_id);
+      const bondHash = new Map(bondPersonMap);
+      const personHash = new Map(personBondMap)
+
+      // UPDATE PERSON-BOND MAP
+      if (!personBondMap.has(pID)){
+        const bondIds: Set<Number> = new Set();
+        bondIds.add(bID);
+        personHash.set(pID, bondIds);
+      } else {
+        const bondIds: Set<Number> = personHash.get(pID) as Set<Number>;
+        bondIds.add(bID);
+        personHash.set(pID, bondIds);
+        setPersonBondMap(personHash);
+
+      }
+     
+  
+
+      //UDPATE BOND-PERSON MAP
+
+      if (!bondPersonMap.has(bID)){
+        const personIds: Set<Number> = new Set();
+        personIds.add(pID);
+        bondHash.set(bID, personIds)
+      } else {
+        const personIds: Set<Number> = bondPersonMap.get(bID) as Set<Number>;
+        personIds.add(pID);
+        bondHash.set(bID, personIds);
+        setBondPersonMap(bondHash)
+
+      }
+
+   
+
     } catch (e) {
       console.error(e);
-      throw Error("Could not create bond member");
+      throw Error("createBondMember(): Could not create bond member");
     }
   }
+
+  function getPersonBondMap() {
+    const iter = personBondMap.entries();
+    console.log("personBondMap: ")
+    personBondMap.forEach(() => {
+      console.log(iter.next().value)
+    })
+  }
+
+  function getBondPersonMap() {
+    const iter = bondPersonMap.entries();
+    console.log("bondPersonMap: ")
+    bondPersonMap.forEach(() => {
+      console.log(iter.next().value)
+    })
+  }
+
+
+
 
   async function removeBondMember(bond: Bond, person: Person) {
     try {
@@ -266,6 +328,8 @@ export const InTouchContextProvider: React.FC<{
           removeBond,
           createBondMember,
           removeBondMember,
+          getBondPersonMap,
+          getPersonBondMap
         }}
       >
         {children}

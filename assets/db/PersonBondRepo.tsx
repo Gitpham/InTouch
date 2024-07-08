@@ -16,7 +16,7 @@ export const addPersonBond = async (db: SQLite.SQLiteDatabase, person: Person, b
 
     } catch (error) {
         console.error(error);
-        throw Error("failed to add group member")
+        throw Error("addPersonBond(): failed to add group member")
     } finally {
         statement.finalizeAsync()
     }
