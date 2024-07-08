@@ -34,6 +34,7 @@ export default function PeopleScreen() {
       </ListItem>
     );
   };
+  
   return (
     <SafeAreaView style={styles.stepContainer}>
       <ThemedText type="title"> People Screen </ThemedText>

@@ -22,6 +22,7 @@ type InTouchContextType = {
   removeBondMember: (bond: Bond, person: Person) => Promise<void>;
   getBondPersonMap: () => void;
   getPersonBondMap: () => void;
+  getBondsOfPerson: (person: Person) => Array<Bond>;
 };
 
 /**
@@ -55,6 +56,9 @@ export const InTouchContext = createContext<InTouchContextType>({
     throw new Error("Function not implemented.");
   },
   getPersonBondMap: function (): void {
+    throw new Error("Function not implemented.");
+  },
+  getBondsOfPerson: function (person: Person): Array<Bond> {
     throw new Error("Function not implemented.");
   },
 });
@@ -118,7 +122,7 @@ export const InTouchContextProvider: React.FC<{
   async function initializePersonBondMaps() {
     try {
       const dbBondPersonList = await getAllPersonBonds(db);
-      console.log("personBond", dbBondPersonList);
+      // console.log("personBond", dbBondPersonList);
 
       const peopleHash: Map<Number, Set<Number>> = new Map();
 
@@ -173,17 +177,17 @@ export const InTouchContextProvider: React.FC<{
 
       setBondPersonMap(bondHash);
 
-      console.log("People: BOnds");
-      const person_iter = peopleHash.entries();
-      peopleHash.forEach(() => {
-        console.log(person_iter.next().value);
-      });
+      // console.log("People: BOnds");
+      // const person_iter = peopleHash.entries();
+      // peopleHash.forEach(() => {
+      //   console.log(person_iter.next().value);
+      // });
 
-      console.log("Bonds: people");
-      const bond_iter = bondHash.entries();
-      bondHash.forEach(() => {
-        console.log(bond_iter.next().value);
-      });
+      // console.log("Bonds: people");
+      // const bond_iter = bondHash.entries();
+      // bondHash.forEach(() => {
+      //   console.log(bond_iter.next().value);
+      // });
     } catch (e) {
       console.error(e);
       throw Error("Could not fetch all BondPersons");
@@ -304,17 +308,16 @@ export const InTouchContextProvider: React.FC<{
       const bondIDs = personBondMap.get(personID);
       const bonds = bondList.filter((b) => {
         const bID: Number = Number(b.bond_id);
-        bondIDs?.has(bID);
-      })
-
+        if (bondIDs?.has(bID)) {
+          return b;
+        }
+      });
       return bonds;
-
-
     } catch (e) {
-    console.error(e);
-    throw Error("getBondsOfPerson(): failed to get bonds of person")
+      console.error(e);
+      throw Error("getBondsOfPerson(): failed to get bonds of person");
+    }
   }
-}
 
   // Initializes user's people list and bond list upon initial render
 
@@ -334,6 +337,7 @@ export const InTouchContextProvider: React.FC<{
           removeBondMember,
           getBondPersonMap,
           getPersonBondMap,
+          getBondsOfPerson,
         }}
       >
         {children}
