@@ -1,5 +1,4 @@
 import * as SQLite from 'expo-sqlite';
-import { SQLiteAnyDatabase } from 'expo-sqlite/build/NativeStatement';
 
 
 
@@ -78,7 +77,7 @@ export const connectToDatabase = async () => {
             interface table {
                 name: string
             }
-            let r = result as table
+            const r = result as table
             
             // console.log(r.name)
             tableNames.push(r.name as string)

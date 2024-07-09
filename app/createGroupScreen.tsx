@@ -12,11 +12,6 @@ import { Bond } from "@/constants/types";
 import { Group } from "expo-contacts";
 import { StandardButton } from "@/components/ButtonStandard";
 
-
-console.log("createGroupScreen")
-
-
-
 export default function createGroupScreen() {
   // For Bottom Sheet
   const [isVisible, setIsVisible] = useState(false);
@@ -35,7 +30,7 @@ export default function createGroupScreen() {
       bondName: bondName,
       typeOfCall: "",
       schedule: "",
-      id: "",
+      bond_id: "",
     };
     createBond(bondToAdd);
     router.push("./(tabs)");
