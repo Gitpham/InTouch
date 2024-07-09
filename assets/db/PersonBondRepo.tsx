@@ -2,33 +2,35 @@ import { Person, Bond } from "@/constants/types";
 import * as SQLite from "expo-sqlite";
 
 
-export const addBondMember = async (db: SQLite.SQLiteDatabase, person: Person, bond: Bond) => {
+export const addPersonBond = async (db: SQLite.SQLiteDatabase, person: Person, bond: Bond) => {
 
     const statement = await db.prepareAsync(`INSERT INTO person_bond (person_id, bond_id) VALUES (?, ?)`)
 
-    const value: string[] = [person.id, bond.id];
+    console.log("person_id", person.person_id)
+    console.log("bond_id", bond.bond_id)
+
+    const value: string[] = [person.person_id, bond.bond_id];
 
     try {
-        console.log("adding group member")
         return await statement.executeAsync(value);
 
     } catch (error) {
         console.error(error);
-        throw Error("failed to add group member")
+        throw Error("addPersonBond(): failed to add group member")
     } finally {
         statement.finalizeAsync()
     }
 
 }
 
-export const deleteBondMember = async (db: SQLite.SQLiteDatabase, person: Person, bond: Bond) => {
+export const deletePersonBond = async (db: SQLite.SQLiteDatabase, person: Person, bond: Bond) => {
 
     const statement = await db.prepareAsync(`
        DELETE FROM person_bond
         WHERE person_id = ? & bond_id = ?
         `);
 
-    const value: string[] = [person.id, bond.id]
+    const value: string[] = [person.person_id, bond.bond_id]
 
     try {
         console.log('removing group member')
@@ -44,24 +46,15 @@ export const deleteBondMember = async (db: SQLite.SQLiteDatabase, person: Person
 
 
 
-export const getAllGroupMembers = async (db: SQLite.SQLiteDatabase, bond: Bond) => {
-
-    const statement = await db.prepareAsync(
-        `SELECT person.firstName, person.lastName, person.phoneNumber, person.id
-        FROM person 
-        INNER JOIN person_bond ON person_bond.person_id = person.person_id
-        WHERE person_bond.group_id = ?
-        `);
-    
-    const value: string[] = [bond.id]
+export const getAllPersonBonds = async (db: SQLite.SQLiteDatabase) => {
 
     try {
-        console.log('fetching bond members')
-        return await statement.executeAsync<Person>(value)
+        return await db.getAllAsync(
+            `SELECT *
+            FROM person_bond
+            `);
     } catch (error) {
         console.error(error)
-        throw Error("Failed to fetch bond")
-    } finally {
-        statement.finalizeAsync()
-    }
+        throw Error("Failed to get all Person Bonds")
+    } 
 }
