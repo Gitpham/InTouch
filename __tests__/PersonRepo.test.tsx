@@ -1,6 +1,6 @@
 import { Person } from "@/constants/types";
 import { openDatabaseAsync } from "expo-sqlite";
-import { addPerson, deletePerson, getAllPersons, updatePerson } from "./PersonRepo";
+import { addPerson, deletePerson, getAllPersons, updatePerson } from "@/assets/db/PersonRepo";
 import { mockExecuteAsync, mockGetAllAsync, mockPrepareAsync, testPersonList } from "@/__mocks__/expo-sqlite";
 
 jest.mock("expo-sqlite");
