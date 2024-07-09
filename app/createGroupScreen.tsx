@@ -35,13 +35,17 @@ export default function createGroupScreen() {
     createBond(bondToAdd);
     router.push("./(tabs)");
   }
+  let title = "Create Group";
+  if (bondName) {
+    title = bondName;
+  }
+
 
   return (
     <SafeAreaView style={styles.stepContainer}>
       <View style={styles.centeredView}>
         <ThemedText type="title" style={styles.title}>
-          {" "}
-          Create Group{" "}
+          {title}
         </ThemedText>
       </View>
 
