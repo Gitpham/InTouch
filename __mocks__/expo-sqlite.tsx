@@ -32,6 +32,21 @@ export const testBondList: Bond[] = [testB1, testB2];
 
 export const testPersonList: Person[] = [testP1, testP2];
 
+export const testPersonBondList = [
+  { bond_id: 1, person_id: 1 },
+  { bond_id: 1, person_id: 1 },
+  { bond_id: 2, person_id: 1 },
+  { bond_id: 3, person_id: 4 },
+  { bond_id: null, person_id: null },
+  { bond_id: null, person_id: null },
+  { bond_id: null, person_id: null },
+  { bond_id: null, person_id: null },
+  { bond_id: 6, person_id: 2 },
+  { bond_id: 6, person_id: 4 },
+  { bond_id: 6, person_id: 5 },
+  { bond_id: 6, person_id: 6 },
+];
+
 export const mockExecuteAsync = jest.fn();
 export const mockFinalizeAsync = jest.fn();
 export const mockGetAllAsync = jest.fn().mockImplementation((sql: string) => {
@@ -42,6 +57,14 @@ export const mockGetAllAsync = jest.fn().mockImplementation((sql: string) => {
   if (sql == `SELECT * FROM bond`) {
     return Promise.resolve(testBondList);
   }
+
+  if (sql == `SELECT *
+            FROM person_bond
+            `){
+    return Promise.resolve(testPersonBondList);
+  }
+
+  throw Error("Does not recognize sql command")
 });
 
 const mockStatement = {

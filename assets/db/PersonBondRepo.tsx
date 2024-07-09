@@ -5,10 +5,6 @@ import * as SQLite from "expo-sqlite";
 export const addPersonBond = async (db: SQLite.SQLiteDatabase, person: Person, bond: Bond) => {
 
     const statement = await db.prepareAsync(`INSERT INTO person_bond (person_id, bond_id) VALUES (?, ?)`)
-
-    console.log("person_id", person.person_id)
-    console.log("bond_id", bond.bond_id)
-
     const value: string[] = [person.person_id, bond.bond_id];
 
     try {
@@ -33,7 +29,6 @@ export const deletePersonBond = async (db: SQLite.SQLiteDatabase, person: Person
     const value: string[] = [person.person_id, bond.bond_id]
 
     try {
-        console.log('removing group member')
         return await statement.executeAsync(value)
     } catch (error) {
         console.error(error)

@@ -9,7 +9,6 @@ export const addBond = async (db: SQLite.SQLiteDatabase, bond: Bond) => {
   const value: string[] = [bond.bondName, bond.schedule, bond.typeOfCall];
 
   try {
-    console.log("add bond");
     return await statement.executeAsync(value);
   } catch (error) {
     console.error(error);

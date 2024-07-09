@@ -129,7 +129,7 @@ export const InTouchContextProvider: React.FC<{
   async function initializePersonBondMaps() {
     try {
       const dbBondPersonList = await getAllPersonBonds(db);
-      // console.log("personBond", dbBondPersonList);
+      console.log("personBond", dbBondPersonList);
 
       const peopleHash: Map<number, Set<number>> = new Map();
 
