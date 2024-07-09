@@ -6,7 +6,7 @@ import { useLocalSearchParams } from "expo-router";
 import { useContext, useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { InTouchContext } from "@/context/InTouchContext";
-import { FlatList, Pressable } from "react-native";
+import { FlatList, Pressable, StyleSheet } from "react-native";
 
 export default function PersonScreen() {
 

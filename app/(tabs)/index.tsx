@@ -15,7 +15,7 @@ export default function homeScreen() {
   const renderBonds = ({ item }: { item: Bond }) => {
     return (
       <ListItem bottomDivider>
-        <ListItem.Content id={item.id}>
+        <ListItem.Content id={item.bond_id}>
           <ListItem.Title>{item.bondName} </ListItem.Title>
         </ListItem.Content>
       </ListItem>
@@ -33,7 +33,7 @@ export default function homeScreen() {
       <FlatList
         data={bondList}
         renderItem={renderBonds}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.bond_id}
       />
 
       <StandardButton

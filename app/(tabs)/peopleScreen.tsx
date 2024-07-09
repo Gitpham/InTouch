@@ -3,11 +3,12 @@ import { ThemedText } from "@/components/ThemedText";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FlatList, Pressable, StyleSheet } from "react-native";
 import { ListItem } from "@rneui/themed";
-import { useContext } from "react";
+import { useContext, } from "react";
 import { router } from "expo-router";
 import { InTouchContext } from "@/context/InTouchContext";
 import { StandardButton } from "@/components/ButtonStandard";
 import { Person } from "@/constants/types";
+import { View } from "react-native"
 
 export default function PeopleScreen() {
   const { peopleList } = useContext(InTouchContext);
