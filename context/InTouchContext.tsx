@@ -90,12 +90,14 @@ export const InTouchContextProvider: React.FC<{
 
   useEffect(() => {
 
+    console.log("db name:", db.databaseName)
     const initalize = async () => {
 
       if (!hasRendered) {
         try {
-          await initializePeopleList();
           await initializeBondList();
+
+          await initializePeopleList();
           await initializePersonBondMaps();
           hasRendered = true;
         } catch (error) {
