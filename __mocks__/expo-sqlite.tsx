@@ -81,3 +81,4 @@ const mockDatabase = {
 
 export const openDatabaseAsync = jest.fn(() => mockDatabase);
 export const SQLiteDatabase = jest.fn(() => mockDatabase);
+export const useSQLiteContext = jest.fn(() => mockDatabase)

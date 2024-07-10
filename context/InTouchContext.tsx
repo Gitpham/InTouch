@@ -84,27 +84,36 @@ export const InTouchContextProvider: React.FC<{
     new Map<number, Set<number>>()
   );
 
+  let hasRendered = false;
+
   const db = useSQLiteContext();
 
   useEffect(() => {
+
     const initalize = async () => {
-      try {
-        await initializePeopleList();
-        await initializeBondList();
-        await initializePersonBondMaps();
-      } catch (error) {
-        console.error(error);
-        throw Error("failed to initialize db");
+
+      if (!hasRendered) {
+        try {
+          await initializePeopleList();
+          await initializeBondList();
+          await initializePersonBondMaps();
+          hasRendered = true;
+        } catch (error) {
+          console.error(error);
+          throw Error("failed to initialize db");
+        }
+
+  
       }
     };
 
     initalize();
-  }, [db]);
+  }, []);
 
   async function initializePeopleList() {
     try {
       const initialized_peopleList = await getAllPersons(db);
-      // console.log("initialized peopleList:", initialized_peopleList)
+      // console.log(initialized_peopleList)
       setPeopleList(initialized_peopleList);
     } catch (e) {
       console.error(e);
@@ -129,7 +138,7 @@ export const InTouchContextProvider: React.FC<{
   async function initializePersonBondMaps() {
     try {
       const dbBondPersonList = await getAllPersonBonds(db);
-      console.log("personBond", dbBondPersonList);
+      // console.log("personBond", dbBondPersonList);
 
       const peopleHash: Map<number, Set<number>> = new Map();
 

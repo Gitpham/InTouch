@@ -14,7 +14,6 @@ export const addBond = async (db: SQLite.SQLiteDatabase, bond: Bond) => {
     console.error(error);
     throw Error("failed to upload bond");
   } finally {
-    console.log("finalize bond async");
     statement.finalizeAsync();
   }
 };
