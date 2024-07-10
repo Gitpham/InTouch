@@ -25,6 +25,11 @@ type InTouchContextType = {
   getBondsOfPerson: (person: Person) => Array<Bond>;
 };
 
+type BondPerson = {
+  person_id: Number;
+  bond_id: Number;
+}
+
 /**
  * This is initalized with an empty InTouchContextType. These are essentailly placeholder functions that we replace
  * upon providing values to the InTouchContext.Provider
@@ -320,6 +325,23 @@ export const InTouchContextProvider: React.FC<{
         }
       });
       return bonds;
+    } catch (e) {
+      console.error(e);
+      throw Error("getBondsOfPerson(): failed to get bonds of person");
+    }
+  }
+
+  function getMembersOfBonds(bond: Bond): Array<Person> {
+    const bondID = Number(bond.bond_id);
+    try {
+      const personIDs = bondPersonMap.get(bondID);
+      const persons = peopleList.filter((p) => {
+        const pID: number = Number(p.person_id);
+        if (personIDs?.has(pID)) {
+          return p;
+        }
+      });
+      return persons;
     } catch (e) {
       console.error(e);
       throw Error("getBondsOfPerson(): failed to get bonds of person");
