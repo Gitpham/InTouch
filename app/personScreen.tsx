@@ -1,12 +1,14 @@
 /* eslint-disable react/react-in-jsx-scope */
 import { ThemedText } from "@/components/ThemedText";
+import { Card } from "@rneui/themed";
 import { Bond, Person } from "@/constants/types";
 import { Card, ListItem } from "@rneui/themed";
 import { useLocalSearchParams } from "expo-router";
 import { useContext, useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { InTouchContext } from "@/context/InTouchContext";
-import { FlatList, Pressable, StyleSheet } from "react-native";
+import { Person } from "@/constants/types";
+import { FlatList, Pressable, StyleSheet, View } from "react-native";
 
 export default function PersonScreen() {
 

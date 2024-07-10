@@ -78,6 +78,10 @@ export const InTouchContextProvider: React.FC<{
   children: React.ReactNode;
 // eslint-disable-next-line react/prop-types
 }> = ({ children }) => {
+  // Hashmaps for cross referencing groups and members
+  let bondHashmap: Map<String, Person[]> = new Map();
+  let personHashmap: Map<String, Bond[]> = new Map();
+
   const [peopleList, setPeopleList] = useState<Person[]>([]);
   const [bondList, setBondList] = useState<Bond[]>([]);
 
@@ -313,6 +317,7 @@ export const InTouchContextProvider: React.FC<{
       throw Error("Could not delete bond member");
     }
   }
+
 
   function getBondsOfPerson(person: Person): Array<Bond> {
     const personID = Number(person.person_id);
