@@ -1,18 +1,17 @@
 /* eslint-disable react/react-in-jsx-scope */
 import { ThemedText } from "@/components/ThemedText";
-import { Card } from "@rneui/themed";
 import { Bond, Person } from "@/constants/types";
-import { Card, ListItem } from "@rneui/themed";
+import { Card, ListItem, Button } from "@rneui/themed";
 import { useLocalSearchParams } from "expo-router";
 import { useContext, useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { InTouchContext } from "@/context/InTouchContext";
-import { Person } from "@/constants/types";
 import { FlatList, Pressable, StyleSheet, View } from "react-native";
+import { router } from "expo-router";
 
 export default function PersonScreen() {
 
-  const {peopleList, getBondsOfPerson} = useContext(InTouchContext)
+  const {peopleList, getBondsOfPerson, removePerson } = useContext(InTouchContext)
   const localParams = useLocalSearchParams();
   const [person, setPerson] = useState<Person>()
   const [bonds, setBonds] = useState<Array<Bond>>();
@@ -20,32 +19,51 @@ export default function PersonScreen() {
 
   useEffect(() => {
     const personId: number = Number(localParams.id)
-    setPerson(peopleList[personId -1]);
-    const p: Person = peopleList[personId -1];
-    const b = getBondsOfPerson(p)
-    setBonds(b)
+    let person_index = peopleList.findIndex(item => item.person_id === personId)
+    if (person_index !== -1) {
+      const p: Person = peopleList[person_index];
+      setPerson(p);
+      const b = getBondsOfPerson(p);
+      setBonds(b);
+    }
 
   }, [])
 
 
   const renderBonds = ({ item }: { item: Bond }) => {
-    return (
-      <ListItem bottomDivider>
-        <Pressable >
+    if (item) {
+      return (
+        <ListItem bottomDivider>
+          <Pressable >
+  
+          <ListItem.Content id={item.bond_id.toString()}>
+            <ListItem.Title>
+              {item.bondName} 
+            </ListItem.Title>
+          </ListItem.Content>
+          </Pressable>
+  
+        </ListItem>
+      )}
+      else {
+        return (
+          <ListItem bottomDivider>
+          </ListItem>
+        );
 
-        <ListItem.Content id={item.bond_id}>
-          <ListItem.Title>
-            {item.bondName} 
-          </ListItem.Title>
-        </ListItem.Content>
-        </Pressable>
+      }
+    }
 
-      </ListItem>
-    );
-  }
+    const deletePerson = () => {
+      if (person) {
+      removePerson(person);
+      }
+      router.back();
+    }
+
 
        return (
-        <SafeAreaView>
+        <SafeAreaView style = {styles.stepContainer}>
              <Card>
                <Card.Title>Name: {person?.firstName} {person?.lastName} </Card.Title>
                <Card.Divider></Card.Divider>
@@ -60,11 +78,18 @@ export default function PersonScreen() {
              <Card>
               <Card.Title>Groups</Card.Title>
               <FlatList
-        data={bonds}
-        renderItem={renderBonds}
-        keyExtractor={(item) => item.bond_id}
-      />
+            data={bonds}
+            renderItem={renderBonds}
+            keyExtractor={(item) => item.bond_id.toString()}
+          />
              </Card>
+
+             <Button
+             title = "Delete"
+             buttonStyle = {styles.redButton}
+             titleStyle = {styles.redTitle}
+             onPress = {() => deletePerson()}
+             />
 
 
 
@@ -82,6 +107,15 @@ const styles = StyleSheet.create({
   },
   title: {
     color: "black",
+  },
+  redButton: {
+    margin: 10,
+    backgroundColor: "white",
+    borderColor: "red",
+    borderWidth: 2,
+  },
+  redTitle: {
+    color: "red",
   },
   stepContainer: {
     flex: 1,

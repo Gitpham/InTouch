@@ -9,7 +9,7 @@ export const addPersonBond = async (db: SQLite.SQLiteDatabase, person: Person, b
     console.log("person_id", person.person_id)
     console.log("bond_id", bond.bond_id)
 
-    const value: string[] = [person.person_id, bond.bond_id];
+    const value: string[] = [person.person_id.toString(), bond.bond_id.toString()];
 
     try {
         return await statement.executeAsync(value);
@@ -30,7 +30,7 @@ export const deletePersonBond = async (db: SQLite.SQLiteDatabase, person: Person
         WHERE person_id = ? & bond_id = ?
         `);
 
-    const value: string[] = [person.person_id, bond.bond_id]
+    const value: string[] = [person.person_id.toString(), bond.bond_id.toString()]
 
     try {
         console.log('removing group member')

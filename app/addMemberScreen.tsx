@@ -22,7 +22,7 @@ export default function addMemberScreen() {
           firstName: person?.firstName as string,
           lastName: person?.lastName as string,
           phoneNumber: person?.phoneNumbers?.[0]?.number as string,
-          person_id: "",
+          person_id: -0,
         };
 
         createPerson(newContact);

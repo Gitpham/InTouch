@@ -13,7 +13,7 @@ import { View } from "react-native"
 export default function PeopleScreen() {
   const { peopleList } = useContext(InTouchContext);
 
-  function onPersonPress (person_id: string) {
+  function onPersonPress (person_id: number) {
     router.navigate({pathname: "../personScreen", params: {id: `${person_id}`} })
   }
 
@@ -23,12 +23,12 @@ export default function PeopleScreen() {
       <ListItem bottomDivider>
         <Pressable onPress={() => onPersonPress(item.person_id)}>
 
-        <ListItem.Content id={item.person_id}>
+        <ListItem.Content id={item.person_id.toString()}>
           <ListItem.Title>
             {item.firstName} {item.lastName}
           </ListItem.Title>
           <ListItem.Title>
-            Phone Number: {item.phoneNumber} id: {item.person_id}
+            Phone Number: {item.phoneNumber} id: {item.person_id.toString()}
           </ListItem.Title>
         </ListItem.Content>
         </Pressable>
@@ -44,7 +44,7 @@ export default function PeopleScreen() {
       <FlatList
         data={peopleList}
         renderItem={renderContacts}
-        keyExtractor={(item) => item.person_id}
+        keyExtractor={(item) => item.person_id.toString()}
       />
 
       <StandardButton 

@@ -23,6 +23,7 @@ type InTouchContextType = {
   getBondPersonMap: () => void;
   getPersonBondMap: () => void;
   getBondsOfPerson: (person: Person) => Array<Bond>;
+  getMembersOfBond: (bond: Bond) => Array<Person>
 };
 
 type BondPerson = {
@@ -70,7 +71,9 @@ export const InTouchContext = createContext<InTouchContextType>({
   getBondsOfPerson: function (person: Person): Array<Bond> {
     throw new Error("Function not implemented.");
   },
-    /* eslint-enable @typescript-eslint/no-unused-vars */
+  getMembersOfBond: function (bond: Bond): Array<Person> {
+    throw new Error("Function not implemented.");
+  },
 
 });
 
@@ -215,7 +218,7 @@ export const InTouchContextProvider: React.FC<{
       await addPerson(db, person);
       // this assumes that all people in db have a id from 1 to size of table -1
       const toAddPersonId = peopleList.length + 1;
-      const toAddPerson: Person = { ...person, person_id: `${toAddPersonId}` };
+      const toAddPerson: Person = { ...person, person_id: toAddPersonId };
       setPeopleList([...peopleList, toAddPerson]);
     } catch (e) {
       console.error(e);
@@ -229,6 +232,20 @@ export const InTouchContextProvider: React.FC<{
       setPeopleList(
         peopleList.filter((item) => item.person_id != person.person_id)
       );
+
+      personBondMap.delete(person.person_id);
+      setPersonBondMap(personBondMap);
+
+      bondPersonMap.forEach((value, key) => {
+        if (value) {
+        if (value.has(person.person_id)) {
+          value.delete(person.person_id);
+        }
+      }
+      });
+
+      setBondPersonMap(bondPersonMap);
+
     } catch (e) {
       console.error(e);
       throw Error("Could not remove person");
@@ -249,6 +266,20 @@ export const InTouchContextProvider: React.FC<{
     try {
       await deleteBond(db, bond);
       setBondList(bondList.filter((item) => item.bond_id != bond.bond_id));
+
+      // Remove bond from bondPerson hash map
+      bondPersonMap.delete(bond.bond_id);
+      setBondPersonMap(bondPersonMap)
+
+      // Remove all instances of bond within PersonBond hash map
+      personBondMap.forEach((value, key) => {
+        if (value.has(bond.bond_id)) {
+          value.delete(bond.bond_id);
+        }
+      });
+
+      setPersonBondMap(personBondMap);
+
     } catch (e) {
       console.error(e);
       throw Error("Could not remove bond");
@@ -336,7 +367,7 @@ export const InTouchContextProvider: React.FC<{
     }
   }
 
-  function getMembersOfBonds(bond: Bond): Array<Person> {
+  function getMembersOfBond(bond: Bond): Array<Person> {
     const bondID = Number(bond.bond_id);
     try {
       const personIDs = bondPersonMap.get(bondID);
@@ -372,6 +403,7 @@ export const InTouchContextProvider: React.FC<{
           getBondPersonMap,
           getPersonBondMap,
           getBondsOfPerson,
+          getMembersOfBond
         }}
       >
         {children}

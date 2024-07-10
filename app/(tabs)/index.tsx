@@ -12,15 +12,15 @@ import { Bond } from "@/constants/types";
 export default function homeScreen() {
   const { bondList } = useContext(InTouchContext);
 
-  function onBondPress (bond_id: string) {
-    router.navigate({pathname: "../groupScreen", params: {id: `${bond_id}`} })
+  function onBondPress (bond: Bond) {
+    router.navigate({pathname: "../groupScreen", params: {id: `${bond.bond_id}`} })
   }
 
   const renderBonds = ({ item }: { item: Bond }) => {
     return (
-      <Pressable onPress = {() => onBondPress(item.bond_id)}>
+      <Pressable onPress = {() => onBondPress(item)}>
       <ListItem bottomDivider>
-        <ListItem.Content id={item.bond_id}>
+        <ListItem.Content id={item.bond_id.toString()}>
           <ListItem.Title>{item.bondName} </ListItem.Title>
         </ListItem.Content>
       </ListItem>
@@ -39,7 +39,7 @@ export default function homeScreen() {
       <FlatList
         data={bondList}
         renderItem={renderBonds}
-        keyExtractor={(item) => item.bond_id}
+        keyExtractor={(item) => item.bond_id.toString()}
       />
 
       <StandardButton

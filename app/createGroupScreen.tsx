@@ -18,7 +18,7 @@ export default function createGroupScreen() {
 
   // Data to be stored in record
   const [bondName, groupNameChange] = useState("");
-  const { createBond } = useContext(InTouchContext);
+  const { createBond, bondList } = useContext(InTouchContext);
 
   function onDonePress() {
 
@@ -30,7 +30,7 @@ export default function createGroupScreen() {
       bondName: bondName,
       typeOfCall: "",
       schedule: "",
-      bond_id: "",
+      bond_id: bondList.length,
     };
     createBond(bondToAdd);
     router.push("./(tabs)");

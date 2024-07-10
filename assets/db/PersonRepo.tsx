@@ -51,10 +51,10 @@ export const deletePerson = async (db: SQLite.SQLiteDatabase, person: Person) =>
 
     const statement = await db.prepareAsync(`
        DELETE FROM person
-      WHERE id = ?
+      WHERE person_id = ?
         `);
 
-    const value: string[] = [person.person_id]
+    const value: string[] = [person.person_id.toString()]
 
     try {
         return await statement.executeAsync(value)
