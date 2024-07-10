@@ -181,6 +181,23 @@ export const InTouchContextProvider: React.FC<{
     }
   }
 
+  function getMembersOfBonds(bond: Bond): Array<Person> {
+    const bondID = Number(bond.bond_id);
+    try {
+      const personIDs = bondPersonMap.get(bondID);
+      const persons = peopleList.filter((p) => {
+        const pID: number = Number(p.person_id);
+        if (personIDs?.has(pID)) {
+          return p;
+        }
+      });
+      return persons;
+    } catch (e) {
+      console.error(e);
+      throw Error("getBondsOfPerson(): failed to get bonds of person");
+    }
+  }
+
   // Initializes user's people list and bond list upon initial render
 
   return (
