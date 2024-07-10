@@ -4,16 +4,26 @@ import { ScrollView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { InTouchContext } from "@/context/InTouchContext";
 import { useContext } from "react";
-import { Person } from "@/constants/types";
+import { Bond, Person } from "@/constants/types";
+import { getAllPersonBonds } from "@/assets/db/PersonBondRepo";
 
 
 export default function ReminderScreen() {
 
-     const {createBondMember, peopleList, bondList} = useContext(InTouchContext)
+     const {createBondMember, peopleList, bondList, getBondPersonMap, getPersonBondMap } = useContext(InTouchContext)
+
+
+
+
 
      function onTestAddMember() {
-        
-          createBondMember(bondList[0], peopleList[0])
+
+
+          createBondMember(peopleList[5], bondList[5]);
+          getBondPersonMap();
+          getPersonBondMap();
+          
+
      }
        return (
         <SafeAreaView>

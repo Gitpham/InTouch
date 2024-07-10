@@ -6,6 +6,9 @@ export const addPersonBond = async (db: SQLite.SQLiteDatabase, person: Person, b
 
     const statement = await db.prepareAsync(`INSERT INTO person_bond (person_id, bond_id) VALUES (?, ?)`)
 
+    console.log("person_id", person.person_id)
+    console.log("bond_id", bond.bond_id)
+
     const value: string[] = [person.person_id, bond.bond_id];
 
     try {
@@ -13,7 +16,7 @@ export const addPersonBond = async (db: SQLite.SQLiteDatabase, person: Person, b
 
     } catch (error) {
         console.error(error);
-        throw Error("failed to add group member")
+        throw Error("addPersonBond(): failed to add group member")
     } finally {
         statement.finalizeAsync()
     }
@@ -45,17 +48,13 @@ export const deletePersonBond = async (db: SQLite.SQLiteDatabase, person: Person
 
 export const getAllPersonBonds = async (db: SQLite.SQLiteDatabase) => {
 
-    const statement = await db.prepareAsync(
-        `SELECT *
-        FROM person_bond
-        `);
-    
     try {
-        return await statement.executeAsync<Person>()
+        return await db.getAllAsync(
+            `SELECT *
+            FROM person_bond
+            `);
     } catch (error) {
         console.error(error)
-        throw Error("Failed to Person Bond")
-    } finally {
-        statement.finalizeAsync()
-    }
+        throw Error("Failed to get all Person Bonds")
+    } 
 }

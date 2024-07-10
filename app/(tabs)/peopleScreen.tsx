@@ -1,12 +1,14 @@
+/* eslint-disable react/react-in-jsx-scope */
 import { ThemedText } from "@/components/ThemedText";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { FlatList, Pressable, StyleSheet, View } from "react-native";
-import { Button, ListItem } from "@rneui/themed";
-import { useContext, useEffect, useState } from "react";
+import { FlatList, Pressable, StyleSheet } from "react-native";
+import { ListItem } from "@rneui/themed";
+import { useContext, } from "react";
 import { router } from "expo-router";
 import { InTouchContext } from "@/context/InTouchContext";
 import { StandardButton } from "@/components/ButtonStandard";
 import { Person } from "@/constants/types";
+import { View } from "react-native"
 
 export default function PeopleScreen() {
   const { peopleList } = useContext(InTouchContext);
@@ -34,6 +36,7 @@ export default function PeopleScreen() {
       </ListItem>
     );
   };
+  
   return (
     <SafeAreaView style={styles.stepContainer}>
       <View style = {styles.centeredView}><ThemedText type="title" style = {styles.title}> People Screen </ThemedText></View>

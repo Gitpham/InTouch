@@ -1,22 +1,48 @@
+/* eslint-disable react/react-in-jsx-scope */
 import { ThemedText } from "@/components/ThemedText";
-import { StyleSheet, View } from "react-native"
 import { Card } from "@rneui/themed";
+import { Bond, Person } from "@/constants/types";
+import { Card, ListItem } from "@rneui/themed";
 import { useLocalSearchParams } from "expo-router";
 import { useContext, useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { InTouchContext } from "@/context/InTouchContext";
 import { Person } from "@/constants/types";
+import { FlatList, Pressable, StyleSheet, View } from "react-native";
 
 export default function PersonScreen() {
 
-  const {peopleList} = useContext(InTouchContext)
+  const {peopleList, getBondsOfPerson} = useContext(InTouchContext)
   const localParams = useLocalSearchParams();
   const [person, setPerson] = useState<Person>()
+  const [bonds, setBonds] = useState<Array<Bond>>();
+
 
   useEffect(() => {
     const personId: number = Number(localParams.id)
     setPerson(peopleList[personId -1]);
+    const p: Person = peopleList[personId -1];
+    const b = getBondsOfPerson(p)
+    setBonds(b)
+
   }, [])
+
+
+  const renderBonds = ({ item }: { item: Bond }) => {
+    return (
+      <ListItem bottomDivider>
+        <Pressable >
+
+        <ListItem.Content id={item.bond_id}>
+          <ListItem.Title>
+            {item.bondName} 
+          </ListItem.Title>
+        </ListItem.Content>
+        </Pressable>
+
+      </ListItem>
+    );
+  }
 
        return (
         <SafeAreaView>
@@ -33,6 +59,11 @@ export default function PersonScreen() {
 
              <Card>
               <Card.Title>Groups</Card.Title>
+              <FlatList
+        data={bonds}
+        renderItem={renderBonds}
+        keyExtractor={(item) => item.bond_id}
+      />
              </Card>
 
 
