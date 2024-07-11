@@ -2,7 +2,7 @@ import {  InTouchContextProvider } from "@/context/InTouchContext";
 import React  from "react";
 import { render, screen, waitFor } from '@testing-library/react-native';
 import InTouchContextDummyComponent from "@/__dummyComponents/InTouchContextDummyComponent";
-import { mockExecuteAsync, mockFinalizeAsync, mockGetAllAsync, mockPrepareAsync, testBondList, testPersonBondList, testPersonList } from "@/__mocks__/expo-sqlite";
+import { mockExecuteAsync, mockFinalizeAsync, mockGetAllAsync, mockPrepareAsync, testBondList, testPersonList } from "@/__mocks__/expo-sqlite";
 import { bondPersonMap_test, personBondMap_test } from "@/__dummyComponents/InTouchContextMockData";
 describe("integration tests for InTouchContext", () => {
 
@@ -17,7 +17,7 @@ describe("integration tests for InTouchContext", () => {
 
     it("upon rendering, InTouchContextProvider should have peopleList intitialized ", async () => {
 
-        const comp = render(<InTouchContextDummyComponent></InTouchContextDummyComponent>, {wrapper: InTouchContextProvider})
+        render(<InTouchContextDummyComponent></InTouchContextDummyComponent>, {wrapper: InTouchContextProvider})
 
         await waitFor(() => {
             expect(screen.getByTestId("peopleList").props.children.length).toBeGreaterThan(0); // Assuming peopleList is not empty
@@ -30,7 +30,7 @@ describe("integration tests for InTouchContext", () => {
 
     it("upon rendering, InTouchContextProvider should have bondList intitialized ", async () => {
 
-        const comp = render(<InTouchContextDummyComponent></InTouchContextDummyComponent>, {wrapper: InTouchContextProvider})
+        render(<InTouchContextDummyComponent></InTouchContextDummyComponent>, {wrapper: InTouchContextProvider})
 
         await waitFor(() => {
             expect(screen.getByTestId("bondList").props.children.length).toBeGreaterThan(0); // Assuming peopleList is not empty
@@ -44,7 +44,7 @@ describe("integration tests for InTouchContext", () => {
 
     it("upon rendering, InTouchContextProvider should have personBondMap intitialized ", async () => {
 
-        const comp = render(<InTouchContextDummyComponent></InTouchContextDummyComponent>, {wrapper: InTouchContextProvider})
+        render(<InTouchContextDummyComponent></InTouchContextDummyComponent>, {wrapper: InTouchContextProvider})
 
         await waitFor(() => {
             expect(screen.getByTestId("personBondMap").props.children.length).toBeGreaterThan(0); // Assuming peopleList is not empty
@@ -57,7 +57,7 @@ describe("integration tests for InTouchContext", () => {
 
     it("upon rendering, InTouchContextProvider should have bondPersonMap intitialized ", async () => {
 
-        const comp = render(<InTouchContextDummyComponent></InTouchContextDummyComponent>, {wrapper: InTouchContextProvider})
+        render(<InTouchContextDummyComponent></InTouchContextDummyComponent>, {wrapper: InTouchContextProvider})
 
         await waitFor(() => {
             expect(screen.getByTestId("bondPersonMap").props.children.length).toBeGreaterThan(0); // Assuming peopleList is not empty
@@ -69,9 +69,4 @@ describe("integration tests for InTouchContext", () => {
     })
 
     
-
-
-
-
-
 })

@@ -6,25 +6,20 @@ import {
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import "react-native-reanimated";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
 import * as SQLite from "expo-sqlite";
 import { InTouchContextProvider } from "@/context/InTouchContext";
-// import { loadDB } from "@/assets/db/db";
 import React from "react";
 import { loadDB } from "@/assets/db/db";
-
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
-
-
 export default function RootLayout() {
   const colorScheme = useColorScheme();
-  const [dbHasLoaded, setDbHasLoaded] = useState(false);
 
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
@@ -33,12 +28,9 @@ export default function RootLayout() {
   useEffect(() => {
     const initDB = async () => {
       await loadDB();
-      setDbHasLoaded(true);
     };
-
     initDB();
   });
-
 
   useEffect(() => {
     if (loaded) {
@@ -50,12 +42,11 @@ export default function RootLayout() {
     return null;
   }
 
-  return ( 
+  return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
       <SQLite.SQLiteProvider databaseName="Test_DataBase_6.db">
         <InTouchContextProvider>
-          <Stack
-          >
+          <Stack>
             <Stack.Screen name="index" options={{ headerShown: false }} />
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
             <Stack.Screen name="+not-found" />
