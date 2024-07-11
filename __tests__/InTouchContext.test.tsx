@@ -2,8 +2,10 @@ import {  InTouchContextProvider } from "@/context/InTouchContext";
 import React  from "react";
 import { render, screen, waitFor } from '@testing-library/react-native';
 import InTouchContextDummyComponent from "@/__dummyComponents/InTouchContextDummyComponent";
-import { mockExecuteAsync, mockFinalizeAsync, mockGetAllAsync, mockPrepareAsync } from "@/__mocks__/expo-sqlite";
+import { mockExecuteAsync, mockFinalizeAsync, mockGetAllAsync, mockPrepareAsync, testBondList, testPersonBondList, testPersonList } from "@/__mocks__/expo-sqlite";
+import { bondPersonMap_test, personBondMap_test } from "@/__dummyComponents/InTouchContextMockData";
 describe("integration tests for InTouchContext", () => {
+
 
     beforeEach(() => {
 
@@ -22,8 +24,7 @@ describe("integration tests for InTouchContext", () => {
         });
 
         const peopleListElement = screen.getByTestId("peopleList");
-        const expectedValue = "P1 P1_lastName 111-111-1111 1, P2 P2_lastName 111-111-1112 2";
-
+        const expectedValue = testPersonList.map((p) => `${p.firstName} ${p.lastName} ${p.phoneNumber} ${p.person_id}`).join(', ')
         expect(peopleListElement.props.children).toEqual(expectedValue)
     })
 
@@ -36,7 +37,7 @@ describe("integration tests for InTouchContext", () => {
         });
 
         const bondListElement = screen.getByTestId("bondList");
-        const expectedValue = "family weekly group 1, friends monthly individual 2";
+        const expectedValue = testBondList.map((p) => `${p.bondName} ${p.schedule} ${p.typeOfCall} ${p.bond_id}`).join(', ')
 
         expect(bondListElement.props.children).toEqual(expectedValue)
     })
@@ -50,13 +51,7 @@ describe("integration tests for InTouchContext", () => {
         });
 
         const personBondListElement = screen.getByTestId("personBondMap");
-        const expectedValue = [
-            [1, new Set([1, 2])],
-            [4, new Set([3, 6])],
-            [2, new Set([6])],
-            [5, new Set([6])],
-            [6, new Set([6])]
-        ];
+        const expectedValue = personBondMap_test;
         expect(personBondListElement.props.children).toEqual(expectedValue)
     })
 
@@ -69,7 +64,7 @@ describe("integration tests for InTouchContext", () => {
         });
 
         const bondPersonListElement = screen.getByTestId("bondPersonMap");
-        const expectedValue =[[1, new Set ([1])], [2, new Set ([1])], [3, new Set([4])], [6, new Set([2,6])]]
+        const expectedValue = bondPersonMap_test
         expect(bondPersonListElement.props.children).toEqual(expectedValue)
     })
 

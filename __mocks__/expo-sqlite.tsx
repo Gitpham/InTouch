@@ -1,38 +1,38 @@
 import { Bond, Person } from "@/constants/types";
 
-export const testP1: Person = {
+ const testP1: Person = {
   firstName: "P1",
   lastName: "P1_lastName",
   phoneNumber: "111-111-1111",
   person_id: "1",
 };
 
-export const testP2: Person = {
+ const testP2: Person = {
   firstName: "P2",
   lastName: "P2_lastName",
   phoneNumber: "111-111-1112",
   person_id: "2",
 };
 
-export const testB1: Bond = {
+const testB1: Bond = {
   bondName: "family",
   bond_id: "1",
   schedule: "weekly",
   typeOfCall: "group",
 };
 
-export const testB2: Bond = {
+const testB2: Bond = {
   bondName: "friends",
   bond_id: "2",
   schedule: "monthly",
   typeOfCall: "individual",
 };
 
-export const testBondList: Bond[] = [testB1, testB2];
+const testBondList: Bond[] = [testB1, testB2];
 
-export const testPersonList: Person[] = [testP1, testP2];
+const testPersonList: Person[] = [testP1, testP2];
 
-export const testPersonBondList = [
+const testPersonBondList = [
   { bond_id: 1, person_id: 1 },
   { bond_id: 1, person_id: 1 },
   { bond_id: 2, person_id: 1 },
@@ -47,9 +47,9 @@ export const testPersonBondList = [
   { bond_id: 6, person_id: 6 },
 ];
 
-export const mockExecuteAsync = jest.fn();
-export const mockFinalizeAsync = jest.fn();
-export const mockGetAllAsync = jest.fn().mockImplementation((sql: string) => {
+const mockExecuteAsync = jest.fn();
+const mockFinalizeAsync = jest.fn();
+const mockGetAllAsync = jest.fn().mockImplementation((sql: string) => {
   if (sql == `SELECT * FROM person`) {
     return Promise.resolve(testPersonList);
   }
@@ -72,13 +72,15 @@ const mockStatement = {
   finalizeAsync: mockFinalizeAsync,
 };
 
-export const mockPrepareAsync = jest.fn(() => mockStatement);
+const mockPrepareAsync = jest.fn(() => mockStatement);
 
 const mockDatabase = {
   prepareAsync: mockPrepareAsync,
   getAllAsync: mockGetAllAsync,
 };
 
-export const openDatabaseAsync = jest.fn(() => mockDatabase);
-export const SQLiteDatabase = jest.fn(() => mockDatabase);
-export const useSQLiteContext = jest.fn(() => mockDatabase)
+const openDatabaseAsync = jest.fn(() => mockDatabase);
+const SQLiteDatabase = jest.fn(() => mockDatabase);
+const useSQLiteContext = jest.fn(() => mockDatabase)
+
+export {testBondList, testPersonList, testPersonBondList, openDatabaseAsync, SQLiteDatabase, useSQLiteContext, mockPrepareAsync, mockGetAllAsync, mockFinalizeAsync, mockExecuteAsync}
