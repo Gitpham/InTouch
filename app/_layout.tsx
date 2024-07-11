@@ -6,62 +6,39 @@ import {
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import "react-native-reanimated";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
-import { SQLiteProvider } from "expo-sqlite";
+import * as SQLite from "expo-sqlite";
 import { InTouchContextProvider } from "@/context/InTouchContext";
 // import { loadDB } from "@/assets/db/db";
 import React from "react";
-import { Asset } from "expo-asset";
-import * as FileSystem from "expo-file-system";
+import { loadDB } from "@/assets/db/db";
+
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
-const loadDB = async () => {
-  const dbName = "Test_DataBase_5.db";
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const dbAsset = require("../assets/Test_DataBase_5.db");
-  const dbUri = Asset.fromModule(dbAsset).uri;
-  const dbFilePath = `${FileSystem.documentDirectory}SQLite/${dbName}`;
 
-  try {
-    const fileInfo = await FileSystem.getInfoAsync(dbFilePath);
-    if (!fileInfo.exists) {
-      console.log("open new db");
-
-      await FileSystem.makeDirectoryAsync(
-        `${FileSystem.documentDirectory}SQLite`,
-        { intermediates: true }
-      );
-      await FileSystem.downloadAsync(dbUri, dbFilePath);
-    }
-  } catch (e) {
-    console.error(e);
-    console.log("failed to get filepath");
-  }
-};
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
+  const [dbHasLoaded, setDbHasLoaded] = useState(false);
+
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
 
-  let dbHasLoaded = false;
-
   useEffect(() => {
-    if (!dbHasLoaded) {
-      const load=  async () => {
-        await loadDB();
-      };
-      load()
+    const initDB = async () => {
+      await loadDB();
+      setDbHasLoaded(true);
+    };
 
-      dbHasLoaded = true;
-    }
-  }, []);
+    initDB();
+  });
+
 
   useEffect(() => {
     if (loaded) {
@@ -73,15 +50,11 @@ export default function RootLayout() {
     return null;
   }
 
-  return (
+  return ( 
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <SQLiteProvider
-        databaseName="Test_DataBase_5.db"
-        // assetSource={{ assetId: require("../assets/InTouchDB_1.db") }}
-      >
+      <SQLite.SQLiteProvider databaseName="Test_DataBase_6.db">
         <InTouchContextProvider>
           <Stack
-          // screenOptions={{ headerShown: false }}
           >
             <Stack.Screen name="index" options={{ headerShown: false }} />
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
@@ -104,7 +77,7 @@ export default function RootLayout() {
             />
           </Stack>
         </InTouchContextProvider>
-      </SQLiteProvider>
+      </SQLite.SQLiteProvider>
     </ThemeProvider>
   );
 }

@@ -1,4 +1,6 @@
 import * as SQLite from "expo-sqlite";
+import { Asset } from "expo-asset";
+import * as FileSystem from "expo-file-system";
 
 
 
@@ -7,6 +9,28 @@ export const connectToDatabase = async () => {
   console.log("Successfully opened db");
   return db;
 };
+
+export const loadDB = async () => {
+    try {
+      const dbName = "Test_DataBase_6.db";
+      const dbAsset = require("../Test_DataBase_6.db");
+      const dbUri = Asset.fromModule(dbAsset).uri;
+      const dbFilePath = `${FileSystem.documentDirectory}SQLite/${dbName}`;
+  
+      const fileInfo = await FileSystem.getInfoAsync(dbFilePath);
+  
+      if (!fileInfo.exists) {
+        await FileSystem.makeDirectoryAsync(
+          `${FileSystem.documentDirectory}SQLite`
+          // { intermediates: true }
+        );
+        await FileSystem.downloadAsync(dbUri, dbFilePath);
+      }
+    } catch (e) {
+      console.error(e);
+      console.log("failed to loadDB()");
+    }
+  };
 
 
 
