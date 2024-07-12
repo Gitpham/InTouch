@@ -2,14 +2,11 @@ import { Person, Bond } from "@/constants/types";
 import * as SQLite from "expo-sqlite";
 
 
-export const addPersonBond = async (db: SQLite.SQLiteDatabase, person: Person, bond: Bond) => {
+export const addPersonBond = async (db: SQLite.SQLiteDatabase, person_id: number, bond_id: number) => {
 
     const statement = await db.prepareAsync(`INSERT INTO person_bond (person_id, bond_id) VALUES (?, ?)`)
 
-    console.log("person_id", person.person_id)
-    console.log("bond_id", bond.bond_id)
-
-    const value: string[] = [person.person_id.toString(), bond.bond_id.toString()];
+    const value: string[] = [person_id.toString(), bond_id.toString()];
 
     try {
         return await statement.executeAsync(value);
