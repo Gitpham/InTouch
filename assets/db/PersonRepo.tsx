@@ -32,7 +32,7 @@ export const updatePerson = async (db: SQLite.SQLiteDatabase, updatedPerson: Per
         WHERE person_id = ?
         `);
 
-    const value: string[] = [updatedPerson.firstName, updatedPerson.lastName, updatedPerson.phoneNumber, updatedPerson.person_id]
+    const value: string[] = [updatedPerson.firstName, updatedPerson.lastName, updatedPerson.phoneNumber, updatedPerson.person_id.toString()]
 
     try {
         return await statement.executeAsync(value)
@@ -40,7 +40,6 @@ export const updatePerson = async (db: SQLite.SQLiteDatabase, updatedPerson: Per
         console.error(error)
         throw Error("Failed to update person")
     } finally {
-        // console.log("finalize updatePerson async")
         statement.finalizeAsync()
     }
 }

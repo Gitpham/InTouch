@@ -17,7 +17,7 @@ describe("PersonRepo unit tests", () => {
       firstName: "Phoenix",
       lastName: "Pham",
       phoneNumber: "111-111-1111",
-      person_id: "1",
+      person_id: 1,
     };
 
     const db = await openDatabaseAsync("name");
@@ -38,7 +38,7 @@ describe("PersonRepo unit tests", () => {
       firstName: "Phoenix",
       lastName: "Pham",
       phoneNumber: "111-111-1111",
-      person_id: "1",
+      person_id: 1,
     };
 
     const db = await openDatabaseAsync("name");
@@ -53,7 +53,7 @@ describe("PersonRepo unit tests", () => {
       p.firstName,
       p.lastName,
       p.phoneNumber,
-      p.person_id,
+      p.person_id.toString(),
     ]);
   });
 
@@ -62,20 +62,20 @@ describe("PersonRepo unit tests", () => {
       firstName: "Phoenix",
       lastName: "Pham",
       phoneNumber: "111-111-1111",
-      person_id: "1",
+      person_id: 1,
     };
 
     const db = await openDatabaseAsync("name");
     await deletePerson(db, p);
     const expectedSql = `
        DELETE FROM person
-      WHERE id = ?
+      WHERE person_id = ?
         `;
 
     expect(mockPrepareAsync).toHaveBeenCalledWith(expectedSql);
 
     expect(mockExecuteAsync).toHaveBeenCalledWith([
-      p.person_id,
+      p.person_id.toString(),
     ]);
   });
 

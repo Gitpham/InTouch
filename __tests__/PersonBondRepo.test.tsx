@@ -25,7 +25,7 @@ describe("PersonBondRepo Unit Tests", () => {
     const b: Bond = {
       bondName: "b",
       typeOfCall: "group",
-      bond_id: "1",
+      bond_id: 1,
       schedule: "weekly",
     };
 
@@ -33,15 +33,15 @@ describe("PersonBondRepo Unit Tests", () => {
       firstName: "Phoenix",
       lastName: "Pham",
       phoneNumber: "111-111-1111",
-      person_id: "1",
+      person_id: 1,
     };
 
     const expectedStatement = `INSERT INTO person_bond (person_id, bond_id) VALUES (?, ?)`;
-    const expectedValue = [p.person_id, b.bond_id];
+    const expectedValue = [p.person_id.toString(), b.bond_id.toString()];
 
     const db = await openDatabaseAsync("name");
 
-    await addPersonBond(db, p, b);
+    await addPersonBond(db, p.person_id, b.bond_id);
 
     expect(mockPrepareAsync).toHaveBeenCalledWith(expectedStatement);
     expect(mockExecuteAsync).toHaveBeenCalledWith(expectedValue);

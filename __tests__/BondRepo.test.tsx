@@ -46,7 +46,7 @@ describe("BondRepo() unit tests", () => {
     const b: Bond = {
       bondName: "b",
       typeOfCall: "group",
-      bond_id: "",
+      bond_id: 1,
       schedule: "weekly",
     };
 
@@ -56,7 +56,7 @@ describe("BondRepo() unit tests", () => {
         WHERE bond_id = ?
         `;
 
-    const expectedValues = [b.bondName, b.schedule, b.typeOfCall, b.bond_id];
+    const expectedValues = [b.bondName, b.bond_id.toString()];
 
     const db = await openDatabaseAsync("name");
     await updateBond(db, b);
