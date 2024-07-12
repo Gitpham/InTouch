@@ -4,28 +4,42 @@ import { Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "@rneui/themed";
 import { StyleSheet, View } from "react-native";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import * as Contacts from "expo-contacts";
 import { InTouchContext } from "@/context/InTouchContext";
 import { StandardButton } from "@/components/ButtonStandard";
 import { Person } from "@/constants/types";
 
 export default function addMemberScreen() {
-  const { createPerson } = useContext(InTouchContext);
+  const { createPerson, peopleList, createBondMember } = useContext(InTouchContext);
+  const localParams = useLocalSearchParams();
 
   async function importFromContacts() {
     const { status } = await Contacts.requestPermissionsAsync();
     if (status === "granted") {
       const person = await Contacts.presentContactPickerAsync();
       if (person) {
+
+        // Generate unique person id
+        let person_id = 0;
+        if (peopleList.length > 0) {
+          person_id = peopleList[peopleList.length - 1].person_id + 1;
+        }
+
         const newContact: Person = {
           firstName: person?.firstName as string,
           lastName: person?.lastName as string,
           phoneNumber: person?.phoneNumbers?.[0]?.number as string,
-          person_id: -0,
+          person_id: person_id,
         };
 
         createPerson(newContact);
+
+        const bond_id = +localParams.bond_id
+        
+        if (bond_id !== -1) {
+          createBondMember(newContact.person_id, bond_id)
+        }
       } else {
         Alert.alert("unable to add from contacts");
       }
@@ -43,7 +57,7 @@ export default function addMemberScreen() {
       <StandardButton
         title="Create Contact Manually"
         onPress={() => {
-          router.push("./addMemberManualScreen");
+          router.navigate({pathname: "./addMemberManualScreen", params: {bond_id: localParams.bond_id}});
         }}
       />
 

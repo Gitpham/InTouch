@@ -10,7 +10,7 @@ import { StandardButton } from "@/components/ButtonStandard";
 import { Bond } from "@/constants/types";
 
 export default function homeScreen() {
-  const { bondList } = useContext(InTouchContext);
+  const { bondList, bondPersonMap } = useContext(InTouchContext);
 
   function onBondPress (bond: Bond) {
     router.navigate({pathname: "../groupScreen", params: {id: `${bond.bond_id}`} })

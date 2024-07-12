@@ -49,7 +49,7 @@ export default function PeopleScreen() {
 
       <StandardButton 
        title="Add New Contact"
-       onPress={() => router.push("../addMemberScreen")}/>
+       onPress={() => router.navigate({pathname: "../addMemberScreen", params: {bond_id: -1}})}/>
 
     </SafeAreaView>
   );

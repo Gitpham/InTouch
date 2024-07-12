@@ -20,18 +20,25 @@ export default function createGroupScreen() {
   const [bondName, groupNameChange] = useState("");
   const { createBond, bondList } = useContext(InTouchContext);
 
+  // Generate unique bond_id
+  let bond_id = 0;
+  if (bondList.length > 0) {
+    bond_id = bondList[bondList.length - 1].bond_id + 1;
+  }
+
+  const bondToAdd: Bond = {
+    bondName: bondName,
+    typeOfCall: "",
+    schedule: "",
+    bond_id: bond_id,
+  };
+
   function onDonePress() {
 
     if (!bondName) {
       Alert.alert("Must enter a Bond name")
       return;
     }
-    const bondToAdd: Bond = {
-      bondName: bondName,
-      typeOfCall: "",
-      schedule: "",
-      bond_id: bondList.length,
-    };
     createBond(bondToAdd);
     router.push("./(tabs)");
   }
@@ -65,7 +72,7 @@ export default function createGroupScreen() {
 
       <Button
         title="Add Group Member"
-        onPress={() => router.push("./addMemberScreen")}
+        onPress={() => router.navigate({pathname: "./addMemberScreen", params : {bond_id: bond_id}})}
         buttonStyle={styles.button}
         titleStyle={styles.title}
       />

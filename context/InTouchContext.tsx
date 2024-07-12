@@ -18,7 +18,7 @@ type InTouchContextType = {
   removePerson: (person: Person) => Promise<void>;
   createBond: (bond: Bond) => Promise<void>;
   removeBond: (bond: Bond) => Promise<void>;
-  createBondMember: (person: Person, bond: Bond) => Promise<void>;
+  createBondMember: (person_id: number, bond_id: number) => Promise<void>;
   removeBondMember: (bond: Bond, person: Person) => Promise<void>;
   getBondPersonMap: () => void;
   getPersonBondMap: () => void;
@@ -56,7 +56,7 @@ export const InTouchContext = createContext<InTouchContextType>({
   removeBond: function (bond: Bond): Promise<void> {
     throw new Error("Function not implemented.");
   },
-  createBondMember: function (person: Person, bond: Bond): Promise<void> {
+  createBondMember: function (person_id: number, bond_id: number): Promise<void> {
     throw new Error("Function not implemented.");
   },
   removeBondMember: function (bond: Bond, person: Person): Promise<void> {
@@ -286,11 +286,11 @@ export const InTouchContextProvider: React.FC<{
     }
   }
 
-  async function createBondMember(person: Person, bond: Bond) {
+  async function createBondMember(person_id: number, bond_id: number) {
     try {
-      await addPersonBond(db, person, bond);
-      const pID: number = Number(person.person_id);
-      const bID: number = Number(bond.bond_id);
+      await addPersonBond(db, person_id, bond_id);
+      const pID: number = person_id;
+      const bID: number = bond_id;
       const bondHash = new Map(bondPersonMap);
       const personHash = new Map(personBondMap);
 
