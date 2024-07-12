@@ -32,7 +32,14 @@ export default function RootLayout() {
     const initDB = async () => {
       await loadDB();
     };
-    initDB();
+
+    try {
+      initDB();
+
+    } catch (e) {
+      console.error(e);
+      console.log("failed to initDB()")
+    }
   });
 
   useEffect(() => {

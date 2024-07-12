@@ -26,11 +26,6 @@ type InTouchContextType = {
   getMembersOfBond: (bond: Bond) => Array<Person>
 };
 
-type BondPerson = {
-  person_id: Number;
-  bond_id: Number;
-}
-
 /**
  * This is initalized with an empty InTouchContextType. These are essentailly placeholder functions that we replace
  * upon providing values to the InTouchContext.Provider
@@ -82,8 +77,6 @@ export const InTouchContextProvider: React.FC<{
 // eslint-disable-next-line react/prop-types
 }> = ({ children }) => {
   // Hashmaps for cross referencing groups and members
-  let bondHashmap: Map<String, Person[]> = new Map();
-  let personHashmap: Map<String, Bond[]> = new Map();
 
   const [peopleList, setPeopleList] = useState<Person[]>([]);
   const [bondList, setBondList] = useState<Bond[]>([]);

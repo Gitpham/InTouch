@@ -11,3 +11,8 @@ export type Person = {
     phoneNumber: string,
     person_id: number,
 }
+
+export type BondPerson = {
+    person_id: number;
+    bond_id: number;
+  }

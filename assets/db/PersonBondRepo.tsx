@@ -1,4 +1,4 @@
-import { Person, Bond } from "@/constants/types";
+import { Person, Bond, BondPerson } from "@/constants/types";
 import * as SQLite from "expo-sqlite";
 
 
@@ -45,7 +45,7 @@ export const deletePersonBond = async (db: SQLite.SQLiteDatabase, person: Person
 export const getAllPersonBonds = async (db: SQLite.SQLiteDatabase) => {
 
     try {
-        return await db.getAllAsync(
+        return await db.getAllAsync<BondPerson>(
             `SELECT *
             FROM person_bond
             `);
