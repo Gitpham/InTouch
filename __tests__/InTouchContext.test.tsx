@@ -186,7 +186,61 @@ describe("integration tests for InTouchContext", () => {
       });
 
 
+      it("calling removePerson() with a valid person should remove a person from the peopleList state variable", async () => {
+        //CHECKS DEFAULT VALUE OF PEOPLE LIST
+        render(<InTouchContextDummyComponent></InTouchContextDummyComponent>, {
+          wrapper: InTouchContextProvider,
+        });
+    
+        const expectedValue = testPersonList
+          .map(
+            (p) => `${p.firstName} ${p.lastName} ${p.phoneNumber} ${p.person_id}`
+          )
+          .join(", ");
+  
+  
+        await waitFor(() => {
+          expect(
+            screen.getByTestId("peopleList").props.children.length
+          ).toBeGreaterThan(0); 
+        });
+  
+        let peopleListElement = screen.getByTestId("peopleList");
+        expect(peopleListElement.props.children).toEqual(expectedValue);
+  
+        //call removePerson()
+        await waitFor(() => {
+          expect(
+            screen.getByTestId("removePerson").props.children.length
+          ).toBeGreaterThan(0); // Assuming peopleList is not empty
+        });
+  
+        await userEvent.press(screen.getByTestId("removePerson"));
+  
+        //check that peopleList is updated
+        const newExpectedList = testPersonList.filter((p) => p.person_id != 1)
+        const newExpectedValue = newExpectedList
+          .map(
+            (p) => `${p.firstName} ${p.lastName} ${p.phoneNumber} ${p.person_id}`
+          )
+          .join(", ");
+  
+        await waitFor(() => {
+          expect(
+            screen.getByTestId("peopleList").props.children.length
+          ).toBeGreaterThan(0); 
+        });
+  
+        peopleListElement = screen.getByTestId("peopleList");
+        expect(peopleListElement.props.children).toEqual(newExpectedValue);
+      });
+
+
+
   });
+
+
+
 
 
 
