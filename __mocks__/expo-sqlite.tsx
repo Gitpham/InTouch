@@ -1,29 +1,29 @@
 import { Bond, Person } from "@/constants/types";
 
- const testP1: Person = {
+const testP1: Person = {
   firstName: "P1",
   lastName: "P1_lastName",
   phoneNumber: "111-111-1111",
-  person_id: "1",
+  person_id: 1,
 };
 
- const testP2: Person = {
+const testP2: Person = {
   firstName: "P2",
   lastName: "P2_lastName",
   phoneNumber: "111-111-1112",
-  person_id: "2",
+  person_id: 2,
 };
 
 const testB1: Bond = {
   bondName: "family",
-  bond_id: "1",
+  bond_id: 1,
   schedule: "weekly",
   typeOfCall: "group",
 };
 
 const testB2: Bond = {
   bondName: "friends",
-  bond_id: "2",
+  bond_id: 2,
   schedule: "monthly",
   typeOfCall: "individual",
 };
@@ -58,13 +58,16 @@ const mockGetAllAsync = jest.fn().mockImplementation((sql: string) => {
     return Promise.resolve(testBondList);
   }
 
-  if (sql == `SELECT *
+  if (
+    sql ==
+    `SELECT *
             FROM person_bond
-            `){
+            `
+  ) {
     return Promise.resolve(testPersonBondList);
   }
 
-  throw Error("Does not recognize sql command")
+  throw Error("Does not recognize sql command");
 });
 
 const mockStatement = {
@@ -81,6 +84,21 @@ const mockDatabase = {
 
 const openDatabaseAsync = jest.fn(() => mockDatabase);
 const SQLiteDatabase = jest.fn(() => mockDatabase);
-const useSQLiteContext = jest.fn(() => mockDatabase)
+const useSQLiteContext = jest.fn(() => mockDatabase);
 
-export {testBondList, testPersonList, testPersonBondList, openDatabaseAsync, SQLiteDatabase, useSQLiteContext, mockPrepareAsync, mockGetAllAsync, mockFinalizeAsync, mockExecuteAsync}
+export {
+  testBondList,
+  testPersonList,
+  testPersonBondList,
+  testP1,
+  testP2,
+  testB1,
+  testB2,
+  openDatabaseAsync,
+  SQLiteDatabase,
+  useSQLiteContext,
+  mockPrepareAsync,
+  mockGetAllAsync,
+  mockFinalizeAsync,
+  mockExecuteAsync,
+};

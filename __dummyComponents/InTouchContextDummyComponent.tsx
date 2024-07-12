@@ -1,7 +1,9 @@
 import { InTouchContext } from "@/context/InTouchContext";
 import { useContext,  } from "react";
-import { View, Text } from "react-native";
+import { View, Text, Button, Pressable} from "react-native";
 import React from "react";
+import { testP1 } from "@/__mocks__/expo-sqlite";
+// import { Button } from "@rneui/themed";
 
 
 export default function InTouchContextDummyComponent () {
@@ -10,7 +12,7 @@ export default function InTouchContextDummyComponent () {
         bondList,
         personBondMap,
         bondPersonMap,
-        // createPerson,
+        createPerson,
         // removePerson,
         // createBond,
         // removeBond,
@@ -34,12 +36,19 @@ export default function InTouchContextDummyComponent () {
     bondPersonMap.forEach(() => bondPersons.push(bpIter.next().value))
     
 
+    function onCreatePersonPress():void {
+        createPerson(testP1);
+    }
+
     return(
         <View>
             <Text testID="peopleList">{people.join(', ')}</Text>
             <Text testID="bondList">{bonds.join(', ')}</Text>
             <Text testID="personBondMap">{personBonds}</Text>
             <Text testID="bondPersonMap">{bondPersons}</Text>
+            <Pressable testID="createPerson" onPress={onCreatePersonPress}>
+                <Text>CreatePerson</Text>
+            </Pressable>
         </View>
     );
 }

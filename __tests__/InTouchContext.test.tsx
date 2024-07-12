@@ -1,9 +1,10 @@
 import {  InTouchContextProvider } from "@/context/InTouchContext";
 import React  from "react";
-import { render, screen, waitFor } from '@testing-library/react-native';
+import { render, screen, userEvent, waitFor } from '@testing-library/react-native';
 import InTouchContextDummyComponent from "@/__dummyComponents/InTouchContextDummyComponent";
-import { mockExecuteAsync, mockFinalizeAsync, mockGetAllAsync, mockPrepareAsync, testBondList, testPersonList } from "@/__mocks__/expo-sqlite";
+import { mockExecuteAsync, mockFinalizeAsync, mockGetAllAsync, mockPrepareAsync, testBondList, testP1, testPersonList } from "@/__mocks__/expo-sqlite";
 import { bondPersonMap_test, personBondMap_test } from "@/__dummyComponents/InTouchContextMockData";
+import { Person } from "@/constants/types";
 describe("integration tests for InTouchContext", () => {
 
 
@@ -66,6 +67,26 @@ describe("integration tests for InTouchContext", () => {
         const bondPersonListElement = screen.getByTestId("bondPersonMap");
         const expectedValue = bondPersonMap_test
         expect(bondPersonListElement.props.children).toEqual(expectedValue)
+    })
+
+    describe("people", () => {
+
+        it("calling createPerson() with a valid person should write to the db with the correct sql", async () => {
+
+            const expected = [testP1.firstName, testP1.lastName, testP1.phoneNumber]
+            render(<InTouchContextDummyComponent></InTouchContextDummyComponent>, {wrapper: InTouchContextProvider})
+            await waitFor(() => {
+                expect(screen.getByTestId("createPerson").props.children.length).toBeGreaterThan(0); // Assuming peopleList is not empty
+            });
+
+            await userEvent.press(screen.getByTestId("createPerson"))
+            expect(mockExecuteAsync).toHaveBeenCalledWith(expected)
+        })
+
+
+
+
+
     })
 
     
