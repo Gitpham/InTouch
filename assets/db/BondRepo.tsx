@@ -59,7 +59,7 @@ export const deleteBond = async (db: SQLite.SQLiteDatabase, bond: Bond) => {
         statement.finalizeAsync()
     }
   }
-};
+
 
 export const getAllBonds = async (db: SQLite.SQLiteDatabase) => {
   const bonds = await db.getAllAsync<Bond>(`SELECT * FROM bond`);
