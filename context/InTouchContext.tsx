@@ -96,27 +96,35 @@ export const InTouchContextProvider: React.FC<{
     new Map<number, Set<number>>()
   );
 
+  let hasRendered = false;
+
   const db = useSQLiteContext();
 
   useEffect(() => {
+
     const initalize = async () => {
-      try {
-        await initializePeopleList();
-        await initializeBondList();
-        await initializePersonBondMaps();
-      } catch (error) {
-        console.error(error);
-        throw Error("failed to initialize db");
+
+      if (!hasRendered) {
+        try {
+          await initializeBondList();
+          await initializePeopleList();
+          await initializePersonBondMaps();
+          hasRendered = true;
+        } catch (error) {
+          console.error(error);
+          throw Error("failed to initialize db");
+        }
+
+  
       }
     };
 
     initalize();
-  }, [db]);
+  }, []);
 
   async function initializePeopleList() {
     try {
       const initialized_peopleList = await getAllPersons(db);
-      // console.log("initialized peopleList:", initialized_peopleList)
       setPeopleList(initialized_peopleList);
     } catch (e) {
       console.error(e);
@@ -141,18 +149,12 @@ export const InTouchContextProvider: React.FC<{
   async function initializePersonBondMaps() {
     try {
       const dbBondPersonList = await getAllPersonBonds(db);
-      // console.log("personBond", dbBondPersonList);
-
       const peopleHash: Map<number, Set<number>> = new Map();
 
-      // console.log("init peopleHash")
       dbBondPersonList.forEach((p) => {
         const personId: number = p.person_id as number;
         const bondId: number = p.bond_id as number;
         if (!personId || !bondId) {
-          // console.log("person or bond id is null");
-          // console.log("bond", bondId);
-          // console.log("person", personId)
           return;
         }
 
@@ -195,18 +197,6 @@ export const InTouchContextProvider: React.FC<{
       });
 
       setBondPersonMap(bondHash);
-
-      // console.log("People: BOnds");
-      // const person_iter = peopleHash.entries();
-      // peopleHash.forEach(() => {
-      //   console.log(person_iter.next().value);
-      // });
-
-      // console.log("Bonds: people");
-      // const bond_iter = bondHash.entries();
-      // bondHash.forEach(() => {
-      //   console.log(bond_iter.next().value);
-      // });
     } catch (e) {
       console.error(e);
       throw Error("Could not fetch all BondPersons");

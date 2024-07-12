@@ -14,14 +14,12 @@ export const addPerson = async (db: SQLite.SQLiteDatabase, person: Person) => {
     const value: string[] = [person.firstName, person.lastName, person.phoneNumber];
 
     try {
-        console.log("add person")
         return await statement.executeAsync(value);
 
     } catch (error) {
         console.error(error);
         throw Error("failed to upload person")
     } finally {
-        console.log("finalize person async")
         statement.finalizeAsync()
     }
 
@@ -34,7 +32,7 @@ export const updatePerson = async (db: SQLite.SQLiteDatabase, updatedPerson: Per
         WHERE person_id = ?
         `);
 
-    const value: string[] = [updatedPerson.firstName, updatedPerson.lastName, updatedPerson.phoneNumber, '1']
+    const value: string[] = [updatedPerson.firstName, updatedPerson.lastName, updatedPerson.phoneNumber, updatedPerson.person_id]
 
     try {
         return await statement.executeAsync(value)
@@ -70,7 +68,7 @@ export const deletePerson = async (db: SQLite.SQLiteDatabase, person: Person) =>
 
 
 export const getAllPersons = async (db: SQLite.SQLiteDatabase) => {
-
+    // console.log("getAllPersons()")
     try {
         return await db.getAllAsync<Person>(`SELECT * FROM person`)
     } catch (error) {

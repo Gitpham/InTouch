@@ -33,7 +33,6 @@ export const deletePersonBond = async (db: SQLite.SQLiteDatabase, person: Person
     const value: string[] = [person.person_id.toString(), bond.bond_id.toString()]
 
     try {
-        console.log('removing group member')
         return await statement.executeAsync(value)
     } catch (error) {
         console.error(error)

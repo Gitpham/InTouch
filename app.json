@@ -41,7 +41,8 @@
         {
           "contactsPermission": "Allow inTouch to access your contacts."
         }
-      ]
+      ],
+      "expo-asset"
     ],
     "experiments": {
       "typedRoutes": true

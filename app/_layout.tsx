@@ -14,6 +14,7 @@ import { useColorScheme } from "@/hooks/useColorScheme";
 import { SQLiteProvider } from "expo-sqlite";
 import { InTouchContextProvider } from "@/context/InTouchContext";
 import React from "react";
+import { loadDB } from "@/assets/db/db";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -21,25 +22,18 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
 
-  // const loadData = useCallback(async () => {
-  //   try {
-  //     const db = await connectToDatabase();
-  //     await createTables(db);
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // }, []);
-
-  
-
   const colorScheme = useColorScheme();
+
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
 
-  // useEffect(() => {
-  //   loadData();
-  // },[loadData])
+  useEffect(() => {
+    const initDB = async () => {
+      await loadDB();
+    };
+    initDB();
+  });
 
   useEffect(() => {
 
@@ -55,28 +49,30 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <SQLiteProvider databaseName="Test_DataBase_1.db" assetSource={{ assetId: require('./../Test_DataBase_1.db') }}>
-      <InTouchContextProvider>
-
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="index" options={{ headerShown: false }} />
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="+not-found" options={{ headerShown: false }} />
-          <Stack.Screen
-            name="createGroupModal"
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="addMemberScreen"
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="addMemberManualScreen"
-            options={{ headerShown: false }}
-          />
-        </Stack>
+      <SQLiteProvider databaseName="Test_DataBase_6.db">
+        <InTouchContextProvider>
+          <Stack>
+            <Stack.Screen name="index" options={{ headerShown: false }} />
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="+not-found" />
+            <Stack.Screen
+              name="createGroupScreen"
+              options={{ headerBackTitle: "home", headerTitle: "" }}
+            />
+            <Stack.Screen
+              name="addMemberScreen"
+              options={{ headerTitle: "" }}
+            />
+            <Stack.Screen
+              name="addMemberManualScreen"
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="personScreen"
+              options={{ headerTitle: "Person" }}
+            />
+          </Stack>
         </InTouchContextProvider>
-
       </SQLiteProvider>
     </ThemeProvider>
   );
