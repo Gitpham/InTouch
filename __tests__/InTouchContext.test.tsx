@@ -101,6 +101,7 @@ describe("integration tests for InTouchContext", () => {
   });
 
   describe("people", () => {
+
     it("calling createPerson() with a valid person should write to the db with the correct sql", async () => {
       const expected = [testP1.firstName, testP1.lastName, testP1.phoneNumber];
       render(<InTouchContextDummyComponent></InTouchContextDummyComponent>, {
@@ -167,5 +168,26 @@ describe("integration tests for InTouchContext", () => {
       peopleListElement = screen.getByTestId("peopleList");
       expect(peopleListElement.props.children).toEqual(newExpectedValue);
     });
+
+
+    it("calling removePerson() with a valid person should write to the db with the correct sql", async () => {
+        const expected = ["1"];
+        render(<InTouchContextDummyComponent></InTouchContextDummyComponent>, {
+          wrapper: InTouchContextProvider,
+        });
+        await waitFor(() => {
+          expect(
+            screen.getByTestId("removePerson").props.children.length
+          ).toBeGreaterThan(0); // Assuming peopleList is not empty
+        });
+  
+        await userEvent.press(screen.getByTestId("removePerson"));
+        expect(mockExecuteAsync).toHaveBeenCalledWith(expected);
+      });
+
+
   });
+
+
+
 });

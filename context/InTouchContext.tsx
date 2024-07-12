@@ -211,23 +211,32 @@ export const InTouchContextProvider: React.FC<{
 
   async function removePerson(person: Person) {
     try {
+
+      if (!person.person_id){
+        throw new Error("person_id is falsy")
+      }
+      const personID: number = person.person_id as number;
       await deletePerson(db, person);
+
       setPeopleList(
-        peopleList.filter((item) => item.person_id != person.person_id)
+        peopleList.filter((item) => item.person_id != personID)
       );
 
-      personBondMap.delete(person.person_id);
-      setPersonBondMap(personBondMap);
+      const newPersonBondMap = personBondMap;
+      newPersonBondMap.delete(personID)
+      setPersonBondMap(newPersonBondMap);
 
-      bondPersonMap.forEach((value, key) => {
+      const newBondPersonMap = bondPersonMap;
+
+      newBondPersonMap.forEach((value, key) => {
         if (value) {
-        if (value.has(person.person_id)) {
-          value.delete(person.person_id);
+        if (value.has(personID)) {
+          value.delete(personID);
         }
       }
       });
 
-      setBondPersonMap(bondPersonMap);
+      setBondPersonMap(newBondPersonMap);
 
     } catch (e) {
       console.error(e);

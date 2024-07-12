@@ -13,7 +13,7 @@ export default function InTouchContextDummyComponent () {
         personBondMap,
         bondPersonMap,
         createPerson,
-        // removePerson,
+        removePerson,
         // createBond,
         // removeBond,
         // createBondMember,
@@ -40,6 +40,10 @@ export default function InTouchContextDummyComponent () {
         createPerson(testP1);
     }
 
+    function onRemovePersonPress(): void {
+        removePerson(testP1);
+    }
+
     return(
         <View>
             <Text testID="peopleList">{people.join(', ')}</Text>
@@ -49,6 +53,11 @@ export default function InTouchContextDummyComponent () {
             <Pressable testID="createPerson" onPress={onCreatePersonPress}>
                 <Text>CreatePerson</Text>
             </Pressable>
+            <Pressable testID="removePerson" onPress={onRemovePersonPress}>
+                <Text>RemovePerson</Text>
+            </Pressable>
+
+
         </View>
     );
 }
