@@ -78,7 +78,7 @@ export const InTouchContextProvider: React.FC<{
 }> = ({ children }) => {
   // Hashmaps for cross referencing groups and members
 
-  const [peopleList, setPeopleList] = useState<Person[]>([]);
+  const [peopleList, setPeopleList] = React.useState<Person[]>([]);
   const [bondList, setBondList] = useState<Bond[]>([]);
 
   const [personBondMap, setPersonBondMap] = useState<Map<number, Set<number>>>(

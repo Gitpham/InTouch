@@ -9,7 +9,7 @@ export type Person = {
     firstName: string,
     lastName: string,
     phoneNumber: string,
-    person_id: number,
+    person_id: number | undefined,
 }
 
 export type BondPerson = {
