@@ -22,7 +22,7 @@ export default function PersonScreen() {
     if (bond_index !== -1) {
       const b: Bond = bondList[bond_index];
       setBond(b);
-      console.log("groupScreen, bond: ", b)
+      // console.log("groupScreen, bond: ", b)
       const p = getMembersOfBond(b);
       setMembers(p)
       console.log("groupScreen, bondMembers: ", p)

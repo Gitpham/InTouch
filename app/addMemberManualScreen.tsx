@@ -35,9 +35,9 @@ export default function addMemberManualScreen() {
         
     if (bond_id !== -1) {
       // console.log("creating bond member with person id: ", person_id, " and bond id: ", bond_id)
-      console.log("addMembeManuallyScreen: personID: ", personID)
-          addTempBondMember(personID);
-      console.log("addMemberManually tempBondMembers:", tempBondMembers)
+      // console.log("addMembeManuallyScreen: personID: ", personID)
+        addTempBondMember(personID);
+      // console.log("addMemberManually tempBondMembers:", tempBondMembers)
     }
 
     router.back();
