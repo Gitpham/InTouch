@@ -7,13 +7,18 @@ import {
 import { getAllPersons, addPerson, deletePerson } from "@/assets/db/PersonRepo";
 import { Person, Bond } from "@/constants/types";
 import { useSQLiteContext } from "expo-sqlite";
-import { createContext, useEffect, useState, } from "react";
+import { createContext, useEffect, useState } from "react";
 import React from "react";
 type InTouchContextType = {
+  tempBondMembers: number[];
+
   peopleList: Person[];
   bondList: Bond[];
   personBondMap: Map<number, Set<number>>;
   bondPersonMap: Map<number, Set<number>>;
+  generatePersonId: () =>  number;
+  addTempBondMember: (personID: number) => void;
+  clearTempBondMembers: () => void;
   createPerson: (person: Person) => Promise<void>;
   removePerson: (person: Person) => Promise<void>;
   createBond: (bond: Bond) => Promise<void>;
@@ -23,7 +28,8 @@ type InTouchContextType = {
   getBondPersonMap: () => void;
   getPersonBondMap: () => void;
   getBondsOfPerson: (person: Person) => Array<Bond>;
-  getMembersOfBond: (bond: Bond) => Array<Person>
+  getMembersOfBond: (bond: Bond) => Array<Person>;
+  generateBondId: () => number;
 };
 
 /**
@@ -51,7 +57,10 @@ export const InTouchContext = createContext<InTouchContextType>({
   removeBond: function (bond: Bond): Promise<void> {
     throw new Error("Function not implemented.");
   },
-  createBondMember: function (person_id: number, bond_id: number): Promise<void> {
+  createBondMember: function (
+    person_id: number,
+    bond_id: number
+  ): Promise<void> {
     throw new Error("Function not implemented.");
   },
   removeBondMember: function (bond: Bond, person: Person): Promise<void> {
@@ -69,12 +78,24 @@ export const InTouchContext = createContext<InTouchContextType>({
   getMembersOfBond: function (bond: Bond): Array<Person> {
     throw new Error("Function not implemented.");
   },
-
+  generateBondId: function (): number {
+    throw new Error("Function not implemented.");
+  },
+  tempBondMembers: [],
+  addTempBondMember: function (personID: number): void {
+    throw new Error("Function not implemented.");
+  },
+  clearTempBondMembers: function (): void {
+    throw new Error("Function not implemented.");
+  },
+  generatePersonId: function (): number {
+    throw new Error("Function not implemented.");
+  },
 });
 
 export const InTouchContextProvider: React.FC<{
   children: React.ReactNode;
-// eslint-disable-next-line react/prop-types
+  // eslint-disable-next-line react/prop-types
 }> = ({ children }) => {
   // Hashmaps for cross referencing groups and members
 
@@ -89,14 +110,27 @@ export const InTouchContextProvider: React.FC<{
     new Map<number, Set<number>>()
   );
 
+  const [tempBondMembers, setTempBondMembers] = useState<number[]>([]);
+
+  function addTempBondMember(personID: number) {
+    const newTempBondMembers = tempBondMembers;
+    newTempBondMembers.push(personID);
+    setTempBondMembers(newTempBondMembers);
+
+    // setTempBondMembers([...tempBondMembers, personID])
+    // console.log("addTempBOndMember()",tempBondMembers, personID)
+  }
+
+  function clearTempBondMembers() {
+    setTempBondMembers([])
+  }
+
   let hasRendered = false;
 
   const db = useSQLiteContext();
 
   useEffect(() => {
-
     const initalize = async () => {
-
       if (!hasRendered) {
         try {
           await initializeBondList();
@@ -107,8 +141,6 @@ export const InTouchContextProvider: React.FC<{
           console.error(error);
           throw Error("failed to initialize db");
         }
-
-  
       }
     };
 
@@ -196,6 +228,14 @@ export const InTouchContextProvider: React.FC<{
     }
   }
 
+  function generatePersonId(): number {
+    let person_id = 0;
+    if (peopleList.length > 0) {
+      person_id = peopleList[peopleList.length - 1].person_id as number + 1;
+    }
+    return person_id;
+  }
+
   async function createPerson(person: Person) {
     try {
       await addPerson(db, person);
@@ -211,37 +251,48 @@ export const InTouchContextProvider: React.FC<{
 
   async function removePerson(person: Person) {
     try {
-
-      if (!person.person_id){
-        throw new Error("person_id is falsy")
+      if (!person.person_id) {
+        throw new Error("person_id is falsy");
       }
       const personID: number = person.person_id as number;
       await deletePerson(db, person);
 
-      setPeopleList(
-        peopleList.filter((item) => item.person_id != personID)
-      );
+      setPeopleList(peopleList.filter((item) => item.person_id != personID));
 
-      const newPersonBondMap = personBondMap;
-      newPersonBondMap.delete(personID)
-      setPersonBondMap(newPersonBondMap);
+      const bondsOfPerson: Set<number> = personBondMap.get(
+        personID
+      ) as Set<number>;
 
-      const newBondPersonMap = bondPersonMap;
-
-      newBondPersonMap.forEach((value, key) => {
-        if (value) {
-        if (value.has(personID)) {
-          value.delete(personID);
-        }
-      }
+      setPersonBondMap((prevMap) => {
+        const newMap = new Map(prevMap);
+        newMap.delete(personID);
+        return newMap;
       });
 
-      setBondPersonMap(newBondPersonMap);
+      setBondPersonMap((prevMap) => {
+        const newBondPersonMap = prevMap;
 
+        bondsOfPerson.forEach((b) => {
+          const updatedPersons: Set<number> = newBondPersonMap.get(
+            b
+          ) as Set<number>;
+          updatedPersons.delete(personID);
+          newBondPersonMap.set(b, updatedPersons);
+        });
+        return newBondPersonMap;
+      });
     } catch (e) {
       console.error(e);
       throw Error("Could not remove person");
     }
+  }
+
+  function generateBondId(): number {
+    let updatedBondID = 0;
+    if (bondList.length > 0) {
+      updatedBondID = bondList[bondList.length - 1].bond_id + 1;
+    }
+    return updatedBondID;
   }
 
   async function createBond(bond: Bond) {
@@ -256,22 +307,36 @@ export const InTouchContextProvider: React.FC<{
 
   async function removeBond(bond: Bond) {
     try {
+      if (!bond.bond_id) {
+        throw Error("failed removeBond(). bond_id is undefined");
+      }
+      const bondID: number = bond.bond_id as number;
+
       await deleteBond(db, bond);
-      setBondList(bondList.filter((item) => item.bond_id != bond.bond_id));
+      setBondList(bondList.filter((item) => item.bond_id != bondID));
 
       // Remove bond from bondPerson hash map
-      bondPersonMap.delete(bond.bond_id);
-      setBondPersonMap(bondPersonMap)
+      const personsOfBond: Set<number> = bondPersonMap.get(
+        bondID
+      ) as Set<number>;
 
-      // Remove all instances of bond within PersonBond hash map
-      personBondMap.forEach((value, key) => {
-        if (value.has(bond.bond_id)) {
-          value.delete(bond.bond_id);
-        }
+      setBondPersonMap((prevMap) => {
+        const newMap = new Map(prevMap);
+        newMap.delete(bondID);
+        return newMap;
       });
 
-      setPersonBondMap(personBondMap);
-
+      setPersonBondMap((prevMap) => {
+        const newPersonBondMap = prevMap;
+        personsOfBond.forEach((b) => {
+          const updatedBonds: Set<number> = newPersonBondMap.get(
+            b
+          ) as Set<number>;
+          updatedBonds.delete(bondID);
+          newPersonBondMap.set(b, updatedBonds);
+        });
+        return newPersonBondMap;
+      });
     } catch (e) {
       console.error(e);
       throw Error("Could not remove bond");
@@ -341,7 +406,6 @@ export const InTouchContextProvider: React.FC<{
     }
   }
 
-
   function getBondsOfPerson(person: Person): Array<Bond> {
     const personID = Number(person.person_id);
     try {
@@ -360,9 +424,10 @@ export const InTouchContextProvider: React.FC<{
   }
 
   function getMembersOfBond(bond: Bond): Array<Person> {
-    const bondID = Number(bond.bond_id);
+    const bondID = +bond.bond_id;
     try {
       const personIDs = bondPersonMap.get(bondID);
+      console.log(personIDs)
       const persons = peopleList.filter((p) => {
         const pID: number = Number(p.person_id);
         if (personIDs?.has(pID)) {
@@ -382,10 +447,12 @@ export const InTouchContextProvider: React.FC<{
     <>
       <InTouchContext.Provider
         value={{
+          tempBondMembers,
           peopleList,
           bondList,
           personBondMap,
           bondPersonMap,
+          generatePersonId,
           createPerson,
           removePerson,
           createBond,
@@ -395,7 +462,10 @@ export const InTouchContextProvider: React.FC<{
           getBondPersonMap,
           getPersonBondMap,
           getBondsOfPerson,
-          getMembersOfBond
+          getMembersOfBond,
+          generateBondId,
+          addTempBondMember,
+          clearTempBondMembers,
         }}
       >
         {children}

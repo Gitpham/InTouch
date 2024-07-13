@@ -5,13 +5,13 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "@rneui/themed";
 import { StyleSheet, View } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import * as SQLite from "expo-sqlite";
+import React from "react";
 import { InTouchContext } from "@/context/InTouchContext";
 import { Person } from "@/constants/types";
 
 export default function addMemberManualScreen() {
   const router = useRouter();
-  const { createPerson, peopleList, createBondMember } = useContext(InTouchContext);
+  const { createPerson, generatePersonId, addTempBondMember, tempBondMembers } = useContext(InTouchContext);
   const localParams = useLocalSearchParams();
 
   // Member information
@@ -20,25 +20,24 @@ export default function addMemberManualScreen() {
   const [memberNumber, memNumberChange] = useState("");
 
   // Generate unique person id
-  let person_id = 0;
-  if (peopleList.length > 0) {
-    person_id = peopleList[peopleList.length - 1].person_id + 1;
-  }
+  const personID = generatePersonId();
 
   async function savePerson() {
     const newContact: Person = {
       firstName: memberFirstName,
       lastName: memberLastName,
       phoneNumber: memberNumber,
-      person_id: person_id,
+      person_id: personID,
     };
 
-    createPerson(newContact);
+    await createPerson(newContact);
     const bond_id = +localParams.bond_id
         
     if (bond_id !== -1) {
-      console.log("creating bond member with person id: ", person_id, " and bond id: ", bond_id)
-      createBondMember(person_id, bond_id)
+      // console.log("creating bond member with person id: ", person_id, " and bond id: ", bond_id)
+      console.log("addMembeManuallyScreen: personID: ", personID)
+          addTempBondMember(personID);
+      console.log("addMemberManually tempBondMembers:", tempBondMembers)
     }
 
     router.back();

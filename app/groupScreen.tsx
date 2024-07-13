@@ -7,6 +7,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { InTouchContext } from "@/context/InTouchContext";
 import { Bond, Person } from "@/constants/types";
 import { router } from "expo-router";
+import React from "react";
 
 export default function PersonScreen() {
 
@@ -21,8 +22,10 @@ export default function PersonScreen() {
     if (bond_index !== -1) {
       const b: Bond = bondList[bond_index];
       setBond(b);
+      console.log("groupScreen, bond: ", b)
       const p = getMembersOfBond(b);
       setMembers(p)
+      console.log("groupScreen, bondMembers: ", p)
     }
   }, [])
 

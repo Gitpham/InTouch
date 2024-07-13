@@ -9,37 +9,35 @@ import * as Contacts from "expo-contacts";
 import { InTouchContext } from "@/context/InTouchContext";
 import { StandardButton } from "@/components/ButtonStandard";
 import { Person } from "@/constants/types";
+import React from "react";
 
 export default function addMemberScreen() {
-  const { createPerson, peopleList, createBondMember } = useContext(InTouchContext);
+  const { createPerson, addTempBondMember, generatePersonId , tempBondMembers} = useContext(InTouchContext);
   const localParams = useLocalSearchParams();
 
   async function importFromContacts() {
     const { status } = await Contacts.requestPermissionsAsync();
+
     if (status === "granted") {
       const person = await Contacts.presentContactPickerAsync();
       if (person) {
 
         // Generate unique person id
-        let person_id = 0;
-        if (peopleList.length > 0) {
-          person_id = peopleList[peopleList.length - 1].person_id + 1;
-        }
+        const personID = generatePersonId();
 
         const newContact: Person = {
           firstName: person?.firstName as string,
           lastName: person?.lastName as string,
           phoneNumber: person?.phoneNumbers?.[0]?.number as string,
-          person_id: person_id,
+          person_id: personID,
         };
-
         createPerson(newContact);
 
-        const bond_id = +localParams.bond_id
+        const bond_id = +localParams.bond_id;
         
         if (bond_id !== -1) {
-          createBondMember(newContact.person_id, bond_id)
-        }
+          addTempBondMember(personID);
+          }
       } else {
         Alert.alert("unable to add from contacts");
       }

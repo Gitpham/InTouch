@@ -9,29 +9,25 @@ import { router } from "expo-router";
 
 import { InTouchContext } from "@/context/InTouchContext";
 import { Bond } from "@/constants/types";
-import { Group } from "expo-contacts";
 import { StandardButton } from "@/components/ButtonStandard";
+import React from "react";
 
 export default function createGroupScreen() {
-  // For Bottom Sheet
-  const [isVisible, setIsVisible] = useState(false);
 
   // Data to be stored in record
   const [bondName, groupNameChange] = useState("");
-  const { createBond, bondList } = useContext(InTouchContext);
+  const { createBond, generateBondId, tempBondMembers, clearTempBondMembers, createBondMember} = useContext(InTouchContext);
 
-  // Generate unique bond_id
-  let bond_id = 0;
-  if (bondList.length > 0) {
-    bond_id = bondList[bondList.length - 1].bond_id + 1;
-  }
+
+  const bondID = generateBondId();
 
   const bondToAdd: Bond = {
     bondName: bondName,
     typeOfCall: "",
     schedule: "",
-    bond_id: bond_id,
+    bond_id: bondID,
   };
+
 
   function onDonePress() {
 
@@ -39,7 +35,19 @@ export default function createGroupScreen() {
       Alert.alert("Must enter a Bond name")
       return;
     }
+
+    console.log("createGroupScreen tempBondMembers:", tempBondMembers)
     createBond(bondToAdd);
+    tempBondMembers.forEach(async (bm) => {
+      try {
+        await createBondMember(bm, bondID)
+        console.log("createGroupScreen, called createBondMember with", bm, bondID)
+      } catch (e) {
+        console.error(e);
+        throw Error ("failed to call createBondMember()")
+      }
+    })
+    clearTempBondMembers();
     router.push("./(tabs)");
   }
   let title = "Create Group";
@@ -72,7 +80,7 @@ export default function createGroupScreen() {
 
       <Button
         title="Add Group Member"
-        onPress={() => router.navigate({pathname: "./addMemberScreen", params : {bond_id: bond_id}})}
+        onPress={() => router.navigate({pathname: "./addMemberScreen", params : {bond_id: bondID}})}
         buttonStyle={styles.button}
         titleStyle={styles.title}
       />
@@ -88,7 +96,10 @@ export default function createGroupScreen() {
 
       <StandardButton
       title="Cancel"
-      onPress={() => router.back()}
+      onPress={() => {
+        clearTempBondMembers();
+        router.back()}
+      }
       >
       </StandardButton>
 
