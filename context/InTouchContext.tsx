@@ -5,7 +5,7 @@ import {
   getAllPersonBonds,
 } from "@/assets/db/PersonBondRepo";
 import { getAllPersons, addPerson, deletePerson } from "@/assets/db/PersonRepo";
-import { Person, Bond } from "@/constants/types";
+import { Person, Bond, BondPerson } from "@/constants/types";
 import { useSQLiteContext } from "expo-sqlite";
 import { createContext, useEffect, useState } from "react";
 import React from "react";
@@ -135,7 +135,7 @@ export const InTouchContextProvider: React.FC<{
         try {
           await initializeBondList();
           await initializePeopleList();
-          await initializePersonBondMaps();
+          await initializeBondMemberMaps();
           hasRendered = true;
         } catch (error) {
           console.error(error);
@@ -171,62 +171,69 @@ export const InTouchContextProvider: React.FC<{
    * creates a 2 local hashmaps for the bondmember lisst, A, B. A's keys are the person_id, values are the bonds
    * bonds associated with that person. B is vice versa.
    */
-  async function initializePersonBondMaps() {
+  async function initializeBondMemberMaps() {
     try {
-      const dbBondPersonList = await getAllPersonBonds(db);
-      const peopleHash: Map<number, Set<number>> = new Map();
-
-      dbBondPersonList.forEach((p) => {
-        const personId: number = p.person_id as number;
-        const bondId: number = p.bond_id as number;
-        if (!personId || !bondId) {
-          return;
-        }
-
-        if (peopleHash.has(personId)) {
-          const groupIds: Set<number> = peopleHash.get(personId) as Set<number>;
-          groupIds.add(bondId);
-          peopleHash.set(personId, groupIds);
-          return;
-        }
-
-        const pGroup: Set<number> = new Set();
-        pGroup.add(bondId);
-        peopleHash.set(personId, pGroup);
-        return;
-      });
-
-      setPersonBondMap(peopleHash);
-
-      const bondHash: Map<number, Set<number>> = new Map();
-
-      dbBondPersonList.forEach((p) => {
-        const personId: number = p.person_id as number;
-        const bondId: number = p.bond_id as number;
-
-        if (!personId || !bondId) {
-          return;
-        }
-
-        if (bondHash.has(bondId)) {
-          const personIds: Set<number> = bondHash.get(bondId) as Set<number>;
-          personIds.add(bondId);
-          bondHash.set(bondId, personIds);
-          return;
-        }
-
-        const pIdSet: Set<number> = new Set();
-        pIdSet.add(personId);
-        bondHash.set(bondId, pIdSet);
-        return;
-      });
-
-      setBondPersonMap(bondHash);
+      const dbBondPersonList: BondPerson[] = await getAllPersonBonds(db);
+      setPersonBondMap(initializePersonBondMap(dbBondPersonList));
+      setBondPersonMap(initializeBondPersonMap(dbBondPersonList))
     } catch (e) {
       console.error(e);
       throw Error("Could not fetch all BondPersons");
     }
   }
+
+  function initializePersonBondMap(dbBondPersonList: BondPerson[]):Map<number, Set<number>> {
+    const personBondHash = new Map<number, Set<number>>();
+
+    dbBondPersonList.forEach((p) => {
+      const personId: number = p.person_id as number;
+      const bondId: number = p.bond_id as number;
+      if (!personId || !bondId) {
+        return;
+      }
+
+      if (personBondHash.has(personId)) {
+        const groupIds: Set<number> = personBondHash.get(personId) as Set<number>;
+        groupIds.add(bondId);
+        personBondHash.set(personId, groupIds);
+        return;
+      }
+
+      const pGroup: Set<number> = new Set();
+      pGroup.add(bondId);
+      personBondHash.set(personId, pGroup);
+      return;
+    });
+    return personBondHash;
+  }
+
+  function initializeBondPersonMap(dbBondPersonList: BondPerson[]):Map<number, Set<number>> {
+    const bondPersonHash = new Map<number, Set<number>>();
+    dbBondPersonList.forEach((p) => {
+      if (!p.person_id || !p.bond_id) {
+        // console.log("no person or bond id. bondID: ", bondId, "personID: ", personId)
+        return;
+      }
+      const personId: number = p.person_id as number;
+      const bondId: number = p.bond_id as number;
+
+      if (bondPersonHash.has(bondId)) {
+        // console.log("has bond: ", bondId, "personId to add: ", personId)
+        const personIdSet: Set<number> = bondPersonHash.get(bondId) as Set<number>;
+        personIdSet.add(personId);
+        bondPersonHash.set(bondId, personIdSet);
+        return;
+      }
+
+
+      const newPersonIdSet: Set<number> = new Set();
+      newPersonIdSet.add(personId);
+      bondPersonHash.set(bondId, newPersonIdSet);
+      return;
+    });   
+    return bondPersonHash;
+  }
+
 
   function generatePersonId(): number {
     let person_id = 0;
@@ -345,40 +352,53 @@ export const InTouchContextProvider: React.FC<{
 
   async function createBondMember(person_id: number, bond_id: number) {
     try {
+      if (!person_id || !bond_id) {
+        throw Error("createBondMember(): personID or bondID is undefined")
+      }
       await addPersonBond(db, person_id, bond_id);
       const pID: number = person_id;
       const bID: number = bond_id;
-      const bondHash = new Map(bondPersonMap);
-      const personHash = new Map(personBondMap);
 
-      // UPDATE PERSON-BOND MAP
-      if (!personBondMap.has(pID)) {
-        const bondIds: Set<number> = new Set();
-        bondIds.add(bID);
-        personHash.set(pID, bondIds);
-      } else {
-        const bondIds: Set<number> = personHash.get(pID) as Set<number>;
-        bondIds.add(bID);
-        personHash.set(pID, bondIds);
-        setPersonBondMap(personHash);
-      }
-
-      //UDPATE BOND-PERSON MAP
-
-      if (!bondPersonMap.has(bID)) {
-        const personIds: Set<number> = new Set();
-        personIds.add(pID);
-        bondHash.set(bID, personIds);
-      } else {
-        const personIds: Set<number> = bondPersonMap.get(bID) as Set<number>;
-        personIds.add(pID);
-        bondHash.set(bID, personIds);
-        setBondPersonMap(bondHash);
-      }
+      setPersonBondMap(addToPersonBondMap(person_id, bond_id));
+      setBondPersonMap(addToBondPersonMap(person_id, bond_id));
     } catch (e) {
       console.error(e);
       throw Error("createBondMember(): Could not create bond member");
     }
+  }
+
+  function addToPersonBondMap(personID: number, bondID: number): Map<number, Set<number>> {
+    const personHash = new Map(personBondMap);
+    // UPDATE PERSON-BOND MAP
+    if (!personBondMap.has(personID)) {
+      const bondIds: Set<number> = new Set();
+      bondIds.add(bondID);
+      personHash.set(personID, bondIds);
+    } else {
+      const bondIds: Set<number> = personHash.get(personID) as Set<number>;
+      bondIds.add(bondID);
+      personHash.set(personID, bondIds);
+    }
+    return personHash;
+  }
+
+  function addToBondPersonMap(personID: number, bondID: number): Map<number, Set<number>> {
+    const bondHash = new Map(bondPersonMap);
+    console.log("addToPersonBondMap: ", personID, bondID)
+
+
+    if (!bondPersonMap.has(bondID)) {
+      const personIds: Set<number> = new Set();
+      personIds.add(personID);
+      bondHash.set(bondID, personIds);
+    } else {
+      const personIds: Set<number> = bondPersonMap.get(bondID) as Set<number>;
+      personIds.add(personID);
+      bondHash.set(bondID, personIds);
+    }
+
+    return bondHash;
+
   }
 
   function getPersonBondMap() {
@@ -400,10 +420,39 @@ export const InTouchContextProvider: React.FC<{
   async function removeBondMember(bond: Bond, person: Person) {
     try {
       await deletePersonBond(db, person, bond);
+      setPersonBondMap(removeFromPersonBondMap(bond, person))
+      setBondPersonMap(removeFromBondPersonMap(bond, person))
     } catch (e) {
       console.error(e);
       throw Error("Could not delete bond member");
     }
+  }
+
+  function removeFromPersonBondMap(bond: Bond, person: Person): Map<number, Set<number>> {
+
+    const bondID: number = bond.bond_id;
+    const personID: number = person.person_id as number;
+    const personHash = new Map(personBondMap);
+
+    // UPDATE PERSON-BOND MAP
+    const bondIds: Set<number> = personHash.get(personID) as Set<number>;
+    bondIds.delete(bondID);
+    personHash.set(personID, bondIds);
+    return personHash;
+
+  }
+
+  function removeFromBondPersonMap(bond: Bond, person: Person): Map<number, Set<number>> {
+
+    const bondID: number = bond.bond_id;
+    const personID: number = person.person_id as number;
+    const bondHash = new Map(bondPersonMap);
+
+    // UPDATE PERSON-BOND MAP
+    const personIds: Set<number> = bondHash.get(bondID) as Set<number>;
+    personIds.delete(personID);
+    bondHash.set(bondID, personIds);
+    return bondHash;
   }
 
   function getBondsOfPerson(person: Person): Array<Bond> {
