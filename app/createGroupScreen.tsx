@@ -38,15 +38,15 @@ export default function createGroupScreen() {
 
     console.log("createGroupScreen tempBondMembers:", tempBondMembers)
     createBond(bondToAdd);
-    tempBondMembers.forEach(async (bm) => {
+
+
+    
       try {
-        await createBondMember(bm, bondID)
-        console.log("createGroupScreen, called createBondMember with", bm, bondID)
+        createBondMember(tempBondMembers, bondID)
       } catch (e) {
         console.error(e);
         throw Error ("failed to call createBondMember()")
       }
-    })
     clearTempBondMembers();
     router.push("./(tabs)");
   }

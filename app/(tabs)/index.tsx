@@ -21,7 +21,7 @@ export default function homeScreen() {
       <Pressable onPress = {() => onBondPress(item)}>
       <ListItem bottomDivider>
         <ListItem.Content id={item.bond_id.toString()}>
-          <ListItem.Title>{item.bondName} </ListItem.Title>
+          <ListItem.Title>{item.bondName} id: {item.bond_id.toString()}</ListItem.Title>
         </ListItem.Content>
       </ListItem>
       </Pressable>

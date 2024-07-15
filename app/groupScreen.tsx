@@ -9,7 +9,7 @@ import { Bond, Person } from "@/constants/types";
 import { router } from "expo-router";
 import React from "react";
 
-export default function PersonScreen() {
+export default function groupScreen() {
 
   const {bondList, getMembersOfBond, removeBond } = useContext(InTouchContext)
   const localParams = useLocalSearchParams();
@@ -17,7 +17,10 @@ export default function PersonScreen() {
   const [members, setMembers] = useState<Array<Person>>();
 
   useEffect(() => {
-    const bondId: number = Number(localParams.id)
+    const bondId: number = +localParams.id;
+    
+    console.log("bondID: ", bondId)
+    console.log("bondList: ", bondList)
     let bond_index = bondList.findIndex(item => item.bond_id === bondId)
     if (bond_index !== -1) {
       const b: Bond = bondList[bond_index];

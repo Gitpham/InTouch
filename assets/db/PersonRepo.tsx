@@ -9,9 +9,8 @@ import * as SQLite from "expo-sqlite";
 
 export const addPerson = async (db: SQLite.SQLiteDatabase, person: Person) => {
 
-    const statement = await db.prepareAsync(`INSERT INTO person (firstName, lastName, phoneNumber) VALUES (?, ?, ?)`)
-
-    const value: string[] = [person.firstName, person.lastName, person.phoneNumber];
+    const statement = await db.prepareAsync(`INSERT INTO person (person_id, firstName, lastName, phoneNumber) VALUES (?, ?, ?, ?)`)
+    const value: string[] = [(person.person_id as number).toString(), person.firstName, person.lastName, person.phoneNumber];
 
     try {
         return await statement.executeAsync(value);
@@ -67,7 +66,6 @@ export const deletePerson = async (db: SQLite.SQLiteDatabase, person: Person) =>
 
 
 export const getAllPersons = async (db: SQLite.SQLiteDatabase) => {
-    // console.log("getAllPersons()")
     try {
         return await db.getAllAsync<Person>(`SELECT * FROM person`)
     } catch (error) {

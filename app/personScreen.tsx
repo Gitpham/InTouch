@@ -65,7 +65,7 @@ export default function PersonScreen() {
        return (
         <SafeAreaView style = {styles.stepContainer}>
              <Card>
-               <Card.Title>Name: {person?.firstName} {person?.lastName} </Card.Title>
+               <Card.Title>Name: {person?.firstName} {person?.lastName} ID: {person?.person_id}</Card.Title>
                <Card.Divider></Card.Divider>
                <ThemedText>Number: </ThemedText>
                <ThemedText>{person?.phoneNumber}</ThemedText>

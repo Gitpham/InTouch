@@ -2,29 +2,28 @@ import * as SQLite from "expo-sqlite";
 import { Asset } from "expo-asset";
 import * as FileSystem from "expo-file-system";
 
-
-
-export const connectToDatabase = async () => {
-  const db = await SQLite.openDatabaseAsync("InTouchDB_1.db");
-  console.log("Successfully opened db");
-  return db;
-};
-
 export const loadDB = async () => {
     try {
-      const dbName = "Test_DataBase_6.db";
-      const dbAsset = require("../Test_DataBase_6.db");
+      const dbName = "Test_DataBase_7.db";
+      const dbAsset = require("../Test_DataBase_7.db");
       const dbUri = Asset.fromModule(dbAsset).uri;
       const dbFilePath = `${FileSystem.documentDirectory}SQLite/${dbName}`;
   
+
       const fileInfo = await FileSystem.getInfoAsync(dbFilePath);
+      console.log("(a) fileINFO: ", fileInfo)
   
       if (!fileInfo.exists) {
+
+
         await FileSystem.makeDirectoryAsync(
           `${FileSystem.documentDirectory}SQLite`
           // { intermediates: true }
         );
+        console.log("b")
         await FileSystem.downloadAsync(dbUri, dbFilePath);
+        console.log("c")
+
       }
     } catch (e) {
       console.error(e);
@@ -33,12 +32,30 @@ export const loadDB = async () => {
   };
 
 
+export const clearDB = async (db: SQLite.SQLiteDatabase) => {
+
+
+  try {
+
+    await db.execAsync('DELETE FROM person;');
+    await db.execAsync('DELETE FROM bond;');
+    await db.execAsync('DELETE FROM person_bond;');
+    
+
+  } catch (e) {
+    console.error(e);
+    throw Error ("failed to clearDB()")
+  }
+
+}
+
+
 
 
 export const createTables = async (db: SQLite.SQLiteDatabase) => {
   const groupQuery = `
         CREATE TABLE IF NOT EXISTS bond (
-            bond_id INTEGER PRIMARY KEY AUTOINCREMENT,
+            bond_id INTEGER PRIMARY KEY,
             bondName TEXT NOT NULL UNIQUE,
             schedule TEXT,
             type_of_call TEXT
@@ -47,7 +64,7 @@ export const createTables = async (db: SQLite.SQLiteDatabase) => {
 
   const personQuery = `
         CREATE TABLE IF NOT EXISTS person (
-            person_id INTEGER PRIMARY KEY AUTOINCREMENT,
+            person_id INTEGER PRIMARY KEY,
             firstName TEXT NOT NULL,
             lastName TEXT,
             phoneNumber TEXT NOT NULL UNIQUE
@@ -82,6 +99,8 @@ export const createTables = async (db: SQLite.SQLiteDatabase) => {
     throw Error(`failed to create tables`);
   }
 };
+
+//kj
 
 export const getTableNames = async (
   db: SQLite.SQLiteDatabase

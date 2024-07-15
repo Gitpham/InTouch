@@ -1,5 +1,5 @@
 import { ThemedText } from "@/components/ThemedText";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { TextInput } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "@rneui/themed";
@@ -20,9 +20,11 @@ export default function addMemberManualScreen() {
   const [memberNumber, memNumberChange] = useState("");
 
   // Generate unique person id
-  const personID = generatePersonId();
+
 
   async function savePerson() {
+    const personID = generatePersonId();
+
     const newContact: Person = {
       firstName: memberFirstName,
       lastName: memberLastName,
@@ -32,7 +34,6 @@ export default function addMemberManualScreen() {
 
     await createPerson(newContact);
     const bond_id = +localParams.bond_id
-        
     if (bond_id !== -1) {
       // console.log("creating bond member with person id: ", person_id, " and bond id: ", bond_id)
       // console.log("addMembeManuallyScreen: personID: ", personID)
