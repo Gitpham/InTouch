@@ -13,8 +13,11 @@ import {
   mockGetAllAsync,
   mockPrepareAsync,
   testB1,
+  testB3,
+  testB6,
   testBondList,
   testP1,
+  testP2,
   testPersonList,
 } from "@/__mocks__/expo-sqlite";
 import { Bond, Person } from "@/constants/types";
@@ -447,9 +450,9 @@ describe("integration tests for InTouchContext", () => {
         wrapper: InTouchContextProvider,
       });
 
-      const currPIdSet: Set<number> = pbHash.get(1) as Set<number>;
-      currPIdSet.add(3);
-      pbHash.set(1, currPIdSet);
+      const bondIdSet: Set<number> = pbHash.get(1) as Set<number>;
+      bondIdSet.add(3);
+      pbHash.set(1, bondIdSet);
 
       const pbIter = pbHash.entries();
       expectedPersonBondHash = [];
@@ -484,9 +487,9 @@ describe("integration tests for InTouchContext", () => {
         wrapper: InTouchContextProvider,
       });
 
-      const currBondIDSet: Set<number> = bpHash.get(3) as Set<number>;
-      currBondIDSet.add(1);
-      bpHash.set(3, currBondIDSet);
+      const personIdSet: Set<number> = bpHash.get(3) as Set<number>;
+      personIdSet.add(1);
+      bpHash.set(3, personIdSet);
 
       const bpIter = bpHash.entries();
       expectedBondPersonHash = [];
@@ -511,9 +514,55 @@ describe("integration tests for InTouchContext", () => {
       //ASSERT
       const bondPersonElement =
         screen.getByTestId("bondPersonMap").props.children;
-
       expect(bondPersonElement).toEqual(expectedBondPersonHash);
     });
+
+    it("removeBondMember(6, 1) should update the bondPerson hash", async () => {
+      //ARRANGE
+      
+      // console.log("expectedBondPersonhash before ", expectedBondPersonHash);
+
+      // MANUALLY REMOVE BOND MEMBER FORM BONDPERSONHASH
+      const personIdSet: Set<number> = bpHash.get(testB6.bond_id) as Set<number>;
+      personIdSet.delete(testP2.person_id as number);
+      bpHash.set(testB6.bond_id, personIdSet);
+
+      const bpIter = bpHash.entries();
+      expectedBondPersonHash = [];
+      bpHash.forEach(() => expectedBondPersonHash.push(bpIter.next().value));
+      // console.log("expectedBondPersonhash after ", expectedBondPersonHash);
+
+      jest.useFakeTimers();
+      render(<InTouchContextDummyComponent></InTouchContextDummyComponent>, {
+        wrapper: InTouchContextProvider,
+      });
+
+      await waitFor(() => {
+        expect(
+          screen.getByTestId("bondPersonMap").props.children.length
+        ).toBeGreaterThan(0); 
+      });
+
+      //ACT
+      await userEvent.press(screen.getByTestId("removeBondMember"));
+      jest.advanceTimersByTime(500);
+
+      await waitFor(() => {
+        expect(
+          screen.getByTestId("bondPersonMap").props.children.length
+        ).toBeGreaterThan(0); // Assuming peopleList is not empty
+      });
+
+      //ASSERT
+      const bondPersonElement =
+        screen.getByTestId("bondPersonMap").props.children;
+
+      // console.log("expectedBondPersonhash: ", expectedBondPersonHash);
+      // console.log("bondPersonElement: ", bondPersonElement)
+      expect(bondPersonElement).toEqual(expectedBondPersonHash);
+    });
+
+  
 
 
   });

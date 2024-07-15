@@ -356,9 +356,6 @@ export const InTouchContextProvider: React.FC<{
         throw Error("createBondMember(): personID or bondID is undefined")
       }
       await addPersonBond(db, person_id, bond_id);
-      const pID: number = person_id;
-      const bID: number = bond_id;
-
       setPersonBondMap(addToPersonBondMap(person_id, bond_id));
       setBondPersonMap(addToBondPersonMap(person_id, bond_id));
     } catch (e) {
@@ -384,7 +381,6 @@ export const InTouchContextProvider: React.FC<{
 
   function addToBondPersonMap(personID: number, bondID: number): Map<number, Set<number>> {
     const bondHash = new Map(bondPersonMap);
-    console.log("addToPersonBondMap: ", personID, bondID)
 
 
     if (!bondPersonMap.has(bondID)) {
@@ -433,13 +429,15 @@ export const InTouchContextProvider: React.FC<{
     const bondID: number = bond.bond_id;
     const personID: number = person.person_id as number;
     const personHash = new Map(personBondMap);
-
     // UPDATE PERSON-BOND MAP
     const bondIds: Set<number> = personHash.get(personID) as Set<number>;
     bondIds.delete(bondID);
+    if (bondIds.size == 0) {
+      personHash.delete(personID)
+      return personHash;
+    }
     personHash.set(personID, bondIds);
     return personHash;
-
   }
 
   function removeFromBondPersonMap(bond: Bond, person: Person): Map<number, Set<number>> {
@@ -451,6 +449,13 @@ export const InTouchContextProvider: React.FC<{
     // UPDATE PERSON-BOND MAP
     const personIds: Set<number> = bondHash.get(bondID) as Set<number>;
     personIds.delete(personID);
+
+
+    if (personIds.size == 0) {
+      bondHash.delete(bondID)
+      return bondHash;
+    }
+
     bondHash.set(bondID, personIds);
     return bondHash;
   }

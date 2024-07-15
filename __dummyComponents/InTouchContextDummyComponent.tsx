@@ -2,7 +2,7 @@ import { InTouchContext } from "@/context/InTouchContext";
 import { useContext } from "react";
 import { View, Text, Button, Pressable } from "react-native";
 import React from "react";
-import { testB1, testP1 } from "@/__mocks__/expo-sqlite";
+import { testB1, testB3, testB6, testP1, testP2 } from "@/__mocks__/expo-sqlite";
 // import { Button } from "@rneui/themed";
 
 export default function InTouchContextDummyComponent() {
@@ -62,7 +62,7 @@ export default function InTouchContextDummyComponent() {
   }
 
   function onRemoveBondMemberPress(): void {
-    removeBondMember(testB1, testP1);
+    removeBondMember(testB6, testP2);
   }
 
 

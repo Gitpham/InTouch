@@ -28,6 +28,20 @@ const testB2: Bond = {
   typeOfCall: "individual",
 };
 
+const testB3: Bond = {
+  bondName: "friends",
+  bond_id: 3,
+  schedule: "monthly",
+  typeOfCall: "individual",
+};
+
+const testB6: Bond = {
+  bondName: "friends",
+  bond_id: 6,
+  schedule: "monthly",
+  typeOfCall: "individual",
+};
+
 const testBondList: Bond[] = [testB1, testB2];
 
 const testPersonList: Person[] = [testP1, testP2];
@@ -91,6 +105,8 @@ export {
   testP2,
   testB1,
   testB2,
+  testB3,
+  testB6,
   openDatabaseAsync,
   SQLiteDatabase,
   useSQLiteContext,
