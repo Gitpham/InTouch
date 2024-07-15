@@ -30,6 +30,10 @@ describe("integration tests for InTouchContext", () => {
     mockPrepareAsync.mockClear();
   });
 
+  afterEach(() => {
+    jest.useRealTimers();
+  })
+
   it("upon rendering, InTouchContextProvider should have peopleList intitialized ", async () => {
     render(<InTouchContextDummyComponent></InTouchContextDummyComponent>, {
       wrapper: InTouchContextProvider,
@@ -103,6 +107,7 @@ describe("integration tests for InTouchContext", () => {
 
   describe("people", () => {
     it("calling createPerson() with a valid person should write to the db with the correct sql", async () => {
+      jest.useFakeTimers();
       const expected = [testP1.firstName, testP1.lastName, testP1.phoneNumber];
       render(<InTouchContextDummyComponent></InTouchContextDummyComponent>, {
         wrapper: InTouchContextProvider,
@@ -114,10 +119,12 @@ describe("integration tests for InTouchContext", () => {
       });
 
       await userEvent.press(screen.getByTestId("createPerson"));
+      jest.advanceTimersByTime(500);
       expect(mockExecuteAsync).toHaveBeenCalledWith(expected);
     });
 
     it("calling createPerson() with a valid person should add a person to the peopleList state variable", async () => {
+      jest.useFakeTimers();
       //CHECKS DEFAULT VALUE OF PEOPLE LIST
       render(<InTouchContextDummyComponent></InTouchContextDummyComponent>, {
         wrapper: InTouchContextProvider,
@@ -146,6 +153,7 @@ describe("integration tests for InTouchContext", () => {
       });
 
       await userEvent.press(screen.getByTestId("createPerson"));
+      jest.advanceTimersByTime(500)
 
       //check that peopleList is updated
 
@@ -169,6 +177,7 @@ describe("integration tests for InTouchContext", () => {
     });
 
     it("calling removePerson() with a valid person should write to the db with the correct sql", async () => {
+      jest.useFakeTimers();
       const expected = ["1"];
       render(<InTouchContextDummyComponent></InTouchContextDummyComponent>, {
         wrapper: InTouchContextProvider,
@@ -180,10 +189,12 @@ describe("integration tests for InTouchContext", () => {
       });
 
       await userEvent.press(screen.getByTestId("removePerson"));
+      jest.advanceTimersByTime(500);
       expect(mockExecuteAsync).toHaveBeenCalledWith(expected);
     });
 
     it("calling removePerson() with a valid person should remove a person from the peopleList state variable", async () => {
+      jest.useFakeTimers();
       //CHECKS DEFAULT VALUE OF PEOPLE LIST
       render(<InTouchContextDummyComponent></InTouchContextDummyComponent>, {
         wrapper: InTouchContextProvider,
@@ -212,6 +223,7 @@ describe("integration tests for InTouchContext", () => {
       });
 
       await userEvent.press(screen.getByTestId("removePerson"));
+      jest.advanceTimersByTime(500)
 
       //check that peopleList is updated
       const newExpectedList = testPersonList.filter((p) => p.person_id != 1);
@@ -231,7 +243,14 @@ describe("integration tests for InTouchContext", () => {
       expect(peopleListElement.props.children).toEqual(newExpectedValue);
     });
 
+    
+  });
+
+
+  describe("Bond functions", () => {
+
     it("calling createBond() with a valid bond should write to the db with the correct sql", async () => {
+      jest.useFakeTimers();
       const expected = [testB1.bondName, testB1.schedule, testB1.typeOfCall];
       render(<InTouchContextDummyComponent></InTouchContextDummyComponent>, {
         wrapper: InTouchContextProvider,
@@ -243,10 +262,13 @@ describe("integration tests for InTouchContext", () => {
       });
 
       await userEvent.press(screen.getByTestId("createBond"));
+      jest.advanceTimersByTime(500);
       expect(mockExecuteAsync).toHaveBeenCalledWith(expected);
+      jest.useRealTimers()
     });
 
     it("calling createBond() with a valid bond should add a bond to the bondList state variable", async () => {
+      jest.useFakeTimers();
       //CHECKS DEFAULT VALUE OF PEOPLE LIST
       render(<InTouchContextDummyComponent></InTouchContextDummyComponent>, {
         wrapper: InTouchContextProvider,
@@ -273,6 +295,7 @@ describe("integration tests for InTouchContext", () => {
       });
 
       await userEvent.press(screen.getByTestId("createBond"));
+      jest.advanceTimersByTime(500);
 
       //check that bondList is updated
 
@@ -291,9 +314,13 @@ describe("integration tests for InTouchContext", () => {
 
       bondListElement = screen.getByTestId("bondList");
       expect(bondListElement.props.children).toEqual(newExpectedValue);
+      jest.useRealTimers();
     });
 
     it("calling removeBond() with a valid bond should remove a bond from the bondList state variable", async () => {
+
+      jest.useFakeTimers();
+
       //CHECKS DEFAULT VALUE OF BOND LIST
       render(<InTouchContextDummyComponent></InTouchContextDummyComponent>, {
         wrapper: InTouchContextProvider,
@@ -320,6 +347,7 @@ describe("integration tests for InTouchContext", () => {
       });
 
       await userEvent.press(screen.getByTestId("removeBond"));
+      jest.advanceTimersByTime(500);
 
       //check that peopleList is updated
       const newExpectedList = testBondList.filter((p) => p.bond_id != 1);
@@ -335,6 +363,14 @@ describe("integration tests for InTouchContext", () => {
 
       bondListElement = screen.getByTestId("bondList");
       expect(bondListElement.props.children).toEqual(newExpectedValue);
+      jest.useRealTimers();
     });
-  });
+
+
+
+
+
+
+
+  })
 });
