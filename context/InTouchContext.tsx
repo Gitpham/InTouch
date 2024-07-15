@@ -373,10 +373,11 @@ export const InTouchContextProvider: React.FC<{
         throw Error("createBondMember(): bondID is undefined")
       }
 
-      setBondPersonMap(addToBondPersonMap(person_ids, bond_id));
+      await setBondPersonMap(addToBondPersonMap(person_ids, bond_id));
+      await setPersonBondMap(addToPersonBondMap(person_ids, bond_id));
 
       person_ids.forEach(async (person_id) => {
-      setPersonBondMap(addToPersonBondMap(person_id, bond_id));
+     
       console.log("perosnBOndMap: ", personBondMap)
       
       console.log("bondPersonMap", bondPersonMap);
@@ -389,10 +390,11 @@ export const InTouchContextProvider: React.FC<{
     }
   }
 
-  function addToPersonBondMap(personID: number, bondID: number): Map<number, Set<number>> {
+  function addToPersonBondMap(person_ids: Set<number>, bondID: number): Map<number, Set<number>> {
     const personHash = new Map(personBondMap);
     // UPDATE PERSON-BOND MAP
-    if (!personBondMap.has(personID)) {
+    person_ids.forEach((personID) => {
+      if (!personBondMap.has(personID)) {
       const bondIds: Set<number> = new Set();
       bondIds.add(bondID);
       personHash.set(personID, bondIds);
@@ -401,6 +403,7 @@ export const InTouchContextProvider: React.FC<{
       bondIds.add(bondID);
       personHash.set(personID, bondIds);
     }
+  });
     return personHash;
   }
 

@@ -51,6 +51,10 @@ export default function ReminderScreen() {
      function onPressShowBondPersonMap() {
           console.log(getBondPersonMap())
      }
+
+     function onPressShowPersonBondMap(){
+          console.log("personBondMap: ", getPersonBondMap())
+     }
        return (
         <SafeAreaView>
           
@@ -66,6 +70,9 @@ export default function ReminderScreen() {
              <StandardButton title="print bonds" onPress={onPressShowBonds}/>
 
              <StandardButton title="show bondPersonMap" onPress={onPressShowBondPersonMap}/>
+
+             <StandardButton title="show personBondMap" onPress={onPressShowPersonBondMap}/>
+
 
 
         </SafeAreaView>
