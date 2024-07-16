@@ -129,7 +129,12 @@ describe("integration tests for InTouchContext", () => {
   describe("people", () => {
     it("calling createPerson() with a valid person should write to the db with the correct sql", async () => {
       jest.useFakeTimers();
-      const expected = ["3", testP1.firstName, testP1.lastName, testP1.phoneNumber];
+      const expected = [
+        "3",
+        testP1.firstName,
+        testP1.lastName,
+        testP1.phoneNumber,
+      ];
       render(<InTouchContextDummyComponent></InTouchContextDummyComponent>, {
         wrapper: InTouchContextProvider,
       });
@@ -269,7 +274,12 @@ describe("integration tests for InTouchContext", () => {
     it("calling createBond() with a valid bond should write to the db with the correct sql", async () => {
       //ARRANGE
       jest.useFakeTimers();
-      const expected = ["3", testB2.bondName, testB2.schedule, testB2.typeOfCall];
+      const expected = [
+        "3",
+        testB2.bondName,
+        testB2.schedule,
+        testB2.typeOfCall,
+      ];
       render(<InTouchContextDummyComponent></InTouchContextDummyComponent>, {
         wrapper: InTouchContextProvider,
       });
@@ -278,7 +288,7 @@ describe("integration tests for InTouchContext", () => {
       await waitFor(() => {
         expect(
           screen.getByTestId("createBond").props.children.length
-        ).toBeGreaterThan(0); 
+        ).toBeGreaterThan(0);
       });
       await userEvent.press(screen.getByTestId("createBond"));
       jest.advanceTimersByTime(500);
@@ -522,7 +532,7 @@ describe("integration tests for InTouchContext", () => {
       expect(bondPersonElement).toEqual(expectedBondPersonHash);
     });
 
-    it("createBondMember(1, [1, 2, 3]) should write to the personBond table with the correct sql", async () => {
+    it("createBondMember(3, [1, 2, 3]) should write to the personBond table with the correct sql", async () => {
       //ARRANGE
       jest.useFakeTimers();
       render(<InTouchContextDummyComponent></InTouchContextDummyComponent>, {
@@ -540,7 +550,7 @@ describe("integration tests for InTouchContext", () => {
       jest.advanceTimersByTime(500);
 
       //ASSERT
- 
+
       const expectedValue_1: string[] = ["1", "3"];
       const expectedValue_2: string[] = ["2", "3"];
       const expectedValue_3: string[] = ["3", "3"];
@@ -550,50 +560,110 @@ describe("integration tests for InTouchContext", () => {
       expect(mockExecuteAsync).toHaveBeenCalledWith(expectedValue_3);
     });
 
-    it("createBondMember(1, 3) should update the personBond hash", async () => {
+    it("createBondMember(3, [1,2,3]) should update the personBond hash", async () => {
       //ARRANGE
       jest.useFakeTimers();
       render(<InTouchContextDummyComponent></InTouchContextDummyComponent>, {
         wrapper: InTouchContextProvider,
       });
 
-      const bondIdSet: Set<number> = pbHash.get(1) as Set<number>;
+      await waitFor(() => {
+        expect(
+          screen.getByTestId("personBondMap").props.children.length
+        ).toBeGreaterThan(0);
+      });
+
+      //CHECK that personBondMap is equal to default expected value
+
+      let personBondElement =
+        screen.getByTestId("personBondMap").props.children;
+      expect(personBondElement).toEqual(expectedPersonBondHash);
+
+      //CREATE NEW EXPECTED personBondMap
+
+      let bondIdSet: Set<number> = pbHash.get(1) as Set<number>;
       bondIdSet.add(3);
       pbHash.set(1, bondIdSet);
+
+      bondIdSet = pbHash.get(2) as Set<number>;
+      bondIdSet.add(3);
+      pbHash.set(2, bondIdSet);
+
+      bondIdSet = new Set();
+      bondIdSet.add(3);
+      pbHash.set(3, bondIdSet);
 
       const pbIter = pbHash.entries();
       expectedPersonBondHash = [];
       pbHash.forEach(() => expectedPersonBondHash.push(pbIter.next().value));
 
-      await waitFor(() => {
-        expect(
-          screen.getByTestId("personBondMap").props.children.length
-        ).toBeGreaterThan(0); // Assuming peopleList is not empty
-      });
-
       //ACT
-      await userEvent.press(screen.getByTestId("createBondMember"));
-
+      await userEvent.press(screen.getByTestId("createMultipleBondMembers"));
       jest.advanceTimersByTime(500);
       await waitFor(() => {
         expect(
           screen.getByTestId("personBondMap").props.children.length
+        ).toBeGreaterThan(0);
+      });
+
+      //ASSERT
+      personBondElement = screen.getByTestId("personBondMap").props.children;
+      expect(personBondElement).toEqual(expectedPersonBondHash);
+    });
+
+    it("createBondMember(3, [1, 2, 3]) should update the bondPerson hash", async () => {
+      //ARRANGE
+      jest.useFakeTimers();
+      render(<InTouchContextDummyComponent></InTouchContextDummyComponent>, {
+        wrapper: InTouchContextProvider,
+      });
+
+      await waitFor(() => {
+        expect(
+          screen.getByTestId("bondPersonMap").props.children.length
+        ).toBeGreaterThan(0); // Assuming peopleList is not empty
+      });
+
+      // CREATE NEW EXPECTD BP HASH
+      let personIdSet: Set<number> = bpHash.get(3) as Set<number>;
+      personIdSet.add(1);
+      bpHash.set(3, personIdSet);
+
+      personIdSet = bpHash.get(3) as Set<number>;
+      personIdSet.add(2);
+      bpHash.set(3, personIdSet);
+
+      personIdSet = bpHash.get(3) as Set<number>;
+      personIdSet.add(3);
+      bpHash.set(3, personIdSet);
+
+      const bpIter = bpHash.entries();
+      expectedBondPersonHash = [];
+      pbHash.forEach(() => expectedBondPersonHash.push(bpIter.next().value));
+
+      //ACT
+      await userEvent.press(screen.getByTestId("createMultipleBondMembers"));
+
+      jest.advanceTimersByTime(500);
+      await waitFor(() => {
+        expect(
+          screen.getByTestId("bondPersonMap").props.children.length
         ).toBeGreaterThan(0); // Assuming peopleList is not empty
       });
 
       //ASSERT
-      const personBondElement =
-        screen.getByTestId("personBondMap").props.children;
-
-      // console.log("personBondElement: ", personBondElement)
-      expect(personBondElement).toEqual(expectedPersonBondHash);
+      const bondPersonElement =
+        screen.getByTestId("bondPersonMap").props.children;
+      expect(bondPersonElement).toEqual(expectedBondPersonHash);
     });
 
     it("removeBondMember(6, 1) should update the bondPerson hash", async () => {
       //ARRANGE
 
       // MANUALLY REMOVE BOND MEMBER FORM BONDPERSONHASH
-      const personIdSet: Set<number> = bpHash.get(testB6.bond_id) as Set<number>;
+      const personIdSet: Set<number> = bpHash.get(
+        testB6.bond_id
+      ) as Set<number>;
       personIdSet.delete(testP2.person_id as number);
       bpHash.set(testB6.bond_id, personIdSet);
 
@@ -609,7 +679,7 @@ describe("integration tests for InTouchContext", () => {
       await waitFor(() => {
         expect(
           screen.getByTestId("bondPersonMap").props.children.length
-        ).toBeGreaterThan(0); 
+        ).toBeGreaterThan(0);
       });
 
       //ACT
@@ -628,9 +698,5 @@ describe("integration tests for InTouchContext", () => {
 
       expect(bondPersonElement).toEqual(expectedBondPersonHash);
     });
-
-  
-
-
   });
 });
