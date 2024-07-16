@@ -13,6 +13,7 @@ import {
   mockGetAllAsync,
   mockPrepareAsync,
   testB1,
+  testB2,
   testB3,
   testB6,
   testBondList,
@@ -128,7 +129,7 @@ describe("integration tests for InTouchContext", () => {
   describe("people", () => {
     it("calling createPerson() with a valid person should write to the db with the correct sql", async () => {
       jest.useFakeTimers();
-      const expected = [3, testP1.firstName, testP1.lastName, testP1.phoneNumber];
+      const expected = ["3", testP1.firstName, testP1.lastName, testP1.phoneNumber];
       render(<InTouchContextDummyComponent></InTouchContextDummyComponent>, {
         wrapper: InTouchContextProvider,
       });
@@ -266,30 +267,33 @@ describe("integration tests for InTouchContext", () => {
 
   describe("Bond functions", () => {
     it("calling createBond() with a valid bond should write to the db with the correct sql", async () => {
+      //ARRANGE
       jest.useFakeTimers();
-      const expected = [testB1.bondName, testB1.schedule, testB1.typeOfCall];
+      const expected = ["3", testB2.bondName, testB2.schedule, testB2.typeOfCall];
       render(<InTouchContextDummyComponent></InTouchContextDummyComponent>, {
         wrapper: InTouchContextProvider,
       });
+
+      //ACT
       await waitFor(() => {
         expect(
           screen.getByTestId("createBond").props.children.length
-        ).toBeGreaterThan(0); // Assuming peopleList is not empty
+        ).toBeGreaterThan(0); 
       });
-
       await userEvent.press(screen.getByTestId("createBond"));
       jest.advanceTimersByTime(500);
+
+      //ASSERT
       expect(mockExecuteAsync).toHaveBeenCalledWith(expected);
       jest.useRealTimers();
     });
 
     it("calling createBond() with a valid bond should add a bond to the bondList state variable", async () => {
+      //CHECKS DEFAULT VALUE OF BOND LIST
       jest.useFakeTimers();
-      //CHECKS DEFAULT VALUE OF PEOPLE LIST
       render(<InTouchContextDummyComponent></InTouchContextDummyComponent>, {
         wrapper: InTouchContextProvider,
       });
-
       await waitFor(() => {
         expect(
           screen.getByTestId("bondList").props.children.length
@@ -300,7 +304,6 @@ describe("integration tests for InTouchContext", () => {
       const expectedValue = testBondList
         .map((p) => `${p.bondName} ${p.schedule} ${p.typeOfCall} ${p.bond_id}`)
         .join(", ");
-
       expect(bondListElement.props.children).toEqual(expectedValue);
 
       //call createBond()
@@ -316,7 +319,7 @@ describe("integration tests for InTouchContext", () => {
       //check that bondList is updated
 
       const newExpectedList = testBondList;
-      const addBond: Bond = { ...testB1, bond_id: 3 };
+      const addBond: Bond = { ...testB2, bond_id: 3 };
       newExpectedList.push(addBond);
       const newExpectedValue = newExpectedList
         .map((b) => `${b.bondName} ${b.schedule} ${b.typeOfCall} ${b.bond_id}`)
@@ -519,9 +522,75 @@ describe("integration tests for InTouchContext", () => {
       expect(bondPersonElement).toEqual(expectedBondPersonHash);
     });
 
+    it("createBondMember(1, [1, 2, 3]) should write to the personBond table with the correct sql", async () => {
+      //ARRANGE
+      jest.useFakeTimers();
+      render(<InTouchContextDummyComponent></InTouchContextDummyComponent>, {
+        wrapper: InTouchContextProvider,
+      });
+
+      await waitFor(() => {
+        expect(
+          screen.getByTestId("createMultipleBondMembers").props.children.length
+        ).toBeGreaterThan(0); // Assuming peopleList is not empty
+      });
+
+      //ACT
+      await userEvent.press(screen.getByTestId("createMultipleBondMembers"));
+      jest.advanceTimersByTime(500);
+
+      //ASSERT
+ 
+      const expectedValue_1: string[] = ["1", "3"];
+      const expectedValue_2: string[] = ["2", "3"];
+      const expectedValue_3: string[] = ["3", "3"];
+
+      expect(mockExecuteAsync).toHaveBeenCalledWith(expectedValue_1);
+      expect(mockExecuteAsync).toHaveBeenCalledWith(expectedValue_2);
+      expect(mockExecuteAsync).toHaveBeenCalledWith(expectedValue_3);
+    });
+
+    it("createBondMember(1, 3) should update the personBond hash", async () => {
+      //ARRANGE
+      jest.useFakeTimers();
+      render(<InTouchContextDummyComponent></InTouchContextDummyComponent>, {
+        wrapper: InTouchContextProvider,
+      });
+
+      const bondIdSet: Set<number> = pbHash.get(1) as Set<number>;
+      bondIdSet.add(3);
+      pbHash.set(1, bondIdSet);
+
+      const pbIter = pbHash.entries();
+      expectedPersonBondHash = [];
+      pbHash.forEach(() => expectedPersonBondHash.push(pbIter.next().value));
+
+      await waitFor(() => {
+        expect(
+          screen.getByTestId("personBondMap").props.children.length
+        ).toBeGreaterThan(0); // Assuming peopleList is not empty
+      });
+
+      //ACT
+      await userEvent.press(screen.getByTestId("createBondMember"));
+
+      jest.advanceTimersByTime(500);
+      await waitFor(() => {
+        expect(
+          screen.getByTestId("personBondMap").props.children.length
+        ).toBeGreaterThan(0); // Assuming peopleList is not empty
+      });
+
+      //ASSERT
+      const personBondElement =
+        screen.getByTestId("personBondMap").props.children;
+
+      // console.log("personBondElement: ", personBondElement)
+      expect(personBondElement).toEqual(expectedPersonBondHash);
+    });
+
     it("removeBondMember(6, 1) should update the bondPerson hash", async () => {
       //ARRANGE
-      
 
       // MANUALLY REMOVE BOND MEMBER FORM BONDPERSONHASH
       const personIdSet: Set<number> = bpHash.get(testB6.bond_id) as Set<number>;

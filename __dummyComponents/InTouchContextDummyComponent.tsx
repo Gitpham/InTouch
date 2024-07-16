@@ -2,7 +2,7 @@ import { InTouchContext } from "@/context/InTouchContext";
 import { useContext } from "react";
 import { View, Text, Button, Pressable } from "react-native";
 import React from "react";
-import { testB1, testB3, testB6, testP1, testP2 } from "@/__mocks__/expo-sqlite";
+import { testB1, testB2, testB3, testB6, testP1, testP2 } from "@/__mocks__/expo-sqlite";
 // import { Button } from "@rneui/themed";
 
 export default function InTouchContextDummyComponent() {
@@ -39,16 +39,17 @@ export default function InTouchContextDummyComponent() {
   bondPersonMap.forEach(() => bondPersons.push(bpIter.next().value));
 
   function onCreatePersonPress(): void {
+
     createPerson(testP1);
   }
 
   function onRemovePersonPress(): void {
+    // console.log("onRemovePersonPress() testP1: ", testP1 )
     removePerson(testP1);
   }
 
   function onCreateBondPress(): void {
-    const bondID = generateBondId();
-    createBond({ ...testB1, bond_id: bondID });
+    createBond(testB2);
   }
 
   function onRemoveBondPress(): void {
@@ -59,6 +60,12 @@ export default function InTouchContextDummyComponent() {
     const personID: Set<number> = new Set([1])
     const bondID: number = 3;
     createBondMember(personID, bondID);
+  }
+
+  function onCreateBondMultipleMemberPress(): void {
+    const personIDs: Set<number> = new Set([1, 2, 3])
+    const bondID: number = 3;
+    createBondMember(personIDs, bondID);
   }
 
   function onRemoveBondMemberPress(): void {
@@ -89,6 +96,10 @@ export default function InTouchContextDummyComponent() {
 
       <Pressable testID="createBondMember" onPress={onCreateBondMemberPress}>
         <Text>createBondMember</Text>
+      </Pressable>
+
+      <Pressable testID="createMultipleBondMembers" onPress={onCreateBondMultipleMemberPress}>
+        <Text>createMultipleBondMembers</Text>
       </Pressable>
 
       <Pressable testID="removeBondMember" onPress={onRemoveBondMemberPress}>

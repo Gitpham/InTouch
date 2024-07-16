@@ -14,6 +14,13 @@ const testP2: Person = {
   person_id: 2,
 };
 
+const testP3: Person = {
+  firstName: "P3",
+  lastName: "P3_lastName",
+  phoneNumber: "111-111-1112",
+  person_id: 3,
+};
+
 const testB1: Bond = {
   bondName: "family",
   bond_id: 1,
@@ -103,6 +110,7 @@ export {
   testPersonBondList,
   testP1,
   testP2,
+  testP3,
   testB1,
   testB2,
   testB3,
