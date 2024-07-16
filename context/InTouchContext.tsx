@@ -418,7 +418,6 @@ export const InTouchContextProvider: React.FC<{
 
     }
     return bondHash;
-
   }
 
   function getPersonBondMap() {
