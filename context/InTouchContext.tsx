@@ -111,7 +111,7 @@ export const InTouchContextProvider: React.FC<{
   const [tempBondMembers, setTempBondMembers] = useState<Set<number>>(new Set<number>());
 
   function addTempBondMember(personID: number) {
-    const newTempBondMembers = tempBondMembers;
+    const newTempBondMembers = new Set(tempBondMembers);
     newTempBondMembers.add(personID);
     setTempBondMembers(newTempBondMembers);
   }
