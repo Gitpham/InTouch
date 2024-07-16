@@ -1,5 +1,5 @@
 import { ThemedText } from "@/components/ThemedText";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { TextInput } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "@rneui/themed";
@@ -11,7 +11,7 @@ import { Person } from "@/constants/types";
 
 export default function addMemberManualScreen() {
   const router = useRouter();
-  const { createPerson, generatePersonId, addTempBondMember, tempBondMembers } = useContext(InTouchContext);
+  const { createPerson, generatePersonId, addTempBondMember } = useContext(InTouchContext);
   const localParams = useLocalSearchParams();
 
   // Member information

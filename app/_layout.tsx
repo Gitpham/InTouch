@@ -15,7 +15,7 @@ import { SQLiteProvider } from "expo-sqlite";
 import { InTouchContextProvider } from "@/context/InTouchContext";
 import React from "react";
 import * as SQLite from 'expo-sqlite';
-import { createDB, loadDB } from "@/assets/db/db";
+import { createDB } from "@/assets/db/db";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();

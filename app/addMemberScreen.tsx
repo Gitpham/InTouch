@@ -2,7 +2,6 @@ import { ThemedText } from "@/components/ThemedText";
 import { useContext } from "react";
 import { Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Button } from "@rneui/themed";
 import { StyleSheet, View } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import * as Contacts from "expo-contacts";

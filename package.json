@@ -41,7 +41,9 @@
     "react-native-screens": "3.31.1",
     "react-native-web": "~0.19.10",
     "expo-file-system": "~17.0.1",
-    "expo-asset": "~10.0.10"
+    "expo-asset": "~10.0.10",
+    "expo-notifications": "~0.28.10",
+    "expo-device": "~6.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
