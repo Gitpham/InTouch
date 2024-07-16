@@ -249,6 +249,8 @@ export const InTouchContextProvider: React.FC<{
 
   async function createPerson(person: Person) {
     try {
+
+      person.person_id = generatePersonId();
       await addPerson(db, person);
       // this assumes that all people in db have a id from 1 to size of table -1
       const toAddPersonId = person.person_id;

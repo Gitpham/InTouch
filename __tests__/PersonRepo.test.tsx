@@ -24,9 +24,10 @@ describe("PersonRepo unit tests", () => {
 
     await addPerson(db, p);
     expect(mockPrepareAsync).toHaveBeenCalledWith(
-      "INSERT INTO person (firstName, lastName, phoneNumber) VALUES (?, ?, ?)"
+      "INSERT INTO person (person_id, firstName, lastName, phoneNumber) VALUES (?, ?, ?, ?)"
     );
     expect(mockExecuteAsync).toHaveBeenCalledWith([
+      p.person_id.toString(),
       p.firstName,
       p.lastName,
       p.phoneNumber,

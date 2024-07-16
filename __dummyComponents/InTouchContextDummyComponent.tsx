@@ -56,7 +56,7 @@ export default function InTouchContextDummyComponent() {
   }
 
   function onCreateBondMemberPress(): void {
-    const personID: number = 1;
+    const personID: Set<number> = new Set([1])
     const bondID: number = 3;
     createBondMember(personID, bondID);
   }

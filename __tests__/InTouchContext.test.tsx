@@ -128,7 +128,7 @@ describe("integration tests for InTouchContext", () => {
   describe("people", () => {
     it("calling createPerson() with a valid person should write to the db with the correct sql", async () => {
       jest.useFakeTimers();
-      const expected = [testP1.firstName, testP1.lastName, testP1.phoneNumber];
+      const expected = [3, testP1.firstName, testP1.lastName, testP1.phoneNumber];
       render(<InTouchContextDummyComponent></InTouchContextDummyComponent>, {
         wrapper: InTouchContextProvider,
       });
@@ -477,6 +477,8 @@ describe("integration tests for InTouchContext", () => {
       //ASSERT
       const personBondElement =
         screen.getByTestId("personBondMap").props.children;
+
+      // console.log("personBondElement: ", personBondElement)
       expect(personBondElement).toEqual(expectedPersonBondHash);
     });
 
@@ -520,7 +522,6 @@ describe("integration tests for InTouchContext", () => {
     it("removeBondMember(6, 1) should update the bondPerson hash", async () => {
       //ARRANGE
       
-      // console.log("expectedBondPersonhash before ", expectedBondPersonHash);
 
       // MANUALLY REMOVE BOND MEMBER FORM BONDPERSONHASH
       const personIdSet: Set<number> = bpHash.get(testB6.bond_id) as Set<number>;
@@ -530,7 +531,6 @@ describe("integration tests for InTouchContext", () => {
       const bpIter = bpHash.entries();
       expectedBondPersonHash = [];
       bpHash.forEach(() => expectedBondPersonHash.push(bpIter.next().value));
-      // console.log("expectedBondPersonhash after ", expectedBondPersonHash);
 
       jest.useFakeTimers();
       render(<InTouchContextDummyComponent></InTouchContextDummyComponent>, {
@@ -557,8 +557,6 @@ describe("integration tests for InTouchContext", () => {
       const bondPersonElement =
         screen.getByTestId("bondPersonMap").props.children;
 
-      // console.log("expectedBondPersonhash: ", expectedBondPersonHash);
-      // console.log("bondPersonElement: ", bondPersonElement)
       expect(bondPersonElement).toEqual(expectedBondPersonHash);
     });
 

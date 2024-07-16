@@ -23,13 +23,13 @@ export default function addMemberManualScreen() {
 
 
   async function savePerson() {
-    const personID = generatePersonId();
+    // const personID = generatePersonId();
 
     const newContact: Person = {
       firstName: memberFirstName,
       lastName: memberLastName,
       phoneNumber: memberNumber,
-      person_id: personID,
+      person_id: undefined,
     };
 
     await createPerson(newContact);
