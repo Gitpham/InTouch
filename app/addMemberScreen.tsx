@@ -23,7 +23,7 @@ export default function addMemberScreen() {
       if (person) {
 
         // Generate unique person id
-        // const personID = generatePersonId();
+        const personID = generatePersonId();
 
         const newContact: Person = {
           firstName: person?.firstName as string,

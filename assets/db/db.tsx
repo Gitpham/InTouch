@@ -33,26 +33,21 @@ export const loadDB = async () => {
 
 
 export const clearDB = async (db: SQLite.SQLiteDatabase) => {
-
-
   try {
-
     await db.execAsync('DELETE FROM person;');
     await db.execAsync('DELETE FROM bond;');
     await db.execAsync('DELETE FROM person_bond;');
-    
 
   } catch (e) {
     console.error(e);
     throw Error ("failed to clearDB()")
   }
-
 }
 
 
 
 
-export const createTables = async (db: SQLite.SQLiteDatabase) => {
+export const createDB = async (db: SQLite.SQLiteDatabase) => {
   const groupQuery = `
         CREATE TABLE IF NOT EXISTS bond (
             bond_id INTEGER PRIMARY KEY,
@@ -87,7 +82,10 @@ export const createTables = async (db: SQLite.SQLiteDatabase) => {
         );
     `;
 
+
   try {
+    console.log("creating db: ", db.databaseName)
+    await db.execAsync('PRAGMA foreign_keys = ON');
     await db.execAsync(personQuery);
     // console.log("person table")
     await db.execAsync(groupQuery);

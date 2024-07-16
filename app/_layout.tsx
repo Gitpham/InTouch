@@ -14,7 +14,8 @@ import { useColorScheme } from "@/hooks/useColorScheme";
 import { SQLiteProvider } from "expo-sqlite";
 import { InTouchContextProvider } from "@/context/InTouchContext";
 import React from "react";
-import { loadDB } from "@/assets/db/db";
+import * as SQLite from 'expo-sqlite';
+import { createDB, loadDB } from "@/assets/db/db";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -29,8 +30,11 @@ export default function RootLayout() {
   });
 
   useEffect(() => {
+
+
     const initDB = async () => {
-      await loadDB();
+      const db = await SQLite.openDatabaseAsync("DbWForeignKeys.db");
+      createDB(db);
     };
 
     try {
@@ -56,7 +60,7 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <SQLiteProvider databaseName="Test_DataBase_6.db">
+      <SQLiteProvider databaseName="DbWForeignKeys.db">
         <InTouchContextProvider>
           <Stack>
             <Stack.Screen name="index" options={{ headerShown: false }} />
