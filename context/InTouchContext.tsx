@@ -11,7 +11,6 @@ import { createContext, useEffect, useState } from "react";
 import React from "react";
 type InTouchContextType = {
   tempBondMembers: Set<number>;
-
   peopleList: Person[];
   bondList: Bond[];
   personBondMap: Map<number, Set<number>>;
@@ -42,7 +41,7 @@ export const InTouchContext = createContext<InTouchContextType>({
   bondList: [],
   personBondMap: new Map<number, Set<number>>(),
   bondPersonMap: new Map<number, Set<number>>(),
-
+  tempBondMembers: new Set<number>(),
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   /* eslint-disable @typescript-eslint/no-unused-vars */
   createPerson: function (person: Person): Promise<void> {
@@ -81,7 +80,6 @@ export const InTouchContext = createContext<InTouchContextType>({
   generateBondId: function (): number {
     throw new Error("Function not implemented.");
   },
-  tempBondMembers: [],
   addTempBondMember: function (personID: number): void {
     throw new Error("Function not implemented.");
   },
@@ -110,16 +108,16 @@ export const InTouchContextProvider: React.FC<{
     new Map<number, Set<number>>()
   );
 
-  const [tempBondMembers, setTempBondMembers] = useState<number[]>([]);
+  const [tempBondMembers, setTempBondMembers] = useState<Set<number>>(new Set<number>());
 
   function addTempBondMember(personID: number) {
     const newTempBondMembers = tempBondMembers;
-    newTempBondMembers.push(personID);
+    newTempBondMembers.add(personID);
     setTempBondMembers(newTempBondMembers);
   }
 
   function clearTempBondMembers() {
-    setTempBondMembers([])
+    setTempBondMembers(new Set<number>())
   }
 
   let hasRendered = false;

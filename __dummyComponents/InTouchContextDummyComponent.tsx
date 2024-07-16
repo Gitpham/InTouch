@@ -1,8 +1,8 @@
 import { InTouchContext } from "@/context/InTouchContext";
 import { useContext } from "react";
-import { View, Text, Button, Pressable } from "react-native";
+import { View, Text, Pressable } from "react-native";
 import React from "react";
-import { testB1, testB2, testB3, testB6, testP1, testP2 } from "@/__mocks__/expo-sqlite";
+import { testB1, testB2,  testB6, testP1, testP2 } from "@/__mocks__/expo-sqlite";
 // import { Button } from "@rneui/themed";
 
 export default function InTouchContextDummyComponent() {
@@ -15,7 +15,6 @@ export default function InTouchContextDummyComponent() {
     removePerson,
     createBond,
     removeBond,
-    generateBondId,
     createBondMember,
     removeBondMember,
     // getBondPersonMap,

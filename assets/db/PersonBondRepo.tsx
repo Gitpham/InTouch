@@ -27,7 +27,7 @@ export const deletePersonBond = async (db: SQLite.SQLiteDatabase, person: Person
         WHERE person_id = ? & bond_id = ?
         `);
 
-    const value: string[] = [person.person_id.toString(), bond.bond_id.toString()]
+    const value: string[] = [(person.person_id as number).toString(), bond.bond_id.toString()]
 
     try {
         return await statement.executeAsync(value)
