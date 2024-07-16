@@ -116,9 +116,6 @@ export const InTouchContextProvider: React.FC<{
     const newTempBondMembers = tempBondMembers;
     newTempBondMembers.push(personID);
     setTempBondMembers(newTempBondMembers);
-
-    // setTempBondMembers([...tempBondMembers, personID])
-    // console.log("addTempBOndMember()",tempBondMembers, personID)
   }
 
   function clearTempBondMembers() {
@@ -211,14 +208,12 @@ export const InTouchContextProvider: React.FC<{
     const bondPersonHash = new Map<number, Set<number>>();
     dbBondPersonList.forEach((p) => {
       if (!p.person_id || !p.bond_id) {
-        // console.log("no person or bond id. bondID: ", bondId, "personID: ", personId)
         return;
       }
       const personId: number = p.person_id as number;
       const bondId: number = p.bond_id as number;
 
       if (bondPersonHash.has(bondId)) {
-        // console.log("has bond: ", bondId, "personId to add: ", personId)
         const personIdSet: Set<number> = bondPersonHash.get(bondId) as Set<number>;
         personIdSet.add(personId);
         bondPersonHash.set(bondId, personIdSet);
@@ -240,22 +235,22 @@ export const InTouchContextProvider: React.FC<{
     let person_id = 1;
 
     if (peopleList.length > 0) {
-      console.log("peopleList: ", peopleList)
       person_id = peopleList[peopleList.length - 1].person_id as number + 1;
     }
-    console.log("phoenix is ass", person_id)
     return person_id;
   }
 
   async function createPerson(person: Person) {
     try {
-
-      person.person_id = generatePersonId();
-      await addPerson(db, person);
-      // this assumes that all people in db have a id from 1 to size of table -1
-      const toAddPersonId = person.person_id;
-      const toAddPerson: Person = { ...person, person_id: toAddPersonId };
-      setPeopleList([...peopleList, toAddPerson]);
+      const pid = generatePersonId();
+      const personWithId: Person = {
+        firstName: person.firstName,
+        lastName: person.lastName,
+        phoneNumber: person.phoneNumber,
+        person_id: pid
+      }
+      await addPerson(db, personWithId);
+      setPeopleList([...peopleList, personWithId]);
     } catch (e) {
       console.error(e);
       throw Error("Could not create person");
@@ -263,18 +258,17 @@ export const InTouchContextProvider: React.FC<{
   }
 
   async function removePerson(person: Person) {
-    
     try {
       if (person.person_id == undefined) {
-        console.log("removePerson(): personID: " + person.person_id)
         throw new Error("person_id is falsy");
       }
       const personID: number = person.person_id as number;
       await deletePerson(db, person);
 
+      //UPDATE PEOPLE LIST
       setPeopleList(peopleList.filter((item) => item.person_id != personID));
 
-      console.log(personBondMap)
+      //UPDATE BONDPERSON
       const bondsOfPerson: Set<number> = personBondMap.get(
         personID
       ) as Set<number>;
@@ -293,7 +287,8 @@ export const InTouchContextProvider: React.FC<{
           return newBondPersonMap;
         });
       }
-
+      
+      //UPDATE PERSON BOND
       setPersonBondMap((prevMap) => {
         const newMap = new Map(prevMap);
         newMap.delete(personID);
@@ -317,8 +312,16 @@ export const InTouchContextProvider: React.FC<{
 
   async function createBond(bond: Bond) {
     try {
-      await addBond(db, bond);
-      setBondList([...bondList, bond]);
+      const bid = generateBondId();
+
+      const bondWithId: Bond = {
+        bondName: bond.bondName,
+        schedule: bond.schedule,
+        typeOfCall: bond.typeOfCall,
+        bond_id: bid
+      }
+      await addBond(db, bondWithId);
+      setBondList([...bondList, bondWithId]);
     } catch (e) {
       console.error(e);
       throw Error("Could not create bond");
@@ -379,10 +382,6 @@ export const InTouchContextProvider: React.FC<{
       await setPersonBondMap(addToPersonBondMap(person_ids, bond_id));
 
       person_ids.forEach(async (person_id) => {
-     
-      console.log("perosnBOndMap: ", personBondMap)
-      
-      console.log("bondPersonMap", bondPersonMap);
       await addPersonBond(db, person_id, bond_id);
       });
 
@@ -415,15 +414,11 @@ export const InTouchContextProvider: React.FC<{
     if (bondPersonMap.has(bondID) == false) {
       const personIds = new Set([...person_ids])
       bondHash.set(bondID, personIds);
-      console.log("new bond: ", bondHash)
     } else {
       const personIds: Set<number> = new Set([...(bondPersonMap.get(bondID) as Set<number>), ...person_ids])
       bondHash.set(bondID, personIds);
-      console.log("existing bond: ", bondHash)
 
     }
-
-
     return bondHash;
 
   }
