@@ -11,6 +11,7 @@ import React from "react";
 import { getAllPersons } from "@/assets/db/PersonRepo";
 import { clearDB } from "@/assets/db/db";
 import { getAllBonds } from "@/assets/db/BondRepo";
+import Scheduler from "@/components/Scheduler";
 
 
 export default function ReminderScreen() {
@@ -72,7 +73,7 @@ export default function ReminderScreen() {
              <StandardButton title="show bondPersonMap" onPress={onPressShowBondPersonMap}/>
 
              <StandardButton title="show personBondMap" onPress={onPressShowPersonBondMap}/>
-
+               <Scheduler></Scheduler>
 
 
         </SafeAreaView>
