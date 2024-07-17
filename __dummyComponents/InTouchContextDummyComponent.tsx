@@ -17,6 +17,9 @@ export default function InTouchContextDummyComponent() {
     removeBond,
     createBondMember,
     removeBondMember,
+    tempBondMembers, 
+    addTempBondMember, 
+    clearTempBondMembers,
     // getBondPersonMap,
     // getPersonBondMap,
     // getBondsOfPerson,
@@ -36,6 +39,10 @@ export default function InTouchContextDummyComponent() {
   const bpIter = bondPersonMap.entries();
   const bondPersons: string[] = [];
   bondPersonMap.forEach(() => bondPersons.push(bpIter.next().value));
+
+  const tmIter = tempBondMembers.values();
+  const tempBondMembersArr: string[] = [];
+  tempBondMembers.forEach(() => tempBondMembersArr.push(tmIter.next().value))
 
   function onCreatePersonPress(): void {
 
@@ -71,6 +78,14 @@ export default function InTouchContextDummyComponent() {
     removeBondMember(testB6, testP2);
   }
 
+  function onAddTempBondMemberPress(){
+    addTempBondMember(1);
+  }
+
+  function onClearTempBondMemberPress() {
+    clearTempBondMembers();
+  }
+
 
   return (
     <View>
@@ -78,6 +93,9 @@ export default function InTouchContextDummyComponent() {
       <Text testID="bondList">{bonds.join(", ")}</Text>
       <Text testID="personBondMap">{personBonds}</Text>
       <Text testID="bondPersonMap">{bondPersons}</Text>
+      <Text testID="tempBondMembers">{tempBondMembersArr}</Text>
+
+
       <Pressable testID="createPerson" onPress={onCreatePersonPress}>
         <Text>CreatePerson</Text>
       </Pressable>
@@ -103,6 +121,14 @@ export default function InTouchContextDummyComponent() {
 
       <Pressable testID="removeBondMember" onPress={onRemoveBondMemberPress}>
         <Text>removeBondMember</Text>
+      </Pressable>
+
+      <Pressable testID="addTempBondMember" onPress={onAddTempBondMemberPress}>
+        <Text>addTempBondMember</Text>
+      </Pressable>
+
+      <Pressable testID="clearTempBondMember" onPress={onClearTempBondMemberPress}>
+        <Text>clearTempBondMember</Text>
       </Pressable>
 
     </View>

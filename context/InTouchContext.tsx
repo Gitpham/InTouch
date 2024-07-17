@@ -110,16 +110,6 @@ export const InTouchContextProvider: React.FC<{
 
   const [tempBondMembers, setTempBondMembers] = useState<Set<number>>(new Set<number>());
 
-  function addTempBondMember(personID: number) {
-    const newTempBondMembers = tempBondMembers;
-    newTempBondMembers.add(personID);
-    setTempBondMembers(newTempBondMembers);
-  }
-
-  function clearTempBondMembers() {
-    setTempBondMembers(new Set<number>())
-  }
-
   let hasRendered = false;
 
   const db = useSQLiteContext();
@@ -141,6 +131,8 @@ export const InTouchContextProvider: React.FC<{
 
     initalize();
   }, []);
+
+  //INITIALIZE LOCAL CACHE FUNCTIONS
 
   async function initializePeopleList() {
     try {
@@ -228,6 +220,8 @@ export const InTouchContextProvider: React.FC<{
   }
 
 
+  //PERSON FUNCTIONS
+
   function generatePersonId(): number {
 
     let person_id = 1;
@@ -300,6 +294,8 @@ export const InTouchContextProvider: React.FC<{
     }
   }
 
+  //BOND FUNCTIONS
+
   function generateBondId(): number {
     let updatedBondID = 1;
     if (bondList.length > 0) {
@@ -368,6 +364,19 @@ export const InTouchContextProvider: React.FC<{
       console.error(e);
       throw Error("Could not remove bond");
     }
+  }
+
+  // BOND MEMBER FUNCTIONS
+
+  function addTempBondMember(personID: number) {
+
+    const newTempBondMembers = new Set(tempBondMembers);
+    newTempBondMembers.add(personID);
+    setTempBondMembers(newTempBondMembers);
+  }
+
+  function clearTempBondMembers() {
+    setTempBondMembers(new Set<number>())
   }
 
   async function createBondMember(person_ids: Set<number>, bond_id: number) {

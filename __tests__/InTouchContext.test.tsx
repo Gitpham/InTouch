@@ -696,5 +696,71 @@ describe("integration tests for InTouchContext", () => {
 
       expect(bondPersonElement).toEqual(expectedBondPersonHash);
     });
+
+    it("tempBondMembers should be initialized to empty", async () => {
+      render(<InTouchContextDummyComponent></InTouchContextDummyComponent>, {
+        wrapper: InTouchContextProvider,
+      });
+
+      await waitFor(() => {
+        expect(screen.getByTestId("tempBondMembers").props.children).toEqual(
+          []
+        ); // Assuming peopleList is not empty
+      });
+
+      const tmListElement =
+        screen.getByTestId("tempBondMembers").props.children;
+      const expectedValue: number[] = [];
+      expect(tmListElement).toEqual(expectedValue);
+    });
+
+    it("addTempBondMembers should add to tempBondMember set", async () => {
+      jest.useFakeTimers();
+      render(<InTouchContextDummyComponent></InTouchContextDummyComponent>, {
+        wrapper: InTouchContextProvider,
+      });
+
+      await waitFor(() => {
+        expect(screen.getByTestId("tempBondMembers").props.children).toEqual(
+          []
+        ); // Assuming peopleList is not empty
+      });
+
+      //ACT
+      await userEvent.press(screen.getByTestId("addTempBondMember"));
+      jest.advanceTimersByTime(500);
+
+      const tempBondMemberElement =
+        screen.getByTestId("tempBondMembers").props.children;
+      const expectedValue: number[] = [1];
+      expect(tempBondMemberElement).toEqual(expectedValue);
+    });
+
+    it("clearTempBondMembers should clear to tempBondMember set", async () => {
+      jest.useFakeTimers();
+      render(<InTouchContextDummyComponent></InTouchContextDummyComponent>, {
+        wrapper: InTouchContextProvider,
+      });
+
+      await waitFor(() => {
+        expect(screen.getByTestId("tempBondMembers").props.children).toEqual(
+          []
+        ); 
+      });
+
+      //add 1 person to set
+      await userEvent.press(screen.getByTestId("addTempBondMember"));
+      jest.advanceTimersByTime(500);
+
+      //clear set
+
+      await userEvent.press(screen.getByTestId("clearTempBondMember"));
+      jest.advanceTimersByTime(500);
+
+      const tempBondMemberElement =
+        screen.getByTestId("tempBondMembers").props.children;
+      const expectedValue: number[] = [];
+      expect(tempBondMemberElement).toEqual(expectedValue);
+    });
   });
 });
