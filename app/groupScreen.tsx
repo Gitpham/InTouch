@@ -30,7 +30,7 @@ export default function groupScreen() {
   const renderMembers = ({ item }: { item: Person }) => {
     return (
       <ListItem bottomDivider>
-        <Pressable >
+        <Pressable onPress = {() => {router.navigate({pathname: "./personScreen", params: {id: `${item.person_id}`}})}}>
         <ListItem.Content id={item.person_id.toString()}>
           <ListItem.Title>
             {item.firstName} {item.lastName}
