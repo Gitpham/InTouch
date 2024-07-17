@@ -9,19 +9,16 @@ import * as SQLite from "expo-sqlite";
 
 export const addPerson = async (db: SQLite.SQLiteDatabase, person: Person) => {
 
-    const statement = await db.prepareAsync(`INSERT INTO person (firstName, lastName, phoneNumber) VALUES (?, ?, ?)`)
-
-    const value: string[] = [person.firstName, person.lastName, person.phoneNumber];
+    const statement = await db.prepareAsync(`INSERT INTO person (person_id, firstName, lastName, phoneNumber) VALUES (?, ?, ?, ?)`)
+    const value: string[] = [(person.person_id as number).toString(), person.firstName, person.lastName, person.phoneNumber];
 
     try {
-        console.log("add person")
         return await statement.executeAsync(value);
 
     } catch (error) {
         console.error(error);
         throw Error("failed to upload person")
     } finally {
-        console.log("finalize person async")
         statement.finalizeAsync()
     }
 
@@ -34,7 +31,7 @@ export const updatePerson = async (db: SQLite.SQLiteDatabase, updatedPerson: Per
         WHERE person_id = ?
         `);
 
-    const value: string[] = [updatedPerson.firstName, updatedPerson.lastName, updatedPerson.phoneNumber, '1']
+    const value: string[] = [updatedPerson.firstName, updatedPerson.lastName, updatedPerson.phoneNumber, updatedPerson.person_id.toString()]
 
     try {
         return await statement.executeAsync(value)
@@ -42,7 +39,6 @@ export const updatePerson = async (db: SQLite.SQLiteDatabase, updatedPerson: Per
         console.error(error)
         throw Error("Failed to update person")
     } finally {
-        // console.log("finalize updatePerson async")
         statement.finalizeAsync()
     }
 }
@@ -51,10 +47,10 @@ export const deletePerson = async (db: SQLite.SQLiteDatabase, person: Person) =>
 
     const statement = await db.prepareAsync(`
        DELETE FROM person
-      WHERE id = ?
+      WHERE person_id = ?
         `);
 
-    const value: string[] = [person.id]
+    const value: string[] = [person.person_id.toString()]
 
     try {
         return await statement.executeAsync(value)
@@ -70,9 +66,7 @@ export const deletePerson = async (db: SQLite.SQLiteDatabase, person: Person) =>
 
 
 export const getAllPersons = async (db: SQLite.SQLiteDatabase) => {
-
     try {
-        console.log("getAllPersons()")
         return await db.getAllAsync<Person>(`SELECT * FROM person`)
     } catch (error) {
         console.error(error)

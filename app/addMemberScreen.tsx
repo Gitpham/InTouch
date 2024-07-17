@@ -1,55 +1,104 @@
 import { ThemedText } from "@/components/ThemedText";
-import { useContext } from "react";
-import { Alert } from "react-native";
+import { useContext, useState } from "react";
+import { Alert, FlatList, Pressable } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Button } from "@rneui/themed";
+import { Button, ListItem } from "@rneui/themed";
 import { StyleSheet, View } from "react-native";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import * as Contacts from "expo-contacts";
 import { InTouchContext } from "@/context/InTouchContext";
 import { StandardButton } from "@/components/ButtonStandard";
 import { Person } from "@/constants/types";
+import React from "react";
 
 export default function addMemberScreen() {
-  const { createPerson } = useContext(InTouchContext);
+  const { createPerson, addTempBondMember, generatePersonId , tempBondMembers, peopleList } = useContext(InTouchContext);
+  const [refresh, setRefresh] = useState(false)
+  const localParams = useLocalSearchParams();
+  const bond_id = +localParams.bond_id;
 
   async function importFromContacts() {
     const { status } = await Contacts.requestPermissionsAsync();
+
     if (status === "granted") {
       const person = await Contacts.presentContactPickerAsync();
       if (person) {
+
+        // Generate unique person id
+        const personID = generatePersonId();
+
         const newContact: Person = {
           firstName: person?.firstName as string,
           lastName: person?.lastName as string,
           phoneNumber: person?.phoneNumbers?.[0]?.number as string,
-          id: "",
+          person_id: undefined,
         };
-
         createPerson(newContact);
+        
+        if (bond_id !== -1) {
+          addTempBondMember(personID);
+          }
       } else {
         Alert.alert("unable to add from contacts");
       }
     }
   }
 
+  const addBondMember = ({ item }: { item: Person }) => {
+    if (!tempBondMembers.has(item.person_id)) {
+    return (
+      <ListItem bottomDivider>
+        <Pressable onPress={() => {addTempBondMember(item.person_id); setRefresh((oldValue) => {return !oldValue})}}>
+        <ListItem.Content id={item.person_id.toString()}>
+          <ListItem.Title>
+            {item.firstName} {item.lastName}
+          </ListItem.Title>
+          <ListItem.Title>
+            Phone Number: {item.phoneNumber} id: {item.person_id.toString()}
+          </ListItem.Title>
+        </ListItem.Content>
+        </Pressable>
+
+      </ListItem>
+    );
+    }
+    else {return null}
+  };
+
+
   return (
     <SafeAreaView style={styles.stepContainer}>
       <View style={styles.centeredView}>
+        {(bond_id !== -1) ? (
+        <>
         <ThemedText type="subtitle" style={styles.title}>
-          Create new contact
+          Choose From inTouch Contacts
         </ThemedText>
+      
+      <FlatList
+        data={peopleList}
+        renderItem={addBondMember}
+        keyExtractor={(item) => item.person_id.toString()}
+      />
+      </>) : null}
       </View>
+
 
       <StandardButton
         title="Create Contact Manually"
         onPress={() => {
-          router.push("./addMemberManualScreen");
+          router.navigate({pathname: "./addMemberManualScreen", params: {bond_id: localParams.bond_id}});
         }}
       />
 
       <StandardButton
         title="Import from Contacts"
         onPress={importFromContacts}
+      />
+
+      <StandardButton
+        title="Done"
+        onPress={() => router.back()}
       />
     </SafeAreaView>
   );

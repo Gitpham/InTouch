@@ -1,33 +1,45 @@
 import { ThemedText } from "@/components/ThemedText";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { TextInput } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "@rneui/themed";
 import { StyleSheet, View } from "react-native";
-import { useRouter } from "expo-router";
-import * as SQLite from "expo-sqlite";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import React from "react";
 import { InTouchContext } from "@/context/InTouchContext";
 import { Person } from "@/constants/types";
 
 export default function addMemberManualScreen() {
   const router = useRouter();
-  const db = SQLite.useSQLiteContext();
-  const { createPerson } = useContext(InTouchContext);
+  const { createPerson, generatePersonId, addTempBondMember, tempBondMembers } = useContext(InTouchContext);
+  const localParams = useLocalSearchParams();
 
   // Member information
   const [memberFirstName, memFirstNameChange] = useState("");
   const [memberLastName, memLastNameChange] = useState("");
   const [memberNumber, memNumberChange] = useState("");
 
+  // Generate unique person id
+
+
   async function savePerson() {
+    const personID = generatePersonId();
+
     const newContact: Person = {
       firstName: memberFirstName,
       lastName: memberLastName,
       phoneNumber: memberNumber,
-      id: "",
+      person_id: undefined,
     };
 
-    createPerson(newContact);
+    await createPerson(newContact);
+    const bond_id = +localParams.bond_id
+    if (bond_id !== -1) {
+      // console.log("creating bond member with person id: ", person_id, " and bond id: ", bond_id)
+      // console.log("addMembeManuallyScreen: personID: ", personID)
+        addTempBondMember(personID);
+      // console.log("addMemberManually tempBondMembers:", tempBondMembers)
+    }
 
     router.back();
   }

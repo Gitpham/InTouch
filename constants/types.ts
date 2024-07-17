@@ -1,6 +1,6 @@
 export type Bond = {
     bondName: string,
-    id: string,
+    bond_id: number,
     schedule: string, 
     typeOfCall: string,
 }
@@ -9,5 +9,10 @@ export type Person = {
     firstName: string,
     lastName: string,
     phoneNumber: string,
-    id: string,
+    person_id: number | undefined,
 }
+
+export type BondPerson = {
+    person_id: number;
+    bond_id: number;
+  }

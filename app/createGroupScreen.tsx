@@ -1,29 +1,38 @@
 import { ThemedText } from "@/components/ThemedText";
-import { useContext, useState } from "react";
-import { Alert, TextInput } from "react-native";
+import { useContext, useState, useEffect } from "react";
+import { Alert, FlatList, TextInput } from "react-native";
 import { } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
-import {  Button, } from "@rneui/themed";
+import {  Button, ListItem, } from "@rneui/themed";
 import { StyleSheet, View } from "react-native";
-import { router } from "expo-router";
-
+import { router, useFocusEffect } from "expo-router";
 import { InTouchContext } from "@/context/InTouchContext";
-import { Bond } from "@/constants/types";
-import { Group } from "expo-contacts";
+import { Bond, Person } from "@/constants/types";
 import { StandardButton } from "@/components/ButtonStandard";
-
-
-console.log("createGroupScreen")
-
-
+import React from "react";
 
 export default function createGroupScreen() {
-  // For Bottom Sheet
-  const [isVisible, setIsVisible] = useState(false);
 
   // Data to be stored in record
   const [bondName, groupNameChange] = useState("");
-  const { createBond } = useContext(InTouchContext);
+  const [refresh, setRefresh] = useState(false);
+  const { createBond, generateBondId, tempBondMembers, clearTempBondMembers, createBondMember, peopleList } = useContext(InTouchContext);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      // This will be triggered every time the screen is focused
+      setRefresh((old) => !old);
+    }, [tempBondMembers])
+  );
+  const bondID = generateBondId();
+
+  const bondToAdd: Bond = {
+    bondName: bondName,
+    typeOfCall: "",
+    schedule: "",
+    bond_id: bondID,
+  };
+
 
   function onDonePress() {
 
@@ -31,25 +40,54 @@ export default function createGroupScreen() {
       Alert.alert("Must enter a Bond name")
       return;
     }
-    const bondToAdd: Bond = {
-      bondName: bondName,
-      typeOfCall: "",
-      schedule: "",
-      id: "",
-    };
+
+    console.log("createGroupScreen tempBondMembers:", tempBondMembers)
     createBond(bondToAdd);
+    
+      try {
+        createBondMember(tempBondMembers, bondID)
+      } catch (e) {
+        console.error(e);
+        throw Error ("failed to call createBondMember()")
+      }
+    clearTempBondMembers();
     router.push("./(tabs)");
   }
+  let title = "Create Group";
+  if (bondName) {
+    title = bondName;
+  }
+
+  const renderGroupMembers = ({ item }: { item}) => {
+    let personToShow: Person;
+    peopleList.forEach((person: Person) => {
+      if (person.person_id === item) {
+        personToShow = person;
+
+    }
+  })
+  return (
+    <ListItem bottomDivider>
+      <ListItem.Content id={item.toString()}>
+        <ListItem.Title>
+          {personToShow.firstName} {personToShow.lastName}
+        </ListItem.Title>
+        <ListItem.Title>
+          Phone Number: {personToShow.phoneNumber} id: {item}
+        </ListItem.Title>
+      </ListItem.Content>
+    </ListItem>
+  );
+  };
+
 
   return (
     <SafeAreaView style={styles.stepContainer}>
       <View style={styles.centeredView}>
         <ThemedText type="title" style={styles.title}>
-          {" "}
-          Create Group{" "}
+          {title}
         </ThemedText>
       </View>
-
       <TextInput
         onChangeText={groupNameChange}
         value={bondName}
@@ -63,10 +101,22 @@ export default function createGroupScreen() {
           backgroundColor: "gray",
         }}
       ></TextInput>
+      <View style={styles.centeredView}>
+      <ThemedText type="subtitle" style={styles.title}>
+          Members
+      </ThemedText>
+
+      </View>
+      <FlatList
+        data={([...tempBondMembers])}
+        renderItem={renderGroupMembers}
+        keyExtractor={(item) => item}
+      />
+
 
       <Button
         title="Add Group Member"
-        onPress={() => router.push("./addMemberScreen")}
+        onPress={() => router.navigate({pathname: "./addMemberScreen", params : {bond_id: bondID}})}
         buttonStyle={styles.button}
         titleStyle={styles.title}
       />
@@ -82,7 +132,10 @@ export default function createGroupScreen() {
 
       <StandardButton
       title="Cancel"
-      onPress={() => router.back()}
+      onPress={() => {
+        clearTempBondMembers();
+        router.back()}
+      }
       >
       </StandardButton>
 
@@ -114,3 +167,4 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 });
+
