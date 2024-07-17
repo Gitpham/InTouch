@@ -1,14 +1,13 @@
 import { ThemedText } from "@/components/ThemedText";
-import { useContext, useState } from "react";
-import { Alert, TextInput } from "react-native";
+import { useContext, useState, useEffect } from "react";
+import { Alert, FlatList, TextInput } from "react-native";
 import { } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
-import {  Button, } from "@rneui/themed";
+import {  Button, ListItem, } from "@rneui/themed";
 import { StyleSheet, View } from "react-native";
-import { router } from "expo-router";
-
+import { router, useFocusEffect } from "expo-router";
 import { InTouchContext } from "@/context/InTouchContext";
-import { Bond } from "@/constants/types";
+import { Bond, Person } from "@/constants/types";
 import { StandardButton } from "@/components/ButtonStandard";
 import React from "react";
 
@@ -16,9 +15,15 @@ export default function createGroupScreen() {
 
   // Data to be stored in record
   const [bondName, groupNameChange] = useState("");
-  const { createBond, generateBondId, tempBondMembers, clearTempBondMembers, createBondMember} = useContext(InTouchContext);
+  const [refresh, setRefresh] = useState(false);
+  const { createBond, generateBondId, tempBondMembers, clearTempBondMembers, createBondMember, peopleList } = useContext(InTouchContext);
 
-
+  useFocusEffect(
+    React.useCallback(() => {
+      // This will be triggered every time the screen is focused
+      setRefresh((old) => !old);
+    }, [tempBondMembers])
+  );
   const bondID = generateBondId();
 
   const bondToAdd: Bond = {
@@ -38,8 +43,6 @@ export default function createGroupScreen() {
 
     console.log("createGroupScreen tempBondMembers:", tempBondMembers)
     createBond(bondToAdd);
-
-
     
       try {
         createBondMember(tempBondMembers, bondID)
@@ -55,6 +58,28 @@ export default function createGroupScreen() {
     title = bondName;
   }
 
+  const renderGroupMembers = ({ item }: { item}) => {
+    let personToShow: Person;
+    peopleList.forEach((person: Person) => {
+      if (person.person_id === item) {
+        personToShow = person;
+
+    }
+  })
+  return (
+    <ListItem bottomDivider>
+      <ListItem.Content id={item.toString()}>
+        <ListItem.Title>
+          {personToShow.firstName} {personToShow.lastName}
+        </ListItem.Title>
+        <ListItem.Title>
+          Phone Number: {personToShow.phoneNumber} id: {item}
+        </ListItem.Title>
+      </ListItem.Content>
+    </ListItem>
+  );
+  };
+
 
   return (
     <SafeAreaView style={styles.stepContainer}>
@@ -63,7 +88,6 @@ export default function createGroupScreen() {
           {title}
         </ThemedText>
       </View>
-
       <TextInput
         onChangeText={groupNameChange}
         value={bondName}
@@ -77,6 +101,18 @@ export default function createGroupScreen() {
           backgroundColor: "gray",
         }}
       ></TextInput>
+      <View style={styles.centeredView}>
+      <ThemedText type="subtitle" style={styles.title}>
+          Members
+      </ThemedText>
+
+      </View>
+      <FlatList
+        data={([...tempBondMembers])}
+        renderItem={renderGroupMembers}
+        keyExtractor={(item) => item}
+      />
+
 
       <Button
         title="Add Group Member"
@@ -131,3 +167,4 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 });
+

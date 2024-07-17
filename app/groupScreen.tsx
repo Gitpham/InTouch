@@ -18,17 +18,12 @@ export default function groupScreen() {
 
   useEffect(() => {
     const bondId: number = +localParams.id;
-    
-    console.log("bondID: ", bondId)
-    console.log("bondList: ", bondList)
     let bond_index = bondList.findIndex(item => item.bond_id === bondId)
     if (bond_index !== -1) {
       const b: Bond = bondList[bond_index];
       setBond(b);
-      // console.log("groupScreen, bond: ", b)
       const p = getMembersOfBond(b);
       setMembers(p)
-      console.log("groupScreen, bondMembers: ", p)
     }
   }, [])
 
