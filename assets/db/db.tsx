@@ -5,6 +5,7 @@ import * as FileSystem from "expo-file-system";
 export const loadDB = async () => {
     try {
       const dbName = "Test_DataBase_7.db";
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
       const dbAsset = require("../Test_DataBase_7.db");
       const dbUri = Asset.fromModule(dbAsset).uri;
       const dbFilePath = `${FileSystem.documentDirectory}SQLite/${dbName}`;
@@ -84,7 +85,6 @@ export const createDB = async (db: SQLite.SQLiteDatabase) => {
 
 
   try {
-    console.log("creating db: ", db.databaseName)
     await db.execAsync('PRAGMA foreign_keys = ON');
     await db.execAsync(personQuery);
     // console.log("person table")

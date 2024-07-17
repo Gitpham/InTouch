@@ -16,3 +16,16 @@ export type BondPerson = {
     person_id: number;
     bond_id: number;
   }
+
+export enum ScheduleFrequency {
+    DAILY= "daily",
+    WEEKLY= "weekly",
+    MONTHLY= "monthly",
+    YEARLY= "yearly",
+  }
+  
+export type Schedule = {
+    scheduleType: ScheduleFrequency;
+    dates: Date[];
+    persons: Person[] | undefined;
+  };

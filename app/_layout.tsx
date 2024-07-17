@@ -16,6 +16,7 @@ import { InTouchContextProvider } from "@/context/InTouchContext";
 import React from "react";
 import * as SQLite from 'expo-sqlite';
 import { createDB } from "@/assets/db/db";
+import { ScheduleContextProvider } from "@/context/scheduleContext";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -61,6 +62,8 @@ export default function RootLayout() {
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
       <SQLiteProvider databaseName="DbWForeignKeys.db">
+        <ScheduleContextProvider>
+
         <InTouchContextProvider>
           <Stack>
             <Stack.Screen name="index" options={{ headerShown: false }} />
@@ -84,6 +87,7 @@ export default function RootLayout() {
             />
           </Stack>
         </InTouchContextProvider>
+        </ScheduleContextProvider>
       </SQLiteProvider>
     </ThemeProvider>
   );

@@ -1,46 +1,43 @@
-import { Person } from "@/constants/types";
+import { Person, Schedule, ScheduleFrequency } from "@/constants/types";
 import { createContext, useState } from "react";
 import React from "react";
 
-enum ScheduleFrequency {
-  DAILY,
-  WEEKLY,
-  MONTHLY,
-  YEARLY,
+type ScheduleContextType= {
+  createPotentialSchedule: (frequency: ScheduleFrequency, dates: Date[]) => void,
 }
 
-type PotentialSchedule = {
-  scheduleType: ScheduleFrequency;
-  dates: Date[];
-};
 
-export const ScheduleContext = createContext(null);
 
-export const SceduleContextProvider: React.FC<{
+export const ScheduleContext = createContext<ScheduleContextType>({
+  createPotentialSchedule: function (frequency: ScheduleFrequency, dates: Date[]): void {
+    throw new Error("Function not implemented.");
+  }
+});
+
+export const ScheduleContextProvider: React.FC<{
   children: React.ReactNode;
   // eslint-disable-next-line react/prop-types
 }> = ({ children }) => {
 
+
     //STATE VARIABLES
-  const [potentialSchedule, setPotentialSchedule] =
-    useState<PotentialSchedule>();
+  const [potentialSchedule, setPotentialSchedule] =useState<Schedule>();
 
 
 
-  const createPotentialSchedule(scheduleType: ScheduleFrequency, dates: Date[]) =>  {
-    const pSchedule: PotentialSchedule = {
-      scheduleType: scheduleType,
+  const createPotentialSchedule= (frequency: ScheduleFrequency, dates: Date[]) =>  {
+    const pSchedule: Schedule = {
+      scheduleType: frequency,
       dates: dates,
+      persons: undefined,
     };
     setPotentialSchedule(pSchedule);
 }
 
-    const generateLineup(people: Person[], startPerson: Person) => {
-        const lineUp: Person[] = [];
-        
+return <ScheduleContext.Provider value={{createPotentialSchedule, potentialSchedule}}>
+  {children}
+</ScheduleContext.Provider>
 
-
-    }
 
 }
 

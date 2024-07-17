@@ -2,6 +2,7 @@ import * as Notifications from "expo-notifications";
 import * as Device from "expo-device";
 import Constants from 'expo-constants';
 import { Platform } from "react-native";
+import { Person, PotentialSchedule, Schedule, ScheduleFrequency } from "@/constants/types";
 
 
 async function schedulePushNotification() {
@@ -14,6 +15,43 @@ async function schedulePushNotification() {
     },
     trigger: { seconds: 2 },
   });
+}
+
+async function generateNotifications(schedule: PotentialSchedule){
+
+  if(schedule.scheduleType == ScheduleFrequency.DAILY){
+    scheduleDailyNotification(schedule);
+  }
+
+}
+
+async function scheduleDailyNotification(schedule: Schedule) {
+
+  const time = schedule.dates[0];
+
+  const dailySchedule: Notifications.DailyTriggerInput = {
+    hour: time.getHours(),
+    minute: time.getMinutes(),
+    repeats: true
+  }
+
+  try {
+    schedule.persons?.forEach(async (p) => {
+      await Notifications.scheduleNotificationAsync({
+        content: {
+          title: `Call  ${p.firstName} ${p.lastName}`,
+          body: `Number: ${p.phoneNumber}`,
+        },
+        trigger: dailySchedule,
+      });
+    })
+  } catch (e) {
+    console.error(e);
+    throw Error("scheduleDailyNotifications() failed to scheduleNotificationAsync()")
+  }
+
+
+
 }
 
 async function registerForPushNotificationsAsync() {
@@ -65,6 +103,6 @@ async function registerForPushNotificationsAsync() {
 }
 
 export {
-    schedulePushNotification, 
-    registerForPushNotificationsAsync,
+  generateNotifications,
+  registerForPushNotificationsAsync,
 }
