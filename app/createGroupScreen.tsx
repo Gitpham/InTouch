@@ -18,12 +18,12 @@ export default function createGroupScreen() {
   const [refresh, setRefresh] = useState(false);
   const { createBond, generateBondId, tempBondMembers, clearTempBondMembers, createBondMember, peopleList } = useContext(InTouchContext);
 
-  useFocusEffect(
-    React.useCallback(() => {
-      // This will be triggered every time the screen is focused
-      setRefresh((old) => !old);
-    }, [tempBondMembers])
-  );
+  // useFocusEffect(
+  //   React.useCallback(() => {
+  //     // This will be triggered every time the screen is focused
+  //     // setRefresh((old) => !old);
+  //   }, [tempBondMembers])
+  // );
   const bondID = generateBondId();
 
   const bondToAdd: Bond = {
