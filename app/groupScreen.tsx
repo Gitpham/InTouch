@@ -1,5 +1,5 @@
 import { ThemedText } from "@/components/ThemedText";
-import { StyleSheet, FlatList, Pressable } from "react-native"
+import { StyleSheet, FlatList, Pressable, ScrollView } from "react-native"
 import { Card, ListItem, Button } from "@rneui/themed";
 import { useLocalSearchParams } from "expo-router";
 import { useContext, useEffect, useState } from "react";
@@ -8,10 +8,11 @@ import { InTouchContext } from "@/context/InTouchContext";
 import { Bond, Person } from "@/constants/types";
 import { router } from "expo-router";
 import React from "react";
+import { StandardButton } from "@/components/ButtonStandard";
 
 export default function groupScreen() {
 
-  const {bondList, getMembersOfBond, removeBond } = useContext(InTouchContext)
+  const {bondList, getMembersOfBond, removeBond, bondPersonMap } = useContext(InTouchContext)
   const localParams = useLocalSearchParams();
   const [bond, setBond] = useState<Bond>()
   const [members, setMembers] = useState<Array<Person>>();
@@ -25,7 +26,7 @@ export default function groupScreen() {
       const p = getMembersOfBond(b);
       setMembers(p)
     }
-  }, [])
+  }, [bondPersonMap])
 
   const renderMembers = ({ item }: { item: Person }) => {
     return (
@@ -51,7 +52,8 @@ export default function groupScreen() {
   }
 
        return (
-        <SafeAreaView style = {styles.stepContainer}>
+        <SafeAreaView style = {styles.stepContainer} >
+          <ScrollView  nestedScrollEnabled={true}>
              <Card>
                <Card.Title>Name: {bond?.bondName}</Card.Title>
                <Card.Divider></Card.Divider>
@@ -66,11 +68,18 @@ export default function groupScreen() {
              <Card>
               <Card.Title>Members</Card.Title>
               <FlatList
+                nestedScrollEnabled = {true}
+                style = {styles.flatList}
                 data = {members}
                 renderItem = {renderMembers}
                 keyExtractor={(item) => item.person_id.toString()}
                 />
              </Card>
+
+             <StandardButton
+             title = "+Add Member"
+             onPress = {() => {router.navigate({pathname: "./addMemberScreen", params: {bond_id : bond.bond_id, group_screen : 1}})}}
+             />
 
              <Button
              title = "Delete"
@@ -80,7 +89,7 @@ export default function groupScreen() {
              />
 
 
-
+          </ScrollView>
         </SafeAreaView>
 
        )
@@ -116,4 +125,7 @@ const styles = StyleSheet.create({
   centeredView: {
     alignItems: "center",
   },
+  flatList: {
+    height: 200,
+  }
 });

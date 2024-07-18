@@ -12,10 +12,11 @@ import { Person } from "@/constants/types";
 import React from "react";
 
 export default function addMemberScreen() {
-  const { createPerson, addTempBondMember, generatePersonId , tempBondMembers, peopleList } = useContext(InTouchContext);
+  const { createPerson, addTempBondMember, generatePersonId , tempBondMembers, peopleList, bondPersonMap, createBondMember } = useContext(InTouchContext);
   const [refresh, setRefresh] = useState(false)
   const localParams = useLocalSearchParams();
   const bond_id = +localParams.bond_id;
+  const group_screen = +localParams.group_screen;
 
   async function importFromContacts() {
     const { status } = await Contacts.requestPermissionsAsync();
@@ -46,24 +47,35 @@ export default function addMemberScreen() {
 
   const addBondMember = ({ item }: { item: Person }) => {
     if (!tempBondMembers.has(item.person_id)) {
-    return (
-      <ListItem bottomDivider>
-        <Pressable onPress={() => {addTempBondMember(item.person_id); setRefresh((oldValue) => {return !oldValue})}}>
-        <ListItem.Content id={item.person_id.toString()}>
-          <ListItem.Title>
-            {item.firstName} {item.lastName}
-          </ListItem.Title>
-          <ListItem.Title>
-            Phone Number: {item.phoneNumber} id: {item.person_id.toString()}
-          </ListItem.Title>
-        </ListItem.Content>
-        </Pressable>
+      const bond_members = bondPersonMap.get(bond_id);
+      if (bond_members) {
+        if (!bond_members.has(item.person_id)) {
+          return (
+            <ListItem bottomDivider>
+              <Pressable onPress={() => {addTempBondMember(item.person_id); setRefresh((oldValue) => {return !oldValue})}}>
+              <ListItem.Content id={item.person_id.toString()}>
+                <ListItem.Title>
+                  {item.firstName} {item.lastName}
+                </ListItem.Title>
+                <ListItem.Title>
+                  Phone Number: {item.phoneNumber} id: {item.person_id.toString()}
+                </ListItem.Title>
+              </ListItem.Content>
+              </Pressable>
 
-      </ListItem>
-    );
+            </ListItem>
+        );}
+      }
     }
     else {return null}
   };
+
+  const onDonePress = () => {
+    if (group_screen === 1) {
+      createBondMember(tempBondMembers, bond_id);
+    }
+    router.back()
+  }
 
 
   return (
@@ -98,7 +110,7 @@ export default function addMemberScreen() {
 
       <StandardButton
         title="Done"
-        onPress={() => router.back()}
+        onPress={() => onDonePress()}
       />
     </SafeAreaView>
   );
