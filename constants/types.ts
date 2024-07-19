@@ -53,10 +53,19 @@ export type WeeklySchedule = {
     sunday: Date | undefined,
 }
 
+export type DayOfMonth = {
+    weekOfMonth: number,
+    dayOfWeek: number,
+    time: Date,
+}
+
 
 export type MonthlySchedule = {
-    //TODO: make this set maximum 28. 
-    dates: Set<Date>
+   daysInMonth: DayOfMonth[]
+}
+
+export function isMonthlySchedule(obj: any): obj is MonthlySchedule {
+    return ((typeof obj.weekOfMonth[0] == "number") && (obj.daysOfWeek[0] instanceof Set) && (obj.time[0][0] instanceof Set))
 }
 
 export type YearlySchedule = {

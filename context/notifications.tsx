@@ -4,7 +4,9 @@ import Constants from "expo-constants";
 import { Platform } from "react-native";
 import {
   Bond,
+  DayOfMonth,
   isDailySchedule,
+  isMonthlySchedule,
   isWeeklySchedule,
   Schedule,
 } from "@/constants/types";
@@ -237,6 +239,42 @@ export async function scheduleWeeklyNotification(s: Schedule, bond: Bond) {
       );
     }
   }
+}
+
+
+export async function scheduleMonthlyNotification(s:Schedule, bond:Bond) {
+  if (!isMonthlySchedule(s.schedule)) {
+    throw Error(
+      "scheduleMonthlyNotification(): param is not of type MonthlySchedule"
+    );
+  }
+
+  const daysToSchedule: DayOfMonth[] = s.schedule.daysInMonth;
+  daysToSchedule.forEach((d) => {
+    const trigger: Notifications.CalendarTriggerInput = {
+      weekOfMonth: d.weekOfMonth,
+      day: d.dayOfWeek,
+      hour: d.time.getHours(),
+      minute: d.time.getMinutes()
+    }
+
+    try {
+      await Notifications.scheduleNotificationAsync({
+        content: {
+          title: `Call ${bond.bondName} !`,
+          body: `Time to Call ${bond.bondName}`,
+          data: { data: `${bond.bond_id}`, test: { test1: "more data" } },
+        },
+        trigger: trigger,
+      });
+    } catch (e) {
+      console.error(e);
+      throw Error(
+        `scheduleMonthlyNotification() failed to scheduleNotificationAsync for the ${d.dayOfWeek} of the ${d.weekOfMonth} week of Month`
+      );
+
+  }
+})
 
 }
 
