@@ -44,6 +44,7 @@ export async function scheduleDailyNotification(s: Schedule, bond: Bond) {
 }
 
 export async function scheduleWeeklyNotification(s: Schedule, bond: Bond) {
+  console.log("scheduleWeeklyNotifications()")
   if (!isWeeklySchedule(s.schedule)) {
     throw Error(
       "scheduleWeeklyNotification(): param is not of type WeeklySchedule"

@@ -37,12 +37,14 @@ export const ScheduleContextProvider: React.FC<{
 
 
   const createPotentialSchedule = async (s: Schedule) =>  {
-    console.log("createPotentialSchedule(): ", s.schedule.time.getMinutes())
     await setPotentialSchedule(s);
 }
 
   const generateSchedule = async (bond: Bond) => {
-    console.log("generateSchedule() potentialSchedule: ", potentialSchedule.schedule.time.getMinutes())
+
+    if (potentialSchedule == undefined){
+      throw Error("generateSchedule(): potenialScheudle is undefined")
+    }
 
     if (isDailySchedule(potentialSchedule.schedule)) {
       await scheduleDailyNotification(potentialSchedule, bond);
