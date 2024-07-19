@@ -11,16 +11,6 @@ import {
   Schedule,
 } from "@/constants/types";
 
-async function schedulePushNotification() {
-  await Notifications.scheduleNotificationAsync({
-    content: {
-      title: "You've got mail! 📬",
-      body: "Here is the notification body",
-      data: { data: "goes here", test: { test1: "more data" } },
-    },
-    trigger: { seconds: 2 },
-  });
-}
 
 export async function scheduleDailyNotification(s: Schedule, bond: Bond) {
   if (!isDailySchedule(s.schedule)) {
@@ -250,7 +240,8 @@ export async function scheduleMonthlyNotification(s:Schedule, bond:Bond) {
   }
 
   const daysToSchedule: DayOfMonth[] = s.schedule.daysInMonth;
-  daysToSchedule.forEach((d) => {
+  daysToSchedule.forEach(async (d) => {
+    
     const trigger: Notifications.CalendarTriggerInput = {
       weekOfMonth: d.weekOfMonth,
       day: d.dayOfWeek,
