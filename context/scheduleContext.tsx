@@ -32,18 +32,21 @@ export const ScheduleContextProvider: React.FC<{
 
 
     //STATE VARIABLES
-  const [potentialSchedule, setPotentialSchedule] =useState<Schedule>({schedule: {time: new Date()}});
+  const [potentialSchedule, setPotentialSchedule] =useState<Schedule>();
 
 
 
-  const createPotentialSchedule = (s: Schedule) =>  {
-    setPotentialSchedule(s);
+  const createPotentialSchedule = async (s: Schedule) =>  {
+    console.log("createPotentialSchedule(): ", s.schedule.time.getMinutes())
+    await setPotentialSchedule(s);
 }
 
-  const generateSchedule = (bond: Bond) => {
-    if (isDailySchedule(potentialSchedule)) {
-      scheduleDailyNotification(potentialSchedule, bond);
-    } else if (isWeeklySchedule(potentialSchedule)) {
+  const generateSchedule = async (bond: Bond) => {
+    console.log("generateSchedule() potentialSchedule: ", potentialSchedule.schedule.time.getMinutes())
+
+    if (isDailySchedule(potentialSchedule.schedule)) {
+      await scheduleDailyNotification(potentialSchedule, bond);
+    } else if (isWeeklySchedule(potentialSchedule.schedule)) {
       scheduleWeeklyNotification(potentialSchedule, bond);
     } 
 

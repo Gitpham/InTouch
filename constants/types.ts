@@ -29,6 +29,7 @@ export type DailySchedule = {
 }
 
 export function isDailySchedule(obj: any): obj is DailySchedule {
+    console.log("isDailySchedule()")
     return (obj.time instanceof Date);
 }
 

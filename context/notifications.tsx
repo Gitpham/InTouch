@@ -13,6 +13,7 @@ import {
 
 
 export async function scheduleDailyNotification(s: Schedule, bond: Bond) {
+  console.log("scheduleDailyNotification")
   if (!isDailySchedule(s.schedule)) {
     throw Error(
       "scheduleDailyNotification(): param is not of type DailySchedule"
@@ -24,6 +25,7 @@ export async function scheduleDailyNotification(s: Schedule, bond: Bond) {
     minute: s.schedule.time.getMinutes(),
     repeats: true,
   };
+  console.log("dailyTrigger: ", dailyTrigger)
   try {
     await Notifications.scheduleNotificationAsync({
       content: {
