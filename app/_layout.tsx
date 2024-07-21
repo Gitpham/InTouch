@@ -82,6 +82,10 @@ export default function RootLayout() {
               name="personScreen"
               options={{ headerTitle: "Person" }}
             />
+            <Stack.Screen
+              name="addReminderModal"
+              options={{ headerTitle: "Add Reminders", presentation: "modal"}}
+            />
           </Stack>
         </InTouchContextProvider>
       </SQLiteProvider>

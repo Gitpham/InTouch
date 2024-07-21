@@ -1,6 +1,6 @@
 /* eslint-disable react/react-in-jsx-scope */
 import { ThemedText } from "@/components/ThemedText";
-import { Bond, Person } from "@/constants/types";
+import { Bond, Person, Reminder } from "@/constants/types";
 import { Card, ListItem, Button } from "@rneui/themed";
 import { useLocalSearchParams } from "expo-router";
 import { useContext, useEffect, useState } from "react";
@@ -15,6 +15,7 @@ export default function PersonScreen() {
   const localParams = useLocalSearchParams();
   const [person, setPerson] = useState<Person>()
   const [bonds, setBonds] = useState<Array<Bond>>();
+  const [reminders, setReminders] = useState<Array<Reminder>>();
 
 
   useEffect(() => {
@@ -73,7 +74,20 @@ export default function PersonScreen() {
 
              <Card>
               <Card.Title>Reminders</Card.Title>
+                            <FlatList
+            data={bonds}
+            renderItem={renderBonds}
+            keyExtractor={(item) => item.bond_id.toString()}
+          />
              </Card>
+
+             <Button
+             title = "+Add Reminder"
+             buttonStyle = {styles.button}
+             titleStyle = {styles.title}
+             onPress = {() => router.navigate({pathname: "./addReminderModal", params: {person_id: person.person_id}})}
+             />
+
 
              <Card>
               <Card.Title>Groups</Card.Title>
