@@ -15,6 +15,7 @@ export type Person = {
 export type BondPerson = {
     person_id: number;
     bond_id: number;
+    nextToCall: number;
   }
 
 export enum ScheduleFrequency {

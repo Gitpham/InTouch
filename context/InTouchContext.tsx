@@ -3,6 +3,7 @@ import {
   addPersonBond,
   deletePersonBond,
   getAllPersonBonds,
+  getPersonsOfBondDB,
 } from "@/assets/db/PersonBondRepo";
 import { getAllPersons, addPerson, deletePerson } from "@/assets/db/PersonRepo";
 import { Person, Bond, BondPerson } from "@/constants/types";
@@ -516,6 +517,8 @@ export const InTouchContextProvider: React.FC<{
       throw Error("getBondsOfPerson(): failed to get bonds of person");
     }
   }
+
+ 
 
   // Initializes user's people list and bond list upon initial render
 
