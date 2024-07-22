@@ -20,6 +20,18 @@ export async function allowsNotificationsAsync() {
   );
 }
 
+
+export async function redirect(notification: Notifications.Notification) {
+  const url = notification.request.content.data?.url;
+  const canOpen = await Linking.canOpenURL(url)
+  if(canOpen){
+    Linking.openURL(url)
+  } else {
+    Alert.alert("could not open url")
+  }
+}
+
+
 export async function requestNotificationPermission(){
   return await Notifications.requestPermissionsAsync({
     ios: {
@@ -86,7 +98,7 @@ export async function scheduleDailyNotification (s: Schedule, bond: Bond): Promi
       content: {
         title: `Call ${bond.bondName} !`,
         body: `Time to Call ${bond.bondName}`,
-        data: { data: `${bond.bond_id}`, test: { test1: "more data" }, url: "tel:1-612-401-2250" },
+        data: { bondID: `${bond.bond_id}`, test: { test1: "more data" }, url: "tel:1-612-401-2250" },
       },
       trigger: dailyTrigger,
     });

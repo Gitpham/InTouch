@@ -73,13 +73,13 @@ export const getAllPersonBonds = async (db: SQLite.SQLiteDatabase) => {
     } 
 }
 
-export const getPersonsOfBondDB = async (db: SQLite.SQLiteDatabase, bond: Bond) => {
+export const getPersonsOfBondDB = async (db: SQLite.SQLiteDatabase, bondID: number) => {
     const statement = await db.prepareAsync(`
         SELECT * FROM person_bond
         WHERE bond_id = ?
          ;`);
 
-    const value: string[] = [bond.bond_id.toString()]
+    const value: string[] = [bondID.toString()]
     try {
         const result =  await statement.executeAsync<BondPerson>(value);
         const rows = await result.getAllAsync();

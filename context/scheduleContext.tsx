@@ -5,13 +5,17 @@ import { scheduleDailyNotification, scheduleWeeklyNotification } from "./notific
 import { getPersonsOfBondDB, updatePersonBond } from "@/assets/db/PersonBondRepo";
 import { useSQLiteContext } from "expo-sqlite";
 import { getPerson } from "@/assets/db/PersonRepo";
+import { Alert, Linking } from "react-native";
+import * as Notifications from "expo-notifications";
+import { validateAndFormatPhoneNumber } from "./PhoneNumberUtils";
 
 //TYPE
 type ScheduleContextType= {
   createPotentialSchedule: (s: Schedule) => void,
   potentialSchedule: Schedule,
   generateSchedule: ( b: Bond) => void,
-  getNextToCall: (bond: Bond)=> Promise<Person>,
+  getNextToCall: (bondID: number)=> Promise<Person>,
+  callPerson: (notification: Notifications.Notification) => void,
 
 }
 
@@ -29,9 +33,12 @@ export const ScheduleContext = createContext<ScheduleContextType>({
   generateSchedule: function (b: Bond): void {
     throw new Error("Function not implemented.");
   },
-  getNextToCall: function (b: Bond): Promise<Person> {
+  getNextToCall: function (bondID: number): Promise<Person> {
     throw new Error("Function not implemented.");
   },
+  callPerson: function (notification: Notifications.Notification): void {
+    throw new Error("Function not implemented.");
+  }
 });
 
 export const ScheduleContextProvider: React.FC<{
@@ -52,9 +59,9 @@ export const ScheduleContextProvider: React.FC<{
    * If there is no next person to call, it marks the first personBond in the list. 
    * @param bond 
    */
-  const getNextToCall = async (bond: Bond): Promise<Person> =>{
+  const getNextToCall = async (bondID: number): Promise<Person> =>{
     try {
-      const members: BondPerson[] = await getPersonsOfBondDB(db, bond);
+      const members: BondPerson[] = await getPersonsOfBondDB(db, bondID);
 
       // IF SOMEBODY IS MARKED AND IS NOT END
       for(let i = 0; i < members.length; i++){
@@ -94,7 +101,31 @@ export const ScheduleContextProvider: React.FC<{
     }
   }
 
+ 
+  
+  // Usage Example
+  try {
+    const phoneNumber = "123.456.7890"; // Example input
+    const formattedPhoneNumber = validateAndFormatPhoneNumber(phoneNumber);
+    console.log('Formatted Phone Number:', formattedPhoneNumber); // Outputs: (123) 456-7890
+  } catch (error) {
+    console.error(error.message);
+  }
 
+  const callPerson= async (notification: Notifications.Notification) => {
+    const bondID: number = +notification.request.content.data?.bondID
+    const toCall: Person = await getNextToCall(bondID);
+    const phoneNumber: string = validateAndFormatPhoneNumber(toCall.phoneNumber);
+
+    const phoneURL: string = `tel:+1${phoneNumber}`;
+    const canOpen = await Linking.canOpenURL(phoneURL);
+
+    if(canOpen){
+      Linking.openURL(phoneURL)
+    } else {
+      Alert.alert("could not open url")
+    }
+  }
 
   const createPotentialSchedule = async (s: Schedule) =>  {
     await setPotentialSchedule(s);
@@ -118,7 +149,7 @@ export const ScheduleContextProvider: React.FC<{
 
   }
 
-return <ScheduleContext.Provider value={{createPotentialSchedule, potentialSchedule, generateSchedule, getNextToCall}}>
+return <ScheduleContext.Provider value={{createPotentialSchedule, potentialSchedule, generateSchedule, getNextToCall, callPerson}}>
   {children}
 </ScheduleContext.Provider>
 
