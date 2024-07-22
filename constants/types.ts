@@ -30,17 +30,26 @@ export type DailySchedule = {
 }
 
 export function isDailySchedule(obj: any): obj is DailySchedule {
-    return (obj.time instanceof Date);
+    try {
+        return (obj.time instanceof Date)
+    } catch (e) {
+        return false;
+    }
 }
 
 export function isWeeklySchedule(obj: any): obj is WeeklySchedule {
-    return (((typeof obj.monday == "undefined") || (obj.monday instanceof Date))
-    && ((typeof obj.tuesday == "undefined") || (obj.tuesday instanceof Date))
-    && ((typeof obj.wednesday == "undefined") || (obj.wednesday instanceof Date))
-    && ((typeof obj.thursday == "undefined") || (obj.thursday instanceof Date))
-    && ((typeof obj.friday == "undefined") || (obj.friday instanceof Date))
-    && ((typeof obj.saturday == "undefined") || (obj.saturday instanceof Date))
-    && ((typeof obj.sunday == "undefined") || (obj.sunday instanceof Date)))
+    try {
+        return (((typeof obj.monday == "undefined") || (obj.monday instanceof Date))
+        && ((typeof obj.tuesday == "undefined") || (obj.tuesday instanceof Date))
+        && ((typeof obj.wednesday == "undefined") || (obj.wednesday instanceof Date))
+        && ((typeof obj.thursday == "undefined") || (obj.thursday instanceof Date))
+        && ((typeof obj.friday == "undefined") || (obj.friday instanceof Date))
+        && ((typeof obj.saturday == "undefined") || (obj.saturday instanceof Date))
+        && ((typeof obj.sunday == "undefined") || (obj.sunday instanceof Date)))
+    } catch (e) {
+        return false;
+    }
+    
 }
 
 

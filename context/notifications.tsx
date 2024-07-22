@@ -4,11 +4,14 @@ import Constants from "expo-constants";
 import { Alert, Linking, Platform } from "react-native";
 import {
   Bond,
+  DailySchedule,
   DayOfMonth,
   isDailySchedule,
   isMonthlySchedule,
   isWeeklySchedule,
+  MonthlySchedule,
   Schedule,
+  WeeklySchedule,
 } from "@/constants/types";
 import React from "react";
 
@@ -68,29 +71,18 @@ export async function cancelNotifications(notificationIDs: string[]) {
   }
 }
 
-// export async function handleNotificationPressed() {
-//   React.useEffect(() => {
-//     const subscription = Notifications.addNotificationResponseReceivedListener(response => {
-//       Alert.alert("recieved notification: ", response)
-//       // const url = response.notification.request.content.data.url;
-//       // Linking.openURL(url);
-//     })
 
-//     return subscription.remove();
-    
-//   }, [])
-// }
-
-export async function scheduleDailyNotification (s: Schedule, bond: Bond): Promise<string> {
-  if (!isDailySchedule(s.schedule)) {
-    throw Error(
-      "scheduleDailyNotification(): param is not of type DailySchedule"
-    );
-  }
+/**
+ * schedules a daily notificaion according to the hour and time of the schedule, and bondID of the bond. 
+ * @param schedule 
+ * @param bond 
+ * @returns 
+ */
+export async function scheduleDailyNotification (schedule: DailySchedule, bond: Bond): Promise<string> {
 
   const dailyTrigger: Notifications.DailyTriggerInput = {
-    hour: s.schedule.time.getHours(),
-    minute: s.schedule.time.getMinutes(),
+    hour: schedule.time.getHours(),
+    minute: schedule.time.getMinutes(),
     repeats: true,
   };
   try {
@@ -110,15 +102,11 @@ export async function scheduleDailyNotification (s: Schedule, bond: Bond): Promi
   }
 }
 
-export async function scheduleWeeklyNotification(s: Schedule, bond: Bond) {
-  if (!isWeeklySchedule(s.schedule)) {
-    throw Error(
-      "scheduleWeeklyNotification(): param is not of type WeeklySchedule"
-    );
-  }
+export async function scheduleWeeklyNotification(schedule: WeeklySchedule, bond: Bond) {
 
-  if (s.schedule.sunday != undefined) {
-    const day: Date = s.schedule.sunday;
+
+  if (schedule.sunday != undefined) {
+    const day: Date = schedule.sunday;
     const weeklyTrigger: Notifications.WeeklyTriggerInput = {
       weekday: 0,
       hour: day.getHours(),
@@ -143,8 +131,8 @@ export async function scheduleWeeklyNotification(s: Schedule, bond: Bond) {
     }
   }
 
-  if (s.schedule.monday != undefined) {
-    const day: Date = s.schedule.monday;
+  if (schedule.monday != undefined) {
+    const day: Date = schedule.monday;
     const weeklyTrigger: Notifications.WeeklyTriggerInput = {
       weekday: 1,
       hour: day.getHours(),
@@ -169,8 +157,8 @@ export async function scheduleWeeklyNotification(s: Schedule, bond: Bond) {
     }
   }
 
-  if (s.schedule.tuesday != undefined) {
-    const day: Date = s.schedule.tuesday;
+  if (schedule.tuesday != undefined) {
+    const day: Date = schedule.tuesday;
     const weeklyTrigger: Notifications.WeeklyTriggerInput = {
       weekday: 2,
       hour: day.getHours(),
@@ -195,8 +183,8 @@ export async function scheduleWeeklyNotification(s: Schedule, bond: Bond) {
     }
   }
 
-  if (s.schedule.wednesday != undefined) {
-    const day: Date = s.schedule.wednesday;
+  if (schedule.wednesday != undefined) {
+    const day: Date = schedule.wednesday;
     const weeklyTrigger: Notifications.WeeklyTriggerInput = {
       weekday: 3,
       hour: day.getHours(),
@@ -221,8 +209,8 @@ export async function scheduleWeeklyNotification(s: Schedule, bond: Bond) {
     }
   }
 
-  if (s.schedule.thursday != undefined) {
-    const day: Date = s.schedule.thursday;
+  if (schedule.thursday != undefined) {
+    const day: Date = schedule.thursday;
     const weeklyTrigger: Notifications.WeeklyTriggerInput = {
       weekday: 4,
       hour: day.getHours(),
@@ -247,8 +235,8 @@ export async function scheduleWeeklyNotification(s: Schedule, bond: Bond) {
     }
   }
 
-  if (s.schedule.friday != undefined) {
-    const day: Date = s.schedule.friday;
+  if (schedule.friday != undefined) {
+    const day: Date = schedule.friday;
     const weeklyTrigger: Notifications.WeeklyTriggerInput = {
       weekday: 5,
       hour: day.getHours(),
@@ -273,8 +261,8 @@ export async function scheduleWeeklyNotification(s: Schedule, bond: Bond) {
     }
   }
 
-  if (s.schedule.saturday != undefined) {
-    const day: Date = s.schedule.saturday;
+  if (schedule.saturday != undefined) {
+    const day: Date = schedule.saturday;
     const weeklyTrigger: Notifications.WeeklyTriggerInput = {
       weekday: 6,
       hour: day.getHours(),
@@ -301,14 +289,14 @@ export async function scheduleWeeklyNotification(s: Schedule, bond: Bond) {
 }
 
 
-export async function scheduleMonthlyNotification(s:Schedule, bond:Bond) {
-  if (!isMonthlySchedule(s.schedule)) {
+export async function scheduleMonthlyNotification(schedule:MonthlySchedule, bond:Bond) {
+  if (!isMonthlySchedule(schedule)) {
     throw Error(
       "scheduleMonthlyNotification(): param is not of type MonthlySchedule"
     );
   }
 
-  const daysToSchedule: DayOfMonth[] = s.schedule.daysInMonth;
+  const daysToSchedule: DayOfMonth[] = schedule.daysInMonth;
   daysToSchedule.forEach(async (d) => {
     
     const trigger: Notifications.CalendarTriggerInput = {
