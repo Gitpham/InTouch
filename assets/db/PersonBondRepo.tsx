@@ -44,10 +44,10 @@ export const updatePersonBond = async (db: SQLite.SQLiteDatabase, pID: number, b
     const statement = await db.prepareAsync(`
         UPDATE person_bond
         SET nextToCall = ?
-        WHERE person_id = ? & bond_id = ?;
+        WHERE person_id = ? AND bond_id = ?;
         `);
 
-    const value: string[] = [isNextToCall.toString(), pID.toString(), bID.toString()]
+    const value: string[] = [isNextToCall.toString(), pID.toString(), bID.toString()];
     try {
         return await statement.executeAsync(value)
     } catch (error) {

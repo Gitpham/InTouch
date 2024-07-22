@@ -58,12 +58,13 @@ export const ScheduleContextProvider: React.FC<{
 
       // IF SOMEBODY IS MARKED AND IS NOT END
       for(let i = 0; i < members.length; i++){
+
         if(members[i].nextToCall == 1){
           const persToCall = await getPerson(db, members[i].person_id);
           await updatePersonBond(db, members[i].person_id, members[i].bond_id, 0);
 
           if (i+1 < members.length){
-            await updatePersonBond(db, members[i+1].person_id, members[i+1].bond_id, 0);
+            await updatePersonBond(db, members[i+1].person_id, members[i+1].bond_id, 1);
             return persToCall as Person;
          }
 
@@ -74,10 +75,11 @@ export const ScheduleContextProvider: React.FC<{
         }
       }
 
-      // If there is no member markd
+      // If there is no member markedd
       const firstToCall: Person = await getPerson(db, members[0].person_id) as Person;
 
       if (members.length == 1) {
+        console.log("members length == 1")
         await updatePersonBond(db, members[0].person_id, members[0].bond_id, 1)
         return firstToCall;
       }
@@ -87,7 +89,8 @@ export const ScheduleContextProvider: React.FC<{
 
      
     } catch (e) {
-      console.error("getNextToCallInBond(): failed to call getPersonsOfBondDB");
+      console.error();
+      throw new Error("getNextToCallInBond(): failed to call getPersonsOfBondDB");
     }
   }
 
