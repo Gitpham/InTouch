@@ -71,6 +71,7 @@ export const createDB = async (db: SQLite.SQLiteDatabase) => {
         CREATE TABLE IF NOT EXISTS person_bond (
             person_id INTEGER,
             bond_id INTEGER,
+            mostRecentlyCalled INTEGER DEFAULT 0,
             PRIMARY KEY (person_id, bond_id),
             FOREIGN KEY (person_id)
                 REFERENCES person (person_id)

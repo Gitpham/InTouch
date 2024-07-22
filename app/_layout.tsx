@@ -34,7 +34,7 @@ export default function RootLayout() {
 
 
     const initDB = async () => {
-      const db = await SQLite.openDatabaseAsync("DbWForeignKeys.db");
+      const db = await SQLite.openDatabaseAsync("Db_leastRecentlyCalled.db");
       createDB(db);
     };
 
@@ -61,7 +61,7 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <SQLiteProvider databaseName="DbWForeignKeys.db">
+      <SQLiteProvider databaseName="Db_leastRecentlyCalled.db">
         <ScheduleContextProvider>
 
         <InTouchContextProvider>
