@@ -1,7 +1,7 @@
 import * as Notifications from "expo-notifications";
 import * as Device from "expo-device";
 import Constants from "expo-constants";
-import { Platform } from "react-native";
+import { Alert, Linking, Platform } from "react-native";
 import {
   Bond,
   DayOfMonth,
@@ -10,6 +10,27 @@ import {
   isWeeklySchedule,
   Schedule,
 } from "@/constants/types";
+import React from "react";
+
+
+export async function allowsNotificationsAsync() {
+  const settings = await Notifications.getPermissionsAsync();
+  return (
+    settings.granted || settings.ios?.status === Notifications.IosAuthorizationStatus.PROVISIONAL
+  );
+}
+
+export async function requestNotificationPermission(){
+  return await Notifications.requestPermissionsAsync({
+    ios: {
+      allowAlert: true,
+      allowBadge: true,
+      allowSound: true,
+      allowAnnouncements: true,
+    },
+  });
+}
+
 
 export async function cancelAllNotifications(){
   try {
@@ -35,8 +56,20 @@ export async function cancelNotifications(notificationIDs: string[]) {
   }
 }
 
+// export async function handleNotificationPressed() {
+//   React.useEffect(() => {
+//     const subscription = Notifications.addNotificationResponseReceivedListener(response => {
+//       Alert.alert("recieved notification: ", response)
+//       // const url = response.notification.request.content.data.url;
+//       // Linking.openURL(url);
+//     })
+
+//     return subscription.remove();
+    
+//   }, [])
+// }
+
 export async function scheduleDailyNotification (s: Schedule, bond: Bond): Promise<string> {
-  console.log("scheduleDailyNotification")
   if (!isDailySchedule(s.schedule)) {
     throw Error(
       "scheduleDailyNotification(): param is not of type DailySchedule"
@@ -48,13 +81,12 @@ export async function scheduleDailyNotification (s: Schedule, bond: Bond): Promi
     minute: s.schedule.time.getMinutes(),
     repeats: true,
   };
-  console.log("dailyTrigger: ", dailyTrigger)
   try {
     return await Notifications.scheduleNotificationAsync({
       content: {
         title: `Call ${bond.bondName} !`,
         body: `Time to Call ${bond.bondName}`,
-        data: { data: `${bond.bond_id}`, test: { test1: "more data" } },
+        data: { data: `${bond.bond_id}`, test: { test1: "more data" }, url: "tel:1-612-401-2250" },
       },
       trigger: dailyTrigger,
     });
@@ -67,7 +99,6 @@ export async function scheduleDailyNotification (s: Schedule, bond: Bond): Promi
 }
 
 export async function scheduleWeeklyNotification(s: Schedule, bond: Bond) {
-  console.log("scheduleWeeklyNotifications()")
   if (!isWeeklySchedule(s.schedule)) {
     throw Error(
       "scheduleWeeklyNotification(): param is not of type WeeklySchedule"
