@@ -101,17 +101,6 @@ export const ScheduleContextProvider: React.FC<{
     }
   }
 
- 
-  
-  // Usage Example
-  try {
-    const phoneNumber = "123.456.7890"; // Example input
-    const formattedPhoneNumber = validateAndFormatPhoneNumber(phoneNumber);
-    console.log('Formatted Phone Number:', formattedPhoneNumber); // Outputs: (123) 456-7890
-  } catch (error) {
-    console.error(error.message);
-  }
-
   const callPerson= async (notification: Notifications.Notification) => {
     const bondID: number = +notification.request.content.data?.bondID
     const toCall: Person = await getNextToCall(bondID);

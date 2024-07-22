@@ -98,7 +98,7 @@ export async function scheduleDailyNotification (s: Schedule, bond: Bond): Promi
       content: {
         title: `Call ${bond.bondName} !`,
         body: `Time to Call ${bond.bondName}`,
-        data: { bondID: `${bond.bond_id}`, test: { test1: "more data" }, url: "tel:1-612-401-2250" },
+        data: { bondID: `${bond.bond_id}`, test: { test1: "more data" } },
       },
       trigger: dailyTrigger,
     });
