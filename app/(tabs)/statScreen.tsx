@@ -1,5 +1,5 @@
 import * as Notifications from "expo-notifications";
-import { registerForPushNotificationsAsync, schedulePushNotification } from "@/context/notifications";
+import { registerForPushNotificationsAsync } from "@/context/notifications";
 import { useState, useRef, useEffect } from "react";
 import { Platform, View, Button, Text } from "react-native";
 import React from "react";

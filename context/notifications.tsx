@@ -11,8 +11,31 @@ import {
   Schedule,
 } from "@/constants/types";
 
+export async function cancelAllNotifications(){
+  try {
+    await Notifications.cancelAllScheduledNotificationsAsync()
+  } catch (e) {
+    console.error(e)
+    throw Error(
+      "cancelAllNotifications() failed to call cancelAllScheduledNotificationsAsync"
+    );
+  }
+}
 
-export async function scheduleDailyNotification(s: Schedule, bond: Bond) {
+export async function cancelNotifications(notificationIDs: string[]) {
+  try {
+    notificationIDs.forEach(async (id) => {
+      await Notifications.cancelScheduledNotificationAsync(id);
+    })
+  } catch (e) {
+    console.error(e)
+    throw Error(
+      "cancelNotification() failed to call cancelScheduleNotificationsAsync"
+    );
+  }
+}
+
+export async function scheduleDailyNotification (s: Schedule, bond: Bond): Promise<string> {
   console.log("scheduleDailyNotification")
   if (!isDailySchedule(s.schedule)) {
     throw Error(
@@ -27,7 +50,7 @@ export async function scheduleDailyNotification(s: Schedule, bond: Bond) {
   };
   console.log("dailyTrigger: ", dailyTrigger)
   try {
-    await Notifications.scheduleNotificationAsync({
+    return await Notifications.scheduleNotificationAsync({
       content: {
         title: `Call ${bond.bondName} !`,
         body: `Time to Call ${bond.bondName}`,

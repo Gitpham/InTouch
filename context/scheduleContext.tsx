@@ -3,6 +3,7 @@ import { createContext, useState } from "react";
 import React from "react";
 import { scheduleDailyNotification, scheduleWeeklyNotification } from "./notifications";
 
+//TYPE
 type ScheduleContextType= {
   createPotentialSchedule: (s: Schedule) => void,
   potentialSchedule: Schedule,
@@ -10,7 +11,7 @@ type ScheduleContextType= {
 }
 
 
-
+//DECLARATION
 export const ScheduleContext = createContext<ScheduleContextType>({
   createPotentialSchedule: function (s: Schedule): void {
     throw new Error("Function not implemented.");
@@ -33,6 +34,7 @@ export const ScheduleContextProvider: React.FC<{
 
     //STATE VARIABLES
   const [potentialSchedule, setPotentialSchedule] =useState<Schedule>();
+  const [notificationIDs, setNotificationIDs] = useState<string[]>([]);
 
 
 
@@ -47,7 +49,11 @@ export const ScheduleContextProvider: React.FC<{
     }
 
     if (isDailySchedule(potentialSchedule.schedule)) {
-      await scheduleDailyNotification(potentialSchedule, bond);
+     const id: string = await scheduleDailyNotification(potentialSchedule, bond);
+     setNotificationIDs((nIds) => {
+      return [...nIds, id]
+     })
+     
     } else if (isWeeklySchedule(potentialSchedule.schedule)) {
       scheduleWeeklyNotification(potentialSchedule, bond);
     } 
