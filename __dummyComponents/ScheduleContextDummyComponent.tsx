@@ -2,9 +2,8 @@ import { printPotentialSchedule, ScheduleContext } from "@/context/ScheduleConte
 import { useContext, useEffect, useState } from "react";
 import { Pressable, View, Text } from "react-native";
 import React from "react";
-import { DailySchedule, Person, personToString, Schedule } from "@/constants/types";
+import { Person, personToString, } from "@/constants/types";
 import { testDailySchedule } from "./ScheduleContextMockData";
-import { testB1 } from "@/__mocks__/expo-sqlite";
 
 export default function ScheduleContextDummyComponent(){
     const {getNextToCall, callPerson, generateSchedule, createPotentialSchedule, potentialSchedule} = useContext(ScheduleContext);

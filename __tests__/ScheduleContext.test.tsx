@@ -8,11 +8,25 @@ import {
 import {
   printPotentialSchedule,
   ScheduleContextProvider,
-} from "@/context/scheduleContext";
+} from "@/context/ScheduleContext";
 import ScheduleContextDummyComponent from "@/__dummyComponents/ScheduleContextDummyComponent";
 import { testDailySchedule } from "@/__dummyComponents/ScheduleContextMockData";
-import { getPersonsOfBondDB, updatePersonBond } from "@/assets/db/PersonBondRepo";
 import { mockGetPersonsOfBondDB } from "@/assets/db/__mocks__/PersonBondRepo";
+import { mockGetAllAsyncPersonBond, testPersonBondList } from "@/__mocks__/expo-sqlite";
+import { getPersonsOfBondDB } from "@/assets/db/PersonBondRepo";
+import { updateBond } from "@/assets/db/BondRepo";
+import * as SQLite from "expo-sqlite";
+
+jest.mock("@/assets/db/PersonBondRepo")
+jest.mock("@/assets/db/PersonRepo")
+
+// const mockGPOB = jest.fn().mockImplementation((db, num) => testPersonBondList);
+// const mockUpdatePersonBond = jest.fn();
+// jest.mock("@/assets/db/PersonBondRepo", () => ({
+//   getPersonsOfBondDB: mockGPOB,
+//   updatePersonBond: mockUpdatePersonBond,
+// }))
+
 
 describe("ScheduleContext integration tests", () => {
   it("calling createPotentialSchedule() with a daily schedule should set the potential schedule to the daily schedule  ", async () => {
@@ -38,14 +52,13 @@ describe("ScheduleContext integration tests", () => {
   });
 
   it("calling getNextToCall() for a bond with 3 unmarked members should return the first and mark the second", async () => {
-    
-
+   
     jest.useFakeTimers();
     render(<ScheduleContextDummyComponent></ScheduleContextDummyComponent>, {
       wrapper: ScheduleContextProvider,
     });
     await waitFor(() => {
-      expect(screen.getByTestId("nextToCall").props.children.length).toBeGreaterThan(0)// Assuming peopleList is not empty
+      expect(screen.getByTestId("nextToCall").props.children.length).toBeGreaterThan(0)
     });
 
 
@@ -53,11 +66,10 @@ describe("ScheduleContext integration tests", () => {
     jest.advanceTimersByTime(500);
 
     await waitFor(() => {
-      expect(screen.getByTestId("nextToCall").props.children.length).toBeGreaterThan(0)// Assuming peopleList is not empty
+      expect(screen.getByTestId("nextToCall").props.children.length).toBeGreaterThan(0)
     });
 
-    expect(mockGetPersonsOfBondDB).toHaveBeenCalled();
-    const nextToCallEl = screen.getByTestId("nextToCall").props.children;
+    expect(getPersonsOfBondDB).toHaveBeenCalled();
 
 
 

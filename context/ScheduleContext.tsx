@@ -128,11 +128,12 @@ export const ScheduleContextProvider: React.FC<{
   const getNextToCall = async (bondID: number): Promise<Person> => {
     try {
       const members: BondPerson[] = await getPersonsOfBondDB(db, bondID);
-
       // IF SOMEBODY IS MARKED AND IS NOT END
       for (let i = 0; i < members.length; i++) {
         if (members[i].nextToCall == 1) {
+          console.log("marked")
           const persToCall = await getPerson(db, members[i].person_id);
+          console.log("persTocall passed")
           await updatePersonBond(
             db,
             members[i].person_id,
@@ -168,13 +169,12 @@ export const ScheduleContextProvider: React.FC<{
       )) as Person;
 
       if (members.length == 1) {
-        console.log("members length == 1");
         await updatePersonBond(db, members[0].person_id, members[0].bond_id, 1);
         return firstToCall;
       }
-
       await updatePersonBond(db, members[1].person_id, members[1].bond_id, 1);
       return firstToCall;
+
     } catch (e) {
       console.error();
       throw new Error(

@@ -70,7 +70,7 @@ export const getAllPersons = async (db: SQLite.SQLiteDatabase) => {
         return await db.getAllAsync<Person>(`SELECT * FROM person`)
     } catch (error) {
         console.error(error)
-        throw Error("Failed to getAllPersons()")
+        throw Error("getAllPersons(): Failed to getAllPersons()")
     }
 }
 
