@@ -12,6 +12,10 @@ export type Person = {
     person_id: number | undefined,
 }
 
+export function personToString(person: Person): string { 
+    return "" + person.firstName + " " + person.lastName + " " + person.phoneNumber + " " + person.person_id
+}
+
 export type BondPerson = {
     person_id: number;
     bond_id: number;

@@ -65,6 +65,12 @@ const testPersonBondList = [
   { bond_id: 6, person_id: 6 },
 ];
 
+const testPersonBondList_NoneMarked = [
+  {bond_id: 1, person_id: 1, nextToCall: 0},
+  {bond_id: 1, person_id: 2, nextToCall: 0},
+  {bond_id: 1, person_id: 3, nextToCall: 0},
+]
+
 const mockExecuteAsync = jest.fn();
 const mockFinalizeAsync = jest.fn();
 const mockGetAllAsync = jest.fn().mockImplementation((sql: string) => {
@@ -85,12 +91,20 @@ const mockGetAllAsync = jest.fn().mockImplementation((sql: string) => {
     return Promise.resolve(testPersonBondList);
   }
 
+  if (sql == `
+        SELECT * FROM person_bond
+        WHERE bond_id = ?
+         ;`) {
+          return Promise.resolve(testPersonBondList_NoneMarked)
+         }
+
   throw Error("Does not recognize sql command");
 });
 
 const mockStatement = {
   executeAsync: mockExecuteAsync,
   finalizeAsync: mockFinalizeAsync,
+  getAllAsync: mockGetAllAsync,
 };
 
 const mockPrepareAsync = jest.fn(() => mockStatement);

@@ -16,7 +16,7 @@ import { InTouchContextProvider } from "@/context/InTouchContext";
 import React from "react";
 import * as SQLite from 'expo-sqlite';
 import { createDB } from "@/assets/db/db";
-import { ScheduleContextProvider } from "@/context/scheduleContext";
+import { ScheduleContextProvider } from "@/context/ScheduleContext";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
