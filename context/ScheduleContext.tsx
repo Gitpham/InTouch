@@ -126,8 +126,10 @@ export const ScheduleContextProvider: React.FC<{
    * @param bond
    */
   const getNextToCall = async (bondID: number): Promise<Person> => {
+    console.log("getNextToCall()")
     try {
       const members: BondPerson[] = await getPersonsOfBondDB(db, bondID);
+      console.log("passed getPOB()")
       // IF SOMEBODY IS MARKED AND IS NOT END
       for (let i = 0; i < members.length; i++) {
         if (members[i].nextToCall == 1) {

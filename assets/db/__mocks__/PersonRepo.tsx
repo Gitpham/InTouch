@@ -1,6 +1,8 @@
 import { testP1 } from "@/__mocks__/expo-sqlite";
 
-const mockGetPerson = jest.fn().mockImplementation(() => {
+const mockGetPerson = jest.fn().mockImplementation((db, pid ) => {
+    console.log("mockGetPerson")
+    console.log("pid", pid)
     return testP1;
 })
 

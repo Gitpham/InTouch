@@ -7,17 +7,17 @@ const testPersonBondList_NoneMarked = [
 const mockUpdatePersonBond = jest.fn().mockImplementation(() => {
     return;
 });
-const mockGetPersonsOfBondDB = jest.fn().mockImplementation((id) => {
+const mockGetPersonsOfBondDB = jest.fn().mockImplementation( (id) => {
+    console.log("PersonBondRepoMock: mockGetPersonOfBondDB()")
     return testPersonBondList_NoneMarked;
 });
-const updatePersonBond = mockUpdatePersonBond;
-const getPersonsOfBondDB =  jest.fn().mockImplementation((id) => {
-    return testPersonBondList_NoneMarked;
-})
+const updatePersonBond = jest.fn(() => mockUpdatePersonBond);
+const getPersonsOfBondDB =  mockGetPersonsOfBondDB;
 
 
 export {
-    mockUpdatePersonBond,
-    mockGetPersonsOfBondDB as getPersonsOfBondDB,
-    updatePersonBond
+    updatePersonBond,
+    getPersonsOfBondDB,
+    mockUpdatePersonBond ,
+    mockGetPersonsOfBondDB,
 }
