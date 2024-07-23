@@ -33,6 +33,7 @@ type InTouchContextType = {
   addReminder: (person_id: number, reminder: String, bond_id?: number) => void;
   deleteReminder: (person_id: number) => void;
   generateBondId: () => number;
+  getRemindersOfPerson: (person_id: number) => Reminder[]
 };
 
 /**
@@ -101,6 +102,10 @@ export const InTouchContext = createContext<InTouchContextType>({
     throw new Error("Function not implemented");
   },
   deleteReminder: function (person_id: number) {
+    throw new Error("Function not implemented.");
+  },
+
+  getRemindersOfPerson: function (person_id: number): Reminder[] {
     throw new Error("Function not implemented.");
   },
 });
@@ -583,10 +588,18 @@ export const InTouchContextProvider: React.FC<{
 
     // Update reminderList
     setReminderList((prevReminders) => {
+
       let newReminders = [...prevReminders];
-      newReminders.filter(reminder => reminder.reminder_id !== reminder_id);
-      return newReminders;
+      return newReminders.filter((reminder) => {
+        if (reminder.reminder_id !== reminder_id) 
+          {return reminder}
+      });
     })
+  }
+
+  function getRemindersOfPerson(person_id: number) {
+    const newReminders = [...reminderList]
+    return newReminders.filter((reminder) => reminder.person_id === person_id);
   }
 
   // Initializes user's people list and bond list upon initial render
@@ -617,7 +630,8 @@ export const InTouchContextProvider: React.FC<{
           clearTempBondMembers,
           generateReminderId,
           addReminder,
-          deleteReminder
+          deleteReminder,
+          getRemindersOfPerson
         }}
       >
         {children}

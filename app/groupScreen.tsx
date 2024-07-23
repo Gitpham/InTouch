@@ -1,5 +1,5 @@
 import { ThemedText } from "@/components/ThemedText";
-import { StyleSheet, FlatList, Pressable, ScrollView } from "react-native"
+import { StyleSheet, FlatList, Pressable, ScrollView, View } from "react-native"
 import { Card, ListItem, Button } from "@rneui/themed";
 import { useLocalSearchParams } from "expo-router";
 import { useContext, useEffect, useState } from "react";
@@ -31,13 +31,23 @@ export default function groupScreen() {
   const renderMembers = ({ item }: { item: Person }) => {
     return (
       <ListItem bottomDivider>
-        <Pressable onPress = {() => {router.navigate({pathname: "./personScreen", params: {id: `${item.person_id}`}})}}>
         <ListItem.Content id={item.person_id.toString()}>
-          <ListItem.Title>
-            {item.firstName} {item.lastName}
-          </ListItem.Title>
+        <View style = {styles.rowOrientation}>
+          <View style = {styles.nameContainer}>
+            <Pressable onPress = {() => {router.navigate({pathname: "./personScreen", params: {id: `${item.person_id}`}})}}>
+              <ListItem.Title>
+                {item.firstName} {item.lastName}
+              </ListItem.Title>
+            </Pressable>
+          </View>
+          <Pressable
+            onPress = {() => console.log("delete!")}
+          >
+            <ThemedText>Delete</ThemedText>
+          </Pressable>
+          </View>
         </ListItem.Content>
-        </Pressable>
+
 
       </ListItem>
     );
@@ -127,5 +137,14 @@ const styles = StyleSheet.create({
   },
   flatList: {
     height: 200,
-  }
+  },
+  rowOrientation: {
+    flexDirection: "row",
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  nameContainer: {
+    flex: 1,
+    marginRight: 10, // Adds space between delete button and name
+  },
 });

@@ -6,12 +6,12 @@ import { useLocalSearchParams } from "expo-router";
 import { useContext, useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { InTouchContext } from "@/context/InTouchContext";
-import { FlatList, Pressable, StyleSheet, View } from "react-native";
+import { FlatList, Pressable, StyleSheet, TouchableOpacity, View } from "react-native";
 import { router } from "expo-router";
 
 export default function PersonScreen() {
 
-  const {peopleList, getBondsOfPerson, removePerson } = useContext(InTouchContext)
+  const {peopleList, getBondsOfPerson, removePerson, reminderList, getRemindersOfPerson, deleteReminder } = useContext(InTouchContext)
   const localParams = useLocalSearchParams();
   const [person, setPerson] = useState<Person>()
   const [bonds, setBonds] = useState<Array<Bond>>();
@@ -26,9 +26,11 @@ export default function PersonScreen() {
       setPerson(p);
       const b = getBondsOfPerson(p);
       setBonds(b);
+      const r = getRemindersOfPerson(personId);
+      setReminders(r)
     }
 
-  }, [])
+  }, [reminderList])
 
 
   const renderBonds = ({ item }: { item: Bond }) => {
@@ -55,11 +57,43 @@ export default function PersonScreen() {
       }
     }
 
+    const renderReminders = ({ item }: { item: Reminder }) => {
+      if (item) {
+        return (
+          <ListItem bottomDivider>
+    
+            <ListItem.Content id={item.reminder_id.toString()}>
+              <ListItem.Title>
+                {item.reminder} 
+              </ListItem.Title>
+            </ListItem.Content>
+            <Pressable
+             onPress={() => removeReminder(item.reminder_id)}
+             style={styles.touchable}>
+              <ThemedText>Delete</ThemedText>
+             </Pressable>
+    
+          </ListItem>
+        )}
+        else {
+          return (
+            <ListItem bottomDivider>
+            </ListItem>
+          );
+  
+        }
+      }
+
     const deletePerson = () => {
       if (person) {
       removePerson(person);
       }
       router.back();
+    }
+
+    const removeReminder = (reminder_id: number) => {
+      console.log(reminderList)
+      deleteReminder(reminder_id);
     }
 
 
@@ -75,9 +109,9 @@ export default function PersonScreen() {
              <Card>
               <Card.Title>Reminders</Card.Title>
                             <FlatList
-            data={bonds}
-            renderItem={renderBonds}
-            keyExtractor={(item) => item.bond_id.toString()}
+            data={reminders}
+            renderItem={renderReminders}
+            keyExtractor={(item) => item.reminder_id.toString()}
           />
              </Card>
 
@@ -142,4 +176,7 @@ const styles = StyleSheet.create({
   centeredView: {
     alignItems: "center",
   },
+  touchable: {
+    padding: 10,
+  }
 });

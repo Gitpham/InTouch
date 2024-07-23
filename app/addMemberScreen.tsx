@@ -49,25 +49,25 @@ export default function addMemberScreen() {
     if (!tempBondMembers.has(item.person_id)) {
       const bond_members = bondPersonMap.get(bond_id);
       if (bond_members) {
-        if (!bond_members.has(item.person_id)) {
-          return (
-            <ListItem bottomDivider>
-              <Pressable onPress={() => {addTempBondMember(item.person_id); setRefresh((oldValue) => {return !oldValue})}}>
-              <ListItem.Content id={item.person_id.toString()}>
-                <ListItem.Title>
-                  {item.firstName} {item.lastName}
-                </ListItem.Title>
-                <ListItem.Title>
-                  Phone Number: {item.phoneNumber} id: {item.person_id.toString()}
-                </ListItem.Title>
-              </ListItem.Content>
-              </Pressable>
-
-            </ListItem>
-        );}
+        if (bond_members.has(item.person_id)) {
+          return null;
+        }
       }
-    }
-    else {return null}
+      return (
+        <ListItem bottomDivider>
+          <Pressable onPress={() => {addTempBondMember(item.person_id); setRefresh((oldValue) => {return !oldValue})}}>
+          <ListItem.Content id={item.person_id.toString()}>
+            <ListItem.Title>
+              {item.firstName} {item.lastName}
+            </ListItem.Title>
+            <ListItem.Title>
+              Phone Number: {item.phoneNumber} id: {item.person_id.toString()}
+            </ListItem.Title>
+          </ListItem.Content>
+          </Pressable>
+
+        </ListItem>
+    );}
   };
 
   const onDonePress = () => {
@@ -81,7 +81,7 @@ export default function addMemberScreen() {
   return (
     <SafeAreaView style={styles.stepContainer}>
       <View style={styles.centeredView}>
-        {(bond_id !== -1) ? (
+        {(bond_id !== -1) ?  (
         <>
         <ThemedText type="subtitle" style={styles.title}>
           Choose From inTouch Contacts
@@ -89,10 +89,11 @@ export default function addMemberScreen() {
       
       <FlatList
         data={peopleList}
+        style = {styles.flatList}
         renderItem={addBondMember}
         keyExtractor={(item) => item.person_id.toString()}
       />
-      </>) : null}
+      </>) :  null}
       </View>
 
 
@@ -131,4 +132,7 @@ const styles = StyleSheet.create({
   centeredView: {
     alignItems: "center",
   },
+  flatList: {
+    height: 200,
+  }
 });
