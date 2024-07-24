@@ -104,8 +104,6 @@ export function isMonthlySchedule(obj: any): obj is MonthlySchedule {
     return true;
    }
    return false;
-    
-  
 }
 
 export type YearlySchedule = {

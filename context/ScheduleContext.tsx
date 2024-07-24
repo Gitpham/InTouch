@@ -13,6 +13,7 @@ import { createContext, useState } from "react";
 import React from "react";
 import {
   scheduleDailyNotification,
+  scheduleMonthlyNotification,
   scheduleWeeklyNotification,
 } from "./notifications";
 import {
@@ -225,6 +226,7 @@ export const ScheduleContextProvider: React.FC<{
       return;
     } else if (isMonthlySchedule(potentialSchedule.schedule)){
       console.log("generateSchedule(): isMonthlySchedule!")
+      scheduleMonthlyNotification(potentialSchedule.schedule, bond)
       return;
     } else {
       console.log("generateSchedule(): no type detected!")

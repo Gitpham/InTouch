@@ -265,34 +265,28 @@ export async function scheduleWeeklyNotification(schedule: WeeklySchedule, bond:
 
 
 export async function scheduleMonthlyNotification(schedule:MonthlySchedule, bond:Bond) {
-  if (!isMonthlySchedule(schedule)) {
-    throw Error(
-      "scheduleMonthlyNotification(): param is not of type MonthlySchedule"
-    );
-  }
 
-  const daysToSchedule: DayOfMonth[] = schedule.daysInMonth;
-  daysToSchedule.forEach(async (d) => {
-    
+  schedule.daysInMonth.forEach(async (d: DayOfMonth) => {
+    console.log("day in monthly schedule: ", d as DayOfMonth)
+
+    const weekOfMonth:number = Number(d.weekOfMonth);
+    const dayOfWeek: number = Number(d.dayOfWeek);
     const trigger: Notifications.CalendarTriggerInput = {
-      weekOfMonth: d.weekOfMonth,
-      day: d.dayOfWeek,
+      weekOfMonth: weekOfMonth,
+      weekday: dayOfWeek,
       hour: d.time.getHours(),
-      minute: d.time.getMinutes()
+      minute: d.time.getMinutes(),
+      repeats: true,
     }
 
     try {
       await Notifications.scheduleNotificationAsync({
-        content: {
-          title: `Call ${bond.bondName} !`,
-          body: `Time to Call ${bond.bondName}`,
-          data: { data: `${bond.bond_id}`, test: { test1: "more data" } },
-        },
+        content: notificationContent(bond),
         trigger: trigger,
       });
     } catch (e) {
       console.error(e);
-      throw Error(
+      throw new Error(
         `scheduleMonthlyNotification() failed to scheduleNotificationAsync for the ${d.dayOfWeek} of the ${d.weekOfMonth} week of Month`
       );
 
