@@ -2,6 +2,7 @@ import {
   Bond,
   BondPerson,
   isDailySchedule,
+  isMonthlySchedule,
   isWeeklySchedule,
   Person,
   Schedule,
@@ -202,11 +203,15 @@ export const ScheduleContextProvider: React.FC<{
   };
 
   const generateSchedule = async (bond: Bond) => {
+
+
     if (potentialSchedule == undefined) {
       throw Error("generateSchedule(): potenialScheudle is undefined");
     }
 
+    console.log("generateSchedule(), potentialSchedule: ", potentialSchedule.schedule)
     if (isDailySchedule(potentialSchedule.schedule)) {
+      console.log("dailySchedule")
       const id: string = await scheduleDailyNotification(
         potentialSchedule.schedule,
         bond
@@ -215,8 +220,18 @@ export const ScheduleContextProvider: React.FC<{
         return [...nIds, id];
       });
     } else if (isWeeklySchedule(potentialSchedule.schedule)) {
+      console.log("weeklyScheudle")
       scheduleWeeklyNotification(potentialSchedule.schedule, bond);
+      return;
+    } else if (isMonthlySchedule(potentialSchedule.schedule)){
+      console.log("generateSchedule(): isMonthlySchedule!")
+      return;
+    } else {
+      console.log("generateSchedule(): no type detected!")
+
     }
+
+
   };
 
 

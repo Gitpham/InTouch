@@ -43,6 +43,17 @@ export function isDailySchedule(obj: any): obj is DailySchedule {
 
 export function isWeeklySchedule(obj: any): obj is WeeklySchedule {
     try {
+
+        if (typeof obj.monday == "undefined" 
+            && typeof obj.tuesday == "undefined"
+            && typeof obj.wednesday == "undefined"
+            && typeof obj.thursday == "undefined"
+            && typeof obj.friday == "undefined"
+            && typeof obj.saturday == "undefined"
+            && typeof obj.sunday == "undefined"
+         ) {
+            return false
+         }
         return (((typeof obj.monday == "undefined") || (obj.monday instanceof Date))
         && ((typeof obj.tuesday == "undefined") || (obj.tuesday instanceof Date))
         && ((typeof obj.wednesday == "undefined") || (obj.wednesday instanceof Date))
@@ -78,8 +89,23 @@ export type MonthlySchedule = {
    daysInMonth: DayOfMonth[]
 }
 
+export function isDayOfMonth(obj: any): obj is DayOfMonth{
+    return ((typeof obj.weekOfMonth == "number") && (typeof obj.dayOfWeek == "number") && (obj.time instanceof Date))
+}
+
 export function isMonthlySchedule(obj: any): obj is MonthlySchedule {
-    return ((typeof obj.weekOfMonth[0] == "number") && (typeof obj.daysOfWeek[0] == "number") && (obj.time instanceof Date))
+
+   if (obj.daysInMonth != undefined) {
+    obj.daysInMonth.forEach(d => {
+        if (!isDayOfMonth(d)){
+            return false;
+        }
+    })
+    return true;
+   }
+   return false;
+    
+  
 }
 
 export type YearlySchedule = {
