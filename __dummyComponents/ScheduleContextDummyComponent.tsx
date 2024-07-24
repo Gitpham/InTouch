@@ -16,8 +16,21 @@ export default function ScheduleContextDummyComponent(){
         createPotentialSchedule(testDailySchedule);
     }
 
-    async function onGetNextToCall() {
+    async function onGetNextToCall_noneMarked() {
         setPersonToCall(await getNextToCall(1));
+    }
+
+    async function onGetNextToCall_noneMarked_sizeOne(){
+        setPersonToCall(await getNextToCall(0));
+    }
+
+    async function onGetNextToCall_marked() {
+        
+        setPersonToCall(await getNextToCall(2));
+    }
+
+    async function getNextToCall_lastMarked() {
+        setPersonToCall(await getNextToCall(3));
     }
 
 
@@ -28,8 +41,20 @@ export default function ScheduleContextDummyComponent(){
                 <Text>createPotentialDailySchedule()</Text>
             </Pressable>
 
-            <Pressable testID="getNextToCall" onPress={onGetNextToCall}>
-                <Text testID="nextToCall">{pToCall}</Text>
+            <Pressable testID="getNextToCall_noneMarked" onPress={onGetNextToCall_noneMarked}>
+                <Text testID="nextToCall_noneMarked">{pToCall}</Text>
+            </Pressable>
+
+            <Pressable testID="getNextToCall_noneMarked_sizeOne" onPress={onGetNextToCall_noneMarked_sizeOne}>
+                <Text testID="nextToCall_noneMarked_sizeOne">{pToCall}</Text>
+            </Pressable>
+
+            <Pressable testID="getNextToCall_marked" onPress={onGetNextToCall_marked}>
+                <Text testID="nextToCall_marked">{pToCall}</Text>
+            </Pressable>
+
+            <Pressable testID="getNextToCall_lastMarked" onPress={getNextToCall_lastMarked}>
+                <Text testID="nextToCall_lastMarked">{pToCall}</Text>
             </Pressable>
             
         </View>

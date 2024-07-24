@@ -126,16 +126,12 @@ export const ScheduleContextProvider: React.FC<{
    * @param bond
    */
   const getNextToCall = async (bondID: number): Promise<Person> => {
-    console.log("getNextToCall()")
     try {
       const members: BondPerson[] = await getPersonsOfBondDB(db, bondID);
-      console.log("passed getPOB()")
       // IF SOMEBODY IS MARKED AND IS NOT END
       for (let i = 0; i < members.length; i++) {
         if (members[i].nextToCall == 1) {
-          console.log("marked")
           const persToCall = await getPerson(db, members[i].person_id);
-          console.log("persTocall passed")
           await updatePersonBond(
             db,
             members[i].person_id,
@@ -191,7 +187,6 @@ export const ScheduleContextProvider: React.FC<{
     const phoneNumber: string = validateAndFormatPhoneNumber(
       toCall.phoneNumber
     );
-
     const phoneURL: string = `tel:+1${phoneNumber}`;
     const canOpen = await Linking.canOpenURL(phoneURL);
 
