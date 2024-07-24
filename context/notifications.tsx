@@ -71,7 +71,13 @@ export async function cancelNotifications(notificationIDs: string[]) {
   }
 }
 
-
+const notificationContent = (bond: Bond): Notifications.NotificationContentInput => {
+  return {
+    title: `Call ${bond.bondName} !`,
+    body: `Time to call somebody in ${bond.bondName}`,
+    data: { bondID: `${bond.bond_id}`, test: { test1: "more data" } },
+  }
+}
 /**
  * schedules a daily notificaion according to the hour and time of the schedule, and bondID of the bond. 
  * @param schedule 
@@ -87,11 +93,7 @@ export async function scheduleDailyNotification (schedule: DailySchedule, bond: 
   };
   try {
     return await Notifications.scheduleNotificationAsync({
-      content: {
-        title: `Call ${bond.bondName} !`,
-        body: `Time to call somebody in ${bond.bondName}`,
-        data: { bondID: `${bond.bond_id}`, test: { test1: "more data" } },
-      },
+      content: notificationContent(bond),
       trigger: dailyTrigger,
     });
   } catch (e) {
@@ -108,32 +110,6 @@ export async function scheduleWeeklyNotification(schedule: WeeklySchedule, bond:
   if (schedule.sunday != undefined) {
     const day: Date = schedule.sunday;
     const weeklyTrigger: Notifications.WeeklyTriggerInput = {
-      weekday: 0,
-      hour: day.getHours(),
-      minute: day.getMinutes(),
-      repeats: true,
-    };
-
-    try {
-      await Notifications.scheduleNotificationAsync({
-        content: {
-          title: `Call ${bond.bondName} !`,
-          body: `Time to Call ${bond.bondName}`,
-          data: { data: `${bond.bond_id}`, test: { test1: "more data" } },
-        },
-        trigger: weeklyTrigger,
-      });
-    } catch (e) {
-      console.error(e);
-      throw Error(
-        "scheduleDailyNotification() failed to scheduleNotificationAsync for sunday "
-      );
-    }
-  }
-
-  if (schedule.monday != undefined) {
-    const day: Date = schedule.monday;
-    const weeklyTrigger: Notifications.WeeklyTriggerInput = {
       weekday: 1,
       hour: day.getHours(),
       minute: day.getMinutes(),
@@ -142,23 +118,19 @@ export async function scheduleWeeklyNotification(schedule: WeeklySchedule, bond:
 
     try {
       await Notifications.scheduleNotificationAsync({
-        content: {
-          title: `Call ${bond.bondName} !`,
-          body: `Time to Call ${bond.bondName}`,
-          data: { data: `${bond.bond_id}`, test: { test1: "more data" } },
-        },
+        content: notificationContent(bond),
         trigger: weeklyTrigger,
       });
     } catch (e) {
       console.error(e);
       throw Error(
-        "scheduleDailyNotification() failed to scheduleNotificationAsync for monday "
+        "scheduleWeeklyNotification() failed to scheduleNotificationAsync for sunday "
       );
     }
   }
 
-  if (schedule.tuesday != undefined) {
-    const day: Date = schedule.tuesday;
+  if (schedule.monday != undefined) {
+    const day: Date = schedule.monday;
     const weeklyTrigger: Notifications.WeeklyTriggerInput = {
       weekday: 2,
       hour: day.getHours(),
@@ -168,23 +140,19 @@ export async function scheduleWeeklyNotification(schedule: WeeklySchedule, bond:
 
     try {
       await Notifications.scheduleNotificationAsync({
-        content: {
-          title: `Call ${bond.bondName} !`,
-          body: `Time to Call ${bond.bondName}`,
-          data: { data: `${bond.bond_id}`, test: { test1: "more data" } },
-        },
+        content: notificationContent(bond),
         trigger: weeklyTrigger,
       });
     } catch (e) {
       console.error(e);
       throw Error(
-        "scheduleDailyNotification() failed to scheduleNotificationAsync for tuesday "
+        "scheduleWeeklyNotification() failed to scheduleNotificationAsync for monday "
       );
     }
   }
 
-  if (schedule.wednesday != undefined) {
-    const day: Date = schedule.wednesday;
+  if (schedule.tuesday != undefined) {
+    const day: Date = schedule.tuesday;
     const weeklyTrigger: Notifications.WeeklyTriggerInput = {
       weekday: 3,
       hour: day.getHours(),
@@ -194,23 +162,19 @@ export async function scheduleWeeklyNotification(schedule: WeeklySchedule, bond:
 
     try {
       await Notifications.scheduleNotificationAsync({
-        content: {
-          title: `Call ${bond.bondName} !`,
-          body: `Time to Call ${bond.bondName}`,
-          data: { data: `${bond.bond_id}`, test: { test1: "more data" } },
-        },
+        content: notificationContent(bond),
         trigger: weeklyTrigger,
       });
     } catch (e) {
       console.error(e);
       throw Error(
-        "scheduleDailyNotification() failed to scheduleNotificationAsync for wednesday "
+        "scheduleWeeklyNotification() failed to scheduleNotificationAsync for tuesday "
       );
     }
   }
 
-  if (schedule.thursday != undefined) {
-    const day: Date = schedule.thursday;
+  if (schedule.wednesday != undefined) {
+    const day: Date = schedule.wednesday;
     const weeklyTrigger: Notifications.WeeklyTriggerInput = {
       weekday: 4,
       hour: day.getHours(),
@@ -219,24 +183,21 @@ export async function scheduleWeeklyNotification(schedule: WeeklySchedule, bond:
     };
 
     try {
+      console.log("wednesday")
       await Notifications.scheduleNotificationAsync({
-        content: {
-          title: `Call ${bond.bondName} !`,
-          body: `Time to Call ${bond.bondName}`,
-          data: { data: `${bond.bond_id}`, test: { test1: "more data" } },
-        },
+        content: notificationContent(bond),
         trigger: weeklyTrigger,
       });
     } catch (e) {
       console.error(e);
       throw Error(
-        "scheduleDailyNotification() failed to scheduleNotificationAsync for thursday "
+        "scheduleWeeklyNotification() failed to scheduleNotificationAsync for wednesday "
       );
     }
   }
 
-  if (schedule.friday != undefined) {
-    const day: Date = schedule.friday;
+  if (schedule.thursday != undefined) {
+    const day: Date = schedule.thursday;
     const weeklyTrigger: Notifications.WeeklyTriggerInput = {
       weekday: 5,
       hour: day.getHours(),
@@ -246,23 +207,19 @@ export async function scheduleWeeklyNotification(schedule: WeeklySchedule, bond:
 
     try {
       await Notifications.scheduleNotificationAsync({
-        content: {
-          title: `Call ${bond.bondName} !`,
-          body: `Time to Call ${bond.bondName}`,
-          data: { data: `${bond.bond_id}`, test: { test1: "more data" } },
-        },
+        content: notificationContent(bond),
         trigger: weeklyTrigger,
       });
     } catch (e) {
       console.error(e);
       throw Error(
-        "scheduleDailyNotification() failed to scheduleNotificationAsync for friday "
+        "scheduleWeeklyNotification() failed to scheduleNotificationAsync for thursday "
       );
     }
   }
 
-  if (schedule.saturday != undefined) {
-    const day: Date = schedule.saturday;
+  if (schedule.friday != undefined) {
+    const day: Date = schedule.friday;
     const weeklyTrigger: Notifications.WeeklyTriggerInput = {
       weekday: 6,
       hour: day.getHours(),
@@ -272,17 +229,35 @@ export async function scheduleWeeklyNotification(schedule: WeeklySchedule, bond:
 
     try {
       await Notifications.scheduleNotificationAsync({
-        content: {
-          title: `Call ${bond.bondName} !`,
-          body: `Time to Call ${bond.bondName}`,
-          data: { data: `${bond.bond_id}`, test: { test1: "more data" } },
-        },
+        content: notificationContent(bond),
         trigger: weeklyTrigger,
       });
     } catch (e) {
       console.error(e);
       throw Error(
-        "scheduleDailyNotification() failed to scheduleNotificationAsync for saturday "
+        "scheduleWeeklyNotification() failed to scheduleNotificationAsync for friday "
+      );
+    }
+  }
+
+  if (schedule.saturday != undefined) {
+    const day: Date = schedule.saturday;
+    const weeklyTrigger: Notifications.WeeklyTriggerInput = {
+      weekday: 7,
+      hour: day.getHours(),
+      minute: day.getMinutes(),
+      repeats: true,
+    };
+
+    try {
+      await Notifications.scheduleNotificationAsync({
+        content: notificationContent(bond),
+        trigger: weeklyTrigger,
+      });
+    } catch (e) {
+      console.error(e);
+      throw Error(
+        "scheduleWeeklyNotification() failed to scheduleNotificationAsync for saturday "
       );
     }
   }

@@ -187,7 +187,7 @@ export const ScheduleContextProvider: React.FC<{
     const phoneNumber: string = validateAndFormatPhoneNumber(
       toCall.phoneNumber
     );
-    const phoneURL: string = `tel:+1${phoneNumber}`;
+    const phoneURL: string = `tel:${phoneNumber}`;
     const canOpen = await Linking.canOpenURL(phoneURL);
 
     if (canOpen) {
