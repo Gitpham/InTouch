@@ -87,5 +87,5 @@ export type YearlySchedule = {
 }
   
 export type Schedule = {
-    schedule: DailySchedule | WeeklySchedule
+    schedule: DailySchedule | WeeklySchedule | MonthlySchedule
   };
