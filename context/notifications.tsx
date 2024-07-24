@@ -89,7 +89,7 @@ export async function scheduleDailyNotification (schedule: DailySchedule, bond: 
     return await Notifications.scheduleNotificationAsync({
       content: {
         title: `Call ${bond.bondName} !`,
-        body: `Time to Call ${bond.bondName}`,
+        body: `Time to call somebody in ${bond.bondName}`,
         data: { bondID: `${bond.bond_id}`, test: { test1: "more data" } },
       },
       trigger: dailyTrigger,
