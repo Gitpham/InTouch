@@ -79,7 +79,7 @@ export type MonthlySchedule = {
 }
 
 export function isMonthlySchedule(obj: any): obj is MonthlySchedule {
-    return ((typeof obj.weekOfMonth[0] == "number") && (obj.daysOfWeek[0] instanceof Set) && (obj.time[0][0] instanceof Set))
+    return ((typeof obj.weekOfMonth[0] == "number") && (typeof obj.daysOfWeek[0] == "number") && (obj.time instanceof Date))
 }
 
 export type YearlySchedule = {
