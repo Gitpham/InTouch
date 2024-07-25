@@ -48,9 +48,6 @@ Notifications.setNotificationHandler({
 
 export default function Scheduler() {
   useEffect(() => {
-
-    // registerForPushNotificationsAsync().then(token => token && setExpoPushToken(token));
-
     if (Platform.OS === "android") {
       Notifications.getNotificationChannelsAsync().then((value) =>
         setChannels(value ?? [])
@@ -112,23 +109,7 @@ export default function Scheduler() {
   const [monthlyTime, setMonthlyTime] = useState(new Date());
   const [monthlySet, setMonthlySet] = useState<Set<DayOfMonth>>(new Set());
 
-  const b: Bond = {
-    bondName: "house",
-    bond_id: 1,
-    schedule: "",
-    typeOfCall: "",
-  };
 
-  const b2: Bond = {
-    bondName: "",
-    bond_id: 2,
-    schedule: "",
-    typeOfCall: "",
-  };
-
-  function onSegmentedControlValueChange(value) {
-    setScheduleFrequency(value);
-  }
 
   async function onGenerateNotificationPress() {
     const testBond: Bond = {
@@ -150,38 +131,10 @@ export default function Scheduler() {
     }
   }
 
-  async function onHasPermission() {
-    try {
-      const hasPermission = await allowsNotificationsAsync();
-      if (hasPermission) {
-        Alert.alert("has Notification permission");
-      } else {
-        Alert.alert("does NOT have Notification permission");
-      }
-    } catch (e) {
-      console.error(e);
-      throw Error("allowsNotications() failed");
-    }
+  function onSegmentedControlValueChange(value) {
+    setScheduleFrequency(value);
   }
 
-  async function onRequestPermission() {
-    try {
-      const hasPermission = await requestNotificationPermission();
-    } catch (e) {
-      console.error(e);
-      throw Error("failed requestNotificionPermission()");
-    }
-  }
-
-  async function onGetPersonsOfBond() {
-    const personsOfBond = await getPersonsOfBondDB(db, b2);
-    console.log("persons of Bond: ", personsOfBond);
-  }
-
-  async function onGetNextToCall() {
-    const nextToCall = await getNextToCall(b2);
-    console.log(nextToCall);
-  }
 
   async function onDonePress() {
     switch (scheduleFrequency) {
@@ -269,159 +222,120 @@ export default function Scheduler() {
     }
   }
 
-  // function onDailyPress(event: DateTimePickerEvent, today: Date) {
-  //   setDailyTime(() => today);
-  // }
+
+  const [dailyTime, setDailyTime] = useState(new Date());
+
+  function changeDailyTime(time: Date){
+    setDailyTime(time);
+  }
 
   function dailySelector() {
     return (
-      <DailySchedulePicker></DailySchedulePicker>
-      // <Card>
-      //   <Text>Daily</Text>
-
-      //   <DateTimePicker
-      //     value={dailyTime}
-      //     mode="time"
-      //     onChange={onDailyPress}
-      //   ></DateTimePicker>
-      // </Card>
+      <DailySchedulePicker dailyTime={dailyTime} changeDailyTime={changeDailyTime}></DailySchedulePicker>
     );
   }
 
-  function onSelectDayOfWeek(day: string) {
-    switch (day) {
-      case "mon": {
-        setMon((m) => !m);
-        break;
-      }
-      case "tues":
-        {
-          setTues((d) => !d);
-        }
-        break;
-      case "weds": {
-        setWeds((m) => !m);
-        break;
-      }
-      case "thurs":
-        {
-          setThurs((d) => !d);
-        }
-        break;
-      case "fri":
-        {
-          setFri((d) => !d);
-        }
-        break;
-      case "sat": {
-        setSat((m) => !m);
-        break;
-      }
-      case "sun":
-        {
-          setSun((d) => !d);
-        }
-        break;
-    }
-  }
 
+    const [mon, setMon] = useState(false);
+    function changeMon(isSelected: boolean){
+      setMon(isSelected);
+    }
+    const [monTime, setMonTime] = useState<Date>(new Date());
+    function changeMonTime(time: Date) {
+      setMonTime(time);
+    }
+  
+    const [tues, setTues] = useState(false);
+    function changeTues(isSelected: boolean){
+      setTues(isSelected);
+    }
+    const [tuesTime, setTuesTime] = useState<Date>(new Date());
+    function changeTuesTime(time: Date) {
+      setTuesTime(time);
+    }
+  
+    const [weds, setWeds] = useState(false);
+    function changeWeds(isSelected: boolean){
+      setWeds(isSelected);
+    }
+    const [wedsTime, setWedsTime] = useState<Date>(new Date());
+    function changeWedsTime(time: Date) {
+      setWedsTime(time);
+    }
+  
+    const [thurs, setThurs] = useState(false);
+    function changeThurs(isSelected: boolean){
+      setThurs(isSelected);
+    }
+    const [thursTime, setThursTime] = useState<Date>(new Date());
+    function changeThursTime(time: Date) {
+      setThursTime(time);
+    }
+  
+    const [fri, setFri] = useState(false);
+    function changeFri(isSelected: boolean){
+      setFri(isSelected);
+    }
+    const [friTime, setFriTime] = useState<Date>(new Date());
+    function changeFriTime(time: Date) {
+      setFriTime(time);
+    }
+  
+    const [sat, setSat] = useState(false);
+    function changeSat(isSelected: boolean){
+      setSat(isSelected);
+    }
+    const [satTime, setSatTime] = useState<Date>(new Date());
+    function changeSatTime(time: Date) {
+      setSatTime(time);
+    }
+  
+    const [sun, setSun] = useState(false);
+    function changeSun(isSelected: boolean){
+      setSun(isSelected);
+    }
+    const [sunTime, setSunTime] = useState<Date>(new Date());
+    function changeSunTime(time: Date) {
+      setSunTime(time);
+    }
   function weeklySelector() {
     return (
-      <WeeklySchedulePicker></WeeklySchedulePicker>
-      // <Card>
-      //   <Text>Weekly </Text>
+      <WeeklySchedulePicker 
+      mon={mon}
+      changeMon={changeMon}
+      monTime={monTime}
+      changeMonTime={changeMonTime}
 
-      //   <View style={{ flexDirection: "row" }}>
-      //     <CheckBox
-      //       checked={mon}
-      //       onPress={() => onSelectDayOfWeek("mon")}
-      //       title="Monday"
-      //     ></CheckBox>
-      //     <DateTimePicker
-      //       value={monTime}
-      //       mode="time"
-      //       onChange={(e, d) => setMonTime(d)}
-      //     ></DateTimePicker>
-      //   </View>
+      tues={tues}
+      changeTues={changeTues}
+      tuesTime={tuesTime}
+      changeTuesTime={changeTuesTime}
 
-      //   <View style={{ flexDirection: "row" }}>
-      //     <CheckBox
-      //       checked={tues}
-      //       onPress={() => onSelectDayOfWeek("tues")}
-      //       title="Tuesday"
-      //     ></CheckBox>
-      //     <DateTimePicker
-      //       value={tuesTime}
-      //       mode="time"
-      //       onChange={(e, d) => setTuesTime(d)}
-      //     ></DateTimePicker>
-      //   </View>
+      weds={weds}
+      changeWeds={changeWeds}
+      wedsTime={wedsTime}
+      changeWedsTime={changeWedsTime}
 
-      //   <View style={{ flexDirection: "row" }}>
-      //     <CheckBox
-      //       checked={weds}
-      //       onPress={() => onSelectDayOfWeek("weds")}
-      //       title="Wednesday"
-      //     ></CheckBox>
-      //     <DateTimePicker
-      //       value={wedsTime}
-      //       mode="time"
-      //       onChange={(e, d) => setWedsTime(d)}
-      //     ></DateTimePicker>
-      //   </View>
+      thurs={thurs}
+      changeThurs={changeThurs}
+      thursTime={thursTime}
+      changeThursTime={changeThursTime}
 
-      //   <View style={{ flexDirection: "row" }}>
-      //     <CheckBox
-      //       checked={thurs}
-      //       onPress={() => onSelectDayOfWeek("thurs")}
-      //       title="Thursday"
-      //     ></CheckBox>
-      //     <DateTimePicker
-      //       value={thursTime}
-      //       mode="time"
-      //       onChange={(e, d) => setThursTime(d)}
-      //     ></DateTimePicker>
-      //   </View>
+      fri={fri}
+      changeFri={changeFri}
+      friTime={friTime}
+      changeFriTime={changeFriTime}
 
-      //   <View style={{ flexDirection: "row" }}>
-      //     <CheckBox
-      //       checked={fri}
-      //       onPress={() => onSelectDayOfWeek("fri")}
-      //       title="Friday"
-      //     ></CheckBox>
-      //     <DateTimePicker
-      //       value={friTime}
-      //       mode="time"
-      //       onChange={(e, d) => setFriTime(d)}
-      //     ></DateTimePicker>
-      //   </View>
+      sat={sat}
+      changeSat={changeSat}
+      satTime={satTime}
+      changeSatTime={changeSatTime}
 
-      //   <View style={{ flexDirection: "row" }}>
-      //     <CheckBox
-      //       checked={sat}
-      //       onPress={() => onSelectDayOfWeek("sat")}
-      //       title="Saturday"
-      //     ></CheckBox>
-      //     <DateTimePicker
-      //       value={satTime}
-      //       mode="time"
-      //       onChange={(e, d) => setSatTime(d)}
-      //     ></DateTimePicker>
-      //   </View>
-
-      //   <View style={{ flexDirection: "row" }}>
-      //     <CheckBox
-      //       checked={sun}
-      //       onPress={() => onSelectDayOfWeek("sun")}
-      //       title="Sunday"
-      //     ></CheckBox>
-      //     <DateTimePicker
-      //       value={sunTime}
-      //       mode="time"
-      //       onChange={(e, d) => setSunTime(d)}
-      //     ></DateTimePicker>
-      //   </View>
-      // </Card>
+      sun={sun}
+      changeSun={changeSun}
+      sunTime={sunTime}
+      changeSunTime={changeSunTime}
+      ></WeeklySchedulePicker>
     );
   }
 
@@ -510,24 +424,6 @@ export default function Scheduler() {
     Alert.alert("You already have this day scheduled!");
   }
 
-  function yearlySelector() {
-    return (
-      <Card>
-        <Text>Yearly </Text>
-
-        <DateTimePicker
-          value={day}
-          mode="day"
-          onChange={() => {}}
-        ></DateTimePicker>
-        <DateTimePicker
-          value={time}
-          mode="time"
-          onChange={() => {}}
-        ></DateTimePicker>
-      </Card>
-    );
-  }
 
   function displayScheduleSelectors() {
     return (
@@ -537,8 +433,6 @@ export default function Scheduler() {
         {scheduleFrequency == "weekly" && weeklySelector()}
 
         {scheduleFrequency == "monthly" && monthlySelector()}
-
-        {/* {scheduleFrequency == "yearly" && yearlySelector()} */}
       </>
     );
   }
@@ -576,15 +470,6 @@ export default function Scheduler() {
               title="cancel All Notificatios"
               onPress={onCancelAllNotifications}
             ></StandardButton>
-            {/* <StandardButton title= "has permission to send Notifications?" onPress={onHasPermission}></StandardButton>
-          <StandardButton title= "request notification permission?" onPress={onRequestPermission}></StandardButton>
-          <StandardButton title="getPersonsOfBond" onPress={onGetPersonsOfBond}></StandardButton>
-          <StandardButton title="getNextToCall" onPress={onGetNextToCall}></StandardButton> */}
-
-            {/* <StandardButton title="navigated to bond screen" onPress={() => {
-          router.navigate({pathname: "./peopleScreen" })
-    }}></StandardButton>  */}
-
             <StandardButton
               title="See All Notifications"
               onPress={() => {

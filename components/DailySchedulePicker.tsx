@@ -8,20 +8,12 @@ import { Text } from "react-native";
 import { DailySchedule, Schedule } from "@/constants/types";
 import { ScheduleContext } from "@/context/ScheduleContext";
 
-export default function DailySchedulePicker() {
-    const [dailyTime, setDailyTime] = useState(new Date());
-    const {createPotentialSchedule} = useContext(ScheduleContext);
+export default function DailySchedulePicker({dailyTime, changeDailyTime}) {
     
-    async function onDailyPress(event: DateTimePickerEvent, today: Date) {
-        setDailyTime(today)
-        const pDailySchedule: DailySchedule = {
-            time: today,
-          };
-          const potentialSchedule: Schedule = {
-            schedule: pDailySchedule,
-          };
-          await createPotentialSchedule(potentialSchedule);
+    async function onDailyPress(event: DateTimePickerEvent, time: Date) {
+        changeDailyTime(time)
       }
+
         return (
           <Card>
             <Text>Daily</Text>
