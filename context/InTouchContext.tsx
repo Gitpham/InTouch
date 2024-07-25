@@ -4,8 +4,10 @@ import {
   deletePersonBond,
   getAllPersonBonds,
 } from "@/assets/db/PersonBondRepo";
+import { removeTable } from "@/assets/db/db";
 import { getAllPersons, addPerson, deletePerson } from "@/assets/db/PersonRepo";
-import { Person, Bond, BondPerson } from "@/constants/types";
+import { addReminder, deleteReminder, getAllReminders } from "@/assets/db/ReminderRepo";
+import { Person, Bond, BondPerson, Reminder } from "@/constants/types";
 import { useSQLiteContext } from "expo-sqlite";
 import { createContext, useEffect, useState } from "react";
 import React from "react";
@@ -13,9 +15,11 @@ type InTouchContextType = {
   tempBondMembers: Set<number>;
   peopleList: Person[];
   bondList: Bond[];
+  reminderList: Reminder[];
   personBondMap: Map<number, Set<number>>;
   bondPersonMap: Map<number, Set<number>>;
   generatePersonId: () =>  number;
+  generateReminderId: () =>  number;
   addTempBondMember: (personID: number) => void;
   clearTempBondMembers: () => void;
   createPerson: (person: Person) => Promise<void>;
@@ -28,7 +32,11 @@ type InTouchContextType = {
   getPersonBondMap: () => void;
   getBondsOfPerson: (person: Person) => Array<Bond>;
   getMembersOfBond: (bond: Bond) => Array<Person>;
+  createReminder: (reminder: String, person_id: number, bond_id?: number) => void;
+  removeReminder: (person_id: number) => void;
   generateBondId: () => number;
+  getRemindersOfPerson: (person_id: number) => Reminder[]
+  getRemindersOfBond: (bond_id: number) => Reminder[]
 };
 
 /**
@@ -39,6 +47,7 @@ type InTouchContextType = {
 export const InTouchContext = createContext<InTouchContextType>({
   peopleList: [],
   bondList: [],
+  reminderList: [],
   personBondMap: new Map<number, Set<number>>(),
   bondPersonMap: new Map<number, Set<number>>(),
   tempBondMembers: new Set<number>(),
@@ -89,17 +98,34 @@ export const InTouchContext = createContext<InTouchContextType>({
   generatePersonId: function (): number {
     throw new Error("Function not implemented.");
   },
+  generateReminderId: function (): number {
+    throw new Error("Function not implemented.");
+  },
+  createReminder: function (reminder: String, person_id: number, bond_id: number) {
+    throw new Error("Function not implemented");
+  },
+  removeReminder: function (person_id: number) {
+    throw new Error("Function not implemented.");
+  },
+
+  getRemindersOfPerson: function (person_id: number): Reminder[] {
+    throw new Error("Function not implemented.");
+  },
+  getRemindersOfBond: function (bond_id: number): Reminder[] {
+    throw new Error("Function not implemented.");
+  },
 });
 
 export const InTouchContextProvider: React.FC<{
   children: React.ReactNode;
   // eslint-disable-next-line react/prop-types
 }> = ({ children }) => {
-  // Hashmaps for cross referencing groups and members
-
+  
   const [peopleList, setPeopleList] = React.useState<Person[]>([]);
   const [bondList, setBondList] = useState<Bond[]>([]);
+  const [reminderList, setReminderList] = useState<Reminder[]>([]);
 
+  // Hashmaps for cross referencing groups and members
   const [personBondMap, setPersonBondMap] = useState<Map<number, Set<number>>>(
     new Map<number, Set<number>>()
   );
@@ -121,6 +147,7 @@ export const InTouchContextProvider: React.FC<{
           await initializeBondList();
           await initializePeopleList();
           await initializeBondMemberMaps();
+          await initializeReminderList();
           hasRendered = true;
         } catch (error) {
           console.error(error);
@@ -151,6 +178,16 @@ export const InTouchContextProvider: React.FC<{
     } catch (e) {
       console.error(e);
       throw Error("Could not fetch bond");
+    }
+  }
+
+  async function initializeReminderList() {
+    try {
+      const initialized_reminder_list = await getAllReminders(db);
+      setReminderList(initialized_reminder_list);
+    } catch (e) {
+      console.error(e)
+      throw Error("Could not fetch bond")
     }
   }
 
@@ -287,6 +324,15 @@ export const InTouchContextProvider: React.FC<{
         return newMap;
       });
 
+      //UPDATE REMINDER LIST
+      setReminderList((prevReminders) => {
+        const newReminders = [...prevReminders]
+        newReminders.filter((reminder) => {
+          reminder.person_id !== personID
+        });
+        return newReminders;
+      })
+
      
     } catch (e) {
       console.error(e);
@@ -369,10 +415,9 @@ export const InTouchContextProvider: React.FC<{
   // BOND MEMBER FUNCTIONS
 
   function addTempBondMember(personID: number) {
-
-    const newTempBondMembers = new Set(tempBondMembers);
-    newTempBondMembers.add(personID);
-    setTempBondMembers(newTempBondMembers);
+    const newTempMembers = new Set<number>(tempBondMembers)
+    newTempMembers.add(personID)
+    setTempBondMembers(newTempMembers);
   }
 
   function clearTempBondMembers() {
@@ -527,6 +572,81 @@ export const InTouchContextProvider: React.FC<{
     }
   }
 
+  //REMINDER FUNCTIONS
+
+  
+  function generateReminderId(): number {
+
+    let reminder_id = 1;
+
+    if (reminderList.length > 0) {
+      reminder_id = reminderList[reminderList.length - 1].reminder_id as number + 1;
+    }
+    return reminder_id;
+  }
+
+  async function createReminder(reminder: string, person_id: number, bond_id: number) {
+    
+    const date = new Date;
+    // Extract date from date object
+    const day = String(date.getDay()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // January is 0!
+    const year = date.getFullYear();
+    const formattedDate = `${year}-${month}-${day}`;
+
+    if (!person_id && !bond_id) {
+      throw Error("person_id or bond_id must be provided");
+    }
+
+    const reminderID = generateReminderId();
+    let reminderToAdd : Reminder;
+    if (bond_id === -1) {
+      reminderToAdd = {reminder_id: reminderID, person_id: person_id, reminder: reminder, date: formattedDate}
+    }
+    else {
+      reminderToAdd = {reminder_id: reminderID, bond_id: bond_id, reminder: reminder, date:formattedDate}
+    }
+
+    setReminderList([...reminderList, reminderToAdd])
+    try {
+    await addReminder(db, reminderToAdd)
+    } catch (e) {
+      console.error(e);
+      console.log("Failed to create reminder")
+    }
+
+  }
+
+  async function removeReminder(reminder_id: number) {
+
+    // Update reminderList
+    setReminderList((prevReminders) => {
+
+      let newReminders = [...prevReminders];
+      return newReminders.filter((reminder) => {
+        if (reminder.reminder_id !== reminder_id) 
+          {return reminder}
+      });
+    })
+
+    try {
+    await deleteReminder(db, reminder_id)
+    } catch (e) {
+      console.error(e);
+      console.log("failed to delete reminder")
+    }
+  }
+
+  function getRemindersOfPerson(person_id: number) {
+    const newReminders = [...reminderList]
+    return newReminders.filter((reminder) => reminder.person_id === person_id);
+  }
+
+  function getRemindersOfBond(bond_id: number) {
+    const newReminders = [...reminderList]
+    return newReminders.filter((reminder) => reminder.bond_id === bond_id);
+  }
+
   // Initializes user's people list and bond list upon initial render
 
   return (
@@ -536,6 +656,7 @@ export const InTouchContextProvider: React.FC<{
           tempBondMembers,
           peopleList,
           bondList,
+          reminderList,
           personBondMap,
           bondPersonMap,
           generatePersonId,
@@ -552,6 +673,11 @@ export const InTouchContextProvider: React.FC<{
           generateBondId,
           addTempBondMember,
           clearTempBondMembers,
+          generateReminderId,
+          createReminder,
+          removeReminder,
+          getRemindersOfPerson,
+          getRemindersOfBond
         }}
       >
         {children}

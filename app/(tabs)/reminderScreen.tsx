@@ -9,7 +9,8 @@ import { getAllPersonBonds } from "@/assets/db/PersonBondRepo";
 import { useSQLiteContext } from "expo-sqlite";
 import React from "react";
 import { getAllPersons } from "@/assets/db/PersonRepo";
-import { clearDB } from "@/assets/db/db";
+import { getAllReminders } from "@/assets/db/ReminderRepo";
+import { clearDB, getTableNames } from "@/assets/db/db";
 import { getAllBonds } from "@/assets/db/BondRepo";
 
 
@@ -33,6 +34,12 @@ export default function ReminderScreen() {
 
      }
 
+     async function onShowReminders() {
+          const reminders = await getAllReminders(db)
+          console.log("all reminders ", reminders);
+
+     }
+
      function onPeopleList() {
           console.log("peopleList ", peopleList);
 
@@ -48,6 +55,10 @@ export default function ReminderScreen() {
           clearDB(db)
      }
 
+     async function tableNames() {
+          getTableNames(db);
+     }
+
      function onPressShowBondPersonMap() {
           console.log(getBondPersonMap())
      }
@@ -55,6 +66,7 @@ export default function ReminderScreen() {
      function onPressShowPersonBondMap(){
           console.log("personBondMap: ", getPersonBondMap())
      }
+
        return (
         <SafeAreaView>
           
@@ -62,6 +74,8 @@ export default function ReminderScreen() {
              <StandardButton title="getAllBondMembersMember" onPress={onTestAddMember}/>
 
              <StandardButton title="display people from db" onPress={onShowPeople}/>
+
+             <StandardButton title="display reminders from db" onPress={onShowReminders}/>
 
              <StandardButton title="display peopleList" onPress={onPeopleList}/>
 
@@ -73,7 +87,7 @@ export default function ReminderScreen() {
 
              <StandardButton title="show personBondMap" onPress={onPressShowPersonBondMap}/>
 
-
+             <StandardButton title="show tables" onPress={tableNames}/>
 
         </SafeAreaView>
 

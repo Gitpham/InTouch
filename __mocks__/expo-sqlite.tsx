@@ -1,4 +1,4 @@
-import { Bond, Person } from "@/constants/types";
+import { Bond, Person, Reminder } from "@/constants/types";
 
 const testP1: Person = {
   firstName: "P1",
@@ -49,6 +49,24 @@ const testB6: Bond = {
   typeOfCall: "individual",
 };
 
+
+const now = new Date;
+export const reminderA1: Reminder = {
+  date: now,
+  reminder_id: 1,
+  person_id: 3,
+  bond_id: null,
+  reminder: "Don't forget to tell mom you love her!"
+}
+
+export const reminderA3: Reminder = {
+  date: now,
+  reminder_id: 3,
+  person_id: null,
+  bond_id: 3,
+  reminder: "Wash the dishes!"
+}
+
 const testBondList: Bond[] = [testB1, testB2];
 
 const testPersonList: Person[] = [testP1, testP2];
@@ -64,6 +82,8 @@ const testPersonBondList = [
   { bond_id: 6, person_id: 5 },
   { bond_id: 6, person_id: 6 },
 ];
+
+const testReminderList: Reminder[] = [reminderA1, reminderA3]
 
 const mockExecuteAsync = jest.fn();
 const mockFinalizeAsync = jest.fn();
@@ -83,6 +103,14 @@ const mockGetAllAsync = jest.fn().mockImplementation((sql: string) => {
             `
   ) {
     return Promise.resolve(testPersonBondList);
+  }
+
+  if (
+    sql ==
+    `SELECT * FROM reminder`
+  ) {
+    return Promise.resolve(testReminderList);
+
   }
 
   throw Error("Does not recognize sql command");
@@ -108,6 +136,7 @@ export {
   testBondList,
   testPersonList,
   testPersonBondList,
+  testReminderList,
   testP1,
   testP2,
   testP3,

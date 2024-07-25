@@ -1,20 +1,21 @@
 /* eslint-disable react/react-in-jsx-scope */
 import { ThemedText } from "@/components/ThemedText";
-import { Bond, Person } from "@/constants/types";
+import { Bond, Person, Reminder, formatDate } from "@/constants/types";
 import { Card, ListItem, Button } from "@rneui/themed";
 import { useLocalSearchParams } from "expo-router";
 import { useContext, useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { InTouchContext } from "@/context/InTouchContext";
-import { FlatList, Pressable, StyleSheet, View } from "react-native";
+import { FlatList, Pressable, StyleSheet, TouchableOpacity, View } from "react-native";
 import { router } from "expo-router";
 
 export default function PersonScreen() {
 
-  const {peopleList, getBondsOfPerson, removePerson } = useContext(InTouchContext)
+  const {peopleList, getBondsOfPerson, removePerson, reminderList, getRemindersOfPerson, removeReminder } = useContext(InTouchContext)
   const localParams = useLocalSearchParams();
   const [person, setPerson] = useState<Person>()
   const [bonds, setBonds] = useState<Array<Bond>>();
+  const [reminders, setReminders] = useState<Array<Reminder>>();
 
 
   useEffect(() => {
@@ -25,9 +26,11 @@ export default function PersonScreen() {
       setPerson(p);
       const b = getBondsOfPerson(p);
       setBonds(b);
+      const r = getRemindersOfPerson(personId);
+      setReminders(r)
     }
 
-  }, [])
+  }, [reminderList])
 
 
   const renderBonds = ({ item }: { item: Bond }) => {
@@ -54,11 +57,41 @@ export default function PersonScreen() {
       }
     }
 
+    const renderReminders = ({ item }: { item: Reminder }) => {
+      if (item) {
+        return (
+          <ListItem bottomDivider>
+            <ListItem.Content id={item.reminder_id.toString()}>
+              <ListItem.Title>
+                {item.date + " - " + item.reminder} 
+              </ListItem.Title>
+            </ListItem.Content>
+            <Pressable
+             onPress={() => deleteReminder(item.reminder_id)}
+             style={styles.touchable}>
+              <ThemedText>Delete</ThemedText>
+             </Pressable>
+    
+          </ListItem>
+        )}
+        else {
+          return (
+            <ListItem bottomDivider>
+            </ListItem>
+          );
+  
+        }
+      }
+
     const deletePerson = () => {
       if (person) {
       removePerson(person);
       }
       router.back();
+    }
+
+    const deleteReminder = (reminder_id: number) => {
+      removeReminder(reminder_id);
     }
 
 
@@ -73,7 +106,20 @@ export default function PersonScreen() {
 
              <Card>
               <Card.Title>Reminders</Card.Title>
+              <FlatList
+              data={reminders}
+              renderItem={renderReminders}
+              keyExtractor={(item) => item.reminder_id.toString()}
+              />
              </Card>
+
+             <Button
+             title = "+Add Reminder"
+             buttonStyle = {styles.button}
+             titleStyle = {styles.title}
+             onPress = {() => router.navigate({pathname: "./addReminderModal", params: {person_id: person.person_id, bond_id: -1}})}
+             />
+
 
              <Card>
               <Card.Title>Groups</Card.Title>
@@ -128,4 +174,7 @@ const styles = StyleSheet.create({
   centeredView: {
     alignItems: "center",
   },
+  touchable: {
+    padding: 10,
+  }
 });
