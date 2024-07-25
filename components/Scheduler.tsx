@@ -181,6 +181,12 @@ export default function Scheduler() {
     setMonthlySet(updatedMonthSet);
   }
 
+  //Yearly State variables
+  const [selectedDayInYear, setSelectedDayInYear] = useState<Date>(new Date());
+  const [selectedTimeInYear, setSelectedTimeInYear] = useState<Date>(
+    new Date()
+  );
+
   async function onGenerateNotificationPress() {
     const testBond: Bond = {
       bondName: "testBond",
@@ -286,16 +292,16 @@ export default function Scheduler() {
           createPotentialSchedule(pSchedule);
         }
         break;
-        case ScheduleFrequency.YEARLY: {
-          const pYearSchedule: YearlySchedule = {
-            datesInYear: datesInYear
-          }
-          const pSchedule: Schedule = {
-            schedule: pYearSchedule
-          }
-          createPotentialSchedule(pSchedule)
-          return
-        }
+      case ScheduleFrequency.YEARLY: {
+        const pYearSchedule: YearlySchedule = {
+          datesInYear: datesInYear,
+        };
+        const pSchedule: Schedule = {
+          schedule: pYearSchedule,
+        };
+        createPotentialSchedule(pSchedule);
+        return;
+      }
       default:
         break;
     }
@@ -360,35 +366,30 @@ export default function Scheduler() {
     );
   }
 
-  const [selectedDayInYear, setSelectedDayInYear] = useState<Date>(new Date());
-  const [selectedTimeInYear, setSelectedTimeInYear] = useState<Date>(new Date());
-
-  function changeSelectedDayInYear(selectedDay: Date){
-    setSelectedDayInYear(selectedDay)
+  function changeSelectedDayInYear(selectedDay: Date) {
+    setSelectedDayInYear(selectedDay);
   }
-  function changeSelectedTimeInYear(selectedTime: Date){
-    setSelectedTimeInYear(selectedTime)
+  function changeSelectedTimeInYear(selectedTime: Date) {
+    setSelectedTimeInYear(selectedTime);
   }
 
   const [datesInYear, setDatesInYear] = useState<Set<DateInYear>>(new Set());
 
-  function changeDatesInYear(updatedDates: Set<DateInYear>){
-    setDatesInYear(updatedDates)
+  function changeDatesInYear(updatedDates: Set<DateInYear>) {
+    setDatesInYear(updatedDates);
   }
 
   function yearlySelector() {
     return (
       <YearlySchedulePicker
-      selectedTimeInYear={selectedTimeInYear}
-      changeSelectedTimeInYear={changeSelectedTimeInYear}
-
-      selectedDayInYear={selectedDayInYear}
-      changeSelectedDayInYear={changeSelectedDayInYear}
-
-      datesInYear={datesInYear}
-      changeDatesInYear={changeDatesInYear}
+        selectedTimeInYear={selectedTimeInYear}
+        changeSelectedTimeInYear={changeSelectedTimeInYear}
+        selectedDayInYear={selectedDayInYear}
+        changeSelectedDayInYear={changeSelectedDayInYear}
+        datesInYear={datesInYear}
+        changeDatesInYear={changeDatesInYear}
       ></YearlySchedulePicker>
-    )
+    );
   }
 
   function displayScheduleSelectors() {
