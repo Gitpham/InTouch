@@ -40,7 +40,21 @@ export default function MonthlySchedulePicker({
 
 
 
-    
+    function displayMonthlySet(){
+      console.log("displayMonthlySet()")
+      if (monthlySet.size == 0) return (<Text>No Selected Dates</Text>)
+
+      const currentDates: React.JSX.Element[] = [];
+      monthlySet.forEach(d => {
+        currentDates.push(<Text>
+          Week: {d.weekOfMonth}
+          Day: {d.dayOfWeek}
+          Time: {d.time.toTimeString()}
+        </Text>)
+      })
+      return <>{currentDates}</>
+
+    }
 
     function onAddDayOfMonth() {
         const day: DayOfMonth = {
@@ -105,9 +119,7 @@ export default function MonthlySchedulePicker({
 
           <Card>
             <Text>Current Schedule: </Text>
-            {monthlySet.forEach((d: DayOfMonth) => {
-              <Text>Week: {d.weekOfMonth} Day: {d.dayOfWeek} time: {d.time.toTimeString()}</Text>
-            })}
+            {displayMonthlySet()}
           </Card>
   
           <StandardButton
