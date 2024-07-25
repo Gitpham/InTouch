@@ -1,9 +1,9 @@
 import { ThemedText } from "@/components/ThemedText";
 import { useContext, useState } from "react";
 import { Alert, TextInput } from "react-native";
-import { } from "react-native-gesture-handler";
+import {} from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
-import {  Button, } from "@rneui/themed";
+import { Button } from "@rneui/themed";
 import { StyleSheet, View } from "react-native";
 import { router } from "expo-router";
 
@@ -13,11 +13,15 @@ import { StandardButton } from "@/components/ButtonStandard";
 import React from "react";
 
 export default function createGroupScreen() {
-
   // Data to be stored in record
   const [bondName, groupNameChange] = useState("");
-  const { createBond, generateBondId, tempBondMembers, clearTempBondMembers, createBondMember} = useContext(InTouchContext);
-
+  const {
+    createBond,
+    generateBondId,
+    tempBondMembers,
+    clearTempBondMembers,
+    createBondMember,
+  } = useContext(InTouchContext);
 
   const bondID = generateBondId();
 
@@ -28,25 +32,18 @@ export default function createGroupScreen() {
     bond_id: bondID,
   };
 
-
   function onDonePress() {
-
     if (!bondName) {
-      Alert.alert("Must enter a Bond name")
+      Alert.alert("Must enter a Bond name");
       return;
     }
-
-    console.log("createGroupScreen tempBondMembers:", tempBondMembers)
     createBond(bondToAdd);
-
-
-    
-      try {
-        createBondMember(tempBondMembers, bondID)
-      } catch (e) {
-        console.error(e);
-        throw Error ("failed to call createBondMember()")
-      }
+    try {
+      createBondMember(tempBondMembers, bondID);
+    } catch (e) {
+      console.error(e);
+      throw Error("failed to call createBondMember()");
+    }
     clearTempBondMembers();
     router.push("./(tabs)");
   }
@@ -54,7 +51,6 @@ export default function createGroupScreen() {
   if (bondName) {
     title = bondName;
   }
-
 
   return (
     <SafeAreaView style={styles.stepContainer}>
@@ -80,12 +76,15 @@ export default function createGroupScreen() {
 
       <Button
         title="Add Group Member"
-        onPress={() => router.navigate({pathname: "./addMemberScreen", params : {bond_id: bondID}})}
+        onPress={() =>
+          router.navigate({
+            pathname: "./addMemberScreen",
+            params: { bond_id: bondID },
+          })
+        }
         buttonStyle={styles.button}
         titleStyle={styles.title}
       />
-
-
 
       <Button
         title="Done"
@@ -95,16 +94,12 @@ export default function createGroupScreen() {
       />
 
       <StandardButton
-      title="Cancel"
-      onPress={() => {
-        clearTempBondMembers();
-        router.back()}
-      }
-      >
-      </StandardButton>
-
-
-      
+        title="Cancel"
+        onPress={() => {
+          clearTempBondMembers();
+          router.back();
+        }}
+      ></StandardButton>
     </SafeAreaView>
   );
 }

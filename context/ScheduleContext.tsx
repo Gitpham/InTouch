@@ -206,7 +206,7 @@ export const ScheduleContextProvider: React.FC<{
   };
 
   const generateSchedule = async (bond: Bond) => {
-    console.log("generateSchedule() potentialSchedule: ", potentialSchedule)
+    console.log("generateSchedule() potentialSchedule: ", potentialSchedule?.schedule)
 
     if (potentialSchedule == undefined) {
       throw Error("generateSchedule(): potenialScheudle is undefined");
@@ -238,9 +238,6 @@ export const ScheduleContextProvider: React.FC<{
     console.log("No type detected")
     
   };
-
-
-
   return (
     <ScheduleContext.Provider
       value={{

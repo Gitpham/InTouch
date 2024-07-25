@@ -84,6 +84,23 @@ export const createDB = async (db: SQLite.SQLiteDatabase) => {
         );
     `;
 
+    const notificationQuery = `
+        CREATE TABLE IF NOT EXISTS notifications (
+            person_id INTEGER,
+            bond_id INTEGER,
+            nextToCall INTEGER DEFAULT 0,
+            PRIMARY KEY (person_id, bond_id),
+            FOREIGN KEY (person_id)
+                REFERENCES person (person_id)
+                ON DELETE CASCADE
+                ON UPDATE NO ACTION
+            FOREIGN KEY (bond_id)
+                REFERENCES bond (bond_id)
+                ON DELETE CASCADE
+                ON UPDATE NO ACTION
+        );
+    `;
+
 
   try {
     await db.execAsync('PRAGMA foreign_keys = ON');
