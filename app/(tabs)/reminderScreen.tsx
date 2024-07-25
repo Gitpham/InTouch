@@ -9,6 +9,7 @@ import { getAllPersonBonds } from "@/assets/db/PersonBondRepo";
 import { useSQLiteContext } from "expo-sqlite";
 import React from "react";
 import { getAllPersons } from "@/assets/db/PersonRepo";
+import { getAllReminders } from "@/assets/db/ReminderRepo";
 import { clearDB, getTableNames } from "@/assets/db/db";
 import { getAllBonds } from "@/assets/db/BondRepo";
 
@@ -30,6 +31,12 @@ export default function ReminderScreen() {
      async function onShowPeople() {
           const personBonds = await getAllPersons(db)
           console.log("all people ", personBonds);
+
+     }
+
+     async function onShowReminders() {
+          const reminders = await getAllReminders(db)
+          console.log("all reminders ", reminders);
 
      }
 
@@ -67,6 +74,8 @@ export default function ReminderScreen() {
              <StandardButton title="getAllBondMembersMember" onPress={onTestAddMember}/>
 
              <StandardButton title="display people from db" onPress={onShowPeople}/>
+
+             <StandardButton title="display reminders from db" onPress={onShowReminders}/>
 
              <StandardButton title="display peopleList" onPress={onPeopleList}/>
 

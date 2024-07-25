@@ -84,7 +84,7 @@ export const createDB = async (db: SQLite.SQLiteDatabase) => {
 
   const reminderQuery = `
         CREATE TABLE IF NOT EXISTS reminder (
-            reminder_id INTEGER,
+            reminder_id INTEGER PRIMARY KEY,
             person_id INTEGER NULL,
             bond_id INTEGER NULL,
             reminder TEXT,
@@ -167,4 +167,4 @@ export const removeTable = async (
   }
 };
 
-//test
+

@@ -16,6 +16,7 @@ export default function addReminderModal() {
     const [reminder, setReminder] = useState("")
     const localParams = useLocalSearchParams();
     const person_id = +localParams.person_id;
+    const bond_id = +localParams.bond_id;
 
     const onDonePress = () => {
 
@@ -24,7 +25,7 @@ export default function addReminderModal() {
             return;
         }
 
-        createReminder(person_id, reminder);
+        createReminder(reminder, person_id, bond_id)
         router.back();
     }
 

@@ -32,10 +32,11 @@ type InTouchContextType = {
   getPersonBondMap: () => void;
   getBondsOfPerson: (person: Person) => Array<Bond>;
   getMembersOfBond: (bond: Bond) => Array<Person>;
-  createReminder: (person_id: number, reminder: String, bond_id?: number) => void;
+  createReminder: (reminder: String, person_id: number, bond_id?: number) => void;
   removeReminder: (person_id: number) => void;
   generateBondId: () => number;
   getRemindersOfPerson: (person_id: number) => Reminder[]
+  getRemindersOfBond: (bond_id: number) => Reminder[]
 };
 
 /**
@@ -100,7 +101,7 @@ export const InTouchContext = createContext<InTouchContextType>({
   generateReminderId: function (): number {
     throw new Error("Function not implemented.");
   },
-  createReminder: function (person_id: number, reminder: String, bond_id?: number) {
+  createReminder: function (reminder: String, person_id: number, bond_id: number) {
     throw new Error("Function not implemented");
   },
   removeReminder: function (person_id: number) {
@@ -108,6 +109,9 @@ export const InTouchContext = createContext<InTouchContextType>({
   },
 
   getRemindersOfPerson: function (person_id: number): Reminder[] {
+    throw new Error("Function not implemented.");
+  },
+  getRemindersOfBond: function (bond_id: number): Reminder[] {
     throw new Error("Function not implemented.");
   },
 });
@@ -581,20 +585,35 @@ export const InTouchContextProvider: React.FC<{
     return reminder_id;
   }
 
-  async function createReminder(person_id: number, reminder: string, bond_id?: number) {
+  async function createReminder(reminder: string, person_id: number, bond_id: number) {
+    
+    const date = new Date;
+    // Extract date from date object
+    const day = String(date.getDay()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // January is 0!
+    const year = date.getFullYear();
+    const formattedDate = `${year}-${month}-${day}`;
+
     if (!person_id && !bond_id) {
       throw Error("person_id or bond_id must be provided");
     }
 
     const reminderID = generateReminderId();
-    let reminderToAdd : Reminder = {reminder_id: reminderID, person_id: person_id, reminder: reminder, date: new Date}
-
-    if (bond_id) {
-      reminderToAdd.bond_id = bond_id;
+    let reminderToAdd : Reminder;
+    if (bond_id === -1) {
+      reminderToAdd = {reminder_id: reminderID, person_id: person_id, reminder: reminder, date: formattedDate}
+    }
+    else {
+      reminderToAdd = {reminder_id: reminderID, bond_id: bond_id, reminder: reminder, date:formattedDate}
     }
 
     setReminderList([...reminderList, reminderToAdd])
+    try {
     await addReminder(db, reminderToAdd)
+    } catch (e) {
+      console.error(e);
+      console.log("Failed to create reminder")
+    }
 
   }
 
@@ -610,12 +629,22 @@ export const InTouchContextProvider: React.FC<{
       });
     })
 
+    try {
     await deleteReminder(db, reminder_id)
+    } catch (e) {
+      console.error(e);
+      console.log("failed to delete reminder")
+    }
   }
 
   function getRemindersOfPerson(person_id: number) {
     const newReminders = [...reminderList]
     return newReminders.filter((reminder) => reminder.person_id === person_id);
+  }
+
+  function getRemindersOfBond(bond_id: number) {
+    const newReminders = [...reminderList]
+    return newReminders.filter((reminder) => reminder.bond_id === bond_id);
   }
 
   // Initializes user's people list and bond list upon initial render
@@ -647,7 +676,8 @@ export const InTouchContextProvider: React.FC<{
           generateReminderId,
           createReminder,
           removeReminder,
-          getRemindersOfPerson
+          getRemindersOfPerson,
+          getRemindersOfBond
         }}
       >
         {children}

@@ -3,16 +3,18 @@ import * as SQLite from "expo-sqlite";
 
 export const addReminder = async (db: SQLite.SQLiteDatabase, reminder: Reminder) => {
 
-    // Extract date from date object
-    let date = reminder.date
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // January is 0!
-    const year = date.getFullYear();
-    const formattedDate = `${year}-${month}-${day}`;
 
     const statement = await db.prepareAsync(`INSERT INTO reminder (reminder_id, person_id, bond_id, reminder, date) VALUES (?, ?, ?, ?, ?)`)
-    const value: string[] = [`${reminder.reminder_id}`, `${reminder.person_id}`, null, reminder.reminder, formattedDate]
+    let value : string[];
+   
+    if (!reminder.bond_id) {
+        value = [`${reminder.reminder_id}`, `${reminder.person_id}`, null, reminder.reminder, reminder.date]
+    }
+    else {
+        value = [`${reminder.reminder_id}`, null, `${reminder.bond_id}`, reminder.reminder, reminder.date]
+    }
 
+    console.log('Values to be inserted:', value);
     try {
         return await statement.executeAsync(value);
 
@@ -45,7 +47,7 @@ export const deleteReminder = async (db: SQLite.SQLiteDatabase, reminder_id: num
 }
 
 
-export const getAllReminders = async (db: SQLite.SQLiteDatabase) => {
+export const getAllReminders = async (db: SQLite.SQLiteDatabase) : Promise<Reminder[]> => {
     try {
         return await db.getAllAsync<Reminder>(`SELECT * FROM reminder`)
     } catch (error) {

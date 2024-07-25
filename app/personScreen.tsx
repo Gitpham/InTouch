@@ -1,6 +1,6 @@
 /* eslint-disable react/react-in-jsx-scope */
 import { ThemedText } from "@/components/ThemedText";
-import { Bond, Person, Reminder } from "@/constants/types";
+import { Bond, Person, Reminder, formatDate } from "@/constants/types";
 import { Card, ListItem, Button } from "@rneui/themed";
 import { useLocalSearchParams } from "expo-router";
 import { useContext, useEffect, useState } from "react";
@@ -59,18 +59,11 @@ export default function PersonScreen() {
 
     const renderReminders = ({ item }: { item: Reminder }) => {
       if (item) {
-        const date = item.date;
-        const day = String(date.getDay()).padStart(2, '0');
-        const month = String(date.getMonth() + 1).padStart(2, '0'); // January is 0!
-        const year = date.getFullYear();
-        
-        const formattedDate = `${day}/${month}/${year}`
         return (
           <ListItem bottomDivider>
-    
             <ListItem.Content id={item.reminder_id.toString()}>
               <ListItem.Title>
-                {formattedDate + " - " + item.reminder} 
+                {item.date + " - " + item.reminder} 
               </ListItem.Title>
             </ListItem.Content>
             <Pressable
@@ -113,18 +106,18 @@ export default function PersonScreen() {
 
              <Card>
               <Card.Title>Reminders</Card.Title>
-                            <FlatList
-            data={reminders}
-            renderItem={renderReminders}
-            keyExtractor={(item) => item.reminder_id.toString()}
-          />
+              <FlatList
+              data={reminders}
+              renderItem={renderReminders}
+              keyExtractor={(item) => item.reminder_id.toString()}
+              />
              </Card>
 
              <Button
              title = "+Add Reminder"
              buttonStyle = {styles.button}
              titleStyle = {styles.title}
-             onPress = {() => router.navigate({pathname: "./addReminderModal", params: {person_id: person.person_id}})}
+             onPress = {() => router.navigate({pathname: "./addReminderModal", params: {person_id: person.person_id, bond_id: -1}})}
              />
 
 
