@@ -137,7 +137,9 @@ export async function scheduleDailyNotification(
 export async function scheduleWeeklyNotification(
   schedule: WeeklySchedule,
   bond: Bond
-) {
+): Promise<string[]> {
+
+  const nids: string[] = [];
   if (schedule.sunday != undefined) {
     const day: Date = schedule.sunday;
     const weeklyTrigger: Notifications.WeeklyTriggerInput = {
@@ -148,10 +150,10 @@ export async function scheduleWeeklyNotification(
     };
 
     try {
-      await Notifications.scheduleNotificationAsync({
+      nids.push(await Notifications.scheduleNotificationAsync({
         content: notificationContentWeekly(bond),
         trigger: weeklyTrigger,
-      });
+      }));
     } catch (e) {
       console.error(e);
       throw Error(
@@ -170,10 +172,10 @@ export async function scheduleWeeklyNotification(
     };
 
     try {
-      await Notifications.scheduleNotificationAsync({
+      nids.push(await Notifications.scheduleNotificationAsync({
         content: notificationContentWeekly(bond),
         trigger: weeklyTrigger,
-      });
+      }));
     } catch (e) {
       console.error(e);
       throw Error(
@@ -192,10 +194,10 @@ export async function scheduleWeeklyNotification(
     };
 
     try {
-      await Notifications.scheduleNotificationAsync({
+      nids.push(await Notifications.scheduleNotificationAsync({
         content: notificationContentWeekly(bond),
         trigger: weeklyTrigger,
-      });
+      }));
     } catch (e) {
       console.error(e);
       throw Error(
@@ -215,10 +217,10 @@ export async function scheduleWeeklyNotification(
 
     try {
       console.log("wednesday");
-      await Notifications.scheduleNotificationAsync({
+      nids.push(await Notifications.scheduleNotificationAsync({
         content: notificationContentWeekly(bond),
         trigger: weeklyTrigger,
-      });
+      }));
     } catch (e) {
       console.error(e);
       throw Error(
@@ -237,10 +239,10 @@ export async function scheduleWeeklyNotification(
     };
 
     try {
-      await Notifications.scheduleNotificationAsync({
+      nids.push(await Notifications.scheduleNotificationAsync({
         content: notificationContentWeekly(bond),
         trigger: weeklyTrigger,
-      });
+      }));
     } catch (e) {
       console.error(e);
       throw Error(
@@ -259,10 +261,10 @@ export async function scheduleWeeklyNotification(
     };
 
     try {
-      await Notifications.scheduleNotificationAsync({
+      nids.push(await Notifications.scheduleNotificationAsync({
         content: notificationContentWeekly(bond),
         trigger: weeklyTrigger,
-      });
+      }));
     } catch (e) {
       console.error(e);
       throw Error(
@@ -281,10 +283,10 @@ export async function scheduleWeeklyNotification(
     };
 
     try {
-      await Notifications.scheduleNotificationAsync({
+      nids.push(await Notifications.scheduleNotificationAsync({
         content: notificationContentWeekly(bond),
         trigger: weeklyTrigger,
-      });
+      }));
     } catch (e) {
       console.error(e);
       throw Error(
@@ -292,6 +294,8 @@ export async function scheduleWeeklyNotification(
       );
     }
   }
+
+  return nids;
 }
 
 export async function scheduleMonthlyNotification(

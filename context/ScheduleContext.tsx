@@ -29,6 +29,7 @@ import { Alert, Linking } from "react-native";
 import * as Notifications from "expo-notifications";
 import { validateAndFormatPhoneNumber } from "./PhoneNumberUtils";
 import { uploadDailyScheduleDB } from "@/assets/db/DailyScheduleRepo";
+import { uploadWeeklyScheduleDB } from "@/assets/db/WeeklyScheduleRepo";
 
 //TYPE
 type ScheduleContextType = {
@@ -215,7 +216,6 @@ export const ScheduleContextProvider: React.FC<{
     }
 
     if (isDailySchedule(potentialSchedule.schedule)) {
-      console.log("dailySchedule")
       const nid: string = await scheduleDailyNotification(
         potentialSchedule.schedule,
         bond
@@ -223,8 +223,10 @@ export const ScheduleContextProvider: React.FC<{
       writeDailyScheduleToDB(potentialSchedule.schedule, bond, nid)
       
     } else if (isWeeklySchedule(potentialSchedule.schedule)) {
-      console.log("weeklyScheudle")
-      scheduleWeeklyNotification(potentialSchedule.schedule, bond);
+      const nids: string[] = await scheduleWeeklyNotification(potentialSchedule.schedule, bond);
+      nids.forEach(async nid => {
+        await writeWeeklyScheduleToDB(potentialSchedule.schedule, bond, nid)
+      })
       return;
     } else if (isMonthlySchedule(potentialSchedule.schedule)){
       console.log("generateSchedule(): isMonthlySchedule!")
@@ -240,18 +242,75 @@ export const ScheduleContextProvider: React.FC<{
     
   };
 
-  const writeDailyScheduleToDB = (schedule: DailySchedule,
+  const writeDailyScheduleToDB = async (schedule: DailySchedule,
     bond: Bond, nid: string) => {
       try {
         const time = schedule.time.toTimeString();
 
         await uploadDailyScheduleDB(db, time, nid, bond.bond_id);
-  
       } catch (e) {
         console.error(e);
         throw new Error("writeDailyScheduleToDB() failed")
       }
   }
+
+  /**
+   * dayOFWeek: Sunday = 1, Saty = 7
+   * @param schedule 
+   * @param bond 
+   * @param nid 
+   */
+  const writeWeeklyScheduleToDB = async (schedule: WeeklySchedule,
+    bond: Bond, nid: string) => {
+        const timesOfWeek: string[] = []
+        const dayOfWeek: number[] = [];
+        if (schedule.sunday != undefined) {
+          dayOfWeek.push(1)
+          timesOfWeek.push(schedule.sunday.toTimeString())
+        }
+        if (schedule.monday != undefined) {
+          dayOfWeek.push(2)
+          timesOfWeek.push(schedule.monday.toTimeString())
+        }
+        if (schedule.tuesday != undefined) {
+          dayOfWeek.push(3)
+          timesOfWeek.push(schedule.tuesday.toTimeString())
+
+        }
+        if (schedule.wednesday != undefined) {
+          dayOfWeek.push(4)
+          timesOfWeek.push(schedule.wednesday.toTimeString())
+
+        }
+        if (schedule.thursday != undefined) {
+          dayOfWeek.push(5)
+          timesOfWeek.push(schedule.thursday.toTimeString())
+
+        }
+        if (schedule.friday != undefined) {
+          dayOfWeek.push(6)
+          timesOfWeek.push(schedule.friday.toTimeString())
+
+        }
+        if (schedule.saturday != undefined) {
+          dayOfWeek.push(7)
+          timesOfWeek.push(schedule.saturday.toTimeString())
+
+        }
+
+        let i = 0;
+        dayOfWeek.forEach(async d => {
+          try {
+            await uploadWeeklyScheduleDB(db, timesOfWeek[i], d, nid, bond.bond_id);
+            i++;
+          } catch (e) {
+            console.error(e);
+            throw new Error("writeWeeklyScheduleToDb() failed")
+          }
+        })
+  }
+
+
   return (
     <ScheduleContext.Provider
       value={{
