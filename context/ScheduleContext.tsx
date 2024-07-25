@@ -6,6 +6,7 @@ import {
   isMonthlySchedule,
   isWeeklySchedule,
   isYearlySchedule,
+  MonthlySchedule,
   Person,
   Schedule,
   ScheduleFrequency,
@@ -30,6 +31,7 @@ import * as Notifications from "expo-notifications";
 import { validateAndFormatPhoneNumber } from "./PhoneNumberUtils";
 import { uploadDailyScheduleDB } from "@/assets/db/DailyScheduleRepo";
 import { uploadWeeklyScheduleDB } from "@/assets/db/WeeklyScheduleRepo";
+import { uploadMonthlyScheduleDB } from "@/assets/db/MonthlyScheduleRepo";
 
 //TYPE
 type ScheduleContextType = {
@@ -306,6 +308,21 @@ export const ScheduleContextProvider: React.FC<{
           } catch (e) {
             console.error(e);
             throw new Error("writeWeeklyScheduleToDb() failed")
+          }
+        })
+  }
+
+  const writeMonthlyScheduleToDB = async (schedule: MonthlySchedule,
+    bond: Bond, nid: string) => {
+        schedule.daysInMonth.forEach(async d => {
+          const time: string = d.time.toTimeString();
+          const dayOfWeek: number = d.dayOfWeek;
+          const weekOfMonth: number = d.weekOfMonth;
+          try {
+            await uploadMonthlyScheduleDB(db, time, dayOfWeek, weekOfMonth, nid, bond.bond_id)
+          } catch (e) {
+            console.error(e);
+            throw new Error("writeMonthlyScheduleToDB() failed")
           }
         })
   }
