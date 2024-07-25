@@ -5,6 +5,7 @@ import { Alert, Linking, Platform } from "react-native";
 import {
   Bond,
   DailySchedule,
+  DateInYear,
   DayOfMonth,
   isDailySchedule,
   isMonthlySchedule,
@@ -12,6 +13,7 @@ import {
   MonthlySchedule,
   Schedule,
   WeeklySchedule,
+  YearlySchedule,
 } from "@/constants/types";
 import React from "react";
 
@@ -94,6 +96,16 @@ const notificationContentMonthly = (
   return {
     title: `Call ${bond.bondName} !`,
     body: `Monthly: Time to call somebody in ${bond.bondName}`,
+    data: { bondID: `${bond.bond_id}`, test: { test1: "more data" } },
+  };
+};
+
+const notificationContentYearly = (
+  bond: Bond
+): Notifications.NotificationContentInput => {
+  return {
+    title: `Call ${bond.bondName} !`,
+    body: `Yearly: Time to call somebody in ${bond.bondName}`,
     data: { bondID: `${bond.bond_id}`, test: { test1: "more data" } },
   };
 };
@@ -316,6 +328,35 @@ export async function scheduleMonthlyNotification(
   });
 }
 
+export async function scheduleYearlyNotification(
+  schedule: YearlySchedule,
+  bond: Bond
+){
+  schedule.datesInYear.forEach(async (d: DateInYear) => {
+    const trigger: Notifications.YearlyTriggerInput = {
+      day: d.date.getDate(),
+      month: d.date.getMonth(),
+      hour: d.time.getHours(),
+      minute: d.time.getMinutes(),
+      repeats: true
+    }
+    try {
+      await Notifications.scheduleNotificationAsync({
+        content: notificationContentYearly(bond),
+        trigger: trigger,
+      });
+    } catch (e) {
+      console.error(e);
+      throw new Error(
+        `scheduleYearlyNotification() failed to scheduleNotificationAsync for ${d.getDate()} of ${d.getMonth()}`
+      );
+    }
+
+  })
+
+
+
+}
 export async function getAllScheduledNotifications() {
   try {
     const notifications = await Notifications.getAllScheduledNotificationsAsync();

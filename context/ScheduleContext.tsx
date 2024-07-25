@@ -4,6 +4,7 @@ import {
   isDailySchedule,
   isMonthlySchedule,
   isWeeklySchedule,
+  isYearlySchedule,
   Person,
   Schedule,
   ScheduleFrequency,
@@ -15,6 +16,7 @@ import {
   scheduleDailyNotification,
   scheduleMonthlyNotification,
   scheduleWeeklyNotification,
+  scheduleYearlyNotification,
 } from "./notifications";
 import {
   getPersonsOfBondDB,
@@ -227,12 +229,14 @@ export const ScheduleContextProvider: React.FC<{
       console.log("generateSchedule(): isMonthlySchedule!")
       scheduleMonthlyNotification(potentialSchedule.schedule, bond)
       return;
-    } else {
-      console.log("generateSchedule(): no type detected!")
-
+    } else if (isYearlySchedule(potentialSchedule.schedule)){
+      console.log("generateSchedule(): isYearlySchedule!")
+      scheduleYearlyNotification(potentialSchedule.schedule, bond)
+      return;
     }
 
-
+    console.log("No type detected")
+    
   };
 
 

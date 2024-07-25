@@ -9,11 +9,13 @@ import { StandardButton } from "./ButtonStandard";
 import {
   Bond,
   DailySchedule,
+  DateInYear,
   DayOfMonth,
   MonthlySchedule,
   Schedule,
   ScheduleFrequency,
   WeeklySchedule,
+  YearlySchedule,
 } from "@/constants/types";
 import { ScheduleContext } from "@/context/ScheduleContext";
 import * as Notifications from "expo-notifications";
@@ -26,6 +28,7 @@ import { useSQLiteContext } from "expo-sqlite";
 import DailySchedulePicker from "./DailySchedulePicker";
 import WeeklySchedulePicker from "./WeeklySchedulePicker";
 import MonthlySchedulePicker from "./MonthlySchedulePicker";
+import YearlySchedulePicker from "./YearlySchedulePicker";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -283,6 +286,16 @@ export default function Scheduler() {
           createPotentialSchedule(pSchedule);
         }
         break;
+        case ScheduleFrequency.YEARLY: {
+          const pYearSchedule: YearlySchedule = {
+            datesInYear: datesInYear
+          }
+          const pSchedule: Schedule = {
+            schedule: pYearSchedule
+          }
+          createPotentialSchedule(pSchedule)
+          return
+        }
       default:
         break;
     }
@@ -347,14 +360,47 @@ export default function Scheduler() {
     );
   }
 
+  const [selectedDayInYear, setSelectedDayInYear] = useState<Date>(new Date());
+  const [selectedTimeInYear, setSelectedTimeInYear] = useState<Date>(new Date());
+
+  function changeSelectedDayInYear(selectedDay: Date){
+    setSelectedDayInYear(selectedDay)
+  }
+  function changeSelectedTimeInYear(selectedTime: Date){
+    setSelectedTimeInYear(selectedTime)
+  }
+
+  const [datesInYear, setDatesInYear] = useState<Set<DateInYear>>(new Set());
+
+  function changeDatesInYear(updatedDates: Set<DateInYear>){
+    setDatesInYear(updatedDates)
+  }
+
+  function yearlySelector() {
+    return (
+      <YearlySchedulePicker
+      selectedTimeInYear={selectedTimeInYear}
+      changeSelectedTimeInYear={changeSelectedTimeInYear}
+
+      selectedDayInYear={selectedDayInYear}
+      changeSelectedDayInYear={changeSelectedDayInYear}
+
+      datesInYear={datesInYear}
+      changeDatesInYear={changeDatesInYear}
+      ></YearlySchedulePicker>
+    )
+  }
+
   function displayScheduleSelectors() {
     return (
       <>
-        {scheduleFrequency == "daily" && dailySelector()}
+        {scheduleFrequency == ScheduleFrequency.DAILY && dailySelector()}
 
-        {scheduleFrequency == "weekly" && weeklySelector()}
+        {scheduleFrequency == ScheduleFrequency.WEEKLY && weeklySelector()}
 
-        {scheduleFrequency == "monthly" && monthlySelector()}
+        {scheduleFrequency == ScheduleFrequency.MONTHLY && monthlySelector()}
+
+        {scheduleFrequency == ScheduleFrequency.YEARLY && yearlySelector()}
       </>
     );
   }

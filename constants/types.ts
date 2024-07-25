@@ -106,10 +106,36 @@ export function isMonthlySchedule(obj: any): obj is MonthlySchedule {
    return false;
 }
 
+export type DateInYear = {
+    date: Date,
+    time: Date,
+}
+
+export function isDateInYear(obj: any): obj is DateInYear {
+    return ((obj.date instanceof Date) && (obj.date instanceof obj.time))
+}
 export type YearlySchedule = {
-    dates: Set<Date>
+    datesInYear: Set<DateInYear>
+}
+
+export function isYearlySchedule(obj: any): obj is YearlySchedule {
+    console.log("isyearlySchedule")
+    if (!(obj.datesInYear instanceof Set)){
+        return false;
+    }
+
+    if (obj.datesInYear.size < 1) {
+        return false;
+    }
+
+    obj.datesInYear.forEach(d => {
+        if (!isDateInYear(d)){
+            return false;
+        }
+    })
+    return true;
 }
   
 export type Schedule = {
-    schedule: DailySchedule | WeeklySchedule | MonthlySchedule
+    schedule: DailySchedule | WeeklySchedule | MonthlySchedule | YearlySchedule
   };
