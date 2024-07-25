@@ -1,13 +1,28 @@
 import { Card } from "@rneui/themed";
-import React, { useContext, useState } from "react";
-import { Alert, View } from "react-native";
+import React from "react";
+import { Alert, View, Text } from "react-native";
 import { StandardButton } from "./ButtonStandard";
 import DateTimePicker, {
     DateTimePickerEvent,
   } from "@react-native-community/datetimepicker";
-import { DayOfMonth, MonthlySchedule, Schedule } from "@/constants/types";
-import { ScheduleContext } from "@/context/ScheduleContext";
+import { DayOfMonth } from "@/constants/types";
 import {Picker} from '@react-native-picker/picker';
+
+interface MonthlySchedulePickerInterface {
+  selectedWeekOfMonth: number,
+  changeSelectedWeekOfMonth: (w: number) => void,
+
+  selectedDayOfWeek: number,
+  changeSelectedDayOfWeek: (d: number) => void,
+
+  monthlyTime: Date,
+  changeMonthlyTime: (t: Date) => void,
+
+  monthlySet: Set<DayOfMonth>,
+  changeMonthlySet: (u: Set<DayOfMonth>) => void
+}
+    
+
 export default function MonthlySchedulePicker({
   selectedWeekOfMonth,
   changeSelectedWeekOfMonth,
@@ -21,11 +36,13 @@ export default function MonthlySchedulePicker({
   monthlySet,
   changeMonthlySet
 
-}){
+}: MonthlySchedulePickerInterface){
+
+
 
     
 
-    function onChooseDayMonthly() {
+    function onAddDayOfMonth() {
         const day: DayOfMonth = {
           weekOfMonth: selectedWeekOfMonth as number,
           dayOfWeek: selectedDayOfWeek as number,
@@ -83,8 +100,15 @@ export default function MonthlySchedulePicker({
   
           <StandardButton
             title="Add"
-            onPress={onChooseDayMonthly}
+            onPress={onAddDayOfMonth}
           ></StandardButton>
+
+          <Card>
+            <Text>Current Schedule: </Text>
+            {monthlySet.forEach((d: DayOfMonth) => {
+              <Text>Week: {d.weekOfMonth} Day: {d.dayOfWeek} time: {d.time.toTimeString()}</Text>
+            })}
+          </Card>
   
           <StandardButton
             title="Clear current schedule"

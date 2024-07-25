@@ -7,11 +7,7 @@ import {
   DailySchedule,
   DateInYear,
   DayOfMonth,
-  isDailySchedule,
-  isMonthlySchedule,
-  isWeeklySchedule,
   MonthlySchedule,
-  Schedule,
   WeeklySchedule,
   YearlySchedule,
 } from "@/constants/types";
