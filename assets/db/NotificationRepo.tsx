@@ -42,7 +42,7 @@ export const clearNotificationsDB = async (db: SQLite.SQLiteDatabase, bid: numbe
         const statement = await db.prepareAsync(`SELECT * FROM notifications WHERE bond_id = ?;`)
         const value: string[] = [bid.toString()]
         try {
-            const result = await statement.executeAsync<Person>(value);
+            const result = await statement.executeAsync(value);
             return await result.getFirstAsync();
         } catch (error) {
             console.error(error)
