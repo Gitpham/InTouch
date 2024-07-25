@@ -19,7 +19,7 @@ export async function uploadNotificationDB(db: SQLite.SQLiteDatabase, bid: numbe
   }
 }
 
-export const clearNoticitionsDB = async (db: SQLite.SQLiteDatabase, bid: number) => {
+export const clearNotificationsDB = async (db: SQLite.SQLiteDatabase, bid: number) => {
     const statement = await db.prepareAsync(`
          DELETE FROM notifications
         WHERE bond_id = ?
@@ -38,7 +38,7 @@ export const clearNoticitionsDB = async (db: SQLite.SQLiteDatabase, bid: number)
       }
     }
 
-    export const getNotifications = async (db: SQLite.SQLiteDatabase, bid: number) => {
+    export const getNotificationsDB = async (db: SQLite.SQLiteDatabase, bid: number) => {
         const statement = await db.prepareAsync(`SELECT * FROM notifications WHERE bond_id = ?;`)
         const value: string[] = [bid.toString()]
         try {
