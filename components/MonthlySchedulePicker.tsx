@@ -45,12 +45,14 @@ export default function MonthlySchedulePicker({
       if (monthlySet.size == 0) return (<Text>No Selected Dates</Text>)
 
       const currentDates: React.JSX.Element[] = [];
+      let i = 0;
       monthlySet.forEach(d => {
-        currentDates.push(<Text>
+        currentDates.push(<Text id={""+i}>
           Week: {d.weekOfMonth} 
           Day: {d.dayOfWeek} 
           Time: {d.time.toTimeString()} 
         </Text>)
+        i++;
       })
       return <>{currentDates}</>
 
