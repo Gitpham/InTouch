@@ -122,7 +122,6 @@ export default function createGroupScreen() {
       />
 
 
-
       <Button
         title="Done"
         onPress={onDonePress}

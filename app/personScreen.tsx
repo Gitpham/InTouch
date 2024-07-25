@@ -11,7 +11,7 @@ import { router } from "expo-router";
 
 export default function PersonScreen() {
 
-  const {peopleList, getBondsOfPerson, removePerson, reminderList, getRemindersOfPerson, deleteReminder } = useContext(InTouchContext)
+  const {peopleList, getBondsOfPerson, removePerson, reminderList, getRemindersOfPerson, removeReminder } = useContext(InTouchContext)
   const localParams = useLocalSearchParams();
   const [person, setPerson] = useState<Person>()
   const [bonds, setBonds] = useState<Array<Bond>>();
@@ -59,16 +59,22 @@ export default function PersonScreen() {
 
     const renderReminders = ({ item }: { item: Reminder }) => {
       if (item) {
+        const date = item.date;
+        const day = String(date.getDay()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // January is 0!
+        const year = date.getFullYear();
+        
+        const formattedDate = `${day}/${month}/${year}`
         return (
           <ListItem bottomDivider>
     
             <ListItem.Content id={item.reminder_id.toString()}>
               <ListItem.Title>
-                {item.reminder} 
+                {formattedDate + " - " + item.reminder} 
               </ListItem.Title>
             </ListItem.Content>
             <Pressable
-             onPress={() => removeReminder(item.reminder_id)}
+             onPress={() => deleteReminder(item.reminder_id)}
              style={styles.touchable}>
               <ThemedText>Delete</ThemedText>
              </Pressable>
@@ -91,9 +97,8 @@ export default function PersonScreen() {
       router.back();
     }
 
-    const removeReminder = (reminder_id: number) => {
-      console.log(reminderList)
-      deleteReminder(reminder_id);
+    const deleteReminder = (reminder_id: number) => {
+      removeReminder(reminder_id);
     }
 
 

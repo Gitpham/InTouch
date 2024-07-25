@@ -82,6 +82,25 @@ export const createDB = async (db: SQLite.SQLiteDatabase) => {
         );
     `;
 
+  const reminderQuery = `
+        CREATE TABLE IF NOT EXISTS reminder (
+            reminder_id INTEGER,
+            person_id INTEGER NULL,
+            bond_id INTEGER NULL,
+            reminder TEXT,
+            date DATE,
+            PRIMARY KEY (reminder_id),
+            FOREIGN KEY (person_id)
+                REFERENCES person (person_id)
+                ON DELETE CASCADE
+                ON UPDATE NO ACTION
+            FOREIGN KEY (bond_id)
+                REFERENCES bond (bond_id)
+                ON DELETE CASCADE
+                ON UPDATE NO ACTION
+        );
+  `;
+
 
   try {
     console.log("creating db: ", db.databaseName)
@@ -92,6 +111,7 @@ export const createDB = async (db: SQLite.SQLiteDatabase) => {
     // console.log("group table")
     await db.execAsync(personBondQuery);
     // console.log("personGroup")
+    await db.execAsync(reminderQuery);
   } catch (error) {
     console.error(error);
     throw Error(`failed to create tables`);
@@ -109,8 +129,8 @@ export const getTableNames = async (
       "SELECT name FROM sqlite_master WHERE type ='table' and name NOT LIKE 'sqlite_%'"
     );
 
-    const results2 = await db.getAllAsync("PRAGMA table_info(bond);");
-    console.log("table columns", results2);
+    // const results2 = await db.getAllAsync("PRAGMA table_info(bond);");
+    // console.log("table columns", results2);
 
     results?.forEach((result) => {
       // // console.log(result)
@@ -124,7 +144,7 @@ export const getTableNames = async (
       // console.log(r.name)
       tableNames.push(r.name as string);
     });
-    // console.log("tablename", tableNames)
+    console.log("tablename", tableNames)
     return tableNames;
   } catch (error) {
     console.error(error);
@@ -132,7 +152,7 @@ export const getTableNames = async (
   }
 };
 
-export type Table = "person" | "bond" | "person_bond";
+export type Table = "person" | "bond" | "person_bond" | "reminder";
 
 export const removeTable = async (
   db: SQLite.SQLiteDatabase,

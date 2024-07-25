@@ -12,7 +12,7 @@ import { Alert } from 'react-native';
 ;
 
 export default function addReminderModal() {
-    const { reminderList, addReminder } = useContext(InTouchContext);   
+    const { reminderList, createReminder } = useContext(InTouchContext);   
     const [reminder, setReminder] = useState("")
     const localParams = useLocalSearchParams();
     const person_id = +localParams.person_id;
@@ -24,7 +24,7 @@ export default function addReminderModal() {
             return;
         }
 
-        addReminder(person_id, reminder);
+        createReminder(person_id, reminder);
         router.back();
     }
 
