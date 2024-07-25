@@ -11,7 +11,7 @@ export default function WeeklySchedulePicker({
   mon,
   changeMon,
   monTime,
-  changeMonTime
+  changeMonTime,
 
   tues,
   changeTues,

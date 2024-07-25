@@ -1,9 +1,5 @@
-import DateTimePicker, {
-  DateTimePickerEvent,
-} from "@react-native-community/datetimepicker";
-import { Card, CheckBox } from "@rneui/themed";
 import { useContext, useEffect, useRef, useState } from "react";
-import { View, Text, Platform, Alert, Linking } from "react-native";
+import { View, Platform, Alert } from "react-native";
 import React from "react";
 import SegmentedControl from "@react-native-segmented-control/segmented-control";
 import { ThemedText } from "./ThemedText";
@@ -22,21 +18,14 @@ import {
 import { ScheduleContext } from "@/context/ScheduleContext";
 import * as Notifications from "expo-notifications";
 import {
-  allowsNotificationsAsync,
   cancelAllNotifications,
   getAllScheduledNotifications,
-  requestNotificationPermission,
 } from "@/context/notifications";
 import { ScrollView } from "react-native";
-import { router } from "expo-router";
-import { getPersonsOfBondDB } from "@/assets/db/PersonBondRepo";
 import { useSQLiteContext } from "expo-sqlite";
-import { Picker } from "@react-native-picker/picker";
 import DailySchedulePicker from "./DailySchedulePicker";
 import WeeklySchedulePicker from "./WeeklySchedulePicker";
 import MonthlySchedulePicker from "./MonthlySchedulePicker";
-
-
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -80,8 +69,6 @@ export default function Scheduler() {
     };
   }, []);
 
-  console.log("Scheduler renders")
-
   const [channels, setChannels] = useState<Notifications.NotificationChannel[]>(
     []
   );
@@ -95,21 +82,101 @@ export default function Scheduler() {
   const [scheduleFrequency, setScheduleFrequency] = useState<ScheduleFrequency>(
     ScheduleFrequency.DAILY
   );
-  const {
-    createPotentialSchedule,
-    generateSchedule,
-    getNextToCall,
-    callPerson,
-  } = useContext(ScheduleContext);
+  const { createPotentialSchedule, generateSchedule, callPerson } =
+    useContext(ScheduleContext);
 
+  //DAILY STATE VARIABLES AND SETTERS
 
-  //MONTHLY STATE VARIABLES
+  const [dailyTime, setDailyTime] = useState(new Date());
+
+  function changeDailyTime(time: Date) {
+    setDailyTime(time);
+  }
+
+  //WEEKLY STATE VARIABLES AND SETTERS
+  const [mon, setMon] = useState(false);
+  function changeMon(isSelected: boolean) {
+    setMon(isSelected);
+  }
+  const [monTime, setMonTime] = useState<Date>(new Date());
+  function changeMonTime(time: Date) {
+    setMonTime(time);
+  }
+
+  const [tues, setTues] = useState(false);
+  function changeTues(isSelected: boolean) {
+    setTues(isSelected);
+  }
+  const [tuesTime, setTuesTime] = useState<Date>(new Date());
+  function changeTuesTime(time: Date) {
+    setTuesTime(time);
+  }
+
+  const [weds, setWeds] = useState(false);
+  function changeWeds(isSelected: boolean) {
+    setWeds(isSelected);
+  }
+  const [wedsTime, setWedsTime] = useState<Date>(new Date());
+  function changeWedsTime(time: Date) {
+    setWedsTime(time);
+  }
+
+  const [thurs, setThurs] = useState(false);
+  function changeThurs(isSelected: boolean) {
+    setThurs(isSelected);
+  }
+  const [thursTime, setThursTime] = useState<Date>(new Date());
+  function changeThursTime(time: Date) {
+    setThursTime(time);
+  }
+
+  const [fri, setFri] = useState(false);
+  function changeFri(isSelected: boolean) {
+    setFri(isSelected);
+  }
+  const [friTime, setFriTime] = useState<Date>(new Date());
+  function changeFriTime(time: Date) {
+    setFriTime(time);
+  }
+
+  const [sat, setSat] = useState(false);
+  function changeSat(isSelected: boolean) {
+    setSat(isSelected);
+  }
+  const [satTime, setSatTime] = useState<Date>(new Date());
+  function changeSatTime(time: Date) {
+    setSatTime(time);
+  }
+
+  const [sun, setSun] = useState(false);
+  function changeSun(isSelected: boolean) {
+    setSun(isSelected);
+  }
+  const [sunTime, setSunTime] = useState<Date>(new Date());
+  function changeSunTime(time: Date) {
+    setSunTime(time);
+  }
+
+  //MONTHLY STATE VARIABLES AND SETTERS
   const [selectedWeekOfMonth, setSelectedWeekOfMonth] = useState<number>();
+  function changeSelectedWeekOfMonth(week: number) {
+    setSelectedWeekOfMonth(week);
+  }
+
   const [selectedDayOfWeek, setSelectedDayOfWeek] = useState<number>();
+  function changeSelectedDayOfWeek(day: number) {
+    setSelectedDayOfWeek(day);
+  }
+
   const [monthlyTime, setMonthlyTime] = useState(new Date());
+  function changeMonthlyTime(time: Date) {
+    setMonthlyTime(time);
+  }
+
   const [monthlySet, setMonthlySet] = useState<Set<DayOfMonth>>(new Set());
-
-
+  function changeMonthlySet(updatedMonthSet: Set<DayOfMonth>) {
+    setMonthlySet(updatedMonthSet);
+  }
 
   async function onGenerateNotificationPress() {
     const testBond: Bond = {
@@ -134,7 +201,6 @@ export default function Scheduler() {
   function onSegmentedControlValueChange(value) {
     setScheduleFrequency(value);
   }
-
 
   async function onDonePress() {
     switch (scheduleFrequency) {
@@ -222,208 +288,64 @@ export default function Scheduler() {
     }
   }
 
-
-  const [dailyTime, setDailyTime] = useState(new Date());
-
-  function changeDailyTime(time: Date){
-    setDailyTime(time);
-  }
-
   function dailySelector() {
     return (
-      <DailySchedulePicker dailyTime={dailyTime} changeDailyTime={changeDailyTime}></DailySchedulePicker>
+      <DailySchedulePicker
+        dailyTime={dailyTime}
+        changeDailyTime={changeDailyTime}
+      ></DailySchedulePicker>
     );
   }
 
-
-    const [mon, setMon] = useState(false);
-    function changeMon(isSelected: boolean){
-      setMon(isSelected);
-    }
-    const [monTime, setMonTime] = useState<Date>(new Date());
-    function changeMonTime(time: Date) {
-      setMonTime(time);
-    }
-  
-    const [tues, setTues] = useState(false);
-    function changeTues(isSelected: boolean){
-      setTues(isSelected);
-    }
-    const [tuesTime, setTuesTime] = useState<Date>(new Date());
-    function changeTuesTime(time: Date) {
-      setTuesTime(time);
-    }
-  
-    const [weds, setWeds] = useState(false);
-    function changeWeds(isSelected: boolean){
-      setWeds(isSelected);
-    }
-    const [wedsTime, setWedsTime] = useState<Date>(new Date());
-    function changeWedsTime(time: Date) {
-      setWedsTime(time);
-    }
-  
-    const [thurs, setThurs] = useState(false);
-    function changeThurs(isSelected: boolean){
-      setThurs(isSelected);
-    }
-    const [thursTime, setThursTime] = useState<Date>(new Date());
-    function changeThursTime(time: Date) {
-      setThursTime(time);
-    }
-  
-    const [fri, setFri] = useState(false);
-    function changeFri(isSelected: boolean){
-      setFri(isSelected);
-    }
-    const [friTime, setFriTime] = useState<Date>(new Date());
-    function changeFriTime(time: Date) {
-      setFriTime(time);
-    }
-  
-    const [sat, setSat] = useState(false);
-    function changeSat(isSelected: boolean){
-      setSat(isSelected);
-    }
-    const [satTime, setSatTime] = useState<Date>(new Date());
-    function changeSatTime(time: Date) {
-      setSatTime(time);
-    }
-  
-    const [sun, setSun] = useState(false);
-    function changeSun(isSelected: boolean){
-      setSun(isSelected);
-    }
-    const [sunTime, setSunTime] = useState<Date>(new Date());
-    function changeSunTime(time: Date) {
-      setSunTime(time);
-    }
   function weeklySelector() {
     return (
-      <WeeklySchedulePicker 
-      mon={mon}
-      changeMon={changeMon}
-      monTime={monTime}
-      changeMonTime={changeMonTime}
-
-      tues={tues}
-      changeTues={changeTues}
-      tuesTime={tuesTime}
-      changeTuesTime={changeTuesTime}
-
-      weds={weds}
-      changeWeds={changeWeds}
-      wedsTime={wedsTime}
-      changeWedsTime={changeWedsTime}
-
-      thurs={thurs}
-      changeThurs={changeThurs}
-      thursTime={thursTime}
-      changeThursTime={changeThursTime}
-
-      fri={fri}
-      changeFri={changeFri}
-      friTime={friTime}
-      changeFriTime={changeFriTime}
-
-      sat={sat}
-      changeSat={changeSat}
-      satTime={satTime}
-      changeSatTime={changeSatTime}
-
-      sun={sun}
-      changeSun={changeSun}
-      sunTime={sunTime}
-      changeSunTime={changeSunTime}
+      <WeeklySchedulePicker
+        mon={mon}
+        changeMon={changeMon}
+        monTime={monTime}
+        changeMonTime={changeMonTime}
+        tues={tues}
+        changeTues={changeTues}
+        tuesTime={tuesTime}
+        changeTuesTime={changeTuesTime}
+        weds={weds}
+        changeWeds={changeWeds}
+        wedsTime={wedsTime}
+        changeWedsTime={changeWedsTime}
+        thurs={thurs}
+        changeThurs={changeThurs}
+        thursTime={thursTime}
+        changeThursTime={changeThursTime}
+        fri={fri}
+        changeFri={changeFri}
+        friTime={friTime}
+        changeFriTime={changeFriTime}
+        sat={sat}
+        changeSat={changeSat}
+        satTime={satTime}
+        changeSatTime={changeSatTime}
+        sun={sun}
+        changeSun={changeSun}
+        sunTime={sunTime}
+        changeSunTime={changeSunTime}
       ></WeeklySchedulePicker>
     );
   }
 
   function monthlySelector() {
     return (
-      <MonthlySchedulePicker></MonthlySchedulePicker>
-      // <Card>
-      //   <View>
-      //     <Picker
-      //       selectedValue={selectedWeekOfMonth}
-      //       onValueChange={(itemValue, itemIndex) =>
-      //         setSelectedWeekOfMonth(itemValue)
-      //       }
-      //     >
-      //       <Picker.Item label="First Week" value="1" />
-      //       <Picker.Item label="Second Week" value="2" />
-      //       <Picker.Item label="Third Week" value="3" />
-      //       <Picker.Item label="Fourth Week" value="4" />
-      //     </Picker>
-
-      //     <Picker
-      //       selectedValue={selectedDayOfWeek}
-      //       onValueChange={(itemValue, itemIndex) =>
-      //         setSelectedDayOfWeek(itemValue)
-      //       }
-      //     >
-      //       <Picker.Item label="Sunday" value="1" />
-      //       <Picker.Item label="Monday" value="2" />
-      //       <Picker.Item label="Tuesday" value="3" />
-      //       <Picker.Item label="Wednesday" value="4" />
-      //       <Picker.Item label="Thursday" value="5" />
-      //       <Picker.Item label="Friday" value="6" />
-      //       <Picker.Item label="Saturday" value="7" />
-      //     </Picker>
-
-      //     <DateTimePicker
-      //       value={monthlyTime}
-      //       mode="time"
-      //       onChange={(e, d) => setMonthlyTime(d)}
-      //     ></DateTimePicker>
-      //   </View>
-
-      //   <StandardButton
-      //     title="Add"
-      //     onPress={onChooseDayMonthly}
-      //   ></StandardButton>
-
-      //   <StandardButton
-      //     title="Clear current schedule"
-      //     onPress={() => {
-      //       setMonthlySet(new Set());
-      //     }}
-      //   ></StandardButton>
-      // </Card>
+      <MonthlySchedulePicker
+        selectedWeekOfMonth={selectedWeekOfMonth}
+        changeSelectedWeekOfMonth={changeSelectedWeekOfMonth}
+        selectedDayOfWeek={selectedDayOfWeek}
+        changeSelectedDayOfWeek={changeSelectedDayOfWeek}
+        monthlyTime={monthlyTime}
+        changeMonthlyTime={changeMonthlyTime}
+        monthlySet={monthlySet}
+        changeMonthlySet={changeMonthlySet}
+      ></MonthlySchedulePicker>
     );
   }
-
-  //TODO: default is undefined
-  function onChooseDayMonthly() {
-    const day: DayOfMonth = {
-      weekOfMonth: selectedWeekOfMonth as number,
-      dayOfWeek: selectedDayOfWeek as number,
-      time: monthlyTime,
-    };
-
-    if (!monthlySet.has(day)) {
-      setMonthlySet((prev) => {
-        const newDay = new Set([day]);
-        return new Set<DayOfMonth>([...prev, ...newDay]);
-      });
-      return;
-    }
-
-    const monthlySetStringArr: string[] = [];
-    monthlySet.forEach((d) => {
-      const s =
-        "Day of Week: " +
-        d.dayOfWeek +
-        " Week of Month: " +
-        d.weekOfMonth +
-        " time: " +
-        d.time.getTime().toLocaleString;
-      monthlySetStringArr.push(s);
-    });
-    console.log("monthlySet", monthlySetStringArr);
-    Alert.alert("You already have this day scheduled!");
-  }
-
 
   function displayScheduleSelectors() {
     return (
