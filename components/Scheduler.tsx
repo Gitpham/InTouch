@@ -161,12 +161,12 @@ export default function Scheduler() {
   }
 
   //MONTHLY STATE VARIABLES AND SETTERS
-  const [selectedWeekOfMonth, setSelectedWeekOfMonth] = useState<number>();
+  const [selectedWeekOfMonth, setSelectedWeekOfMonth] = useState<number>(1);
   function changeSelectedWeekOfMonth(week: number) {
     setSelectedWeekOfMonth(week);
   }
 
-  const [selectedDayOfWeek, setSelectedDayOfWeek] = useState<number>();
+  const [selectedDayOfWeek, setSelectedDayOfWeek] = useState<number>(1);
   function changeSelectedDayOfWeek(day: number) {
     setSelectedDayOfWeek(day);
   }

@@ -47,9 +47,9 @@ export default function MonthlySchedulePicker({
       const currentDates: React.JSX.Element[] = [];
       monthlySet.forEach(d => {
         currentDates.push(<Text>
-          Week: {d.weekOfMonth}
-          Day: {d.dayOfWeek}
-          Time: {d.time.toTimeString()}
+          Week: {d.weekOfMonth} 
+          Day: {d.dayOfWeek} 
+          Time: {d.time.toTimeString()} 
         </Text>)
       })
       return <>{currentDates}</>
