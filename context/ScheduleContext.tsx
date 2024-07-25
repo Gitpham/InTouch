@@ -1,6 +1,7 @@
 import {
   Bond,
   BondPerson,
+  DailySchedule,
   isDailySchedule,
   isMonthlySchedule,
   isWeeklySchedule,
@@ -17,7 +18,7 @@ import {
   scheduleMonthlyNotification,
   scheduleWeeklyNotification,
   scheduleYearlyNotification,
-} from "./notifications";
+} from "./NotificationUtil";
 import {
   getPersonsOfBondDB,
   updatePersonBond,
@@ -27,6 +28,7 @@ import { getPerson } from "@/assets/db/PersonRepo";
 import { Alert, Linking } from "react-native";
 import * as Notifications from "expo-notifications";
 import { validateAndFormatPhoneNumber } from "./PhoneNumberUtils";
+import { uploadDailyScheduleDB } from "@/assets/db/DailyScheduleRepo";
 
 //TYPE
 type ScheduleContextType = {
@@ -214,13 +216,12 @@ export const ScheduleContextProvider: React.FC<{
 
     if (isDailySchedule(potentialSchedule.schedule)) {
       console.log("dailySchedule")
-      const id: string = await scheduleDailyNotification(
+      const nid: string = await scheduleDailyNotification(
         potentialSchedule.schedule,
         bond
       );
-      setNotificationIDs((nIds) => {
-        return [...nIds, id];
-      });
+      writeDailyScheduleToDB(potentialSchedule.schedule, bond, nid)
+      
     } else if (isWeeklySchedule(potentialSchedule.schedule)) {
       console.log("weeklyScheudle")
       scheduleWeeklyNotification(potentialSchedule.schedule, bond);
@@ -238,6 +239,19 @@ export const ScheduleContextProvider: React.FC<{
     console.log("No type detected")
     
   };
+
+  const writeDailyScheduleToDB = (schedule: DailySchedule,
+    bond: Bond, nid: string) => {
+      try {
+        const time = schedule.time.toTimeString();
+
+        await uploadDailyScheduleDB(db, time, nid, bond.bond_id);
+  
+      } catch (e) {
+        console.error(e);
+        throw new Error("writeDailyScheduleToDB() failed")
+      }
+  }
   return (
     <ScheduleContext.Provider
       value={{

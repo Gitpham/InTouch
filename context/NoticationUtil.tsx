@@ -11,7 +11,7 @@ import {
   WeeklySchedule,
   YearlySchedule,
 } from "@/constants/types";
-import React from "react";
+import { uploadDailyScheduleDB } from "@/assets/db/DailyScheduleRepo";
 
 export async function allowsNotificationsAsync() {
   const settings = await Notifications.getPermissionsAsync();
@@ -132,6 +132,7 @@ export async function scheduleDailyNotification(
     );
   }
 }
+
 
 export async function scheduleWeeklyNotification(
   schedule: WeeklySchedule,
