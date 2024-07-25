@@ -84,16 +84,67 @@ export const createDB = async (db: SQLite.SQLiteDatabase) => {
         );
     `;
 
-    const notificationQuery = `
+  const notificationQuery = `
         CREATE TABLE IF NOT EXISTS notifications (
-            person_id INTEGER,
+            notification_id INTEGER,
             bond_id INTEGER,
-            nextToCall INTEGER DEFAULT 0,
-            PRIMARY KEY (person_id, bond_id),
-            FOREIGN KEY (person_id)
-                REFERENCES person (person_id)
+            PRIMARY KEY (notification_id),
+            FOREIGN KEY (bond_id)
+                REFERENCES bond (bond_id)
                 ON DELETE CASCADE
                 ON UPDATE NO ACTION
+        );
+    `;
+
+    const dailyQuery = `
+        CREATE TABLE IF NOT EXISTS dailySchedule (
+            time TEXT,
+            bond_id INTEGER,
+            notification_ID TEXT,
+            PRIMARY KEY (notification_ID),
+            FOREIGN KEY (bond_id)
+                REFERENCES bond (bond_id)
+                ON DELETE CASCADE
+                ON UPDATE NO ACTION
+        );
+    `;
+
+    const weeklyQuery = `
+        CREATE TABLE IF NOT EXISTS weeklySchedule (
+            time TEXT,
+            dayOfWeek INTEGER,
+            bond_id INTEGER,
+            notification_ID TEXT,
+            PRIMARY KEY (notification_ID),
+            FOREIGN KEY (bond_id)
+                REFERENCES bond (bond_id)
+                ON DELETE CASCADE
+                ON UPDATE NO ACTION
+        );
+    `;
+
+    const monthlyQuery = `
+        CREATE TABLE IF NOT EXISTS monthlySchedule (
+            time TEXT,
+            dayOfWeek INTEGER,
+            weekOfMonth INTEGER,
+            bond_id INTEGER,
+            notification_ID TEXT,
+            PRIMARY KEY (notification_ID),
+            FOREIGN KEY (bond_id)
+                REFERENCES bond (bond_id)
+                ON DELETE CASCADE
+                ON UPDATE NO ACTION
+        );
+    `;
+
+    const yearlyQuery = `
+        CREATE TABLE IF NOT EXISTS yearlySchedule (
+            time TEXT,
+            date TEXT,
+            bond_id INTEGER,
+            notification_ID TEXT,
+            PRIMARY KEY (notification_ID),
             FOREIGN KEY (bond_id)
                 REFERENCES bond (bond_id)
                 ON DELETE CASCADE
@@ -105,11 +156,13 @@ export const createDB = async (db: SQLite.SQLiteDatabase) => {
   try {
     await db.execAsync('PRAGMA foreign_keys = ON');
     await db.execAsync(personQuery);
-    // console.log("person table")
     await db.execAsync(groupQuery);
-    // console.log("group table")
     await db.execAsync(personBondQuery);
-    // console.log("personGroup")
+    await db.execAsync(notificationQuery);
+    await db.execAsync(dailyQuery);
+    await db.execAsync(weeklyQuery);
+    await db.execAsync(monthlyQuery);
+    await db.execAsync(yearlyQuery);
   } catch (error) {
     console.error(error);
     throw Error(`failed to create tables`);
