@@ -204,13 +204,12 @@ export const ScheduleContextProvider: React.FC<{
   };
 
   const generateSchedule = async (bond: Bond) => {
-
+    console.log("generateSchedule() potentialSchedule: ", potentialSchedule)
 
     if (potentialSchedule == undefined) {
       throw Error("generateSchedule(): potenialScheudle is undefined");
     }
 
-    console.log("generateSchedule(), potentialSchedule: ", potentialSchedule.schedule)
     if (isDailySchedule(potentialSchedule.schedule)) {
       console.log("dailySchedule")
       const id: string = await scheduleDailyNotification(

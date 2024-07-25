@@ -15,27 +15,25 @@ import {
 } from "@/constants/types";
 import React from "react";
 
-
 export async function allowsNotificationsAsync() {
   const settings = await Notifications.getPermissionsAsync();
   return (
-    settings.granted || settings.ios?.status === Notifications.IosAuthorizationStatus.PROVISIONAL
+    settings.granted ||
+    settings.ios?.status === Notifications.IosAuthorizationStatus.PROVISIONAL
   );
 }
 
-
 export async function redirect(notification: Notifications.Notification) {
   const url = notification.request.content.data?.url;
-  const canOpen = await Linking.canOpenURL(url)
-  if(canOpen){
-    Linking.openURL(url)
+  const canOpen = await Linking.canOpenURL(url);
+  if (canOpen) {
+    Linking.openURL(url);
   } else {
-    Alert.alert("could not open url")
+    Alert.alert("could not open url");
   }
 }
 
-
-export async function requestNotificationPermission(){
+export async function requestNotificationPermission() {
   return await Notifications.requestPermissionsAsync({
     ios: {
       allowAlert: true,
@@ -46,12 +44,11 @@ export async function requestNotificationPermission(){
   });
 }
 
-
-export async function cancelAllNotifications(){
+export async function cancelAllNotifications() {
   try {
-    await Notifications.cancelAllScheduledNotificationsAsync()
+    await Notifications.cancelAllScheduledNotificationsAsync();
   } catch (e) {
-    console.error(e)
+    console.error(e);
     throw Error(
       "cancelAllNotifications() failed to call cancelAllScheduledNotificationsAsync"
     );
@@ -62,30 +59,54 @@ export async function cancelNotifications(notificationIDs: string[]) {
   try {
     notificationIDs.forEach(async (id) => {
       await Notifications.cancelScheduledNotificationAsync(id);
-    })
+    });
   } catch (e) {
-    console.error(e)
+    console.error(e);
     throw Error(
       "cancelNotification() failed to call cancelScheduleNotificationsAsync"
     );
   }
 }
 
-const notificationContent = (bond: Bond): Notifications.NotificationContentInput => {
+const notificationContentDaily = (
+  bond: Bond
+): Notifications.NotificationContentInput => {
   return {
     title: `Call ${bond.bondName} !`,
-    body: `Time to call somebody in ${bond.bondName}`,
+    body: `Daily: Time to call somebody in ${bond.bondName}`,
     data: { bondID: `${bond.bond_id}`, test: { test1: "more data" } },
-  }
-}
-/**
- * schedules a daily notificaion according to the hour and time of the schedule, and bondID of the bond. 
- * @param schedule 
- * @param bond 
- * @returns 
- */
-export async function scheduleDailyNotification (schedule: DailySchedule, bond: Bond): Promise<string> {
+  };
+};
 
+const notificationContentWeekly = (
+  bond: Bond
+): Notifications.NotificationContentInput => {
+  return {
+    title: `Call ${bond.bondName} !`,
+    body: `Weekly: Time to call somebody in ${bond.bondName}`,
+    data: { bondID: `${bond.bond_id}`, test: { test1: "more data" } },
+  };
+};
+
+const notificationContentMonthly = (
+  bond: Bond
+): Notifications.NotificationContentInput => {
+  return {
+    title: `Call ${bond.bondName} !`,
+    body: `Monthly: Time to call somebody in ${bond.bondName}`,
+    data: { bondID: `${bond.bond_id}`, test: { test1: "more data" } },
+  };
+};
+/**
+ * schedules a daily notificaion according to the hour and time of the schedule, and bondID of the bond.
+ * @param schedule
+ * @param bond
+ * @returns
+ */
+export async function scheduleDailyNotification(
+  schedule: DailySchedule,
+  bond: Bond
+): Promise<string> {
   const dailyTrigger: Notifications.DailyTriggerInput = {
     hour: schedule.time.getHours(),
     minute: schedule.time.getMinutes(),
@@ -93,7 +114,7 @@ export async function scheduleDailyNotification (schedule: DailySchedule, bond: 
   };
   try {
     return await Notifications.scheduleNotificationAsync({
-      content: notificationContent(bond),
+      content: notificationContentDaily(bond),
       trigger: dailyTrigger,
     });
   } catch (e) {
@@ -104,9 +125,10 @@ export async function scheduleDailyNotification (schedule: DailySchedule, bond: 
   }
 }
 
-export async function scheduleWeeklyNotification(schedule: WeeklySchedule, bond: Bond) {
-
-
+export async function scheduleWeeklyNotification(
+  schedule: WeeklySchedule,
+  bond: Bond
+) {
   if (schedule.sunday != undefined) {
     const day: Date = schedule.sunday;
     const weeklyTrigger: Notifications.WeeklyTriggerInput = {
@@ -118,7 +140,7 @@ export async function scheduleWeeklyNotification(schedule: WeeklySchedule, bond:
 
     try {
       await Notifications.scheduleNotificationAsync({
-        content: notificationContent(bond),
+        content: notificationContentWeekly(bond),
         trigger: weeklyTrigger,
       });
     } catch (e) {
@@ -140,7 +162,7 @@ export async function scheduleWeeklyNotification(schedule: WeeklySchedule, bond:
 
     try {
       await Notifications.scheduleNotificationAsync({
-        content: notificationContent(bond),
+        content: notificationContentWeekly(bond),
         trigger: weeklyTrigger,
       });
     } catch (e) {
@@ -162,7 +184,7 @@ export async function scheduleWeeklyNotification(schedule: WeeklySchedule, bond:
 
     try {
       await Notifications.scheduleNotificationAsync({
-        content: notificationContent(bond),
+        content: notificationContentWeekly(bond),
         trigger: weeklyTrigger,
       });
     } catch (e) {
@@ -183,9 +205,9 @@ export async function scheduleWeeklyNotification(schedule: WeeklySchedule, bond:
     };
 
     try {
-      console.log("wednesday")
+      console.log("wednesday");
       await Notifications.scheduleNotificationAsync({
-        content: notificationContent(bond),
+        content: notificationContentWeekly(bond),
         trigger: weeklyTrigger,
       });
     } catch (e) {
@@ -207,7 +229,7 @@ export async function scheduleWeeklyNotification(schedule: WeeklySchedule, bond:
 
     try {
       await Notifications.scheduleNotificationAsync({
-        content: notificationContent(bond),
+        content: notificationContentWeekly(bond),
         trigger: weeklyTrigger,
       });
     } catch (e) {
@@ -229,7 +251,7 @@ export async function scheduleWeeklyNotification(schedule: WeeklySchedule, bond:
 
     try {
       await Notifications.scheduleNotificationAsync({
-        content: notificationContent(bond),
+        content: notificationContentWeekly(bond),
         trigger: weeklyTrigger,
       });
     } catch (e) {
@@ -251,7 +273,7 @@ export async function scheduleWeeklyNotification(schedule: WeeklySchedule, bond:
 
     try {
       await Notifications.scheduleNotificationAsync({
-        content: notificationContent(bond),
+        content: notificationContentWeekly(bond),
         trigger: weeklyTrigger,
       });
     } catch (e) {
@@ -263,13 +285,14 @@ export async function scheduleWeeklyNotification(schedule: WeeklySchedule, bond:
   }
 }
 
-
-export async function scheduleMonthlyNotification(schedule:MonthlySchedule, bond:Bond) {
-
+export async function scheduleMonthlyNotification(
+  schedule: MonthlySchedule,
+  bond: Bond
+) {
   schedule.daysInMonth.forEach(async (d: DayOfMonth) => {
-    console.log("day in monthly schedule: ", d as DayOfMonth)
+    console.log("day in monthly schedule: ", d as DayOfMonth);
 
-    const weekOfMonth:number = Number(d.weekOfMonth);
+    const weekOfMonth: number = Number(d.weekOfMonth);
     const dayOfWeek: number = Number(d.dayOfWeek);
     const trigger: Notifications.CalendarTriggerInput = {
       weekOfMonth: weekOfMonth,
@@ -277,11 +300,11 @@ export async function scheduleMonthlyNotification(schedule:MonthlySchedule, bond
       hour: d.time.getHours(),
       minute: d.time.getMinutes(),
       repeats: true,
-    }
+    };
 
     try {
       await Notifications.scheduleNotificationAsync({
-        content: notificationContent(bond),
+        content: notificationContentMonthly(bond),
         trigger: trigger,
       });
     } catch (e) {
@@ -289,10 +312,22 @@ export async function scheduleMonthlyNotification(schedule:MonthlySchedule, bond
       throw new Error(
         `scheduleMonthlyNotification() failed to scheduleNotificationAsync for the ${d.dayOfWeek} of the ${d.weekOfMonth} week of Month`
       );
+    }
+  });
+}
 
+export async function getAllScheduledNotifications() {
+  try {
+    const notifications = await Notifications.getAllScheduledNotificationsAsync();
+    console.log("all scheduled notifications: ")
+    notifications.forEach(r => {
+      console.log("trigger: ", r.trigger)
+      console.log("content: ", r.content)
+    })
+  } catch (e) {
+    console.error(e);
+    throw new Error("getAllScheduledNotifications(): failed getAllSCheduledNotificaionsAsync()")
   }
-})
-
 }
 
 async function registerForPushNotificationsAsync() {
