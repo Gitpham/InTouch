@@ -301,7 +301,8 @@ export async function scheduleWeeklyNotification(
 export async function scheduleMonthlyNotification(
   schedule: MonthlySchedule,
   bond: Bond
-) {
+): Promise<string[]> {
+  const nids: string[] = [];
   schedule.daysInMonth.forEach(async (d: DayOfMonth) => {
     console.log("day in monthly schedule: ", d as DayOfMonth);
 
@@ -316,10 +317,10 @@ export async function scheduleMonthlyNotification(
     };
 
     try {
-      await Notifications.scheduleNotificationAsync({
+      nids.push(await Notifications.scheduleNotificationAsync({
         content: notificationContentMonthly(bond),
         trigger: trigger,
-      });
+      }));
     } catch (e) {
       console.error(e);
       throw new Error(
@@ -327,6 +328,7 @@ export async function scheduleMonthlyNotification(
       );
     }
   });
+  return nids
 }
 
 export async function scheduleYearlyNotification(

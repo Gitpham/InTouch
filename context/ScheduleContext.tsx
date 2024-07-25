@@ -231,8 +231,10 @@ export const ScheduleContextProvider: React.FC<{
       })
       return;
     } else if (isMonthlySchedule(potentialSchedule.schedule)){
-      console.log("generateSchedule(): isMonthlySchedule!")
-      scheduleMonthlyNotification(potentialSchedule.schedule, bond)
+      const nids: string[] = scheduleMonthlyNotification(potentialSchedule.schedule, bond)
+      nids.forEach(async nid => {
+        await writeMonthlyScheduleToDB(potentialSchedule.schedule, bond, nid)
+      })
       return;
     } else if (isYearlySchedule(potentialSchedule.schedule)){
       console.log("generateSchedule(): isYearlySchedule!")
