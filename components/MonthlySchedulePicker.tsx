@@ -46,7 +46,7 @@ export default function MonthlySchedulePicker({
     return (
         <Card>
           <View>
-            <Picker
+            <Picker 
               selectedValue={selectedWeekOfMonth}
               onValueChange={(itemValue, itemIndex) =>{
                 changeSelectedWeekOfMonth(itemValue)
