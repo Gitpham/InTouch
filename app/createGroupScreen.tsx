@@ -10,13 +10,14 @@ import { InTouchContext } from "@/context/InTouchContext";
 import { Bond, Person } from "@/constants/types";
 import { StandardButton } from "@/components/ButtonStandard";
 import React from "react";
+import { ScheduleContext } from "@/context/ScheduleContext";
 
 export default function createGroupScreen() {
   // Data to be stored in record
   const [bondName, groupNameChange] = useState("");
   const [refresh, setRefresh] = useState(false);
   const { createBond, generateBondId, tempBondMembers, clearTempBondMembers, createBondMember, peopleList } = useContext(InTouchContext);
-
+  const {generateSchedule} = useContext(ScheduleContext)
   const bondID = generateBondId();
 
   const bondToAdd: Bond = {
@@ -26,13 +27,17 @@ export default function createGroupScreen() {
     bond_id: bondID,
   };
 
-  function onDonePress() {
+  async function onDonePress() {
     if (!bondName) {
       Alert.alert("Must enter a Bond name");
       return;
     }
-    createBond(bondToAdd);
-    
+    try {
+    await createBond(bondToAdd);
+    } catch (e) {
+      console.error(e);
+      throw Error("createGroupScreen onDonePress(): Error calling createbond()")
+    }
       try {
         createBondMember(tempBondMembers, bondID)
       } catch (e) {
@@ -40,6 +45,7 @@ export default function createGroupScreen() {
         throw Error ("failed to call createBondMember()")
       }
     clearTempBondMembers();
+    generateSchedule(bondToAdd)
     router.push("./(tabs)");
   }
 
@@ -73,6 +79,8 @@ export default function createGroupScreen() {
   function onCreateSchedule(){
     router.navigate("./createScheduleScreen")
   }
+
+
 
 
   return (
