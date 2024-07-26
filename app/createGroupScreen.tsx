@@ -42,6 +42,7 @@ export default function createGroupScreen() {
     clearTempBondMembers();
     router.push("./(tabs)");
   }
+
   let title = "Create Group";
   if (bondName) {
     title = bondName;
@@ -68,6 +69,10 @@ export default function createGroupScreen() {
     </ListItem>
   );
   };
+
+  function onCreateSchedule(){
+    router.navigate("./createScheduleScreen")
+  }
 
 
   return (
@@ -114,6 +119,12 @@ export default function createGroupScreen() {
         buttonStyle={styles.button}
         titleStyle={styles.title}
       />
+
+      <StandardButton
+        title ="Create Schedule"
+        onPress={onCreateSchedule}
+        >
+      </StandardButton>
 
       <Button
         title="Done"
