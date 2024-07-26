@@ -3,50 +3,41 @@ import { Asset } from "expo-asset";
 import * as FileSystem from "expo-file-system";
 
 export const loadDB = async () => {
-    try {
-      const dbName = "Test_DataBase_7.db";
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
-      const dbAsset = require("../Test_DataBase_7.db");
-      const dbUri = Asset.fromModule(dbAsset).uri;
-      const dbFilePath = `${FileSystem.documentDirectory}SQLite/${dbName}`;
-  
+  try {
+    const dbName = "Test_DataBase_7.db";
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const dbAsset = require("../Test_DataBase_7.db");
+    const dbUri = Asset.fromModule(dbAsset).uri;
+    const dbFilePath = `${FileSystem.documentDirectory}SQLite/${dbName}`;
 
-      const fileInfo = await FileSystem.getInfoAsync(dbFilePath);
-      console.log("(a) fileINFO: ", fileInfo)
-  
-      if (!fileInfo.exists) {
+    const fileInfo = await FileSystem.getInfoAsync(dbFilePath);
+    console.log("(a) fileINFO: ", fileInfo);
 
-
-        await FileSystem.makeDirectoryAsync(
-          `${FileSystem.documentDirectory}SQLite`
-          // { intermediates: true }
-        );
-        console.log("b")
-        await FileSystem.downloadAsync(dbUri, dbFilePath);
-        console.log("c")
-
-      }
-    } catch (e) {
-      console.error(e);
-      console.log("failed to loadDB()");
+    if (!fileInfo.exists) {
+      await FileSystem.makeDirectoryAsync(
+        `${FileSystem.documentDirectory}SQLite`
+        // { intermediates: true }
+      );
+      console.log("b");
+      await FileSystem.downloadAsync(dbUri, dbFilePath);
+      console.log("c");
     }
-  };
-
+  } catch (e) {
+    console.error(e);
+    console.log("failed to loadDB()");
+  }
+};
 
 export const clearDB = async (db: SQLite.SQLiteDatabase) => {
   try {
-    await db.execAsync('DELETE FROM person;');
-    await db.execAsync('DELETE FROM bond;');
-    await db.execAsync('DELETE FROM person_bond;');
-
+    await db.execAsync("DELETE FROM person;");
+    await db.execAsync("DELETE FROM bond;");
+    await db.execAsync("DELETE FROM person_bond;");
   } catch (e) {
     console.error(e);
-    throw Error ("failed to clearDB()")
+    throw Error("failed to clearDB()");
   }
-}
-
-
-
+};
 
 export const createDB = async (db: SQLite.SQLiteDatabase) => {
   const groupQuery = `
@@ -95,87 +86,103 @@ export const createDB = async (db: SQLite.SQLiteDatabase) => {
             FOREIGN KEY (person_id)
                 REFERENCES person (person_id)
                 ON DELETE CASCADE
-                ON UPDATE NO ACTION);`  
+                ON UPDATE NO ACTION);`;
 
-  const notificationQuery = `
-        CREATE TABLE IF NOT EXISTS notifications (
-            notification_id INTEGER,
-            bond_id INTEGER,
-            PRIMARY KEY (notification_id),
-            FOREIGN KEY (bond_id)
-                REFERENCES bond (bond_id)
-                ON DELETE CASCADE
-                ON UPDATE NO ACTION
-        );`
+  const scheduleQuery = `
+                CREATE TABLE IF NOT EXISTS schedule (
+                    notification_id INTEGER,
+                    bond_id INTEGER,
+                    type TEXT,
+                    time TEXT DEFAULT NULL,
+                    weekDay INTEGER DEFAULT NULL,
+                    weekOfMonth INTEGER DEFAULT NULL,
+                    date TEXT DEFAULT NULL,
+                    PRIMARY KEY (notification_id),
+                    FOREIGN KEY (bond_id)
+                        REFERENCES bond (bond_id)
+                        ON DELETE CASCADE
+                        ON UPDATE NO ACTION
+                );`;
 
-    const dailyQuery = `
-        CREATE TABLE IF NOT EXISTS dailySchedule (
-            time TEXT,
-            bond_id INTEGER,
-            notification_ID TEXT,
-            PRIMARY KEY (notification_ID),
-            FOREIGN KEY (bond_id)
-                REFERENCES bond (bond_id)
-                ON DELETE CASCADE
-                ON UPDATE NO ACTION
-        );
-    `;
+  // const notificationQuery = `
+  //       CREATE TABLE IF NOT EXISTS notifications (
+  //           notification_id INTEGER,
+  //           bond_id INTEGER,
+  //           PRIMARY KEY (notification_id),
+  //           FOREIGN KEY (bond_id)
+  //               REFERENCES bond (bond_id)
+  //               ON DELETE CASCADE
+  //               ON UPDATE NO ACTION
+  //       );`;
 
-    const weeklyQuery = `
-        CREATE TABLE IF NOT EXISTS weeklySchedule (
-            time TEXT,
-            dayOfWeek INTEGER,
-            bond_id INTEGER,
-            notification_ID TEXT,
-            PRIMARY KEY (notification_ID),
-            FOREIGN KEY (bond_id)
-                REFERENCES bond (bond_id)
-                ON DELETE CASCADE
-                ON UPDATE NO ACTION
-        );
-    `;
+  // const dailyQuery = `
+  //       CREATE TABLE IF NOT EXISTS dailySchedule (
+  //           time TEXT,
+  //           bond_id INTEGER,
+  //           notification_ID TEXT,
+  //           PRIMARY KEY (notification_ID),
+  //           FOREIGN KEY (bond_id)
+  //               REFERENCES bond (bond_id)
+  //               ON DELETE CASCADE
+  //               ON UPDATE NO ACTION
+  //       );
+  //   `;
 
-    const monthlyQuery = `
-        CREATE TABLE IF NOT EXISTS monthlySchedule (
-            time TEXT,
-            dayOfWeek INTEGER,
-            weekOfMonth INTEGER,
-            bond_id INTEGER,
-            notification_ID TEXT,
-            PRIMARY KEY (notification_ID),
-            FOREIGN KEY (bond_id)
-                REFERENCES bond (bond_id)
-                ON DELETE CASCADE
-                ON UPDATE NO ACTION
-        );
-    `;
+  // const weeklyQuery = `
+  //       CREATE TABLE IF NOT EXISTS weeklySchedule (
+  //           time TEXT,
+  //           dayOfWeek INTEGER,
+  //           bond_id INTEGER,
+  //           notification_ID TEXT,
+  //           PRIMARY KEY (notification_ID),
+  //           FOREIGN KEY (bond_id)
+  //               REFERENCES bond (bond_id)
+  //               ON DELETE CASCADE
+  //               ON UPDATE NO ACTION
+  //       );
+  //   `;
 
-    const yearlyQuery = `
-        CREATE TABLE IF NOT EXISTS yearlySchedule (
-            time TEXT,
-            date TEXT,
-            bond_id INTEGER,
-            notification_ID TEXT,
-            PRIMARY KEY (notification_ID),
-            FOREIGN KEY (bond_id)
-                REFERENCES bond (bond_id)
-                ON DELETE CASCADE
-                ON UPDATE NO ACTION
-        );
-    `;
+  // const monthlyQuery = `
+  //       CREATE TABLE IF NOT EXISTS monthlySchedule (
+  //           time TEXT,
+  //           dayOfWeek INTEGER,
+  //           weekOfMonth INTEGER,
+  //           bond_id INTEGER,
+  //           notification_ID TEXT,
+  //           PRIMARY KEY (notification_ID),
+  //           FOREIGN KEY (bond_id)
+  //               REFERENCES bond (bond_id)
+  //               ON DELETE CASCADE
+  //               ON UPDATE NO ACTION
+  //       );
+  //   `;
 
+  // const yearlyQuery = `
+  //       CREATE TABLE IF NOT EXISTS yearlySchedule (
+  //           time TEXT,
+  //           date TEXT,
+  //           bond_id INTEGER,
+  //           notification_ID TEXT,
+  //           PRIMARY KEY (notification_ID),
+  //           FOREIGN KEY (bond_id)
+  //               REFERENCES bond (bond_id)
+  //               ON DELETE CASCADE
+  //               ON UPDATE NO ACTION
+  //       );
+  //   `;
 
   try {
-    await db.execAsync('PRAGMA foreign_keys = ON');
+    await db.execAsync("PRAGMA foreign_keys = ON");
     await db.execAsync(personQuery);
     await db.execAsync(groupQuery);
     await db.execAsync(personBondQuery);
     await db.execAsync(reminderQuery);
-    await db.execAsync(notificationQuery);
-    await db.execAsync(dailyQuery);
-    await db.execAsync(weeklyQuery);
-    await db.execAsync(monthlyQuery);
-    await db.execAsync(yearlyQuery);
+    await db.execAsync(scheduleQuery)
+    // await db.execAsync(notificationQuery);
+    // await db.execAsync(dailyQuery);
+    // await db.execAsync(weeklyQuery);
+    // await db.execAsync(monthlyQuery);
+    // await db.execAsync(yearlyQuery);
   } catch (error) {
     console.error(error);
     throw Error(`failed to create tables`);
@@ -199,7 +206,7 @@ export const getTableNames = async (
       const r = result as table;
       tableNames.push(r.name as string);
     });
-    console.log("tablename", tableNames)
+    console.log("tablename", tableNames);
     return tableNames;
   } catch (error) {
     console.error(error);
@@ -221,5 +228,3 @@ export const removeTable = async (
     throw Error(`failed to drop table ${tableName}`);
   }
 };
-
-
