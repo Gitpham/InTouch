@@ -33,6 +33,7 @@ import { uploadDailyScheduleDB } from "@/assets/db/DailyScheduleRepo";
 import { uploadWeeklyScheduleDB } from "@/assets/db/WeeklyScheduleRepo";
 import { uploadMonthlyScheduleDB } from "@/assets/db/MonthlyScheduleRepo";
 import { uploadYearlyScheduleDB } from "@/assets/db/YearlyScheduleRepo";
+import { uploadNotificationDB } from "@/assets/db/NotificationRepo";
 
 //TYPE
 type ScheduleContextType = {
@@ -257,8 +258,8 @@ export const ScheduleContextProvider: React.FC<{
   ) => {
     try {
       const time = schedule.time.toTimeString();
-
       await uploadDailyScheduleDB(db, time, nid, bond.bond_id);
+      await uploadNotificationDB(db, bond.bond_id, nid);
     } catch (e) {
       console.error(e);
       throw new Error("writeDailyScheduleToDB() failed");
@@ -317,6 +318,7 @@ export const ScheduleContextProvider: React.FC<{
           nids[i],
           bond.bond_id
         );
+        await uploadNotificationDB(db, bond.bond_id, nids[i]);
         i++;
       } catch (e) {
         console.error(e);
@@ -344,6 +346,8 @@ export const ScheduleContextProvider: React.FC<{
           nids[i],
           bond.bond_id
         );
+        await uploadNotificationDB(db, bond.bond_id, nids[i]);
+
         i++;
       } catch (e) {
         console.error(e);
@@ -365,6 +369,8 @@ export const ScheduleContextProvider: React.FC<{
       const bid = bond.bond_id;
       try {
         await uploadYearlyScheduleDB(db, time, date, nid, bid);
+        await uploadNotificationDB(db, bond.bond_id, nid);
+
         i++;
       } catch (e) {
         console.error(e);
