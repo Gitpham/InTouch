@@ -9,6 +9,7 @@ import {
   MonthlySchedule,
   Person,
   Schedule,
+  ScheduleFrequency,
   WeeklySchedule,
   YearlySchedule,
 } from "@/constants/types";
@@ -34,6 +35,7 @@ import { uploadWeeklyScheduleDB } from "@/assets/db/WeeklyScheduleRepo";
 import { uploadMonthlyScheduleDB } from "@/assets/db/MonthlyScheduleRepo";
 import { uploadYearlyScheduleDB } from "@/assets/db/YearlyScheduleRepo";
 import { uploadNotificationDB } from "@/assets/db/NotificationRepo";
+import { uploadScheduleToDB } from "@/assets/db/ScheduleRepo";
 
 //TYPE
 type ScheduleContextType = {
@@ -258,8 +260,7 @@ export const ScheduleContextProvider: React.FC<{
   ) => {
     try {
       const time = schedule.time.toTimeString();
-      await uploadDailyScheduleDB(db, time, nid, bond.bond_id);
-      await uploadNotificationDB(db, bond.bond_id, nid);
+      await uploadScheduleToDB(db, ScheduleFrequency.DAILY, time, null, null, null, bond.bond_id, nid )
     } catch (e) {
       console.error(e);
       throw new Error("writeDailyScheduleToDB() failed");
@@ -311,18 +312,12 @@ export const ScheduleContextProvider: React.FC<{
     let i = 0;
     dayOfWeek.forEach(async (d) => {
       try {
-        await uploadWeeklyScheduleDB(
-          db,
-          timesOfWeek[i],
-          d,
-          nids[i],
-          bond.bond_id
-        );
-        await uploadNotificationDB(db, bond.bond_id, nids[i]);
+        const time: string = timesOfWeek[i];
+        await uploadScheduleToDB(db, ScheduleFrequency.WEEKLY, time, d, null, null, bond.bond_id, nids[i])
         i++;
       } catch (e) {
         console.error(e);
-        throw new Error("writeWeeklyScheduleToDb() failed");
+        throw new Error("writeWeeklyScheduleToDb(): uploadScheduleToDB failed");
       }
     });
   };
@@ -338,16 +333,7 @@ export const ScheduleContextProvider: React.FC<{
       const dayOfWeek: number = d.dayOfWeek;
       const weekOfMonth: number = d.weekOfMonth;
       try {
-        await uploadMonthlyScheduleDB(
-          db,
-          time,
-          dayOfWeek,
-          weekOfMonth,
-          nids[i],
-          bond.bond_id
-        );
-        await uploadNotificationDB(db, bond.bond_id, nids[i]);
-
+        await uploadScheduleToDB(db, ScheduleFrequency.MONTHLY, time, dayOfWeek, weekOfMonth, null, bond.bond_id, nids[i])
         i++;
       } catch (e) {
         console.error(e);
@@ -368,9 +354,7 @@ export const ScheduleContextProvider: React.FC<{
       const nid = nids[i];
       const bid = bond.bond_id;
       try {
-        await uploadYearlyScheduleDB(db, time, date, nid, bid);
-        await uploadNotificationDB(db, bond.bond_id, nid);
-
+        await uploadScheduleToDB(db, ScheduleFrequency.YEARLY, time, null, null, date, bid, nid )
         i++;
       } catch (e) {
         console.error(e);
