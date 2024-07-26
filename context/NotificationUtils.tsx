@@ -1,5 +1,7 @@
 import * as Notifications from "expo-notifications";
 import * as Device from "expo-device";
+import * as SQLite from "expo-sqlite";
+
 import Constants from "expo-constants";
 import { Alert, Linking, Platform } from "react-native";
 import {
@@ -11,7 +13,6 @@ import {
   WeeklySchedule,
   YearlySchedule,
 } from "@/constants/types";
-import { uploadDailyScheduleDB } from "@/assets/db/DailyScheduleRepo";
 
 export async function allowsNotificationsAsync() {
   const settings = await Notifications.getPermissionsAsync();

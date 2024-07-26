@@ -39,47 +39,6 @@ Notifications.setNotificationHandler({
 });
 
 export default function Scheduler() {
-  useEffect(() => {
-    if (Platform.OS === "android") {
-      Notifications.getNotificationChannelsAsync().then((value) =>
-        setChannels(value ?? [])
-      );
-      notificationListener.current =
-        Notifications.addNotificationReceivedListener((notification) => {
-          setNotification(notification);
-        });
-    }
-
-    responseListener.current =
-      Notifications.addNotificationResponseReceivedListener(
-        async (response) => {
-          try {
-            callPerson(response.notification);
-          } catch (e) {
-            console.error(e);
-            throw Error("failed to navigate away");
-          }
-        }
-      );
-
-    return () => {
-      notificationListener.current &&
-        Notifications.removeNotificationSubscription(
-          notificationListener.current
-        );
-      responseListener.current &&
-        Notifications.removeNotificationSubscription(responseListener.current);
-    };
-  }, []);
-
-  const [channels, setChannels] = useState<Notifications.NotificationChannel[]>(
-    []
-  );
-  const [notification, setNotification] = useState<
-    Notifications.Notification | undefined
-  >(undefined);
-  const notificationListener = useRef<Notifications.Subscription>();
-  const responseListener = useRef<Notifications.Subscription>();
 
   const db = useSQLiteContext();
   const [scheduleFrequency, setScheduleFrequency] = useState<ScheduleFrequency>(
