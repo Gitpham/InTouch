@@ -1,15 +1,9 @@
-import { StyleSheet, View,} from 'react-native';
-
-import { ThemedText } from '@/components/ThemedText';
-
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { StyleSheet, } from 'react-native';
 import Scheduler from '@/components/Scheduler';
 import React from 'react';
-import { router, usePathname, useRouter } from 'expo-router';
-import { StandardButton } from '@/components/ButtonStandard';
+import { usePathname,  } from 'expo-router';
 
 export default function callScreen() {
-  const currPath = usePathname();
   return (
 
       <Scheduler></Scheduler>

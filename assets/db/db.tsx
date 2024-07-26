@@ -86,7 +86,7 @@ export const createDB = async (db: SQLite.SQLiteDatabase) => {
 
   const reminderQuery = `
         CREATE TABLE IF NOT EXISTS reminder (
-            reminder_id INTEGER PRIMARY KEY,
+            reminder_id INTEGER,
             person_id INTEGER NULL,
             bond_id INTEGER NULL,
             reminder TEXT,
@@ -192,20 +192,11 @@ export const getTableNames = async (
     const results = await db.getAllAsync(
       "SELECT name FROM sqlite_master WHERE type ='table' and name NOT LIKE 'sqlite_%'"
     );
-
-    // const results2 = await db.getAllAsync("PRAGMA table_info(bond);");
-    // console.log("table columns", results2);
-
     results?.forEach((result) => {
-      // // console.log(result)
-      // console.log(result)
-      // for (let index = 0; index < results)
       interface table {
         name: string;
       }
       const r = result as table;
-
-      // console.log(r.name)
       tableNames.push(r.name as string);
     });
     console.log("tablename", tableNames)
