@@ -157,3 +157,13 @@ export function isYearlySchedule(obj: any): obj is YearlySchedule {
 export type Schedule = {
     schedule: DailySchedule | WeeklySchedule | MonthlySchedule | YearlySchedule
   };
+
+export type Schedule_DB = {
+    type: string,
+    time: string,
+    weekDay: number | null,
+    weekOfMonth: number | null,
+    date: string | null,
+    nid: string,
+    bid: number,
+}
