@@ -14,12 +14,7 @@ import {
 } from "@/constants/types";
 import { createContext, useState } from "react";
 import React from "react";
-import {
-  scheduleDailyNotification,
-  scheduleMonthlyNotification,
-  scheduleWeeklyNotification,
-  scheduleYearlyNotification,
-} from "./NotificationUtil";
+import { scheduleDailyNotification, scheduleWeeklyNotification, scheduleMonthlyNotification, scheduleYearlyNotification } from "./NoticationUtil";
 import {
   getPersonsOfBondDB,
   updatePersonBond,
@@ -222,6 +217,7 @@ export const ScheduleContextProvider: React.FC<{
         bond
       );
       writeDailyScheduleToDB(potentialSchedule.schedule, bond, nid)
+      return;
       
     } else if (isWeeklySchedule(potentialSchedule.schedule)) {
       const nids: string[] = await scheduleWeeklyNotification(potentialSchedule.schedule, bond);
