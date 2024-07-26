@@ -4,7 +4,7 @@ import * as SQLite from "expo-sqlite";
 
 export async function uploadDailyScheduleDB(db: SQLite.SQLiteDatabase, time: string, nid: string, bid: number){
     const statement =
-    await db.prepareAsync(`INSERT INTO dailySchedule (time, notification_id, bond_id)
+    await db.prepareAsync(`INSERT INTO schedule (time, type, notification_id, bond_id)
          VALUES (?, ?, ?);`);
 
     const bidString = bid.toString()

@@ -34,7 +34,7 @@ export default function RootLayout() {
 
 
     const initDB = async () => {
-      const db = await SQLite.openDatabaseAsync("nextToCall.db");
+      const db = await SQLite.openDatabaseAsync("July26_ScheduleTable_2.db");
       createDB(db);
     };
 
@@ -61,7 +61,7 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <SQLiteProvider databaseName="nextToCall.db">
+      <SQLiteProvider databaseName="July26_ScheduleTable_2.db">
         <ScheduleContextProvider>
 
         <InTouchContextProvider>

@@ -14,17 +14,17 @@ export async function uploadScheduleToDB(db: SQLite.SQLiteDatabase,
         (type, time, weekDay, weekOfMonth, date, bond_id, notification_id) 
         VALUES (?, ?, ?, ?, ?, ?, ?)`)
 
-    const weekDayV: string | null = weekDay ? weekDay.toString() : null;
-    const weekOfMonthV: string | null = weekOfMonth ? weekOfMonth.toString() : null;
-    const dateV: string | null = date ? date.toString() : null;
+    // const weekDayV: string | null = weekDay ? weekDay.toString() : null;
+    // const weekOfMonthV: string | null = weekOfMonth ? weekOfMonth.toString() : null;
+    // const dateV: string | null = date ? date.toString() : null;
 
     const value = [
         type,
         time,
-        weekDayV,
-        weekOfMonthV,
-        dateV,
-        bid.toString(),
+        weekDay,
+        weekOfMonth,
+        date,
+        bid,
         nid,
     ];
     try {

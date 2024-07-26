@@ -15,7 +15,7 @@ export default function addMemberScreen() {
   const { createPerson, addTempBondMember, generatePersonId , tempBondMembers, peopleList, bondPersonMap, createBondMember } = useContext(InTouchContext);
   const [refresh, setRefresh] = useState(false)
   const localParams = useLocalSearchParams();
-  const bond_id = +localParams.bond_id;
+  const tempBondID = +localParams.bond_id;
   const group_screen = +localParams.group_screen;
 
   async function importFromContacts() {
@@ -23,6 +23,8 @@ export default function addMemberScreen() {
 
     if (status === "granted") {
       const person = await Contacts.presentContactPickerAsync();
+      console.log("Person: ", person)
+      console.log("firstName: ", person?.firstName)
       if (person) {
 
         // Generate unique person id
@@ -34,9 +36,10 @@ export default function addMemberScreen() {
           phoneNumber: person?.phoneNumbers?.[0]?.number as string,
           person_id: undefined,
         };
-        createPerson(newContact);
+        await createPerson(newContact);
         
-        if (bond_id !== -1) {
+        if (tempBondID !== -1) {
+          console.log("addTBondMember")
           addTempBondMember(personID);
           }
       } else {
@@ -47,7 +50,7 @@ export default function addMemberScreen() {
 
   const addBondMember = ({ item }: { item: Person }) => {
     if (!tempBondMembers.has(item.person_id)) {
-      const bond_members = bondPersonMap.get(bond_id);
+      const bond_members = bondPersonMap.get(tempBondID);
       if (bond_members) {
         if (bond_members.has(item.person_id)) {
           return null;
@@ -72,7 +75,7 @@ export default function addMemberScreen() {
 
   const onDonePress = () => {
     if (group_screen === 1) {
-      createBondMember(tempBondMembers, bond_id);
+      createBondMember(tempBondMembers, tempBondID);
     }
     router.back()
   }
@@ -81,7 +84,7 @@ export default function addMemberScreen() {
   return (
     <SafeAreaView style={styles.stepContainer}>
       <View style={styles.centeredView}>
-        {(bond_id !== -1) ?  (
+        {(tempBondID !== -1) ?  (
         <>
         <ThemedText type="subtitle" style={styles.title}>
           Choose From inTouch Contacts
@@ -100,7 +103,7 @@ export default function addMemberScreen() {
       <StandardButton
         title="Create Contact Manually"
         onPress={() => {
-          router.navigate({pathname: "./addMemberManualScreen", params: {bond_id: localParams.bond_id}});
+          router.navigate({pathname: "./addMemberManualScreen", params: {tempBondID: localParams.tempBondID}});
         }}
       />
 

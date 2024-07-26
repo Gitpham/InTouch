@@ -90,7 +90,7 @@ export const createDB = async (db: SQLite.SQLiteDatabase) => {
 
   const scheduleQuery = `
                 CREATE TABLE IF NOT EXISTS schedule (
-                    notification_id INTEGER,
+                    notification_id TEXT,
                     bond_id INTEGER,
                     type TEXT,
                     time TEXT DEFAULT NULL,
