@@ -9,8 +9,8 @@ import {
   MonthlySchedule,
   Person,
   Schedule,
-  ScheduleFrequency,
   WeeklySchedule,
+  YearlySchedule,
 } from "@/constants/types";
 import { createContext, useState } from "react";
 import React from "react";
@@ -126,7 +126,6 @@ export const ScheduleContextProvider: React.FC<{
   //STATE VARIABLES
   const db = useSQLiteContext();
   const [potentialSchedule, setPotentialSchedule] = useState<Schedule>();
-  const [notificationIDs, setNotificationIDs] = useState<string[]>([]);
 
   /**
    * Finds the next person in bond to call. Then updates who's next to call.
@@ -226,15 +225,12 @@ export const ScheduleContextProvider: React.FC<{
       
     } else if (isWeeklySchedule(potentialSchedule.schedule)) {
       const nids: string[] = await scheduleWeeklyNotification(potentialSchedule.schedule, bond);
-      nids.forEach(async nid => {
-        await writeWeeklyScheduleToDB(potentialSchedule.schedule, bond, nid)
-      })
+       await writeWeeklyScheduleToDB(potentialSchedule.schedule, bond, nids)
+     
       return;
     } else if (isMonthlySchedule(potentialSchedule.schedule)){
       const nids: string[] = scheduleMonthlyNotification(potentialSchedule.schedule, bond)
-      nids.forEach(async nid => {
-        await writeMonthlyScheduleToDB(potentialSchedule.schedule, bond, nid)
-      })
+      await writeMonthlyScheduleToDB(potentialSchedule.schedule, bond, nids)
       return;
     } else if (isYearlySchedule(potentialSchedule.schedule)){
       console.log("generateSchedule(): isYearlySchedule!")
@@ -265,7 +261,7 @@ export const ScheduleContextProvider: React.FC<{
    * @param nid 
    */
   const writeWeeklyScheduleToDB = async (schedule: WeeklySchedule,
-    bond: Bond, nid: string) => {
+    bond: Bond, nids: string[]) => {
         const timesOfWeek: string[] = []
         const dayOfWeek: number[] = [];
         if (schedule.sunday != undefined) {
@@ -305,7 +301,7 @@ export const ScheduleContextProvider: React.FC<{
         let i = 0;
         dayOfWeek.forEach(async d => {
           try {
-            await uploadWeeklyScheduleDB(db, timesOfWeek[i], d, nid, bond.bond_id);
+            await uploadWeeklyScheduleDB(db, timesOfWeek[i], d, nids[i], bond.bond_id);
             i++;
           } catch (e) {
             console.error(e);
@@ -315,13 +311,16 @@ export const ScheduleContextProvider: React.FC<{
   }
 
   const writeMonthlyScheduleToDB = async (schedule: MonthlySchedule,
-    bond: Bond, nid: string) => {
+    bond: Bond, nids: string[]) => {
+
+        let i = 0;
         schedule.daysInMonth.forEach(async d => {
           const time: string = d.time.toTimeString();
           const dayOfWeek: number = d.dayOfWeek;
           const weekOfMonth: number = d.weekOfMonth;
           try {
-            await uploadMonthlyScheduleDB(db, time, dayOfWeek, weekOfMonth, nid, bond.bond_id)
+            await uploadMonthlyScheduleDB(db, time, dayOfWeek, weekOfMonth, nids[i], bond.bond_id)
+            i++;
           } catch (e) {
             console.error(e);
             throw new Error("writeMonthlyScheduleToDB() failed")
@@ -329,7 +328,13 @@ export const ScheduleContextProvider: React.FC<{
         })
   }
 
+  const writeYearlyScheduleToDB = async (schedule: YearlySchedule,
+    bond: Bond, nids: string[]) => {
+      schedule.datesInYear.forEach((d) => {
 
+
+      })
+  }
   return (
     <ScheduleContext.Provider
       value={{
