@@ -3,6 +3,7 @@ import {
   addPersonBond,
   deletePersonBond,
   getAllPersonBonds,
+  getPersonsOfBondDB,
 } from "@/assets/db/PersonBondRepo";
 import { removeTable } from "@/assets/db/db";
 import { getAllPersons, addPerson, deletePerson } from "@/assets/db/PersonRepo";
@@ -472,7 +473,6 @@ export const InTouchContextProvider: React.FC<{
 
     }
     return bondHash;
-
   }
 
   function getPersonBondMap() {

@@ -40,6 +40,24 @@ export const deletePersonBond = async (db: SQLite.SQLiteDatabase, person: Person
     }
 }
 
+export const updatePersonBond = async (db: SQLite.SQLiteDatabase, pID: number, bID: number, isNextToCall: number) => {
+    const statement = await db.prepareAsync(`
+        UPDATE person_bond
+        SET nextToCall = ?
+        WHERE person_id = ? AND bond_id = ?;
+        `);
+
+    const value: string[] = [isNextToCall.toString(), pID.toString(), bID.toString()];
+    try {
+        return await statement.executeAsync(value)
+    } catch (error) {
+        console.error(error)
+        throw Error("Failed to update personBond")
+    } finally {
+        statement.finalizeAsync()
+    }
+}
+
 
 
 export const getAllPersonBonds = async (db: SQLite.SQLiteDatabase) => {
@@ -53,4 +71,24 @@ export const getAllPersonBonds = async (db: SQLite.SQLiteDatabase) => {
         console.error(error)
         throw Error("Failed to get all Person Bonds")
     } 
+}
+
+export const getPersonsOfBondDB = async (db: SQLite.SQLiteDatabase, bondID: number) => {
+    const statement = await db.prepareAsync(`
+        SELECT * FROM person_bond
+        WHERE bond_id = ?
+         ;`);
+
+    const value: string[] = [bondID.toString()]
+    try {
+        const result =  await statement.executeAsync<BondPerson>(value);
+        const rows = await result.getAllAsync<BondPerson>(value);
+        return rows;
+
+    } catch (e) {
+        console.error(e);
+        throw Error("getPersonsOfBondDB: failed to get persons of Bond")
+    } finally {
+        await statement.finalizeAsync();
+    }
 }
