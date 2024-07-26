@@ -14,7 +14,12 @@ import {
 } from "@/constants/types";
 import { createContext, useState } from "react";
 import React from "react";
-import { scheduleDailyNotification, scheduleWeeklyNotification, scheduleMonthlyNotification, scheduleYearlyNotification } from "./NoticationUtil";
+import {
+  scheduleDailyNotification,
+  scheduleWeeklyNotification,
+  scheduleMonthlyNotification,
+  scheduleYearlyNotification,
+} from "./NoticationUtil";
 import {
   getPersonsOfBondDB,
   updatePersonBond,
@@ -27,6 +32,7 @@ import { validateAndFormatPhoneNumber } from "./PhoneNumberUtils";
 import { uploadDailyScheduleDB } from "@/assets/db/DailyScheduleRepo";
 import { uploadWeeklyScheduleDB } from "@/assets/db/WeeklyScheduleRepo";
 import { uploadMonthlyScheduleDB } from "@/assets/db/MonthlyScheduleRepo";
+import { uploadYearlyScheduleDB } from "@/assets/db/YearlyScheduleRepo";
 
 //TYPE
 type ScheduleContextType = {
@@ -40,10 +46,8 @@ type ScheduleContextType = {
 export const printPotentialSchedule = (s: Schedule) => {
   if (isDailySchedule(s?.schedule)) {
     let stringOfSchedule: string = "Daily: ";
-    stringOfSchedule +=
-      "hours: " + s.schedule.time.getHours() + " ";
-    stringOfSchedule +=
-      "minutes: " + s.schedule.time.getMinutes();
+    stringOfSchedule += "hours: " + s.schedule.time.getHours() + " ";
+    stringOfSchedule += "minutes: " + s.schedule.time.getMinutes();
     return stringOfSchedule;
   }
   if (isWeeklySchedule(s?.schedule)) {
@@ -97,8 +101,8 @@ export const ScheduleContext = createContext<ScheduleContextType>({
   },
   potentialSchedule: {
     schedule: {
-      time: undefined
-    }
+      time: undefined,
+    },
   },
   generateSchedule: function (b: Bond): void {
     throw new Error("Function not implemented.");
@@ -111,7 +115,7 @@ export const ScheduleContext = createContext<ScheduleContextType>({
   },
   printPotentialSchedule: function (s: Schedule): string {
     throw new Error("Function not implemented.");
-  }
+  },
 });
 
 export const ScheduleContextProvider: React.FC<{
@@ -175,7 +179,6 @@ export const ScheduleContextProvider: React.FC<{
       }
       await updatePersonBond(db, members[1].person_id, members[1].bond_id, 1);
       return firstToCall;
-
     } catch (e) {
       console.error();
       throw new Error(
@@ -205,7 +208,10 @@ export const ScheduleContextProvider: React.FC<{
   };
 
   const generateSchedule = async (bond: Bond) => {
-    console.log("generateSchedule() potentialSchedule: ", potentialSchedule?.schedule)
+    console.log(
+      "generateSchedule() potentialSchedule: ",
+      potentialSchedule?.schedule
+    );
 
     if (potentialSchedule == undefined) {
       throw Error("generateSchedule(): potenialScheudle is undefined");
@@ -216,121 +222,156 @@ export const ScheduleContextProvider: React.FC<{
         potentialSchedule.schedule,
         bond
       );
-      writeDailyScheduleToDB(potentialSchedule.schedule, bond, nid)
+      writeDailyScheduleToDB(potentialSchedule.schedule, bond, nid);
       return;
-      
     } else if (isWeeklySchedule(potentialSchedule.schedule)) {
-      const nids: string[] = await scheduleWeeklyNotification(potentialSchedule.schedule, bond);
-       await writeWeeklyScheduleToDB(potentialSchedule.schedule, bond, nids)
-     
+      const nids: string[] = await scheduleWeeklyNotification(
+        potentialSchedule.schedule,
+        bond
+      );
+      await writeWeeklyScheduleToDB(potentialSchedule.schedule, bond, nids);
       return;
-    } else if (isMonthlySchedule(potentialSchedule.schedule)){
-      const nids: string[] = scheduleMonthlyNotification(potentialSchedule.schedule, bond)
-      await writeMonthlyScheduleToDB(potentialSchedule.schedule, bond, nids)
+    } else if (isMonthlySchedule(potentialSchedule.schedule)) {
+      const nids: string[] = await scheduleMonthlyNotification(
+        potentialSchedule.schedule,
+        bond
+      );
+      await writeMonthlyScheduleToDB(potentialSchedule.schedule, bond, nids);
       return;
-    } else if (isYearlySchedule(potentialSchedule.schedule)){
-      console.log("generateSchedule(): isYearlySchedule!")
-      scheduleYearlyNotification(potentialSchedule.schedule, bond)
+    } else if (isYearlySchedule(potentialSchedule.schedule)) {
+      const nids: string[] = await scheduleYearlyNotification(
+        potentialSchedule.schedule,
+        bond
+      );
+      await writeYearlyScheduleToDB(potentialSchedule.schedule, bond, nids);
       return;
     }
 
-    console.log("No type detected")
-    
+    console.log("No type detected");
   };
 
-  const writeDailyScheduleToDB = async (schedule: DailySchedule,
-    bond: Bond, nid: string) => {
-      try {
-        const time = schedule.time.toTimeString();
+  const writeDailyScheduleToDB = async (
+    schedule: DailySchedule,
+    bond: Bond,
+    nid: string
+  ) => {
+    try {
+      const time = schedule.time.toTimeString();
 
-        await uploadDailyScheduleDB(db, time, nid, bond.bond_id);
-      } catch (e) {
-        console.error(e);
-        throw new Error("writeDailyScheduleToDB() failed")
-      }
-  }
+      await uploadDailyScheduleDB(db, time, nid, bond.bond_id);
+    } catch (e) {
+      console.error(e);
+      throw new Error("writeDailyScheduleToDB() failed");
+    }
+  };
 
   /**
    * dayOFWeek: Sunday = 1, Saty = 7
-   * @param schedule 
-   * @param bond 
-   * @param nid 
+   * @param schedule
+   * @param bond
+   * @param nid
    */
-  const writeWeeklyScheduleToDB = async (schedule: WeeklySchedule,
-    bond: Bond, nids: string[]) => {
-        const timesOfWeek: string[] = []
-        const dayOfWeek: number[] = [];
-        if (schedule.sunday != undefined) {
-          dayOfWeek.push(1)
-          timesOfWeek.push(schedule.sunday.toTimeString())
-        }
-        if (schedule.monday != undefined) {
-          dayOfWeek.push(2)
-          timesOfWeek.push(schedule.monday.toTimeString())
-        }
-        if (schedule.tuesday != undefined) {
-          dayOfWeek.push(3)
-          timesOfWeek.push(schedule.tuesday.toTimeString())
+  const writeWeeklyScheduleToDB = async (
+    schedule: WeeklySchedule,
+    bond: Bond,
+    nids: string[]
+  ) => {
+    const timesOfWeek: string[] = [];
+    const dayOfWeek: number[] = [];
+    if (schedule.sunday != undefined) {
+      dayOfWeek.push(1);
+      timesOfWeek.push(schedule.sunday.toTimeString());
+    }
+    if (schedule.monday != undefined) {
+      dayOfWeek.push(2);
+      timesOfWeek.push(schedule.monday.toTimeString());
+    }
+    if (schedule.tuesday != undefined) {
+      dayOfWeek.push(3);
+      timesOfWeek.push(schedule.tuesday.toTimeString());
+    }
+    if (schedule.wednesday != undefined) {
+      dayOfWeek.push(4);
+      timesOfWeek.push(schedule.wednesday.toTimeString());
+    }
+    if (schedule.thursday != undefined) {
+      dayOfWeek.push(5);
+      timesOfWeek.push(schedule.thursday.toTimeString());
+    }
+    if (schedule.friday != undefined) {
+      dayOfWeek.push(6);
+      timesOfWeek.push(schedule.friday.toTimeString());
+    }
+    if (schedule.saturday != undefined) {
+      dayOfWeek.push(7);
+      timesOfWeek.push(schedule.saturday.toTimeString());
+    }
 
-        }
-        if (schedule.wednesday != undefined) {
-          dayOfWeek.push(4)
-          timesOfWeek.push(schedule.wednesday.toTimeString())
+    let i = 0;
+    dayOfWeek.forEach(async (d) => {
+      try {
+        await uploadWeeklyScheduleDB(
+          db,
+          timesOfWeek[i],
+          d,
+          nids[i],
+          bond.bond_id
+        );
+        i++;
+      } catch (e) {
+        console.error(e);
+        throw new Error("writeWeeklyScheduleToDb() failed");
+      }
+    });
+  };
 
-        }
-        if (schedule.thursday != undefined) {
-          dayOfWeek.push(5)
-          timesOfWeek.push(schedule.thursday.toTimeString())
+  const writeMonthlyScheduleToDB = async (
+    schedule: MonthlySchedule,
+    bond: Bond,
+    nids: string[]
+  ) => {
+    let i = 0;
+    schedule.daysInMonth.forEach(async (d) => {
+      const time: string = d.time.toTimeString();
+      const dayOfWeek: number = d.dayOfWeek;
+      const weekOfMonth: number = d.weekOfMonth;
+      try {
+        await uploadMonthlyScheduleDB(
+          db,
+          time,
+          dayOfWeek,
+          weekOfMonth,
+          nids[i],
+          bond.bond_id
+        );
+        i++;
+      } catch (e) {
+        console.error(e);
+        throw new Error("writeMonthlyScheduleToDB() failed");
+      }
+    });
+  };
 
-        }
-        if (schedule.friday != undefined) {
-          dayOfWeek.push(6)
-          timesOfWeek.push(schedule.friday.toTimeString())
-
-        }
-        if (schedule.saturday != undefined) {
-          dayOfWeek.push(7)
-          timesOfWeek.push(schedule.saturday.toTimeString())
-
-        }
-
-        let i = 0;
-        dayOfWeek.forEach(async d => {
-          try {
-            await uploadWeeklyScheduleDB(db, timesOfWeek[i], d, nids[i], bond.bond_id);
-            i++;
-          } catch (e) {
-            console.error(e);
-            throw new Error("writeWeeklyScheduleToDb() failed")
-          }
-        })
-  }
-
-  const writeMonthlyScheduleToDB = async (schedule: MonthlySchedule,
-    bond: Bond, nids: string[]) => {
-
-        let i = 0;
-        schedule.daysInMonth.forEach(async d => {
-          const time: string = d.time.toTimeString();
-          const dayOfWeek: number = d.dayOfWeek;
-          const weekOfMonth: number = d.weekOfMonth;
-          try {
-            await uploadMonthlyScheduleDB(db, time, dayOfWeek, weekOfMonth, nids[i], bond.bond_id)
-            i++;
-          } catch (e) {
-            console.error(e);
-            throw new Error("writeMonthlyScheduleToDB() failed")
-          }
-        })
-  }
-
-  const writeYearlyScheduleToDB = async (schedule: YearlySchedule,
-    bond: Bond, nids: string[]) => {
-      schedule.datesInYear.forEach((d) => {
-
-
-      })
-  }
+  const writeYearlyScheduleToDB = async (
+    schedule: YearlySchedule,
+    bond: Bond,
+    nids: string[]
+  ) => {
+    let i = 0;
+    schedule.datesInYear.forEach(async (d) => {
+      const time = d.time.toTimeString();
+      const date = d.date.toDateString();
+      const nid = nids[i];
+      const bid = bond.bond_id;
+      try {
+        await uploadYearlyScheduleDB(db, time, date, nid, bid);
+        i++;
+      } catch (e) {
+        console.error(e);
+        throw new Error("writeYearlyScheduleToDB() failed");
+      }
+    });
+  };
   return (
     <ScheduleContext.Provider
       value={{

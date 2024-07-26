@@ -46,8 +46,6 @@ export default function WeeklySchedulePicker({
   console.log("WeeklySchedulerRenders");
 
   function onSelectDayOfWeek(day: string) {
-    console.log("day: ", day);
-
     switch (day) {
       case "mon":
         {

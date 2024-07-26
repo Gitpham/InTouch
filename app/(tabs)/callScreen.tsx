@@ -1,8 +1,6 @@
 import { StyleSheet, } from 'react-native';
 import Scheduler from '@/components/Scheduler';
 import React from 'react';
-import { usePathname,  } from 'expo-router';
-
 export default function callScreen() {
   return (
 

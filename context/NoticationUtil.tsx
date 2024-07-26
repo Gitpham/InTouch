@@ -334,7 +334,8 @@ export async function scheduleMonthlyNotification(
 export async function scheduleYearlyNotification(
   schedule: YearlySchedule,
   bond: Bond
-){
+): Promise<string[]>{
+  const nids: string[] = [];
   schedule.datesInYear.forEach(async (d: DateInYear) => {
     const trigger: Notifications.YearlyTriggerInput = {
       day: d.date.getDate(),
@@ -344,21 +345,18 @@ export async function scheduleYearlyNotification(
       repeats: true
     }
     try {
-      await Notifications.scheduleNotificationAsync({
+      nids.push(await Notifications.scheduleNotificationAsync({
         content: notificationContentYearly(bond),
         trigger: trigger,
-      });
+      }));
     } catch (e) {
       console.error(e);
       throw new Error(
         `scheduleYearlyNotification() failed to scheduleNotificationAsync for ${d.getDate()} of ${d.getMonth()}`
       );
     }
-
   })
-
-
-
+  return nids;
 }
 export async function getAllScheduledNotifications() {
   try {
