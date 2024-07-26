@@ -19,7 +19,7 @@ import {
   scheduleWeeklyNotification,
   scheduleMonthlyNotification,
   scheduleYearlyNotification,
-} from "./NoticationUtil";
+} from "./NotificationUtils";
 import {
   getPersonsOfBondDB,
   updatePersonBond,

@@ -22,7 +22,7 @@ import * as Notifications from "expo-notifications";
 import {
   cancelAllNotifications,
   getAllScheduledNotifications,
-} from "@/context/NoticationUtil";
+} from "@/context/NotificationUtils";
 import { ScrollView } from "react-native";
 import { useSQLiteContext } from "expo-sqlite";
 import DailySchedulePicker from "./DailySchedulePicker";
