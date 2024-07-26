@@ -20,7 +20,7 @@ import * as SQLite from 'expo-sqlite';
 import { createDB } from "@/assets/db/db";
 import { ScheduleContextProvider } from "@/context/ScheduleContext";
 import { Alert, Linking, Platform } from "react-native";
-import { validateAndFormatPhoneNumber } from "@/context/PhoneNumberUtils";
+import { callPersonUtil, getNextToCallUtil, validateAndFormatPhoneNumber } from "@/context/PhoneNumberUtils";
 import { BondPerson, Person } from "@/constants/types";
 import { getPersonsOfBondDB, updatePersonBond } from "@/assets/db/PersonBondRepo";
 import { getPerson } from "@/assets/db/PersonRepo";
@@ -67,7 +67,7 @@ export default function RootLayout() {
         async (response) => {
           console.log("Recieved Response!")
           try {
-            callPerson(response.notification);
+            callPersonUtil(response.notification, db)
           } catch (e) {
             console.error(e);
             throw Error("failed to navigate away");
@@ -93,77 +93,6 @@ export default function RootLayout() {
   >(undefined);
   const notificationListener = useRef<Notifications.Subscription>();
   const responseListener = useRef<Notifications.Subscription>();
-
-  const callPerson = async (notification: Notifications.Notification) => {
-    const bondID: number = +notification.request.content.data?.bondID;
-    const toCall: Person = await getNextToCall(bondID);
-    const phoneNumber: string = validateAndFormatPhoneNumber(
-      toCall.phoneNumber
-    );
-    const phoneURL: string = `tel:${phoneNumber}`;
-    const canOpen = await Linking.canOpenURL(phoneURL);
-
-    if (canOpen) {
-      Linking.openURL(phoneURL);
-    } else {
-      Alert.alert("could not open url");
-    }
-  };
-
-  const getNextToCall = async (bondID: number): Promise<Person> => {
-    try {
-      const members: BondPerson[] = await getPersonsOfBondDB(db, bondID);
-      // IF SOMEBODY IS MARKED AND IS NOT END
-      for (let i = 0; i < members.length; i++) {
-        if (members[i].nextToCall == 1) {
-          const persToCall = await getPerson(db, members[i].person_id);
-          await updatePersonBond(
-            db,
-            members[i].person_id,
-            members[i].bond_id,
-            0
-          );
-
-          if (i + 1 < members.length) {
-            await updatePersonBond(
-              db,
-              members[i + 1].person_id,
-              members[i + 1].bond_id,
-              1
-            );
-            return persToCall as Person;
-          }
-
-          // wraps around
-          await updatePersonBond(
-            db,
-            members[0].person_id,
-            members[0].bond_id,
-            1
-          );
-          return persToCall as Person;
-        }
-      }
-      // If there is no member markedd
-      const firstToCall: Person = (await getPerson(
-        db,
-        members[0].person_id
-      )) as Person;
-
-      if (members.length == 1) {
-        await updatePersonBond(db, members[0].person_id, members[0].bond_id, 1);
-        return firstToCall;
-      }
-      await updatePersonBond(db, members[1].person_id, members[1].bond_id, 1);
-      return firstToCall;
-    } catch (e) {
-      console.error();
-      throw new Error(
-        "getNextToCallInBond(): failed to call getPersonsOfBondDB"
-      );
-    }
-  };
-
   useEffect(() => {
     if (loaded) {
       SplashScreen.hideAsync();

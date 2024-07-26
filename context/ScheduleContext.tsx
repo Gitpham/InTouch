@@ -169,7 +169,6 @@ export const ScheduleContextProvider: React.FC<{
           return persToCall as Person;
         }
       }
-
       // If there is no member markedd
       const firstToCall: Person = (await getPerson(
         db,
