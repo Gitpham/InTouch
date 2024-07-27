@@ -12,18 +12,11 @@ import { StandardButton } from "@/components/ButtonStandard";
 import React from "react";
 
 export default function createGroupScreen() {
-
   // Data to be stored in record
   const [bondName, groupNameChange] = useState("");
   const [refresh, setRefresh] = useState(false);
   const { createBond, generateBondId, tempBondMembers, clearTempBondMembers, createBondMember, peopleList } = useContext(InTouchContext);
 
-  useFocusEffect(
-    React.useCallback(() => {
-      // This will be triggered every time the screen is focused
-      setRefresh((old) => !old);
-    }, [tempBondMembers])
-  );
   const bondID = generateBondId();
 
   const bondToAdd: Bond = {
@@ -33,15 +26,11 @@ export default function createGroupScreen() {
     bond_id: bondID,
   };
 
-
   function onDonePress() {
-
     if (!bondName) {
-      Alert.alert("Must enter a Bond name")
+      Alert.alert("Must enter a Bond name");
       return;
     }
-
-    console.log("createGroupScreen tempBondMembers:", tempBondMembers)
     createBond(bondToAdd);
     
       try {
@@ -116,11 +105,15 @@ export default function createGroupScreen() {
 
       <Button
         title="Add Group Member"
-        onPress={() => router.navigate({pathname: "./addMemberScreen", params : {bond_id: bondID}})}
+        onPress={() =>
+          router.navigate({
+            pathname: "./addMemberScreen",
+            params: { bond_id: bondID },
+          })
+        }
         buttonStyle={styles.button}
         titleStyle={styles.title}
       />
-
 
       <Button
         title="Done"
@@ -130,16 +123,12 @@ export default function createGroupScreen() {
       />
 
       <StandardButton
-      title="Cancel"
-      onPress={() => {
-        clearTempBondMembers();
-        router.back()}
-      }
-      >
-      </StandardButton>
-
-
-      
+        title="Cancel"
+        onPress={() => {
+          clearTempBondMembers();
+          router.back();
+        }}
+      ></StandardButton>
     </SafeAreaView>
   );
 }

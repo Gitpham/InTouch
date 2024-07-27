@@ -84,6 +84,11 @@ const testPersonBondList = [
 ];
 
 const testReminderList: Reminder[] = [reminderA1, reminderA3]
+const testPersonBondList_NoneMarked = [
+  {bond_id: 1, person_id: 1, nextToCall: 0},
+  {bond_id: 1, person_id: 2, nextToCall: 0},
+  {bond_id: 1, person_id: 3, nextToCall: 0},
+]
 
 const mockExecuteAsync = jest.fn();
 const mockFinalizeAsync = jest.fn();
@@ -112,6 +117,12 @@ const mockGetAllAsync = jest.fn().mockImplementation((sql: string) => {
     return Promise.resolve(testReminderList);
 
   }
+  if (sql == `
+        SELECT * FROM person_bond
+        WHERE bond_id = ?
+         ;`) {
+          return Promise.resolve(testPersonBondList_NoneMarked)
+         }
 
   throw Error("Does not recognize sql command");
 });
@@ -119,6 +130,7 @@ const mockGetAllAsync = jest.fn().mockImplementation((sql: string) => {
 const mockStatement = {
   executeAsync: mockExecuteAsync,
   finalizeAsync: mockFinalizeAsync,
+  getAllAsync: mockGetAllAsync,
 };
 
 const mockPrepareAsync = jest.fn(() => mockStatement);
@@ -132,7 +144,11 @@ const openDatabaseAsync = jest.fn(() => mockDatabase);
 const SQLiteDatabase = jest.fn(() => mockDatabase);
 const useSQLiteContext = jest.fn(() => mockDatabase);
 
+const mockUseSQLiteContext = jest.fn(() => mockDatabase);
+
+
 export {
+  mockDatabase,
   testBondList,
   testPersonList,
   testPersonBondList,
@@ -144,6 +160,7 @@ export {
   testB2,
   testB3,
   testB6,
+  mockUseSQLiteContext,
   openDatabaseAsync,
   SQLiteDatabase,
   useSQLiteContext,

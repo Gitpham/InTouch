@@ -92,7 +92,6 @@ export default function groupScreen() {
     if (bond) {
     removeBond(bond);
     }
-    
     router.back();
   }
 
@@ -144,8 +143,6 @@ export default function groupScreen() {
              titleStyle = {styles.redTitle}
               onPress = {() => deleteBond()}
              />
-
-
           </ScrollView>
         </SafeAreaView>
 

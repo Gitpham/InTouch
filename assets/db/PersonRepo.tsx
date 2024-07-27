@@ -70,7 +70,22 @@ export const getAllPersons = async (db: SQLite.SQLiteDatabase) => {
         return await db.getAllAsync<Person>(`SELECT * FROM person`)
     } catch (error) {
         console.error(error)
+        throw Error("getAllPersons(): Failed to getAllPersons()")
+    }
+}
+
+export const getPerson = async (db: SQLite.SQLiteDatabase, pID: number) => {
+    const statement = await db.prepareAsync(`SELECT * FROM person WHERE person_id = ?;`)
+    const value: string[] = [pID.toString()]
+    try {
+        const result = await statement.executeAsync<Person>(value);
+        return await result.getFirstAsync();
+    } catch (error) {
+        console.error(error)
         throw Error("Failed to getAllPersons()")
     }
 }
+
+
+
 

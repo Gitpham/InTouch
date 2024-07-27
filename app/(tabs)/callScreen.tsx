@@ -1,26 +1,35 @@
-import { StyleSheet,} from 'react-native';
-
-import { ThemedText } from '@/components/ThemedText';
-
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { StyleSheet, } from 'react-native';
+import Scheduler from '@/components/Scheduler';
+import React from 'react';
+import { usePathname,  } from 'expo-router';
 
 export default function callScreen() {
   return (
-    <SafeAreaView>
-      <ThemedText>Testing Call SCreen</ThemedText>
-    </SafeAreaView>
+
+      <Scheduler></Scheduler>
+
   );
 }
 
 const styles = StyleSheet.create({
-  headerImage: {
-    color: '#808080',
-    bottom: -90,
-    left: -35,
-    position: 'absolute',
+  button: {
+    margin: 10,
+    backgroundColor: "white",
+    borderColor: "black",
+    borderWidth: 2,
   },
-  titleContainer: {
-    flexDirection: 'row',
+  title: {
+    color: "black",
+  },
+  stepContainer: {
+    flex: 1,
+    backgroundColor: "white",
     gap: 8,
+    marginBottom: 8,
+    flexDirection: "column",
+    paddingTop: 50,
+    justifyContent: "center",
   },
-});
+  centeredView: {
+    alignItems: "center",
+  }})

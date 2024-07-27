@@ -12,6 +12,7 @@ import { getAllPersons } from "@/assets/db/PersonRepo";
 import { getAllReminders } from "@/assets/db/ReminderRepo";
 import { clearDB, getTableNames } from "@/assets/db/db";
 import { getAllBonds } from "@/assets/db/BondRepo";
+import Scheduler from "@/components/Scheduler";
 
 
 export default function ReminderScreen() {
@@ -88,6 +89,8 @@ export default function ReminderScreen() {
              <StandardButton title="show personBondMap" onPress={onPressShowPersonBondMap}/>
 
              <StandardButton title="show tables" onPress={tableNames}/>
+               <Scheduler></Scheduler>
+
 
         </SafeAreaView>
 

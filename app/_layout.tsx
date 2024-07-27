@@ -15,7 +15,8 @@ import { SQLiteProvider } from "expo-sqlite";
 import { InTouchContextProvider } from "@/context/InTouchContext";
 import React from "react";
 import * as SQLite from 'expo-sqlite';
-import { createDB, loadDB } from "@/assets/db/db";
+import { createDB } from "@/assets/db/db";
+import { ScheduleContextProvider } from "@/context/ScheduleContext";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -33,7 +34,7 @@ export default function RootLayout() {
 
 
     const initDB = async () => {
-      const db = await SQLite.openDatabaseAsync("DbWForeignKeys.db");
+      const db = await SQLite.openDatabaseAsync("nextToCall.db");
       createDB(db);
     };
 
@@ -60,7 +61,9 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <SQLiteProvider databaseName="DbWForeignKeys.db">
+      <SQLiteProvider databaseName="nextToCall.db">
+        <ScheduleContextProvider>
+
         <InTouchContextProvider>
           <Stack>
             <Stack.Screen name="index" options={{ headerShown: false }} />
@@ -88,6 +91,7 @@ export default function RootLayout() {
             />
           </Stack>
         </InTouchContextProvider>
+        </ScheduleContextProvider>
       </SQLiteProvider>
     </ThemeProvider>
   );
