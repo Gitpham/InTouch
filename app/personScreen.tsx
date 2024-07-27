@@ -62,9 +62,14 @@ export default function PersonScreen() {
         return (
           <ListItem bottomDivider>
             <ListItem.Content id={item.reminder_id.toString()}>
-              <ListItem.Title>
-                {item.date + " - " + item.reminder} 
+            <View style = {styles.rowOrientation}>
+              <ListItem.Title style = {styles.date}>
+                {item.date + " - "}
               </ListItem.Title>
+            <ListItem.Title>
+              {item.reminder} 
+            </ListItem.Title>
+            </View>
             </ListItem.Content>
             <Pressable
              onPress={() => deleteReminder(item.reminder_id)}
@@ -176,5 +181,14 @@ const styles = StyleSheet.create({
   },
   touchable: {
     padding: 10,
-  }
+  },
+  rowOrientation: {
+    flexDirection: "row",
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  date: {
+    color: "gray",
+    fontSize: 12
+}
 });

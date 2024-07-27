@@ -19,7 +19,7 @@ export default function groupScreen() {
   const [reminders, setReminders] = useState<Array<Reminder>>();
 
   useEffect(() => {
-    const bondId: number = +localParams.id;
+    const bondId: number = +(localParams.id as string);
     let bond_index = bondList.findIndex(item => item.bond_id === bondId)
     if (bond_index !== -1) {
       const b: Bond = bondList[bond_index];
@@ -63,9 +63,14 @@ export default function groupScreen() {
         <ListItem bottomDivider>
   
           <ListItem.Content id={item.reminder_id.toString()}>
+            <View style = {styles.rowOrientation}>
+              <ListItem.Title style = {styles.date}>
+                {item.date + " - "}
+              </ListItem.Title>
             <ListItem.Title>
-              {item.date + " - " + item.reminder} 
+              {item.reminder} 
             </ListItem.Title>
+            </View>
           </ListItem.Content>
           <Pressable
            onPress={() => deleteReminder(item.reminder_id)}
@@ -193,5 +198,9 @@ const styles = StyleSheet.create({
   },
   touchable: {
     padding: 10,
-  }
+  },
+  date: {
+    color: "gray",
+    fontSize: 12
+}
 });

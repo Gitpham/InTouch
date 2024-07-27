@@ -33,7 +33,7 @@ export default function addMemberManualScreen() {
     };
 
     await createPerson(newContact);
-    const bond_id = +localParams.bond_id
+    const bond_id = +(localParams.bond_id as string)
     if (bond_id !== -1) {
       // console.log("creating bond member with person id: ", person_id, " and bond id: ", bond_id)
       // console.log("addMembeManuallyScreen: personID: ", personID)
