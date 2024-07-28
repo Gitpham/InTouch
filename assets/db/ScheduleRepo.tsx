@@ -8,15 +8,12 @@ export async function uploadScheduleToDB(db: SQLite.SQLiteDatabase,
     weekOfMonth: number | null,
     date: string | null,
     bid: number, 
-    nid: string){
+    nid: string
+){
 
     const statement = await db.prepareAsync(`INSERT INTO schedule 
         (type, time, weekDay, weekOfMonth, date, bond_id, notification_id) 
         VALUES (?, ?, ?, ?, ?, ?, ?)`)
-
-    // const weekDayV: string | null = weekDay ? weekDay.toString() : null;
-    // const weekOfMonthV: string | null = weekOfMonth ? weekOfMonth.toString() : null;
-    // const dateV: string | null = date ? date.toString() : null;
 
     const value = [
         type,
