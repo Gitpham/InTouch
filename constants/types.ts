@@ -130,34 +130,25 @@ export type DateInYear = {
 }
 
 export function isDateInYear(obj: any): obj is DateInYear {
-    console.log("isDateInYear")
-    return ((obj.date instanceof Date) && (obj.date instanceof Date))
+    return ((obj.date instanceof Date) && (obj.time instanceof Date))
 }
 export type YearlySchedule = {
     datesInYear: Set<DateInYear>
 }
 
 export function isYearlySchedule(obj: any): obj is YearlySchedule {
-    console.log("yearlySchedule() called")
     if (!(obj.datesInYear instanceof Set)){
         return false;
     }
-
-    console.log("yearlySchedule(): obj is a set")
-
     if (obj.datesInYear.size < 1) {
         return false;
     }
-
-    console.log("yearlySchedule(): obj is greater than 1")
-
 
     obj.datesInYear.forEach(d => {
         if (!isDateInYear(d)){
             return false;
         }
     })
-    console.log("isyearlySchedule(): true")
     return true;
 
 }

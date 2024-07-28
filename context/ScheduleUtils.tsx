@@ -16,36 +16,45 @@ export const generateNotificationSchedule = async (potentialSchedule: Schedule, 
         potentialSchedule.schedule,
         bond
       );
+      console.log("daily nid: ", nid)
       writeDailyScheduleToDB(potentialSchedule.schedule, bond, nid, db);
       return;
+
     } else if (isWeeklySchedule(potentialSchedule.schedule)) {
       const nids: string[] = await scheduleWeeklyNotification(
         potentialSchedule.schedule,
         bond
       );
+      console.log("weekly nids: ", nids)
+      
       await writeWeeklyScheduleToDB(potentialSchedule.schedule, bond, nids, db);
       return;
+
     } else if (isMonthlySchedule(potentialSchedule.schedule)) {
       const nids: string[] = await scheduleMonthlyNotification(
         potentialSchedule.schedule,
         bond
       );
+      console.log("monthly nids: ", nids)
+
       await writeMonthlyScheduleToDB(potentialSchedule.schedule, bond, nids, db);
       return;
+
     } else if (isYearlySchedule(potentialSchedule.schedule)) {
       try {
         const nids: string[] = await scheduleYearlyNotification(
           potentialSchedule.schedule,
           bond
         );
-      await writeYearlyScheduleToDB(potentialSchedule.schedule, bond, nids, db);
-  
+      console.log("yearly nids: ", nids)
+
+        await writeYearlyScheduleToDB(potentialSchedule.schedule, bond, nids, db);
+        return
       } catch (e) {
         console.error(e)
         throw new Error("generateSchedule(): failed scheduleYearlyNotification()")
       }
   
-      return;
     }
   
     console.log("No type detected");
