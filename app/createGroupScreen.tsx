@@ -1,24 +1,26 @@
 import { ThemedText } from "@/components/ThemedText";
-import { useContext, useState, useEffect } from "react";
+import { useContext, useState,  } from "react";
 import { Alert, FlatList, TextInput } from "react-native";
 import { } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {  Button, ListItem, } from "@rneui/themed";
 import { StyleSheet, View } from "react-native";
-import { router, useFocusEffect } from "expo-router";
+import { router,  } from "expo-router";
 import { InTouchContext } from "@/context/InTouchContext";
 import { Bond, Person } from "@/constants/types";
 import { StandardButton } from "@/components/ButtonStandard";
 import React from "react";
 import { ScheduleContext } from "@/context/ScheduleContext";
+import { generateNotificationSchedule } from "@/context/ScheduleUtils";
+import { useSQLiteContext } from "expo-sqlite";
 
 export default function createGroupScreen() {
   // Data to be stored in record
   const [bondName, groupNameChange] = useState("");
-  const [refresh, setRefresh] = useState(false);
   const { createBond, generateBondId, tempBondMembers, clearTempBondMembers, createBondMember, peopleList } = useContext(InTouchContext);
-  const {generateSchedule} = useContext(ScheduleContext)
+  const {potentialSchedule} = useContext(ScheduleContext)
   const bondID = generateBondId();
+  const db = useSQLiteContext();
 
   const bondToAdd: Bond = {
     bondName: bondName,
@@ -27,6 +29,11 @@ export default function createGroupScreen() {
     bond_id: bondID,
   };
 
+  let title = "Create Group";
+  if (bondName) {
+    title = bondName;
+  }
+  
   async function onDonePress() {
     if (!bondName) {
       Alert.alert("Must enter a Bond name");
@@ -45,14 +52,14 @@ export default function createGroupScreen() {
         throw Error ("failed to call createBondMember()")
       }
     clearTempBondMembers();
-    generateSchedule(bondToAdd)
+    generateNotificationSchedule(potentialSchedule, bondToAdd, db)
     router.push("./(tabs)");
   }
 
-  let title = "Create Group";
-  if (bondName) {
-    title = bondName;
+  function onCreateSchedule(){
+    router.navigate("./createScheduleScreen")
   }
+
 
   const renderGroupMembers = ({ item }: { item}) => {
     let personToShow: Person;
@@ -76,9 +83,6 @@ export default function createGroupScreen() {
   );
   };
 
-  function onCreateSchedule(){
-    router.navigate("./createScheduleScreen")
-  }
 
 
 

@@ -9,21 +9,16 @@ import * as SplashScreen from "expo-splash-screen";
 import {  useEffect, useRef, useState } from "react";
 import "react-native-reanimated";
 import * as Notifications from "expo-notifications";
-
-
 import { useColorScheme } from "@/hooks/useColorScheme";
-
 import { SQLiteProvider } from "expo-sqlite";
 import { InTouchContextProvider } from "@/context/InTouchContext";
 import React from "react";
 import * as SQLite from 'expo-sqlite';
 import { createDB } from "@/assets/db/db";
 import { ScheduleContextProvider } from "@/context/ScheduleContext";
-import { Alert, Linking, Platform } from "react-native";
-import { callPersonUtil, getNextToCallUtil, validateAndFormatPhoneNumber } from "@/context/PhoneNumberUtils";
-import { BondPerson, Person } from "@/constants/types";
-import { getPersonsOfBondDB, updatePersonBond } from "@/assets/db/PersonBondRepo";
-import { getPerson } from "@/assets/db/PersonRepo";
+import { Platform } from "react-native";
+import { callPersonUtil, } from "@/context/PhoneNumberUtils";
+
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();

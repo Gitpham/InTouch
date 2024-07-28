@@ -4,7 +4,7 @@ import { scheduleDailyNotification, scheduleWeeklyNotification, scheduleMonthlyN
 import * as SQLite from "expo-sqlite";
 
 //SCHEDULE FUNCTIONS
-const generateNotificationSchedule = async (potentialSchedule: Schedule, bond: Bond, db: SQLite.SQLiteDatabase) => {
+export const generateNotificationSchedule = async (potentialSchedule: Schedule, bond: Bond, db: SQLite.SQLiteDatabase) => {
 
 
     if (potentialSchedule == undefined) {
