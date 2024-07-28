@@ -1,53 +1,18 @@
 import {
-  Bond,
-  BondPerson,
-  DailySchedule,
   isDailySchedule,
-  isMonthlySchedule,
   isWeeklySchedule,
-  isYearlySchedule,
-  MonthlySchedule,
-  Person,
   Schedule,
-  ScheduleFrequency,
   WeeklySchedule,
-  YearlySchedule,
+
 } from "@/constants/types";
 import { createContext, useState } from "react";
 import React from "react";
-import {
-  scheduleDailyNotification,
-  scheduleWeeklyNotification,
-  scheduleMonthlyNotification,
-  scheduleYearlyNotification,
-  writeWeeklyScheduleToDB,
-  writeDailyScheduleToDB,
-  writeMonthlyScheduleToDB,
-  writeYearlyScheduleToDB,
-} from "./NotificationUtils";
-import {
-  getPersonsOfBondDB,
-  updatePersonBond,
-} from "@/assets/db/PersonBondRepo";
-import { useSQLiteContext } from "expo-sqlite";
-import { getPerson } from "@/assets/db/PersonRepo";
-import { Alert, Linking } from "react-native";
-import * as Notifications from "expo-notifications";
-import { validateAndFormatPhoneNumber } from "./PhoneNumberUtils";
-import { uploadDailyScheduleDB } from "@/assets/db/DailyScheduleRepo";
-import { uploadWeeklyScheduleDB } from "@/assets/db/WeeklyScheduleRepo";
-import { uploadMonthlyScheduleDB } from "@/assets/db/MonthlyScheduleRepo";
-import { uploadYearlyScheduleDB } from "@/assets/db/YearlyScheduleRepo";
-import { uploadNotificationDB } from "@/assets/db/NotificationRepo";
-import { uploadScheduleToDB } from "@/assets/db/ScheduleRepo";
+
 
 //TYPE
 type ScheduleContextType = {
   createPotentialSchedule: (s: Schedule) => void;
   potentialSchedule: Schedule;
-  generateSchedule: (b: Bond) => void;
-  getNextToCall: (bondID: number) => Promise<Person>;
-  callPerson: (notification: Notifications.Notification) => void;
 };
 
 export const printPotentialSchedule = (s: Schedule) => {
@@ -108,21 +73,9 @@ export const ScheduleContext = createContext<ScheduleContextType>({
   },
   potentialSchedule: {
     schedule: {
-      time: undefined,
-    },
-  },
-  generateSchedule: function (b: Bond): void {
-    throw new Error("Function not implemented.");
-  },
-  getNextToCall: function (bondID: number): Promise<Person> {
-    throw new Error("Function not implemented.");
-  },
-  callPerson: function (notification: Notifications.Notification): void {
-    throw new Error("Function not implemented.");
-  },
-  printPotentialSchedule: function (s: Schedule): string {
-    throw new Error("Function not implemented.");
-  },
+      time: undefined
+    }
+  }
 });
 
 export const ScheduleContextProvider: React.FC<{
@@ -130,84 +83,8 @@ export const ScheduleContextProvider: React.FC<{
   // eslint-disable-next-line react/prop-types
 }> = ({ children }) => {
   //STATE VARIABLES
-  const db = useSQLiteContext();
   const [potentialSchedule, setPotentialSchedule] = useState<Schedule>();
 
-  /**
-   * Finds the next person in bond to call. Then updates who's next to call.
-   *
-   * If there is no next person to call, it marks the first personBond in the list.
-   * @param bond
-   */
-  const getNextToCall = async (bondID: number): Promise<Person> => {
-    try {
-      const members: BondPerson[] = await getPersonsOfBondDB(db, bondID);
-      // IF SOMEBODY IS MARKED AND IS NOT END
-      for (let i = 0; i < members.length; i++) {
-        if (members[i].nextToCall == 1) {
-          const persToCall = await getPerson(db, members[i].person_id);
-          await updatePersonBond(
-            db,
-            members[i].person_id,
-            members[i].bond_id,
-            0
-          );
-
-          if (i + 1 < members.length) {
-            await updatePersonBond(
-              db,
-              members[i + 1].person_id,
-              members[i + 1].bond_id,
-              1
-            );
-            return persToCall as Person;
-          }
-
-          // wraps around
-          await updatePersonBond(
-            db,
-            members[0].person_id,
-            members[0].bond_id,
-            1
-          );
-          return persToCall as Person;
-        }
-      }
-      // If there is no member markedd
-      const firstToCall: Person = (await getPerson(
-        db,
-        members[0].person_id
-      )) as Person;
-
-      if (members.length == 1) {
-        await updatePersonBond(db, members[0].person_id, members[0].bond_id, 1);
-        return firstToCall;
-      }
-      await updatePersonBond(db, members[1].person_id, members[1].bond_id, 1);
-      return firstToCall;
-    } catch (e) {
-      console.error();
-      throw new Error(
-        "getNextToCallInBond(): failed to call getPersonsOfBondDB"
-      );
-    }
-  };
-
-  const callPerson = async (notification: Notifications.Notification) => {
-    const bondID: number = +notification.request.content.data?.bondID;
-    const toCall: Person = await getNextToCall(bondID);
-    const phoneNumber: string = validateAndFormatPhoneNumber(
-      toCall.phoneNumber
-    );
-    const phoneURL: string = `tel:${phoneNumber}`;
-    const canOpen = await Linking.canOpenURL(phoneURL);
-
-    if (canOpen) {
-      Linking.openURL(phoneURL);
-    } else {
-      Alert.alert("could not open url");
-    }
-  };
 
   const createPotentialSchedule = async (s: Schedule) => {
     await setPotentialSchedule(s);
@@ -219,9 +96,6 @@ export const ScheduleContextProvider: React.FC<{
       value={{
         createPotentialSchedule,
         potentialSchedule,
-        generateSchedule,
-        getNextToCall,
-        callPerson,
       }}
     >
       {children}
