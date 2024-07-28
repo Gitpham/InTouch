@@ -1,5 +1,5 @@
-import { useContext, useEffect, useRef, useState } from "react";
-import { View, Platform, Alert } from "react-native";
+import { useContext, useState } from "react";
+import { View,Alert } from "react-native";
 import React from "react";
 import SegmentedControl from "@react-native-segmented-control/segmented-control";
 import { ThemedText } from "./ThemedText";
@@ -40,11 +40,10 @@ Notifications.setNotificationHandler({
 
 export default function Scheduler() {
 
-  const db = useSQLiteContext();
   const [scheduleFrequency, setScheduleFrequency] = useState<ScheduleFrequency>(
     ScheduleFrequency.DAILY
   );
-  const { createPotentialSchedule, generateSchedule, callPerson } =
+  const { createPotentialSchedule } =
     useContext(ScheduleContext);
 
   //DAILY STATE VARIABLES AND SETTERS
@@ -146,15 +145,6 @@ export default function Scheduler() {
     new Date()
   );
 
-  async function onGenerateNotificationPress() {
-    const testBond: Bond = {
-      bondName: "testBond",
-      bond_id: 5,
-      schedule: "weekly",
-      typeOfCall: "weekly",
-    };
-    await generateSchedule(testBond);
-  }
 
   async function onCancelAllNotifications() {
     try {
@@ -390,10 +380,6 @@ export default function Scheduler() {
 
           <View>
             <StandardButton title="Done" onPress={onDonePress}></StandardButton>
-            <StandardButton
-              title="generateNotification"
-              onPress={onGenerateNotificationPress}
-            ></StandardButton>
             <StandardButton
               title="cancel All Notificatios"
               onPress={onCancelAllNotifications}
