@@ -17,7 +17,8 @@ import React from "react";
 import { StandardButton } from "@/components/ButtonStandard";
 import { getScheduleOfBond } from "@/assets/db/ScheduleRepo";
 import { useSQLiteContext } from "expo-sqlite";
-import { deleteScheduleOfBond, displaySchedule } from "@/context/ScheduleUtils";
+import { deleteScheduleOfBond, displayPotentialSchedule, displaySchedule } from "@/context/ScheduleUtils";
+import { ScheduleContext } from "@/context/ScheduleContext";
 
 export default function groupScreen() {
   const {
@@ -29,11 +30,13 @@ export default function groupScreen() {
     removeReminder,
     reminderList,
   } = useContext(InTouchContext);
+  const {potentialSchedule} = useContext(ScheduleContext)
   const localParams = useLocalSearchParams();
   const [bond, setBond] = useState<Bond>();
   const [members, setMembers] = useState<Array<Person>>();
   const [reminders, setReminders] = useState<Array<Reminder>>();
   const [schedule, setSchedule] = useState<Schedule_DB[]>([]);
+  const [scheduleIsModified, setScheduleIsModified] = useState(false);
   const db = useSQLiteContext();
 
   useEffect(() => {
@@ -117,12 +120,18 @@ export default function groupScreen() {
 
 
   function showSchedule(){
-    const show: (React.JSX.Element | undefined)[] = [];
-    schedule[0] ?
+    if (!scheduleIsModified){
+      schedule[0] ?
            schedule.forEach(s => {
             show.push(displaySchedule(s))
            })
            : <></>
+    }
+
+    if (scheduleIsModified) {
+      return (displayPotentialSchedule(potentialSchedule));
+    }
+    const show: (React.JSX.Element | undefined)[] = [];
 
     return show;
   }
@@ -134,6 +143,7 @@ export default function groupScreen() {
 
   async function onModifySchedule() {
     router.navigate({pathname: "./createScheduleScreen", params: {id: `${bond?.bond_id}`}})
+    setScheduleIsModified(true);
   }
 
 

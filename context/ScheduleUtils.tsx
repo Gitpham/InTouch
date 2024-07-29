@@ -306,3 +306,103 @@ export function displaySchedule(schedule: Schedule_DB) {
   
 }
 
+export function displayPotentialSchedule(s: Schedule) {
+  const schedule = s.schedule;
+  if (isDailySchedule(schedule)) {
+    return (
+      <View>
+        <ThemedText>Daily: {schedule.time.toTimeString()}</ThemedText>
+      </View>
+    )
+  }
+
+  if (isWeeklySchedule(schedule)) {
+    const weeklySchedule = [];
+    if(schedule.monday != undefined) {
+      weeklySchedule.push(
+      <View>
+        <ThemedText>Monday: {schedule.monday.toTimeString()}</ThemedText>
+      </View>)
+    }
+
+    if(schedule.tuesday != undefined) {
+      weeklySchedule.push(
+      <View>
+        <ThemedText>Tuesday: {schedule.tuesday.toTimeString()}</ThemedText>
+      </View>)
+    }
+
+    if(schedule.wednesday != undefined) {
+      weeklySchedule.push(
+      <View>
+        <ThemedText>Wednesday: {schedule.wednesday.toTimeString()}</ThemedText>
+      </View>)
+    }
+
+    if(schedule.thursday != undefined) {
+      weeklySchedule.push(
+      <View>
+        <ThemedText>Thursday: {schedule.thursday.toTimeString()}</ThemedText>
+      </View>)
+    }
+
+    if(schedule.sunday != undefined) {
+      weeklySchedule.push(
+      <View>
+        <ThemedText>Sunday: {schedule.sunday.toTimeString()}</ThemedText>
+      </View>)
+    }
+
+    if(schedule.friday != undefined) {
+      weeklySchedule.push(
+      <View>
+        <ThemedText>Friday: {schedule.friday.toTimeString()}</ThemedText>
+      </View>)
+    }
+
+    if(schedule.saturday != undefined) {
+      weeklySchedule.push(
+      <View>
+        <ThemedText>Saturday: {schedule.saturday.toTimeString()}</ThemedText>
+      </View>)
+    }
+
+    if(schedule.sunday != undefined) {
+      weeklySchedule.push(
+      <View>
+        <ThemedText>Sunday: {schedule.sunday.toTimeString()}</ThemedText>
+      </View>)
+    }
+    return (
+      weeklySchedule
+    )
+  }
+
+  if (isMonthlySchedule(schedule)){
+    const monthlySchedule: React.JSX.Element[] = [];
+    schedule.daysInMonth.forEach(d => {
+      monthlySchedule.push(
+        <View>
+          <ThemedText>Time: {d.time.toTimeString()} Day of Week: {d.dayOfWeek} Week of Month: {d.weekOfMonth}</ThemedText>
+        </View>
+
+      )
+    })
+    return monthlySchedule;
+  }
+
+  if (isYearlySchedule(schedule)) {
+    const yearlySchedule: React.JSX.Element[] = [];
+    schedule.datesInYear.forEach(d => {
+      yearlySchedule.push(
+        <View>
+          <ThemedText>
+            Date: {d.date.toDateString()} Time: {d.time.toTimeString()}
+          </ThemedText>
+        </View>
+      )
+      return yearlySchedule;
+    })
+  }
+}
+
