@@ -1,6 +1,6 @@
 import { Bond, DailySchedule, DateInYear, DayOfMonth, MonthlySchedule, WeeklySchedule, YearlySchedule } from "@/constants/types"
 import { notificationContentDaily, notificationContentMonthly, notificationContentWeekly, notificationContentYearly, scheduleDailyNotification, scheduleMonthlyNotification, scheduleWeeklyNotification, scheduleYearlyNotification } from "@/context/NotificationUtils"
-import {scheduleNotificationAsync, DailytriggerInput, WeeklyTriggerInput, CalendarTriggerInput, YearlyTriggerInput} from "expo-notifications";
+import {scheduleNotificationAsync, WeeklyTriggerInput, CalendarTriggerInput, YearlyTriggerInput, DailyTriggerInput} from "expo-notifications";
 
 jest.mock("expo-notifications", () => {
     const mockScheduleNotificationAsync = jest.fn().mockImplementation(() => {
@@ -32,7 +32,7 @@ describe("NotificationUtils: ", () => {
                 typeOfCall: "Individual",
               };
 
-            const expectedTrigger: DailytriggerInput = {
+            const expectedTrigger: DailyTriggerInput = {
                 hour: date.getHours(),
                 minute: date.getMinutes(),
                 repeats: true
@@ -352,7 +352,6 @@ describe("NotificationUtils: ", () => {
             expect(scheduleNotificationAsync).toHaveBeenCalledWith({content: expectedContent, trigger: expectedTrigger})
             expect(scheduleNotificationAsync).toHaveBeenCalledWith({content: expectedContent, trigger: expectedTrigger1})
             expect(scheduleNotificationAsync).toHaveBeenCalledWith({content: expectedContent, trigger: expectedTrigger2})
-
         })
 
 

@@ -1,5 +1,6 @@
 import * as Notifications from "expo-notifications";
 import * as Device from "expo-device";
+import * as SQLite from "expo-sqlite";
 import Constants from "expo-constants";
 import { Alert, Linking, Platform } from "react-native";
 import {
@@ -8,9 +9,12 @@ import {
   DateInYear,
   DayOfMonth,
   MonthlySchedule,
+  Schedule_DB,
   WeeklySchedule,
   YearlySchedule,
 } from "@/constants/types";
+import { clearNotificationsDB, getNotificationsForBondDB } from "@/assets/db/NotificationRepo";
+import { getScheduleOfBond } from "@/assets/db/ScheduleRepo";
 
 export async function allowsNotificationsAsync() {
   const settings = await Notifications.getPermissionsAsync();
@@ -427,6 +431,19 @@ async function registerForPushNotificationsAsync() {
   return token;
 }
 
+
+export async function cancelNotificationsForBond(db: SQLite.SQLiteDatabase, bid: number) {
+  const schedules: Schedule_DB[] = await getScheduleOfBond(db, bid);
+  for(let i = 0; i < schedules.length; i++){
+    const nid = schedules[i].nid;
+    try {
+    await Notifications.cancelScheduledNotificationAsync(nid);
+    } catch (e) {
+      console.error(e);
+      throw new Error("cancelNotificationsForBond() failed")
+    }
+  }
+}
 
 
 

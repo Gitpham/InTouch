@@ -1,4 +1,4 @@
-import { uploadScheduleToDB } from "@/assets/db/ScheduleRepo";
+import { deleteScheduleByBond, uploadScheduleToDB } from "@/assets/db/ScheduleRepo";
 import {
   Schedule,
   Bond,
@@ -18,6 +18,7 @@ import {
   scheduleWeeklyNotification,
   scheduleMonthlyNotification,
   scheduleYearlyNotification,
+  cancelNotificationsForBond,
 } from "./NotificationUtils";
 import * as SQLite from "expo-sqlite";
 
@@ -232,7 +233,17 @@ export const writeYearlyScheduleToDB = async (
       console.error(e);
       throw new Error("writeYearlyScheduleToDB() failed");
     }
+  }
+};
 
+export async function deleteScheduleOfBond(db: SQLite.SQLiteDatabase, bid: number){
+    
+  try {
+    return await deleteScheduleByBond(db, bid) && await cancelNotificationsForBond(db, bid);
+  } catch (e) {
+    console.error(e);
+    throw new Error("deleteScheduleOfBond() failed")
   }
 
-};
+}
+
