@@ -29,6 +29,7 @@ import DailySchedulePicker from "./DailySchedulePicker";
 import WeeklySchedulePicker from "./WeeklySchedulePicker";
 import MonthlySchedulePicker from "./MonthlySchedulePicker";
 import YearlySchedulePicker from "./YearlySchedulePicker";
+import { router } from "expo-router";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -172,6 +173,7 @@ export default function Scheduler() {
           };
 
           await createPotentialSchedule(potentialSchedule);
+          router.back();
         }
         break;
       case ScheduleFrequency.WEEKLY:
@@ -215,6 +217,7 @@ export default function Scheduler() {
             schedule: potentialWeeklySchedule,
           };
           createPotentialSchedule(pSchedule);
+          router.back();
         }
         break;
       case ScheduleFrequency.MONTHLY:
@@ -239,6 +242,7 @@ export default function Scheduler() {
             schedule: pMonthlySchedule,
           };
           createPotentialSchedule(pSchedule);
+          router.back();
         }
         break;
       case ScheduleFrequency.YEARLY: {
@@ -249,11 +253,13 @@ export default function Scheduler() {
           schedule: pYearSchedule,
         };
         createPotentialSchedule(pSchedule);
+        router.back();
         return;
       }
       default:
         break;
     }
+    
   }
 
   function dailySelector() {

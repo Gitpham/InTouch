@@ -131,6 +131,13 @@ export default function groupScreen() {
     await deleteScheduleOfBond(db, bond?.bond_id as number);
     setSchedule([])
   }
+
+  async function onModifySchedule() {
+    router.navigate({pathname: "./createScheduleScreen", params: {id: `${bond?.bond_id}`}})
+  }
+
+
+
   return (
     <SafeAreaView style={styles.stepContainer}>
       <ScrollView nestedScrollEnabled={true}>
@@ -146,6 +153,7 @@ export default function groupScreen() {
           <ThemedText>Type of Schedule: {bond?.schedule} </ThemedText>
           <ThemedText>{showSchedule()}</ThemedText>
           <StandardButton title="Cancel Schedule" onPress={onCancelSchedule}></StandardButton>
+          <StandardButton title="Modify Schedule" onPress={onModifySchedule}></StandardButton>
         </Card>
 
         <Card>
