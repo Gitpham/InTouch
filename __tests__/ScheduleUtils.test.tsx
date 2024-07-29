@@ -1,7 +1,7 @@
 import { mockDatabase } from "@/__mocks__/expo-sqlite";
 import { uploadScheduleToDB } from "@/assets/db/ScheduleRepo";
-import { Bond, DailySchedule, DayOfMonth, MonthlySchedule, ScheduleFrequency, WeeklySchedule } from "@/constants/types";
-import { writeDailyScheduleToDB, writeMonthlyScheduleToDB, writeWeeklyScheduleToDB } from "@/context/ScheduleUtils";
+import { Bond, DailySchedule, DateInYear, DayOfMonth, MonthlySchedule, ScheduleFrequency, WeeklySchedule, YearlySchedule } from "@/constants/types";
+import { writeDailyScheduleToDB, writeMonthlyScheduleToDB, writeWeeklyScheduleToDB, writeYearlyScheduleToDB } from "@/context/ScheduleUtils";
 import * as SQlite from "expo-sqlite";
 
 jest.mock("@/assets/db/ScheduleRepo", () => {
@@ -270,11 +270,70 @@ describe("ScheduleUtils: ", () => {
         expect(uploadScheduleToDB).toHaveBeenCalledWith(db, ScheduleFrequency.MONTHLY, time2.toTimeString(), day5.dayOfWeek, day5.weekOfMonth, null, bond.bond_id, nids[4])
         expect(uploadScheduleToDB).toHaveBeenCalledWith(db, ScheduleFrequency.MONTHLY, time2.toTimeString(), day6.dayOfWeek, day6.weekOfMonth, null, bond.bond_id, nids[5])
         expect(uploadScheduleToDB).toHaveBeenCalledWith(db, ScheduleFrequency.MONTHLY, time2.toTimeString(), day7.dayOfWeek, day7.weekOfMonth, null, bond.bond_id, nids[6])
-
     })
+
+  })
+
+
+  describe("writeYearlyScheduleToDB(): ", () => {
+
+    it("should call uploadScheduleToDB() 1x for yearlySchedule with 1 date", async () => {
+        const date1 = new Date("1995-12-17T03:24:00")
     
+        const dateInYear: DateInYear = {
+            date: date1,
+            time: date1
+        }
+        const schedule:YearlySchedule = {
+            datesInYear: new Set([dateInYear])
+        }
+        const bond: Bond = {
+          bondName: "",
+          bond_id: 1,
+          schedule: "",
+          typeOfCall: "",
+        };
+        const nids = ["a"];
+        await writeYearlyScheduleToDB(schedule, bond, nids, db)
+        expect(uploadScheduleToDB).toHaveBeenCalledTimes(1)
+        expect(uploadScheduleToDB).toHaveBeenCalledWith(db, ScheduleFrequency.YEARLY, date1.toTimeString(), null, null, date1.toDateString(), bond.bond_id, nids[0] )
+    })
 
+    it("should call uploadScheduleToDB() xx for yearlySchedule with 3 dates", async () => {
+        const date1 = new Date("1995-12-17T03:24:00")
+        const date2 = new Date("1995-12-17T09:30:00")
+        const date3 = new Date("2000-12-17T10:30:00")
 
+        const dateInYear1: DateInYear = {
+            date: date1,
+            time: date1
+        }
+
+        const dateInYear2: DateInYear = {
+            date: date2,
+            time: date2
+        }
+
+        const dateInYear3: DateInYear = {
+            date: date3,
+            time: date3
+        }
+        const schedule:YearlySchedule = {
+            datesInYear: new Set([dateInYear1, dateInYear2, dateInYear3])
+        }
+        const bond: Bond = {
+          bondName: "",
+          bond_id: 1,
+          schedule: "",
+          typeOfCall: "",
+        };
+        const nids = ["a", "b", "c"];
+        await writeYearlyScheduleToDB(schedule, bond, nids, db)
+        expect(uploadScheduleToDB).toHaveBeenCalledTimes(3)
+        expect(uploadScheduleToDB).toHaveBeenCalledWith(db, ScheduleFrequency.YEARLY, date1.toTimeString(), null, null, date1.toDateString(), bond.bond_id, nids[0] )
+        expect(uploadScheduleToDB).toHaveBeenCalledWith(db, ScheduleFrequency.YEARLY, date2.toTimeString(), null, null, date2.toDateString(), bond.bond_id, nids[1] )
+        // expect(uploadScheduleToDB).toHaveBeenCalledWith(db, ScheduleFrequency.YEARLY, date3.toTimeString(), null, null, date3.toDateString(), bond.bond_id, nids[2] )
+    })
 
   })
 

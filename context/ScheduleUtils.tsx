@@ -11,6 +11,7 @@ import {
   WeeklySchedule,
   MonthlySchedule,
   YearlySchedule,
+  DateInYear,
 } from "@/constants/types";
 import {
   scheduleDailyNotification,
@@ -207,8 +208,12 @@ export const writeYearlyScheduleToDB = async (
   nids: string[],
   db: SQLite.SQLiteDatabase
 ) => {
-  let i = 0;
-  schedule.datesInYear.forEach(async (d) => {
+
+  const scheduleIter = schedule.datesInYear.values();
+
+  for(let i = 0; i< schedule.datesInYear.size; i++) {
+
+    const d: DateInYear = scheduleIter.next().value
     const time = d.time.toTimeString();
     const date = d.date.toDateString();
     const nid = nids[i];
@@ -224,10 +229,11 @@ export const writeYearlyScheduleToDB = async (
         bid,
         nid
       );
-      i++;
     } catch (e) {
       console.error(e);
       throw new Error("writeYearlyScheduleToDB() failed");
     }
-  });
+
+  }
+
 };

@@ -1,6 +1,18 @@
 import { Schedule_DB } from "@/constants/types";
 import * as SQLite from "expo-sqlite";
 
+/**
+ * 
+ * @param db 
+ * @param type 
+ * @param time date.toTimeString()
+ * @param weekDay sunday = 1
+ * @param weekOfMonth 1-4
+ * @param date in form date.toDateString()
+ * @param bid 
+ * @param nid 
+ * @returns 
+ */
 export async function uploadScheduleToDB(db: SQLite.SQLiteDatabase, 
     type: string,
     time: string, 
