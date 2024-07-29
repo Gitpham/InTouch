@@ -146,12 +146,8 @@ export const writeWeeklyScheduleToDB = async (
     timesOfWeek.push(schedule.saturday.toTimeString());
   }
 
-  console.log("size of timesOfWeek: ", timesOfWeek.length);
-  console.log("size of nids: ", nids.length);
-  console.log("size of dayOFWeek: ", dayOfWeek.length);
 
   for (let i = 0; i < dayOfWeek.length; i++) {
-    console.log("i: ", i);
     const time: string = timesOfWeek[i];
     const nid = nids[i];
     const day = dayOfWeek[i];
@@ -166,7 +162,6 @@ export const writeWeeklyScheduleToDB = async (
         bond.bond_id,
         nid
       );
-      console.log("called uploadScheduleToDB()")
     } catch (e) {
       console.error(e);
       throw new Error("writeWeeklyScheduleToDb(): uploadScheduleToDB failed");
@@ -180,11 +175,13 @@ export const writeMonthlyScheduleToDB = async (
   nids: string[],
   db: SQLite.SQLiteDatabase
 ) => {
-  let i = 0;
-  schedule.daysInMonth.forEach(async (d) => {
-    const time: string = d.time.toTimeString();
-    const dayOfWeek: number = d.dayOfWeek;
-    const weekOfMonth: number = d.weekOfMonth;
+
+  for(let i = 0; i < schedule.daysInMonth.length; i++) {
+    const time: string = schedule.daysInMonth[i].time.toTimeString();
+    const dayOfWeek: number = schedule.daysInMonth[i].dayOfWeek;
+    const weekOfMonth: number = schedule.daysInMonth[i].weekOfMonth;
+    const bid = bond.bond_id
+    const nid = nids[i]
     try {
       await uploadScheduleToDB(
         db,
@@ -193,15 +190,15 @@ export const writeMonthlyScheduleToDB = async (
         dayOfWeek,
         weekOfMonth,
         null,
-        bond.bond_id,
-        nids[i]
+        bid,
+        nid
       );
-      i++;
-    } catch (e) {
-      console.error(e);
-      throw new Error("writeMonthlyScheduleToDB() failed");
-    }
-  });
+
+  }catch (e) {
+    console.error(e);
+    throw new Error("writeMonthlyScheduleToDB() failed");
+  }
+}
 };
 
 export const writeYearlyScheduleToDB = async (
