@@ -1,6 +1,6 @@
-import { Bond, DailySchedule, DayOfMonth, MonthlySchedule, WeeklySchedule } from "@/constants/types"
-import { notificationContentDaily, notificationContentMonthly, notificationContentWeekly, scheduleDailyNotification, scheduleMonthlyNotification, scheduleWeeklyNotification } from "@/context/NotificationUtils"
-import {scheduleNotificationAsync, DailytriggerInput, WeeklyTriggerInput, CalendarTriggerInput} from "expo-notifications";
+import { Bond, DailySchedule, DateInYear, DayOfMonth, MonthlySchedule, WeeklySchedule, YearlySchedule } from "@/constants/types"
+import { notificationContentDaily, notificationContentMonthly, notificationContentWeekly, notificationContentYearly, scheduleDailyNotification, scheduleMonthlyNotification, scheduleWeeklyNotification, scheduleYearlyNotification } from "@/context/NotificationUtils"
+import {scheduleNotificationAsync, DailytriggerInput, WeeklyTriggerInput, CalendarTriggerInput, YearlyTriggerInput} from "expo-notifications";
 
 jest.mock("expo-notifications", () => {
     const mockScheduleNotificationAsync = jest.fn().mockImplementation(() => {
@@ -262,10 +262,98 @@ describe("NotificationUtils: ", () => {
             expect(scheduleNotificationAsync).toHaveBeenCalledWith({content: expectedContent, trigger: expectedTrigger})
             expect(scheduleNotificationAsync).toHaveBeenCalledWith({content: expectedContent, trigger: expectedTrigger1})
             expect(scheduleNotificationAsync).toHaveBeenCalledWith({content: expectedContent, trigger: expectedTrigger2})
+        })
+    })
 
+    describe("scheduleYearlyNotifications: ", () => {
+
+        it("should call scheduleNotificationAsync 1x if yearlySchedule has 1 date", async () => {
+            const date = new Date("1995-12-17T09:30:00")
             
+            const diy: DateInYear = {
+                date: date,
+                time: date
+            }
+            const schedule: YearlySchedule = {
+                datesInYear: new Set([diy])
+            }
+            const bond: Bond = {
+                bondName: "a",
+                bond_id: 1,
+                schedule: "a",
+                typeOfCall: "a"
+            }
+            const expectedContent = notificationContentYearly(bond)
+            const expectedTrigger: YearlyTriggerInput = {
+                day: diy.date.getUTCDate(),
+                month: diy.date.getMonth(),
+                hour: diy.time.getHours(),
+                minute: diy.time.getMinutes(),
+                repeats: true
+            }
+
+            await scheduleYearlyNotification(schedule, bond);
+            expect(scheduleNotificationAsync).toHaveBeenCalledTimes(1)
+            expect(scheduleNotificationAsync).toHaveBeenCalledWith({content: expectedContent, trigger: expectedTrigger})
         })
 
+        it("should call scheduleNotificationAsync 3x if yearlySchedule has 3 dates", async () => {
+            const date = new Date("1995-12-17T09:30:00")
+            const date1 = new Date("1995-11-10T10:30:00")
+            const date2 = new Date("2024-12-17T01:30:00")
+
+            
+            const diy: DateInYear = {
+                date: date,
+                time: date
+            }
+            const diy1: DateInYear = {
+                date: date1,
+                time: date1
+            }
+            const diy2: DateInYear = {
+                date: date2,
+                time: date2
+            }
+            const schedule: YearlySchedule = {
+                datesInYear: new Set([diy, diy1, diy2])
+            }
+            const bond: Bond = {
+                bondName: "a",
+                bond_id: 1,
+                schedule: "a",
+                typeOfCall: "a"
+            }
+            const expectedContent = notificationContentYearly(bond)
+            const expectedTrigger: YearlyTriggerInput = {
+                day: diy.date.getUTCDate(),
+                month: diy.date.getMonth(),
+                hour: diy.time.getHours(),
+                minute: diy.time.getMinutes(),
+                repeats: true
+            }
+            const expectedTrigger1: YearlyTriggerInput = {
+                day: diy1.date.getUTCDate(),
+                month: diy1.date.getMonth(),
+                hour: diy1.time.getHours(),
+                minute: diy1.time.getMinutes(),
+                repeats: true
+            }
+            const expectedTrigger2: YearlyTriggerInput = {
+                day: diy2.date.getUTCDate(),
+                month: diy2.date.getMonth(),
+                hour: diy2.time.getHours(),
+                minute: diy2.time.getMinutes(),
+                repeats: true
+            }
+
+            await scheduleYearlyNotification(schedule, bond);
+            expect(scheduleNotificationAsync).toHaveBeenCalledTimes(3)
+            expect(scheduleNotificationAsync).toHaveBeenCalledWith({content: expectedContent, trigger: expectedTrigger})
+            expect(scheduleNotificationAsync).toHaveBeenCalledWith({content: expectedContent, trigger: expectedTrigger1})
+            expect(scheduleNotificationAsync).toHaveBeenCalledWith({content: expectedContent, trigger: expectedTrigger2})
+
+        })
 
 
     })

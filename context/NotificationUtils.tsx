@@ -95,7 +95,7 @@ export const notificationContentMonthly = (
   };
 };
 
-const notificationContentYearly = (
+export const notificationContentYearly = (
   bond: Bond
 ): Notifications.NotificationContentInput => {
   return {
@@ -338,7 +338,9 @@ export async function scheduleYearlyNotification(
   bond: Bond
 ): Promise<string[]>{
   const nids: string[] = [];
-  schedule.datesInYear.forEach(async (d: DateInYear) => {
+  const sIter = schedule.datesInYear.values();
+  for(let i = 0; i< schedule.datesInYear.size; i++){
+    const d = sIter.next().value
     const trigger: Notifications.YearlyTriggerInput = {
       day: d.date.getUTCDate(),
       month: d.date.getMonth(),
@@ -357,7 +359,8 @@ export async function scheduleYearlyNotification(
         `scheduleYearlyNotification() failed to scheduleNotificationAsync for ${d.getDate()} of ${d.getMonth()}`
       );
     }
-  })
+  }
+ 
   return nids;
 }
 export async function getAllScheduledNotifications() {
