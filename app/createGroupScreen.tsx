@@ -11,7 +11,7 @@ import { Bond, Person } from "@/constants/types";
 import { StandardButton } from "@/components/ButtonStandard";
 import React from "react";
 import { ScheduleContext } from "@/context/ScheduleContext";
-import { generateNotificationSchedule } from "@/context/ScheduleUtils";
+import { generateNotificationSchedule, getScheduleType } from "@/context/ScheduleUtils";
 import { useSQLiteContext } from "expo-sqlite";
 
 export default function createGroupScreen() {
@@ -33,14 +33,16 @@ export default function createGroupScreen() {
   if (bondName) {
     title = bondName;
   }
-  
+
   async function onDonePress() {
     if (!bondName) {
       Alert.alert("Must enter a Bond name");
       return;
     }
+
     try {
-    await createBond(bondToAdd);
+    bondToAdd.schedule = getScheduleType(potentialSchedule)
+    await createBond(bondToAdd)
     } catch (e) {
       console.error(e);
       throw Error("createGroupScreen onDonePress(): Error calling createbond()")

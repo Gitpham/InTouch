@@ -1,152 +1,199 @@
 import { ThemedText } from "@/components/ThemedText";
-import { StyleSheet, FlatList, Pressable, ScrollView, View } from "react-native"
+import {
+  StyleSheet,
+  FlatList,
+  Pressable,
+  ScrollView,
+  View,
+} from "react-native";
 import { Card, ListItem, Button } from "@rneui/themed";
 import { useLocalSearchParams } from "expo-router";
 import { useContext, useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { InTouchContext } from "@/context/InTouchContext";
-import { Bond, Person, Reminder, formatDate } from "@/constants/types";
+import { Bond, Person, Reminder, Schedule_DB } from "@/constants/types";
 import { router } from "expo-router";
 import React from "react";
 import { StandardButton } from "@/components/ButtonStandard";
+import { getScheduleOfBond } from "@/assets/db/ScheduleRepo";
+import { useSQLiteContext } from "expo-sqlite";
+import { displaySchedule } from "@/context/ScheduleUtils";
 
 export default function groupScreen() {
-
-  const {bondList, getMembersOfBond, removeBond, bondPersonMap, getRemindersOfBond, removeReminder, reminderList } = useContext(InTouchContext)
+  const {
+    bondList,
+    getMembersOfBond,
+    removeBond,
+    bondPersonMap,
+    getRemindersOfBond,
+    removeReminder,
+    reminderList,
+  } = useContext(InTouchContext);
   const localParams = useLocalSearchParams();
-  const [bond, setBond] = useState<Bond>()
+  const [bond, setBond] = useState<Bond>();
   const [members, setMembers] = useState<Array<Person>>();
   const [reminders, setReminders] = useState<Array<Reminder>>();
+  const [schedule, setSchedule] = useState<Schedule_DB[]>([]);
+  const db = useSQLiteContext();
 
   useEffect(() => {
     const bondId: number = +localParams.id;
-    let bond_index = bondList.findIndex(item => item.bond_id === bondId)
+    let bond_index = bondList.findIndex((item) => item.bond_id === bondId);
     if (bond_index !== -1) {
       const b: Bond = bondList[bond_index];
       setBond(b);
       const p = getMembersOfBond(b);
       setMembers(p);
       const r = getRemindersOfBond(bondId);
-      setReminders(r)
+      setReminders(r);
+
+      const getSchedule = async () => {
+        const s = await getScheduleOfBond(db, bondId);
+        console.log("got schedule", s);
+        setSchedule(s);
+      };
+      getSchedule();
     }
-  }, [bondPersonMap, reminderList])
+  }, [bondPersonMap, reminderList]);
 
   const renderMembers = ({ item }: { item: Person }) => {
     return (
       <ListItem bottomDivider>
         <ListItem.Content id={item.person_id.toString()}>
-        <View style = {styles.rowOrientation}>
-          <View style = {styles.nameContainer}>
-            <Pressable onPress = {() => {router.navigate({pathname: "./personScreen", params: {id: `${item.person_id}`}})}}>
-              <ListItem.Title>
-                {item.firstName} {item.lastName}
-              </ListItem.Title>
+          <View style={styles.rowOrientation}>
+            <View style={styles.nameContainer}>
+              <Pressable
+                onPress={() => {
+                  router.navigate({
+                    pathname: "./personScreen",
+                    params: { id: `${item.person_id}` },
+                  });
+                }}
+              >
+                <ListItem.Title>
+                  {item.firstName} {item.lastName}
+                </ListItem.Title>
+              </Pressable>
+            </View>
+            <Pressable onPress={() => console.log("delete!")}>
+              <ThemedText>Delete</ThemedText>
             </Pressable>
           </View>
-          <Pressable
-            onPress = {() => console.log("delete!")}
-          >
-            <ThemedText>Delete</ThemedText>
-          </Pressable>
-          </View>
         </ListItem.Content>
-
-
       </ListItem>
     );
-  }
+  };
 
   const renderReminders = ({ item }: { item: Reminder }) => {
     if (item) {
-
       return (
         <ListItem bottomDivider>
-  
           <ListItem.Content id={item.reminder_id.toString()}>
-            <ListItem.Title>
-              {item.date + " - " + item.reminder} 
-            </ListItem.Title>
+            <ListItem.Title>{item.date + " - " + item.reminder}</ListItem.Title>
           </ListItem.Content>
           <Pressable
-           onPress={() => deleteReminder(item.reminder_id)}
-           style={styles.touchable}>
+            onPress={() => deleteReminder(item.reminder_id)}
+            style={styles.touchable}
+          >
             <ThemedText>Delete</ThemedText>
-           </Pressable>
-  
+          </Pressable>
         </ListItem>
-      )}
-      else {
-        return (
-          <ListItem bottomDivider>
-          </ListItem>
-        );
-
-      }
+      );
+    } else {
+      return <ListItem bottomDivider></ListItem>;
     }
+  };
 
-    const deleteReminder = (reminder_id: number) => {
-      removeReminder(reminder_id);
-    }
+  const deleteReminder = (reminder_id: number) => {
+    removeReminder(reminder_id);
+  };
 
   const deleteBond = () => {
     if (bond) {
-    removeBond(bond);
+      removeBond(bond);
     }
     router.back();
+  };
+
+
+  function showSchedule(){
+    const show: (React.JSX.Element | undefined)[] = [];
+    schedule[0] ?
+           schedule.forEach(s => {
+            show.push(displaySchedule(s))
+           })
+           : <></>
+
+    return show;
+
   }
+  return (
+    <SafeAreaView style={styles.stepContainer}>
+      <ScrollView nestedScrollEnabled={true}>
+        <Card>
+          <Card.Title>Name: {bond?.bondName}</Card.Title>
+          <Card.Divider></Card.Divider>
+          <ThemedText>Number: </ThemedText>
+        </Card>
 
-       return (
-        <SafeAreaView style = {styles.stepContainer} >
-          <ScrollView  nestedScrollEnabled={true}>
-             <Card>
-               <Card.Title>Name: {bond?.bondName}</Card.Title>
-               <Card.Divider></Card.Divider>
-               <ThemedText>Number: </ThemedText>
-               {/* <ThemedText>{person?.phoneNumber}</ThemedText> */}
-             </Card>
+        <Card>
+          <Card.Title>Schedule</Card.Title>
+          <Card.Divider></Card.Divider>
+          <ThemedText>Type of Schedule: {bond?.schedule} </ThemedText>
+          <ThemedText>{showSchedule()}</ThemedText>
+        </Card>
 
-             <Card>
-              <Card.Title>Reminders</Card.Title>
-              <FlatList
-              data={reminders}
-              renderItem={renderReminders}
-              keyExtractor={(item) => item.reminder_id.toString()}
-              />
-             </Card>
+        <Card>
+          <Card.Title>Reminders</Card.Title>
+          <FlatList
+            data={reminders}
+            renderItem={renderReminders}
+            keyExtractor={(item) => item.reminder_id.toString()}
+          />
+        </Card>
 
-             <Button
-             title = "+Add Reminder"
-             buttonStyle = {styles.button}
-             titleStyle = {styles.title}
-             onPress = {() => router.navigate({pathname: "./addReminderModal", params: {person_id: -1, bond_id: bond.bond_id}})}
-             />
+        <Button
+          title="+Add Reminder"
+          buttonStyle={styles.button}
+          titleStyle={styles.title}
+          onPress={() =>
+            router.navigate({
+              pathname: "./addReminderModal",
+              params: { person_id: -1, bond_id: bond.bond_id },
+            })
+          }
+        />
 
-             <Card>
-              <Card.Title>Members</Card.Title>
-              <FlatList
-                nestedScrollEnabled = {true}
-                style = {styles.flatList}
-                data = {members}
-                renderItem = {renderMembers}
-                keyExtractor={(item) => item.person_id.toString()}
-                />
-             </Card>
+        <Card>
+          <Card.Title>Members</Card.Title>
+          <FlatList
+            nestedScrollEnabled={true}
+            style={styles.flatList}
+            data={members}
+            renderItem={renderMembers}
+            keyExtractor={(item) => item.person_id.toString()}
+          />
+        </Card>
 
-             <StandardButton
-             title = "+Add Member"
-             onPress = {() => {router.navigate({pathname: "./addMemberScreen", params: {bond_id : bond.bond_id, group_screen : 1}})}}
-             />
+        <StandardButton
+          title="+Add Member"
+          onPress={() => {
+            router.navigate({
+              pathname: "./addMemberScreen",
+              params: { bond_id: bond.bond_id, group_screen: 1 },
+            });
+          }}
+        />
 
-             <Button
-             title = "Delete"
-             buttonStyle = {styles.redButton}
-             titleStyle = {styles.redTitle}
-              onPress = {() => deleteBond()}
-             />
-          </ScrollView>
-        </SafeAreaView>
-
-       )
+        <Button
+          title="Delete"
+          buttonStyle={styles.redButton}
+          titleStyle={styles.redTitle}
+          onPress={() => deleteBond()}
+        />
+      </ScrollView>
+    </SafeAreaView>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -184,8 +231,8 @@ const styles = StyleSheet.create({
   },
   rowOrientation: {
     flexDirection: "row",
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   nameContainer: {
     flex: 1,
@@ -193,5 +240,5 @@ const styles = StyleSheet.create({
   },
   touchable: {
     padding: 10,
-  }
+  },
 });

@@ -12,6 +12,7 @@ import {
   MonthlySchedule,
   YearlySchedule,
   DateInYear,
+  Schedule_DB,
 } from "@/constants/types";
 import {
   scheduleDailyNotification,
@@ -21,6 +22,9 @@ import {
   cancelNotificationsForBond,
 } from "./NotificationUtils";
 import * as SQLite from "expo-sqlite";
+import { View } from "react-native";
+import React from "react";
+import { ThemedText } from "@/components/ThemedText";
 
 //SCHEDULE FUNCTIONS
 export const generateNotificationSchedule = async (
@@ -237,13 +241,68 @@ export const writeYearlyScheduleToDB = async (
 };
 
 export async function deleteScheduleOfBond(db: SQLite.SQLiteDatabase, bid: number){
-    
   try {
     return await deleteScheduleByBond(db, bid) && await cancelNotificationsForBond(db, bid);
   } catch (e) {
     console.error(e);
     throw new Error("deleteScheduleOfBond() failed")
   }
+}
 
+export function getScheduleType(schedule: Schedule): string{
+  if(isDailySchedule(schedule.schedule)){
+    return "Daily"
+  }
+  if (isWeeklySchedule(schedule.schedule)){
+    return "Weekly"
+  }
+  if (isMonthlySchedule(schedule.schedule)){
+    return "Monthly"
+  }
+  if(isYearlySchedule(schedule.schedule)){
+    return "Yearly"
+  }
+  return "invalid type"
+}
+
+export function displaySchedule(schedule: Schedule_DB) {
+  console.log("displaySchedule(): schedule: ", schedule)
+  if(schedule.type == ScheduleFrequency.DAILY) {
+    return (<View>
+      <ThemedText>
+        Time of day: {schedule.time}
+      </ThemedText>
+    </View>)
+  }
+
+  if(schedule.type == ScheduleFrequency.WEEKLY) {
+    return (<View>
+      <ThemedText>
+        Day of Week: {schedule.weekDay}
+        Time: {schedule.time}
+      </ThemedText>
+    </View>)
+  }
+
+  if(schedule.type == ScheduleFrequency.MONTHLY) {
+    return (<View>
+      <ThemedText>
+        Day of Week: {schedule.weekDay}
+        week of Month: {schedule.weekOfMonth}
+        Time: {schedule.time}
+      </ThemedText>
+    </View>)
+  }
+
+  if(schedule.type == ScheduleFrequency.YEARLY) {
+    return (<View>
+      <ThemedText>
+        Date: {schedule.date}
+        Time: {schedule.time}
+      </ThemedText>
+    </View>)
+  }
+  
+  
 }
 

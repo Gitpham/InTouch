@@ -86,11 +86,22 @@ export const deleteScheduleByNotificationID = async (db: SQLite.SQLiteDatabase, 
 
 
 export const getScheduleOfBond = async (db: SQLite.SQLiteDatabase, bid: number): Promise<Schedule_DB[]>  => {
+    console.log("getScheduleOfBOnd()")
     const statement = await db.prepareAsync(`SELECT * FROM schedule WHERE bond_id = ?;`)
-    const value: string[] = [bid.toString()]
+    const value = [bid]
     try {
         const result = await statement.executeAsync<Schedule_DB>(value);
         return await result.getAllAsync();
+    } catch (error) {
+        console.error(error)
+        throw Error("Failed to getAllPersons()")
+    }
+}
+
+export const getAllSchedules= async (db: SQLite.SQLiteDatabase): Promise<Schedule_DB[]>  => {
+    console.log("getScheduleOfBOnd()")
+    try {
+        return await db.getAllAsync(`SELECT * FROM schedule;`)
     } catch (error) {
         console.error(error)
         throw Error("Failed to getAllPersons()")
