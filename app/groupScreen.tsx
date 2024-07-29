@@ -17,7 +17,7 @@ import React from "react";
 import { StandardButton } from "@/components/ButtonStandard";
 import { getScheduleOfBond } from "@/assets/db/ScheduleRepo";
 import { useSQLiteContext } from "expo-sqlite";
-import { displaySchedule } from "@/context/ScheduleUtils";
+import { deleteScheduleOfBond, displaySchedule } from "@/context/ScheduleUtils";
 
 export default function groupScreen() {
   const {
@@ -125,7 +125,11 @@ export default function groupScreen() {
            : <></>
 
     return show;
+  }
 
+  async function onCancelSchedule(){
+    await deleteScheduleOfBond(db, bond?.bond_id as number);
+    setSchedule([])
   }
   return (
     <SafeAreaView style={styles.stepContainer}>
@@ -141,6 +145,7 @@ export default function groupScreen() {
           <Card.Divider></Card.Divider>
           <ThemedText>Type of Schedule: {bond?.schedule} </ThemedText>
           <ThemedText>{showSchedule()}</ThemedText>
+          <StandardButton title="Cancel Schedule" onPress={onCancelSchedule}></StandardButton>
         </Card>
 
         <Card>
