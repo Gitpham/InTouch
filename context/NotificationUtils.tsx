@@ -1,7 +1,5 @@
 import * as Notifications from "expo-notifications";
 import * as Device from "expo-device";
-import * as SQLite from "expo-sqlite";
-
 import Constants from "expo-constants";
 import { Alert, Linking, Platform } from "react-native";
 import {
@@ -9,17 +7,10 @@ import {
   DailySchedule,
   DateInYear,
   DayOfMonth,
-  isDailySchedule,
-  isMonthlySchedule,
-  isWeeklySchedule,
-  isYearlySchedule,
   MonthlySchedule,
-  Schedule,
-  ScheduleFrequency,
   WeeklySchedule,
   YearlySchedule,
 } from "@/constants/types";
-import { uploadScheduleToDB } from "@/assets/db/ScheduleRepo";
 
 export async function allowsNotificationsAsync() {
   const settings = await Notifications.getPermissionsAsync();
@@ -74,7 +65,7 @@ export async function cancelNotifications(notificationIDs: string[]) {
   }
 }
 
-const notificationContentDaily = (
+export const notificationContentDaily = (
   bond: Bond
 ): Notifications.NotificationContentInput => {
   return {
@@ -84,7 +75,7 @@ const notificationContentDaily = (
   };
 };
 
-const notificationContentWeekly = (
+export const notificationContentWeekly = (
   bond: Bond
 ): Notifications.NotificationContentInput => {
   return {
@@ -94,7 +85,7 @@ const notificationContentWeekly = (
   };
 };
 
-const notificationContentMonthly = (
+export const notificationContentMonthly = (
   bond: Bond
 ): Notifications.NotificationContentInput => {
   return {
@@ -141,7 +132,12 @@ export async function scheduleDailyNotification(
   }
 }
 
-
+/**
+ * Sunday: 1, Sat: 7
+ * @param schedule 
+ * @param bond 
+ * @returns 
+ */
 export async function scheduleWeeklyNotification(
   schedule: WeeklySchedule,
   bond: Bond
@@ -224,7 +220,6 @@ export async function scheduleWeeklyNotification(
     };
 
     try {
-      console.log("wednesday");
       nids.push(await Notifications.scheduleNotificationAsync({
         content: notificationContentWeekly(bond),
         trigger: weeklyTrigger,
@@ -311,9 +306,8 @@ export async function scheduleMonthlyNotification(
   bond: Bond
 ): Promise<string[]> {
   const nids: string[] = [];
-  schedule.daysInMonth.forEach(async (d: DayOfMonth) => {
-    console.log("day in monthly schedule: ", d as DayOfMonth);
-
+  for(let i = 0; i < schedule.daysInMonth.length; i++) {
+    const d = schedule.daysInMonth[i]
     const weekOfMonth: number = Number(d.weekOfMonth);
     const dayOfWeek: number = Number(d.dayOfWeek);
     const trigger: Notifications.CalendarTriggerInput = {
@@ -323,7 +317,6 @@ export async function scheduleMonthlyNotification(
       minute: d.time.getMinutes(),
       repeats: true,
     };
-
     try {
       nids.push(await Notifications.scheduleNotificationAsync({
         content: notificationContentMonthly(bond),
@@ -335,7 +328,8 @@ export async function scheduleMonthlyNotification(
         `scheduleMonthlyNotification() failed to scheduleNotificationAsync for the ${d.dayOfWeek} of the ${d.weekOfMonth} week of Month`
       );
     }
-  });
+  }
+
   return nids
 }
 
@@ -343,7 +337,6 @@ export async function scheduleYearlyNotification(
   schedule: YearlySchedule,
   bond: Bond
 ): Promise<string[]>{
-  console.log("scheduleYearlyNotificaion(): ")
   const nids: string[] = [];
   schedule.datesInYear.forEach(async (d: DateInYear) => {
     const trigger: Notifications.YearlyTriggerInput = {
@@ -365,7 +358,6 @@ export async function scheduleYearlyNotification(
       );
     }
   })
-  console.log("nids: ", nids)
   return nids;
 }
 export async function getAllScheduledNotifications() {
