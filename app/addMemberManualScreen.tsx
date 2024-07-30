@@ -8,6 +8,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import React from "react";
 import { InTouchContext } from "@/context/InTouchContext";
 import { Person } from "@/constants/types";
+import { styles } from "@/constants/Stylesheet"
 
 export default function addMemberManualScreen() {
   const router = useRouter();
@@ -18,9 +19,6 @@ export default function addMemberManualScreen() {
   const [memberFirstName, memFirstNameChange] = useState("");
   const [memberLastName, memLastNameChange] = useState("");
   const [memberNumber, memNumberChange] = useState("");
-
-  // Generate unique person id
-
 
   async function savePerson() {
     const personID = generatePersonId();
@@ -35,10 +33,7 @@ export default function addMemberManualScreen() {
     await createPerson(newContact);
     const bond_id = +(localParams.bond_id as string)
     if (bond_id !== -1) {
-      // console.log("creating bond member with person id: ", person_id, " and bond id: ", bond_id)
-      // console.log("addMembeManuallyScreen: personID: ", personID)
         addTempBondMember(personID);
-      // console.log("addMemberManually tempBondMembers:", tempBondMembers)
     }
 
     router.back();
@@ -60,14 +55,7 @@ export default function addMemberManualScreen() {
         onChangeText={memFirstNameChange}
         value={memberFirstName}
         placeholder="e.g. John"
-        style={{
-          height: 40,
-          margin: 13,
-          borderWidth: 1,
-          padding: 10,
-          color: "white",
-          backgroundColor: "gray",
-        }}
+        style={styles.textInput}
       ></TextInput>
 
       <View style={styles.indentedView}>
@@ -77,14 +65,7 @@ export default function addMemberManualScreen() {
         onChangeText={memLastNameChange}
         value={memberLastName}
         placeholder="e.g. Doe"
-        style={{
-          height: 40,
-          margin: 13,
-          borderWidth: 1,
-          padding: 10,
-          color: "white",
-          backgroundColor: "gray",
-        }}
+        style={styles.textInput}
       ></TextInput>
       <View style={styles.indentedView}>
         <ThemedText style={styles.title}>Phone Number</ThemedText>
@@ -94,21 +75,13 @@ export default function addMemberManualScreen() {
         value={memberNumber}
         placeholder="e.g. (111)-111-1111"
         keyboardType="numeric"
-        style={{
-          height: 40,
-          margin: 13,
-          borderWidth: 1,
-          padding: 10,
-          color: "white",
-          backgroundColor: "gray",
-        }}
+        style={styles.textInput}
       ></TextInput>
 
       <Button
         title="Create Contact"
         onPress={() => {
           savePerson();
-          //  router.push('/createGroupModal');
         }}
         buttonStyle={styles.button}
         titleStyle={styles.title}
@@ -117,29 +90,3 @@ export default function addMemberManualScreen() {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  button: {
-    margin: 10,
-    backgroundColor: "white",
-    borderColor: "black",
-    borderWidth: 2,
-  },
-  title: {
-    color: "black",
-  },
-  stepContainer: {
-    flex: 1,
-    backgroundColor: "white",
-    gap: 8,
-    marginBottom: 8,
-    flexDirection: "column",
-    paddingTop: 50,
-  },
-  indentedView: {
-    paddingLeft: 10,
-  },
-  centeredView: {
-    alignItems: "center",
-  },
-});

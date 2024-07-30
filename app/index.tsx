@@ -5,14 +5,15 @@ import { StyleSheet,  Pressable, Alert } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Link } from 'expo-router';
-import React, { useContext } from 'react';
+import React from 'react';
+import { styles } from "@/constants/Stylesheet"
 
 
 
 export default function greetingScreen() {
   return (
     <>
-    <SafeAreaView style = {styles.stepContainer}>
+    <SafeAreaView style = {styles.homeContainer}>
  
     <Link href="./(tabs)" asChild>
     <Pressable>
@@ -21,41 +22,8 @@ export default function greetingScreen() {
     </Link>
    
     </SafeAreaView>
-     {/* {drawerLayout()} */}
      </>
 
     
   )
 }
-
-
-
-
-
-const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    flex: 1,
-    backgroundColor: 'white',
-    gap: 8,
-    marginBottom: 8,
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
-  testButton: {
-    color: 'red'
-  }
-});

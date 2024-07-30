@@ -8,6 +8,7 @@ import { router } from "expo-router";
 import { InTouchContext } from "@/context/InTouchContext";
 import { StandardButton } from "@/components/ButtonStandard";
 import { Bond } from "@/constants/types";
+import { styles } from "@/constants/Stylesheet"
 
 export default function homeScreen() {
   const { bondList, bondPersonMap } = useContext(InTouchContext);
@@ -50,24 +51,3 @@ export default function homeScreen() {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  title: {
-    color: "black",
-  },
-  items: {
-    color: "black",
-    margin: 25,
-  },
-  stepContainer: {
-    flex: 1,
-    backgroundColor: "white",
-    gap: 8,
-    marginBottom: 8,
-    flexDirection: "column",
-    paddingTop: 50,
-  },
-  centeredView: {
-    alignItems: "center",
-  },
-});

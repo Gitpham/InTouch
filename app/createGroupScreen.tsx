@@ -9,6 +9,7 @@ import { router, useFocusEffect } from "expo-router";
 import { InTouchContext } from "@/context/InTouchContext";
 import { Bond, Person } from "@/constants/types";
 import { StandardButton } from "@/components/ButtonStandard";
+import { styles } from "@/constants/Stylesheet";
 import React from "react";
 
 export default function createGroupScreen() {
@@ -47,8 +48,8 @@ export default function createGroupScreen() {
     title = bondName;
   }
 
-  const renderGroupMembers = ({ item }: { item}) => {
-    let personToShow: Person;
+  const renderGroupMembers = ({ item }: { item: number }) => {
+    let personToShow: Person = peopleList[0];
     peopleList.forEach((person: Person) => {
       if (person.person_id === item) {
         personToShow = person;
@@ -81,14 +82,7 @@ export default function createGroupScreen() {
         onChangeText={groupNameChange}
         value={bondName}
         placeholder="Enter Group Name"
-        style={{
-          height: 40,
-          margin: 13,
-          borderWidth: 1,
-          padding: 10,
-          color: "white",
-          backgroundColor: "gray",
-        }}
+        style = {styles.textInput}
       ></TextInput>
       <View style={styles.centeredView}>
       <ThemedText type="subtitle" style={styles.title}>
@@ -99,9 +93,8 @@ export default function createGroupScreen() {
       <FlatList
         data={([...tempBondMembers])}
         renderItem={renderGroupMembers}
-        keyExtractor={(item) => item}
+        keyExtractor={(item) => item.toString()}
       />
-
 
       <Button
         title="Add Group Member"
@@ -132,27 +125,3 @@ export default function createGroupScreen() {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  button: {
-    margin: 10,
-    backgroundColor: "white",
-    borderColor: "black",
-    borderWidth: 2,
-  },
-  title: {
-    color: "black",
-  },
-  stepContainer: {
-    flex: 1,
-    backgroundColor: "white",
-    gap: 8,
-    marginBottom: 8,
-    flexDirection: "column",
-    paddingTop: 50,
-  },
-  centeredView: {
-    alignItems: "center",
-  },
-});
-

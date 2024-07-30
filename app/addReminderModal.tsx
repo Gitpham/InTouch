@@ -9,7 +9,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { ThemedText } from '@/components/ThemedText';import { StandardButton } from '@/components/ButtonStandard';
 import { InTouchContext } from '@/context/InTouchContext';
 import { Alert } from 'react-native';
-;
+import { styles } from "@/constants/Stylesheet"
 
 export default function addReminderModal() {
     const { reminderList, createReminder } = useContext(InTouchContext);   
@@ -45,14 +45,7 @@ export default function addReminderModal() {
         onChangeText={setReminder}
         value={reminder}
         placeholder="e.g. Ask about Nate's soccer tournament"
-        style={{
-        height: 320,
-        margin: 13,
-        borderWidth: 1,
-        padding: 10,
-        color: "white",
-        backgroundColor: "gray",
-        }}
+        style= {styles.textInput}
         />
 
         <StandardButton 
@@ -68,38 +61,3 @@ export default function addReminderModal() {
   </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-    button: {
-      margin: 10,
-      backgroundColor: "white",
-      borderColor: "black",
-      borderWidth: 2,
-    },
-    title: {
-      color: "black",
-    },
-    redButton: {
-      margin: 10,
-      backgroundColor: "white",
-      borderColor: "red",
-      borderWidth: 2,
-    },
-    redTitle: {
-      color: "red",
-    },
-    stepContainer: {
-      flex: 1,
-      backgroundColor: "white",
-      gap: 8,
-      marginBottom: 8,
-      flexDirection: "column",
-      paddingTop: 50,
-    },
-    centeredView: {
-      alignItems: "center",
-    },
-    flatList: {
-      height: 200,
-    }
-  });

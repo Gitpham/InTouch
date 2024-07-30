@@ -7,8 +7,9 @@ import { useContext } from "react";
 import { Pressable, StyleSheet, FlatList, View } from "react-native";
 import { Bond, Person, Reminder } from "@/constants/types";
 import React from "react";
-import { deleteReminder } from "@/assets/db/ReminderRepo";
 import { ListItem } from "@rneui/base";
+import { styles } from "@/constants/Stylesheet"
+import { DeleteIcon } from "@/components/DeleteIcon";
 
 
 export default function ReminderScreen() {
@@ -49,9 +50,11 @@ export default function ReminderScreen() {
               <ListItem bottomDivider>
                 <ListItem.Content id={item.reminder_id.toString()}>
                     <View style = {styles.rowOrientation}>
+                    <View style = {styles.nameContainer}>
                   <ListItem.Title style = {styles.name}>
                     {name + " "} 
                   </ListItem.Title>
+                  </View>
                   <ListItem.Title style = {styles.date}>
                     {item.date} 
                   </ListItem.Title>
@@ -60,10 +63,11 @@ export default function ReminderScreen() {
                     {item.reminder} 
                   </ListItem.Title>
                 </ListItem.Content>
+
                 <Pressable
                  onPress={() => deleteReminder(item.reminder_id)}
                  style={styles.touchable}>
-                  <ThemedText>Delete</ThemedText>
+                  <DeleteIcon></DeleteIcon>
                  </Pressable>
         
               </ListItem>
@@ -98,60 +102,3 @@ export default function ReminderScreen() {
 
 
 }
-
-
-const styles = StyleSheet.create({
-     button: {
-       margin: 10,
-       backgroundColor: "white",
-       borderColor: "black",
-       borderWidth: 2,
-     },
-     title: {
-       color: "black",
-     },
-     name: {
-          color: "black",
-          fontWeight: 'bold',
-          fontSize: 20
-     },
-     date: {
-          color: "gray",
-          fontSize: 12
-     },
-     redButton: {
-       margin: 10,
-       backgroundColor: "white",
-       borderColor: "red",
-       borderWidth: 2,
-     },
-     redTitle: {
-       color: "red",
-     },
-     stepContainer: {
-       flex: 1,
-       backgroundColor: "white",
-       gap: 8,
-       marginBottom: 8,
-       flexDirection: "column",
-       paddingTop: 50,
-     },
-     centeredView: {
-       alignItems: "center",
-     },
-     flatList: {
-       height: 200,
-     },
-     rowOrientation: {
-       flexDirection: "row",
-       justifyContent: 'space-between',
-       alignItems: 'center',
-     },
-     nameContainer: {
-       flex: 1,
-       marginRight: 10, // Adds space between delete button and name
-     },
-     touchable: {
-       padding: 10,
-     }
-});

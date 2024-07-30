@@ -1,5 +1,5 @@
 import { ThemedText } from "@/components/ThemedText";
-import { StyleSheet, FlatList, Pressable, ScrollView, View } from "react-native"
+import { StyleSheet, FlatList, Pressable, ScrollView, View, Image } from "react-native"
 import { Card, ListItem, Button } from "@rneui/themed";
 import { useLocalSearchParams } from "expo-router";
 import { useContext, useEffect, useState } from "react";
@@ -10,6 +10,8 @@ import { router } from "expo-router";
 import React from "react";
 import { StandardButton } from "@/components/ButtonStandard";
 import { Alert } from "react-native";
+import { styles } from "@/constants/Stylesheet";
+import { DeleteIcon } from "@/components/DeleteIcon";
 
 export default function groupScreen() {
 
@@ -47,7 +49,7 @@ export default function groupScreen() {
           <Pressable
             onPress = {() => {deletePersonAlert(item)}}
           >
-            <ThemedText>Delete</ThemedText>
+            <DeleteIcon></DeleteIcon>
           </Pressable>
           </View>
         </ListItem.Content>
@@ -78,7 +80,7 @@ export default function groupScreen() {
           <Pressable
            onPress={() => deleteReminderAlert(item.reminder_id)}
            style={styles.touchable}>
-            <ThemedText>Delete</ThemedText>
+            <DeleteIcon></DeleteIcon>
            </Pressable>
   
         </ListItem>
@@ -181,55 +183,3 @@ export default function groupScreen() {
 
        )
 }
-
-const styles = StyleSheet.create({
-  button: {
-    margin: 10,
-    backgroundColor: "white",
-    borderColor: "black",
-    borderWidth: 2,
-  },
-  title: {
-    color: "black",
-  },
-  redButton: {
-    margin: 10,
-    backgroundColor: "white",
-    borderColor: "red",
-    borderWidth: 2,
-  },
-  redTitle: {
-    color: "red",
-  },
-  stepContainer: {
-    flex: 1,
-    backgroundColor: "white",
-    gap: 8,
-    marginBottom: 8,
-    flexDirection: "column",
-    paddingTop: 50,
-  },
-  centeredView: {
-    alignItems: "center",
-  },
-  flatList: {
-    height: 200,
-  },
-  rowOrientation: {
-    flex: 1,
-    flexDirection: "row",
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  nameContainer: {
-    flex: 1,
-    marginRight: 10, // Adds space between delete button and name
-  },
-  touchable: {
-    padding: 10,
-  },
-  date: {
-    color: "gray",
-    fontSize: 12
-}
-})

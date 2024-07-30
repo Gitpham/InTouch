@@ -1,6 +1,7 @@
 import { Button } from "@rneui/themed";
 import { router } from "expo-router";
 import { StyleSheet} from "react-native";
+import { PropsWithChildren } from "react"
 
 
 export const StandardButton= ({title, onPress}) => {
@@ -14,21 +15,6 @@ export const StandardButton= ({title, onPress}) => {
         },
         title: {
           color: "black",
-        },
-        items: {
-          color: "black",
-          margin: 25,
-        },
-        stepContainer: {
-          flex: 1,
-          backgroundColor: "white",
-          gap: 8,
-          marginBottom: 8,
-          flexDirection: "column",
-          paddingTop: 50,
-        },
-        centeredView: {
-          alignItems: "center",
         },
       });
 

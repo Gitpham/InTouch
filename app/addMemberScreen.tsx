@@ -9,6 +9,7 @@ import * as Contacts from "expo-contacts";
 import { InTouchContext } from "@/context/InTouchContext";
 import { StandardButton } from "@/components/ButtonStandard";
 import { Person } from "@/constants/types";
+import { styles } from "@/constants/Stylesheet"
 import React from "react";
 
 export default function addMemberScreen() {
@@ -44,30 +45,28 @@ export default function addMemberScreen() {
       }
     }
   }
-
   const addBondMember = ({ item }: { item: Person }) => {
-    if (!tempBondMembers.has(item.person_id)) {
+    if (!tempBondMembers.has(item.person_id as number)) {
       const bond_members = bondPersonMap.get(bond_id);
-      if (bond_members) {
-        if (bond_members.has(item.person_id)) {
-          return null;
-        }
+      if (bond_members && bond_members.has(item.person_id as number)) {
+        return null;
       }
       return (
         <ListItem bottomDivider>
-          <Pressable onPress={() => {addTempBondMember(item.person_id); setRefresh((oldValue) => {return !oldValue})}}>
-          <ListItem.Content id={item.person_id.toString()}>
-            <ListItem.Title>
-              {item.firstName} {item.lastName}
-            </ListItem.Title>
-            <ListItem.Title>
-              Phone Number: {item.phoneNumber} id: {item.person_id.toString()}
-            </ListItem.Title>
-          </ListItem.Content>
+          <Pressable onPress={() => { addTempBondMember(item.person_id as number); setRefresh((oldValue) => !oldValue); }}>
+            <ListItem.Content id={item.person_id?.toString()}>
+              <ListItem.Title>
+                {item.firstName} {item.lastName}
+              </ListItem.Title>
+              <ListItem.Title>
+                Phone Number: {item.phoneNumber} id: {item.person_id?.toString()}
+              </ListItem.Title>
+            </ListItem.Content>
           </Pressable>
-
         </ListItem>
-    );}
+      );
+    }
+    return null;
   };
 
   const onDonePress = () => {
@@ -116,23 +115,3 @@ export default function addMemberScreen() {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  title: {
-    color: "black",
-  },
-  stepContainer: {
-    flex: 1,
-    backgroundColor: "white",
-    gap: 8,
-    marginBottom: 8,
-    flexDirection: "column",
-    paddingTop: 50,
-  },
-  centeredView: {
-    alignItems: "center",
-  },
-  flatList: {
-    height: 200,
-  }
-});

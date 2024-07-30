@@ -2,6 +2,7 @@ import { StyleSheet, } from 'react-native';
 import Scheduler from '@/components/Scheduler';
 import React from 'react';
 import { usePathname,  } from 'expo-router';
+import { styles } from "@/constants/Stylesheet"
 
 export default function callScreen() {
   return (
@@ -10,26 +11,3 @@ export default function callScreen() {
 
   );
 }
-
-const styles = StyleSheet.create({
-  button: {
-    margin: 10,
-    backgroundColor: "white",
-    borderColor: "black",
-    borderWidth: 2,
-  },
-  title: {
-    color: "black",
-  },
-  stepContainer: {
-    flex: 1,
-    backgroundColor: "white",
-    gap: 8,
-    marginBottom: 8,
-    flexDirection: "column",
-    paddingTop: 50,
-    justifyContent: "center",
-  },
-  centeredView: {
-    alignItems: "center",
-  }})

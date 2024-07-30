@@ -9,6 +9,7 @@ import { InTouchContext } from "@/context/InTouchContext";
 import { StandardButton } from "@/components/ButtonStandard";
 import { Person } from "@/constants/types";
 import { View } from "react-native"
+import { styles } from "@/constants/Stylesheet"
 
 export default function PeopleScreen() {
   const { peopleList } = useContext(InTouchContext);
@@ -23,12 +24,12 @@ export default function PeopleScreen() {
       <ListItem bottomDivider>
         <Pressable onPress={() => onPersonPress(item.person_id)}>
 
-        <ListItem.Content id={item.person_id.toString()}>
+        <ListItem.Content id={item.person_id?.toString()}>
           <ListItem.Title>
             {item.firstName} {item.lastName}
           </ListItem.Title>
           <ListItem.Title>
-            Phone Number: {item.phoneNumber} id: {item.person_id.toString()}
+            Phone Number: {item.phoneNumber} id: {item.person_id?.toString()}
           </ListItem.Title>
         </ListItem.Content>
         </Pressable>
@@ -54,27 +55,3 @@ export default function PeopleScreen() {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  button: {
-    margin: 10,
-    backgroundColor: "white",
-    borderColor: "black",
-    borderWidth: 2,
-  },
-  title: {
-    color: "black",
-  },
-  stepContainer: {
-    flex: 1,
-    backgroundColor: "white",
-    gap: 8,
-    marginBottom: 8,
-    flexDirection: "column",
-    paddingTop: 50,
-    justifyContent: "center",
-  },
-  centeredView: {
-    alignItems: "center",
-  },
-});

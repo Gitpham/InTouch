@@ -6,8 +6,10 @@ import { useLocalSearchParams } from "expo-router";
 import { useContext, useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { InTouchContext } from "@/context/InTouchContext";
-import { Alert, FlatList, Pressable, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Alert, FlatList, Pressable, StyleSheet, TouchableOpacity, View, Image } from "react-native";
 import { router } from "expo-router";
+import { styles } from "@/constants/Stylesheet";
+import { DeleteIcon } from "@/components/DeleteIcon";
 
 export default function PersonScreen() {
 
@@ -77,7 +79,10 @@ export default function PersonScreen() {
             <Pressable
              onPress={() => deleteReminderAlert(item.reminder_id)}
              style={styles.touchable}>
-              <ThemedText>Delete</ThemedText>
+              <Image
+              style={styles.tinyLogo}
+              source={require('@/assets/images/x_icon.jpg')}
+            />
              </Pressable>
     
           </ListItem>
@@ -164,51 +169,3 @@ export default function PersonScreen() {
 
        )
 }
-
-const styles = StyleSheet.create({
-  button: {
-    margin: 10,
-    backgroundColor: "white",
-    borderColor: "black",
-    borderWidth: 2,
-  },
-  title: {
-    color: "black",
-  },
-  redButton: {
-    margin: 10,
-    backgroundColor: "white",
-    borderColor: "red",
-    borderWidth: 2,
-  },
-  redTitle: {
-    color: "red",
-  },
-  stepContainer: {
-    flex: 1,
-    backgroundColor: "white",
-    gap: 8,
-    marginBottom: 8,
-    flexDirection: "column",
-    paddingTop: 50,
-  },
-  centeredView: {
-    alignItems: "center",
-  },
-  touchable: {
-    padding: 10,
-  },
-  rowOrientation: {
-    flexDirection: "row",
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  date: {
-    color: "gray",
-    fontSize: 12
-},
-nameContainer: {
-  flex: 1,
-  marginRight: 10, // Adds space between delete button and name
-},
-});
