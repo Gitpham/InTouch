@@ -9,6 +9,7 @@ import React from "react";
 import { InTouchContext } from "@/context/InTouchContext";
 import { Person } from "@/constants/types";
 import { styles } from "@/constants/Stylesheet"
+import { StandardButton } from "@/components/ButtonStandard";
 
 export default function addMemberManualScreen() {
   const router = useRouter();
@@ -78,13 +79,11 @@ export default function addMemberManualScreen() {
         style={styles.textInput}
       ></TextInput>
 
-      <Button
+      <StandardButton
         title="Create Contact"
         onPress={() => {
           savePerson();
         }}
-        buttonStyle={styles.button}
-        titleStyle={styles.title}
       />
 
     </SafeAreaView>

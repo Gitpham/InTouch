@@ -96,7 +96,7 @@ export default function createGroupScreen() {
         keyExtractor={(item) => item.toString()}
       />
 
-      <Button
+      <StandardButton
         title="Add Group Member"
         onPress={() =>
           router.navigate({
@@ -104,15 +104,11 @@ export default function createGroupScreen() {
             params: { bond_id: bondID },
           })
         }
-        buttonStyle={styles.button}
-        titleStyle={styles.title}
       />
 
-      <Button
+      <StandardButton
         title="Done"
         onPress={onDonePress}
-        buttonStyle={styles.button}
-        titleStyle={styles.title}
       />
 
       <StandardButton
