@@ -23,7 +23,7 @@ import {
 } from "./NotificationUtils";
 import * as SQLite from "expo-sqlite";
 import { View } from "react-native";
-import React from "react";
+import React, { JSXElementConstructor } from "react";
 import { ThemedText } from "@/components/ThemedText";
 
 //SCHEDULE FUNCTIONS
@@ -242,7 +242,9 @@ export const writeYearlyScheduleToDB = async (
 
 export async function deleteScheduleOfBond(db: SQLite.SQLiteDatabase, bid: number){
   try {
-    return await deleteScheduleByBond(db, bid) && await cancelNotificationsForBond(db, bid);
+   await cancelNotificationsForBond(db, bid);
+  await deleteScheduleByBond(db, bid);
+  return;
   } catch (e) {
     console.error(e);
     throw new Error("deleteScheduleOfBond() failed")
@@ -265,8 +267,7 @@ export function getScheduleType(schedule: Schedule): string{
   return "invalid type"
 }
 
-export function displaySchedule(schedule: Schedule_DB) {
-  console.log("displaySchedule(): schedule: ", schedule)
+export function displaySchedule(schedule: Schedule_DB): React.JSX.Element {
   if(schedule.type == ScheduleFrequency.DAILY) {
     return (<View>
       <ThemedText>
@@ -302,6 +303,7 @@ export function displaySchedule(schedule: Schedule_DB) {
       </ThemedText>
     </View>)
   }
+  return (<View><ThemedText>Schedule Type invalid</ThemedText></View>)
   
   
 }

@@ -86,7 +86,6 @@ export const deleteScheduleByNotificationID = async (db: SQLite.SQLiteDatabase, 
 
 
 export const getScheduleOfBond = async (db: SQLite.SQLiteDatabase, bid: number): Promise<Schedule_DB[]>  => {
-    console.log("getScheduleOfBOnd()")
     const statement = await db.prepareAsync(`SELECT * FROM schedule WHERE bond_id = ?;`)
     const value = [bid]
     try {

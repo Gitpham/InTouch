@@ -13,6 +13,8 @@ import React from "react";
 type ScheduleContextType = {
   createPotentialSchedule: (s: Schedule) => void;
   potentialSchedule: Schedule;
+  hasEditedSchedule: boolean;
+  markHasEditedSchedule: (s: boolean) => void;
 };
 
 export const printPotentialSchedule = (s: Schedule) => {
@@ -84,7 +86,12 @@ export const ScheduleContextProvider: React.FC<{
 }> = ({ children }) => {
   //STATE VARIABLES
   const [potentialSchedule, setPotentialSchedule] = useState<Schedule>();
+  const [hasEditedSchedule, setHasEditedSchedule] = useState(false);
 
+
+  const markHasEditedSchedule = (bool: boolean) => {
+    setHasEditedSchedule(bool);
+  }
 
   const createPotentialSchedule = async (s: Schedule) => {
     await setPotentialSchedule(s);
@@ -96,6 +103,8 @@ export const ScheduleContextProvider: React.FC<{
       value={{
         createPotentialSchedule,
         potentialSchedule,
+        markHasEditedSchedule,
+        hasEditedSchedule
       }}
     >
       {children}

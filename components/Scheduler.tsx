@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { View,Alert } from "react-native";
 import React from "react";
 import SegmentedControl from "@react-native-segmented-control/segmented-control";
@@ -29,7 +29,7 @@ import DailySchedulePicker from "./DailySchedulePicker";
 import WeeklySchedulePicker from "./WeeklySchedulePicker";
 import MonthlySchedulePicker from "./MonthlySchedulePicker";
 import YearlySchedulePicker from "./YearlySchedulePicker";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -40,11 +40,13 @@ Notifications.setNotificationHandler({
 });
 
 export default function Scheduler() {
+  const localParams = useLocalSearchParams()
+  const [isFromBondScreen, setIsFromBondScreen] = useState(false);
 
   const [scheduleFrequency, setScheduleFrequency] = useState<ScheduleFrequency>(
     ScheduleFrequency.DAILY
   );
-  const { createPotentialSchedule } =
+  const { createPotentialSchedule, markHasEditedSchedule } =
     useContext(ScheduleContext);
 
   //DAILY STATE VARIABLES AND SETTERS
@@ -146,6 +148,12 @@ export default function Scheduler() {
     new Date()
   );
 
+  useEffect(() => {
+    const bool = localParams?.isFromBondScreen as boolean;
+    setIsFromBondScreen(bool)
+  }, [localParams])
+
+
 
   async function onCancelAllNotifications() {
     try {
@@ -172,8 +180,7 @@ export default function Scheduler() {
             schedule: potentialDailySchedule,
           };
 
-          await createPotentialSchedule(potentialSchedule);
-          router.back();
+          createPotentialSchedule(potentialSchedule);
         }
         break;
       case ScheduleFrequency.WEEKLY:
@@ -217,7 +224,6 @@ export default function Scheduler() {
             schedule: potentialWeeklySchedule,
           };
           createPotentialSchedule(pSchedule);
-          router.back();
         }
         break;
       case ScheduleFrequency.MONTHLY:
@@ -242,7 +248,6 @@ export default function Scheduler() {
             schedule: pMonthlySchedule,
           };
           createPotentialSchedule(pSchedule);
-          router.back();
         }
         break;
       case ScheduleFrequency.YEARLY: {
@@ -253,14 +258,17 @@ export default function Scheduler() {
           schedule: pYearSchedule,
         };
         createPotentialSchedule(pSchedule);
-        router.back();
-        return;
-      }
+      } break;
       default:
         break;
     }
-    
+    if(isFromBondScreen){
+      markHasEditedSchedule(true)
+    }
+    router.back();
   }
+
+
 
   function dailySelector() {
     return (
