@@ -9,10 +9,11 @@ import { Bond, Person, Reminder, formatDate } from "@/constants/types";
 import { router } from "expo-router";
 import React from "react";
 import { StandardButton } from "@/components/ButtonStandard";
+import { Alert } from "react-native";
 
 export default function groupScreen() {
 
-  const {bondList, getMembersOfBond, removeBond, bondPersonMap, getRemindersOfBond, removeReminder, reminderList } = useContext(InTouchContext)
+  const {bondList, getMembersOfBond, removeBond, bondPersonMap, getRemindersOfBond, removeReminder, reminderList, removeBondMember } = useContext(InTouchContext)
   const localParams = useLocalSearchParams();
   const [bond, setBond] = useState<Bond>()
   const [members, setMembers] = useState<Array<Person>>();
@@ -34,7 +35,7 @@ export default function groupScreen() {
   const renderMembers = ({ item }: { item: Person }) => {
     return (
       <ListItem bottomDivider>
-        <ListItem.Content id={item.person_id.toString()}>
+        <ListItem.Content id={item.person_id?.toString()}>
         <View style = {styles.rowOrientation}>
           <View style = {styles.nameContainer}>
             <Pressable onPress = {() => {router.navigate({pathname: "./personScreen", params: {id: `${item.person_id}`}})}}>
@@ -44,7 +45,7 @@ export default function groupScreen() {
             </Pressable>
           </View>
           <Pressable
-            onPress = {() => console.log("delete!")}
+            onPress = {() => {deletePersonAlert(item)}}
           >
             <ThemedText>Delete</ThemedText>
           </Pressable>
@@ -100,6 +101,19 @@ export default function groupScreen() {
     router.back();
   }
 
+  const deletePersonAlert = (person: Person) => {
+    const name = person.firstName + " " + person.lastName
+    Alert.alert(`Remove ${name} from ${bond?.bondName}?`, "", [
+      {text: 'Cancel',
+        onPress: () => console.log('Cancel Pressed'),
+        style: 'cancel',},
+      {text: 'OK',
+        onPress: () => {if (bond) {removeBondMember(bond, person)}},
+        isPreferred: true
+      },
+    ]);
+  }
+
        return (
         <SafeAreaView style = {styles.stepContainer} >
           <ScrollView  nestedScrollEnabled={true}>
@@ -123,7 +137,7 @@ export default function groupScreen() {
              title = "+Add Reminder"
              buttonStyle = {styles.button}
              titleStyle = {styles.title}
-             onPress = {() => router.navigate({pathname: "./addReminderModal", params: {person_id: -1, bond_id: bond.bond_id}})}
+             onPress = {() => router.navigate({pathname: "./addReminderModal", params: {person_id: -1, bond_id: bond?.bond_id}})}
              />
 
              <Card>
@@ -139,7 +153,7 @@ export default function groupScreen() {
 
              <StandardButton
              title = "+Add Member"
-             onPress = {() => {router.navigate({pathname: "./addMemberScreen", params: {bond_id : bond.bond_id, group_screen : 1}})}}
+             onPress = {() => {router.navigate({pathname: "./addMemberScreen", params: {bond_id : bond?.bond_id, group_screen : 1}})}}
              />
 
              <Button
@@ -203,4 +217,4 @@ const styles = StyleSheet.create({
     color: "gray",
     fontSize: 12
 }
-});
+})
