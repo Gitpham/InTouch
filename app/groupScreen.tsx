@@ -111,7 +111,7 @@ export default function groupScreen() {
       {text: 'Cancel',
         onPress: () => console.log('Cancel Pressed'),
         style: 'cancel',},
-      {text: 'Yes',
+      {text: 'OK',
         onPress: () => {if (bond) {removeBondMember(bond, person)}},
         isPreferred: true
       },
@@ -123,7 +123,7 @@ export default function groupScreen() {
       {text: 'Cancel',
         onPress: () => console.log('Cancel Pressed'),
         style: 'cancel',},
-      {text: 'Yes',
+      {text: 'OK',
         onPress: () => {if (bond) {deleteReminder(reminder_id)}},
         isPreferred: true
       },

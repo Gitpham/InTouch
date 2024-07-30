@@ -113,7 +113,7 @@ export default function PersonScreen() {
         {text: 'Cancel',
           onPress: () => console.log('Cancel Pressed'),
           style: 'cancel',},
-        {text: 'Yes',
+        {text: 'OK',
           onPress: () => {if (person) {deleteReminder(reminder_id)}},
           isPreferred: true
         },
