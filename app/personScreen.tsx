@@ -6,7 +6,7 @@ import { useLocalSearchParams } from "expo-router";
 import { useContext, useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { InTouchContext } from "@/context/InTouchContext";
-import { FlatList, Pressable, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Alert, FlatList, Pressable, StyleSheet, TouchableOpacity, View } from "react-native";
 import { router } from "expo-router";
 
 export default function PersonScreen() {
@@ -56,23 +56,26 @@ export default function PersonScreen() {
 
       }
     }
-
     const renderReminders = ({ item }: { item: Reminder }) => {
       if (item) {
+  
         return (
           <ListItem bottomDivider>
+    
             <ListItem.Content id={item.reminder_id.toString()}>
-            <View style = {styles.rowOrientation}>
-              <ListItem.Title style = {styles.date}>
-                {item.date + " - "}
+              <View style = {styles.rowOrientation}>
+              <View style = {styles.nameContainer}>
+                <ListItem.Title style = {styles.date}>
+                  {item.date}
+                </ListItem.Title>
+              <ListItem.Title>
+                {item.reminder} 
               </ListItem.Title>
-            <ListItem.Title>
-              {item.reminder} 
-            </ListItem.Title>
-            </View>
+              </View>
+              </View>
             </ListItem.Content>
             <Pressable
-             onPress={() => deleteReminder(item.reminder_id)}
+             onPress={() => deleteReminderAlert(item.reminder_id)}
              style={styles.touchable}>
               <ThemedText>Delete</ThemedText>
              </Pressable>
@@ -99,6 +102,19 @@ export default function PersonScreen() {
       removeReminder(reminder_id);
     }
 
+    const deleteReminderAlert = (reminder_id: number) => {
+      const name = person?.firstName + " " + person?.lastName
+      Alert.alert(`Delete reminder for ${name}?`, "",[
+        {text: 'Cancel',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel',},
+        {text: 'Yes',
+          onPress: () => {if (person) {deleteReminder(reminder_id)}},
+          isPreferred: true
+        },
+      ]);
+   }
+
 
        return (
         <SafeAreaView style = {styles.stepContainer}>
@@ -122,7 +138,7 @@ export default function PersonScreen() {
              title = "+Add Reminder"
              buttonStyle = {styles.button}
              titleStyle = {styles.title}
-             onPress = {() => router.navigate({pathname: "./addReminderModal", params: {person_id: person.person_id, bond_id: -1}})}
+             onPress = {() => router.navigate({pathname: "./addReminderModal", params: {person_id: person?.person_id, bond_id: -1}})}
              />
 
 
@@ -190,5 +206,9 @@ const styles = StyleSheet.create({
   date: {
     color: "gray",
     fontSize: 12
-}
+},
+nameContainer: {
+  flex: 1,
+  marginRight: 10, // Adds space between delete button and name
+},
 });

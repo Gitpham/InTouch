@@ -65,16 +65,18 @@ export default function groupScreen() {
   
           <ListItem.Content id={item.reminder_id.toString()}>
             <View style = {styles.rowOrientation}>
+            <View style = {styles.nameContainer}>
               <ListItem.Title style = {styles.date}>
-                {item.date + " - "}
+                {item.date}
               </ListItem.Title>
             <ListItem.Title>
               {item.reminder} 
             </ListItem.Title>
             </View>
+            </View>
           </ListItem.Content>
           <Pressable
-           onPress={() => deleteReminder(item.reminder_id)}
+           onPress={() => deleteReminderAlert(item.reminder_id)}
            style={styles.touchable}>
             <ThemedText>Delete</ThemedText>
            </Pressable>
@@ -107,12 +109,24 @@ export default function groupScreen() {
       {text: 'Cancel',
         onPress: () => console.log('Cancel Pressed'),
         style: 'cancel',},
-      {text: 'OK',
+      {text: 'Yes',
         onPress: () => {if (bond) {removeBondMember(bond, person)}},
         isPreferred: true
       },
     ]);
   }
+
+  const deleteReminderAlert = (reminder_id: number) => {
+    Alert.alert(`Delete reminder for ${bond?.bondName}?`, "",[
+      {text: 'Cancel',
+        onPress: () => console.log('Cancel Pressed'),
+        style: 'cancel',},
+      {text: 'Yes',
+        onPress: () => {if (bond) {deleteReminder(reminder_id)}},
+        isPreferred: true
+      },
+    ]);
+ }
 
        return (
         <SafeAreaView style = {styles.stepContainer} >
@@ -202,6 +216,7 @@ const styles = StyleSheet.create({
     height: 200,
   },
   rowOrientation: {
+    flex: 1,
     flexDirection: "row",
     justifyContent: 'space-between',
     alignItems: 'center',
