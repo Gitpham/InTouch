@@ -94,6 +94,19 @@ export default function createGroupScreen() {
         personToShow = person;
       }
     });
+
+    return (
+      <ListItem bottomDivider>
+        <ListItem.Content id={item.toString()}>
+          <ListItem.Title>
+            {personToShow.firstName} {personToShow.lastName}
+          </ListItem.Title>
+          <ListItem.Title>
+            Phone Number: {personToShow.phoneNumber} id: {item}
+          </ListItem.Title>
+        </ListItem.Content>
+      </ListItem>
+    );
   };
 
   const renderPotentialSchedule = ({ item }: { item: any }) => {
