@@ -1,6 +1,6 @@
 import { ThemedText } from "@/components/ThemedText";
 import { useContext, useEffect, useState } from "react";
-import { Alert, FlatList, TextInput } from "react-native";
+import { Alert, FlatList, ScrollView, TextInput } from "react-native";
 import {} from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button, ListItem } from "@rneui/themed";
@@ -53,7 +53,7 @@ export default function createGroupScreen() {
     setSchedule(displayPotentialSchedule(potentialSchedule))
   }, [potentialSchedule])
 
-  
+
   async function onDonePress() {
     if (!bondName) {
       Alert.alert("Must enter a Bond name");
@@ -102,7 +102,10 @@ export default function createGroupScreen() {
   };
 
   return (
+
     <SafeAreaView style={styles.stepContainer}>
+      <ScrollView nestedScrollEnabled={true}>
+
       <View style={styles.centeredView}>
         <ThemedText type="title" style={styles.title}>
           {title}
@@ -127,6 +130,7 @@ export default function createGroupScreen() {
         </ThemedText>
       </View>
       <FlatList
+        nestedScrollEnabled={true}
         data={[...tempBondMembers]}
         renderItem={renderGroupMembers}
         keyExtractor={(item) => item}
@@ -178,6 +182,8 @@ export default function createGroupScreen() {
           router.back();
         }}
       ></StandardButton>
+            </ScrollView>
+
     </SafeAreaView>
   );
 }
