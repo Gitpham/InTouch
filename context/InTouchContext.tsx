@@ -435,7 +435,12 @@ export const InTouchContextProvider: React.FC<{
       setPersonBondMap(addToPersonBondMap(person_ids, bond_id));
 
       for (const pid of person_ids) {
+        try {
         await addPersonBond(db, pid, bond_id);
+        } catch (e) {
+          console.error(e);
+          throw new Error("creatBondMEmber(): failed for-loop calling addPersonBond")
+        }
       }
 
 

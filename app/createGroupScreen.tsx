@@ -35,8 +35,6 @@ export default function createGroupScreen() {
   const db = useSQLiteContext();
   const [schedule, setSchedule] = useState(displayPotentialSchedule(potentialSchedule))
 
-  console.log("schedule: ", schedule)
-
   const bondToAdd: Bond = {
     bondName: bondName,
     typeOfCall: "",
@@ -111,7 +109,6 @@ export default function createGroupScreen() {
   };
 
   const renderPotentialSchedule = ({ item }: { item: any }) => {
-    console.log("item: ", item)
     return (item);
   };
 
@@ -142,6 +139,16 @@ export default function createGroupScreen() {
         renderItem={renderGroupMembers}
         keyExtractor={(item) => item.toString()}
       />
+    
+        <StandardButton
+        title="Add Group Member"
+        onPress={() =>
+          router.navigate({
+            pathname: "./addMemberScreen",
+            params: { bond_id: bondID },
+          })
+        }
+      />
 
 
       <View style={styles.centeredView}>
@@ -158,22 +165,14 @@ export default function createGroupScreen() {
       </View>
 
 
-      <Button
-        title="Add Group Member"
-        onPress={() =>
-          router.navigate({
-            pathname: "./addMemberScreen",
-            params: { bond_id: bondID },
-          })
-        }
-      />
+    
 
       <StandardButton
         title="Create Schedule"
         onPress={onCreateSchedule}
       ></StandardButton>
 
-      <Button
+      <StandardButton
         title="Done"
         onPress={onDonePress}
       />

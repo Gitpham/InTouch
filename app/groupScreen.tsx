@@ -5,6 +5,7 @@ import {
   Pressable,
   ScrollView,
   View,
+  Alert,
 } from "react-native";
 import { Card, ListItem, Button } from "@rneui/themed";
 import { useLocalSearchParams } from "expo-router";
@@ -20,9 +21,11 @@ import { ScheduleContext } from "@/context/ScheduleContext";
 import ScheduleCard from "@/components/ScheduleCard";
 import { cancelNotificationsForBond } from "@/context/NotificationUtils";
 import { DeleteIcon } from "@/components/DeleteIcon";
+import { styles } from "@/constants/Stylesheet";
 
 export default function groupScreen() {
   const {
+    removeBondMember,
     bondList,
     getMembersOfBond,
     removeBond,
@@ -39,7 +42,7 @@ export default function groupScreen() {
 
   useEffect(() => {
     const bondId: number = +(localParams.id as string);
-    let bond_index = bondList.findIndex(item => item.bond_id === bondId)
+    const bond_index = bondList.findIndex(item => item.bond_id === bondId)
     if (bond_index !== -1) {
       const b: Bond = bondList[bond_index];
       setBond(b);
@@ -119,7 +122,6 @@ export default function groupScreen() {
 
   }
 
-<<<<<<< HEAD
   const deletePersonAlert = (person: Person) => {
     const name = person.firstName + " " + person.lastName
     Alert.alert(`Remove ${name} from ${bond?.bondName}?`, "", [
