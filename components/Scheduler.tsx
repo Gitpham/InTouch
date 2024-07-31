@@ -46,7 +46,7 @@ export default function Scheduler() {
   const [scheduleFrequency, setScheduleFrequency] = useState<ScheduleFrequency>(
     ScheduleFrequency.DAILY
   );
-  const { createPotentialSchedule, potentialSchedule } =  useContext(ScheduleContext);
+  const { createPotentialSchedule, potentialSchedule, hasEditedSchedule, markHasEditedSchedule } =  useContext(ScheduleContext);
   const db = useSQLiteContext();
   //DAILY STATE VARIABLES AND SETTERS
 
@@ -172,18 +172,16 @@ export default function Scheduler() {
   }
 
   async function onDonePress() {
-
+    let pSchedule: Schedule;
     switch (scheduleFrequency) {
       case ScheduleFrequency.DAILY:
         {
           const potentialDailySchedule: DailySchedule = {
             time: dailyTime,
           };
-          const potentialSchedule: Schedule = {
+          pSchedule = {
             schedule: potentialDailySchedule,
           };
-
-          createPotentialSchedule(potentialSchedule);
         }
         break;
       case ScheduleFrequency.WEEKLY:
@@ -223,10 +221,9 @@ export default function Scheduler() {
             potentialWeeklySchedule.sunday = sunTime;
           }
 
-          const pSchedule: Schedule = {
+          pSchedule= {
             schedule: potentialWeeklySchedule,
           };
-          createPotentialSchedule(pSchedule);
         }
         break;
       case ScheduleFrequency.MONTHLY:
@@ -247,38 +244,42 @@ export default function Scheduler() {
             );
           });
 
-          const pSchedule: Schedule = {
+          pSchedule = {
             schedule: pMonthlySchedule,
           };
-          createPotentialSchedule(pSchedule);
         }
         break;
       case ScheduleFrequency.YEARLY: {
         const pYearSchedule: YearlySchedule = {
           datesInYear: datesInYear,
         };
-        const pSchedule: Schedule = {
+        pSchedule= {
           schedule: pYearSchedule,
         };
-        createPotentialSchedule(pSchedule);
+  
       } break;
       default:
         break;
+
     }
+
     if(isFromBondScreen){
       Alert.alert("Replace Schedule", "Clicking 'confirm' will replace your old schedule with the one you just made", [
-        {text: "Confirm", onPress: onConfirmPress},
+        {text: "Confirm", onPress: () => onConfirmPress(pSchedule)},
         {text: "Cancel"}
       ])
     }
 
     if(!isFromBondScreen){
+      createPotentialSchedule(pSchedule)
       router.back();
     }
   }
 
-  async function onConfirmPress() {
-    await replaceScheduleOfBond(db, bid, potentialSchedule)
+  async function onConfirmPress(schedule: Schedule) {
+    console.log("onDonePress potentialSchedule: ,", schedule)
+    await replaceScheduleOfBond(db, bid, schedule)
+    markHasEditedSchedule(!hasEditedSchedule)
     router.back();
   }
 

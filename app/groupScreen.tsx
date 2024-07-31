@@ -118,7 +118,7 @@ export default function groupScreen() {
         <Card>
           <Card.Title>Name: {bond?.bondName}</Card.Title>
           <Card.Divider></Card.Divider>
-          <ThemedText>Number: </ThemedText>
+          <ThemedText darkColor="black">Number: </ThemedText>
         </Card>
         {bond ? <ScheduleCard bond={bond}></ScheduleCard> : <></>}
         

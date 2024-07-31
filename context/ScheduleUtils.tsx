@@ -283,7 +283,7 @@ export function getScheduleType(schedule: Schedule): string{
 export function displaySchedule(schedule: Schedule_DB): React.JSX.Element {
   if(schedule.type == ScheduleFrequency.DAILY) {
     return (<View>
-      <ThemedText>
+      <ThemedText darkColor="black">
         Time of day: {schedule.time}
       </ThemedText>
     </View>)
@@ -291,7 +291,7 @@ export function displaySchedule(schedule: Schedule_DB): React.JSX.Element {
 
   if(schedule.type == ScheduleFrequency.WEEKLY) {
     return (<View>
-      <ThemedText>
+      <ThemedText darkColor="black" >
         Day of Week: {schedule.weekDay}
         Time: {schedule.time}
       </ThemedText>
@@ -300,7 +300,7 @@ export function displaySchedule(schedule: Schedule_DB): React.JSX.Element {
 
   if(schedule.type == ScheduleFrequency.MONTHLY) {
     return (<View>
-      <ThemedText>
+      <ThemedText darkColor="black">
         Day of Week: {schedule.weekDay}
         week of Month: {schedule.weekOfMonth}
         Time: {schedule.time}
@@ -310,7 +310,7 @@ export function displaySchedule(schedule: Schedule_DB): React.JSX.Element {
 
   if(schedule.type == ScheduleFrequency.YEARLY) {
     return (<View>
-      <ThemedText>
+      <ThemedText darkColor="black">
         Date: {schedule.date}
         Time: {schedule.time}
       </ThemedText>

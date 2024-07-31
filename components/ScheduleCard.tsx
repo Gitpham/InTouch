@@ -18,8 +18,10 @@ export default function ScheduleCard({bond}: ScheduleCardInterface) {
     const {potentialSchedule, hasEditedSchedule, markHasEditedSchedule} = useContext(ScheduleContext)
 
     useEffect(() => {
-        console.log("ScheduleCard bond: ", bond)
+        console.log("ScheduleCard hasEditedSchedule: ", hasEditedSchedule)
+
         const initSchedule = async () => {
+            setShowSchedule([])
             schedules = await getScheduleOfBond(db, bond.bond_id);
             schedules.forEach(s => {
                 const day = displaySchedule(s)
@@ -33,7 +35,7 @@ export default function ScheduleCard({bond}: ScheduleCardInterface) {
         }
         initSchedule()
        
-    }, [potentialSchedule])
+    }, [hasEditedSchedule])
 
     function viewSchedule(){
         return showSchedule
@@ -47,7 +49,7 @@ export default function ScheduleCard({bond}: ScheduleCardInterface) {
     return (   <Card>
         <Card.Title>Schedule</Card.Title>
         <Card.Divider></Card.Divider>
-        <ThemedText>Type of Schedule: {bond?.schedule} </ThemedText>
+        <ThemedText darkColor="black" >Type of Schedule: {bond?.schedule} </ThemedText>
         {viewSchedule()}
 
         <StandardButton title="Edit Schedule" onPress={onModifySchedule}></StandardButton>
