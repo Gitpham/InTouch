@@ -6,7 +6,7 @@ import { useLocalSearchParams } from "expo-router";
 import { useContext, useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { InTouchContext } from "@/context/InTouchContext";
-import { Alert, FlatList, Pressable, StyleSheet, TouchableOpacity, View, Image } from "react-native";
+import { Alert, FlatList, Pressable, StyleSheet, TouchableOpacity, View, Image, Linking } from "react-native";
 import { router } from "expo-router";
 import { styles } from "@/constants/Stylesheet";
 import { DeleteIcon } from "@/components/DeleteIcon";
@@ -35,6 +35,7 @@ export default function PersonScreen() {
   }, [reminderList])
 
 
+  // Rendering functions for flatlists
   const renderBonds = ({ item }: { item: Bond }) => {
     if (item) {
       return (
@@ -79,12 +80,8 @@ export default function PersonScreen() {
             <Pressable
              onPress={() => deleteReminderAlert(item.reminder_id)}
              style={styles.touchable}>
-              <Image
-              style={styles.tinyLogo}
-              source={require('@/assets/images/x_icon.jpg')}
-            />
+            <DeleteIcon></DeleteIcon>
              </Pressable>
-    
           </ListItem>
         )}
         else {
@@ -92,10 +89,10 @@ export default function PersonScreen() {
             <ListItem bottomDivider>
             </ListItem>
           );
-  
         }
       }
 
+    // Delete functions
     const deletePerson = () => {
       if (person) {
       removePerson(person);
@@ -120,6 +117,12 @@ export default function PersonScreen() {
       ]);
    }
 
+   // For texting and calling user
+   const sendSMS = (phoneNumber: string) => {
+    const url = `sms:${phoneNumber}`;
+    Linking.openURL(url).catch(err => console.error('Error:', err));
+  };
+
 
        return (
         <SafeAreaView style = {styles.stepContainer}>
@@ -129,6 +132,42 @@ export default function PersonScreen() {
                <ThemedText>Number: </ThemedText>
                <ThemedText>{person?.phoneNumber}</ThemedText>
              </Card>
+
+            <View style = {styles.centeredView}>
+              <View style = {{width : 150}}>
+                <Button
+                  title = "Call"
+
+                  buttonStyle = {{
+                    margin: 10,
+                    backgroundColor: "red",
+                    borderColor: "black",
+                    borderWidth: 2,
+                  }}
+                  titleStyle = {{
+                    fontSize: 24,
+                    fontWeight: 'bold', 
+                  }}
+                  onPress = {() => console.log("SUIII")}
+                  />
+                </View>
+
+                <Pressable
+                onPress={() => sendSMS(person?.phoneNumber.toString() as string)}
+                >
+
+                <ThemedText 
+                style = {{
+                  fontSize : 16,
+                  marginTop: 10,
+                  color: "black",
+                  textDecorationLine: "underline",
+                }}
+                >
+                  Text
+                </ThemedText>
+                </Pressable>
+             </View>
 
              <Card>
               <Card.Title>Reminders</Card.Title>
