@@ -7,6 +7,7 @@ import DateTimePicker, {
   } from "@react-native-community/datetimepicker";
 import { DayOfMonth } from "@/constants/types";
 import {Picker} from '@react-native-picker/picker';
+import { convertNumberToOrdinal, convertTo12HourTime, convertToDayOfWeek } from "@/context/ScheduleUtils";
 
 interface MonthlySchedulePickerInterface {
   selectedWeekOfMonth: number,
@@ -47,9 +48,7 @@ export default function MonthlySchedulePicker({
       let i = 0;
       monthlySet.forEach(d => {
         currentDates.push(<Text id={""+i}>
-          Week: {d.weekOfMonth} 
-          Day: {d.dayOfWeek} 
-          Time: {d.time.toTimeString()} 
+        The {convertNumberToOrdinal(parseInt(d.weekOfMonth))} {convertToDayOfWeek(parseInt(d.dayOfWeek))} at {convertTo12HourTime(d.time.toTimeString())} 
         </Text>)
         i++;
       })
@@ -119,7 +118,7 @@ export default function MonthlySchedulePicker({
           ></StandardButton>
 
           <Card>
-            <Text>Current Schedule: </Text>
+            <Text>Current Monthly Schedule: </Text>
             {displayMonthlySet()}
           </Card>
   

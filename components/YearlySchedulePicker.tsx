@@ -6,6 +6,9 @@ import React from "react";
 import { View, Text} from "react-native";
 import { StandardButton } from "./ButtonStandard";
 import { DateInYear } from "@/constants/types";
+import { convertTo12HourTime, convertToMonth } from "@/context/ScheduleUtils";
+import { styles } from "@/constants/Stylesheet";
+import { ThemedText } from "./ThemedText";
 
 interface YearlySchedulePickerInterface {
     selectedDayInYear: Date,
@@ -37,8 +40,7 @@ export default function YearlySchedulePicker({
         let i = 0;
         datesInYear.forEach(d => {
           currentDates.push(<Text id={""+i}>
-            Date: {d.date.getUTCDate()}
-            Time: {d.time.toTimeString()} 
+            {convertToMonth(d.date.getUTCMonth())} {d.date.getUTCDate()} {convertTo12HourTime(d.time.toTimeString())} 
           </Text>)
           i++;
         })
@@ -85,6 +87,7 @@ export default function YearlySchedulePicker({
                 </DateTimePicker>
             </View>
             <View>
+                <ThemedText darkColor = "black" style={styles.title}>Current Yearly Schedule</ThemedText>
                 {displayYearlySet()}
             </View>
             <StandardButton title="Add Date"

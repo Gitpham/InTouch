@@ -9,6 +9,7 @@ export const styles = StyleSheet.create({
     },
     title: {
       color: "black",
+      fontWeight: "bold"
     },
     redButton: {
       margin: 10,

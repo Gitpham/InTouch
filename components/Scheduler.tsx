@@ -18,10 +18,6 @@ import {
   YearlySchedule,
 } from "@/constants/types";
 import { ScheduleContext } from "@/context/ScheduleContext";
-import {
-  cancelAllNotifications,
-  getAllScheduledNotifications,
-} from "@/context/NotificationUtils";
 import { ScrollView } from "react-native";
 import { useSQLiteContext } from "expo-sqlite";
 import DailySchedulePicker from "./DailySchedulePicker";
@@ -32,6 +28,7 @@ import { router, useLocalSearchParams } from "expo-router";
 import { getScheduleType, replaceScheduleOfBond } from "@/context/ScheduleUtils";
 import { getBond } from "@/assets/db/BondRepo";
 import { InTouchContext } from "@/context/InTouchContext";
+import { styles } from "@/constants/Stylesheet";
 
 
 interface SchedulerInterface {
@@ -392,27 +389,3 @@ export default function Scheduler( {bid, isFromBondScreen}:SchedulerInterface)  
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  button: {
-    margin: 10,
-    backgroundColor: "white",
-    borderColor: "black",
-    borderWidth: 2,
-  },
-  title: {
-    color: "black",
-  },
-  stepContainer: {
-    flex: 1,
-    backgroundColor: "white",
-    gap: 8,
-    marginBottom: 8,
-    flexDirection: "column",
-    paddingTop: 50,
-    justifyContent: "center",
-  },
-  centeredView: {
-    alignItems: "center",
-  },
-});

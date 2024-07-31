@@ -1,6 +1,5 @@
 import { ThemedText } from "@/components/ThemedText";
 import {
-  StyleSheet,
   FlatList,
   Pressable,
   ScrollView,
@@ -10,7 +9,6 @@ import {
 import { Card, ListItem, Button } from "@rneui/themed";
 import { useLocalSearchParams } from "expo-router";
 import { useContext, useEffect, useState } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { InTouchContext } from "@/context/InTouchContext";
 import { Bond, Person, Reminder,} from "@/constants/types";
 import { router } from "expo-router";
