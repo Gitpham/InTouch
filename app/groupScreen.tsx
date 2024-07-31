@@ -50,7 +50,7 @@ export default function groupScreen() {
       const r = getRemindersOfBond(bondId);
       setReminders(r);
     }
-  }, [bondPersonMap, reminderList, ]);
+  }, [bondPersonMap, reminderList, bondList]);
 
 
 

@@ -34,7 +34,7 @@ type InTouchContextType = {
   getPersonBondMap: () => void;
   getBondsOfPerson: (person: Person) => Array<Bond>;
   getMembersOfBond: (bond: Bond) => Array<Person>;
-  createReminder: (reminder: string, person_id: number, bond_id?: number) => void;
+  createReminder: (reminder: string, person_id: number, bond_id: number) => void;
   removeReminder: (person_id: number) => void;
   generateBondId: () => number;
   getRemindersOfPerson: (person_id: number) => Reminder[]
@@ -53,8 +53,18 @@ export const InTouchContext = createContext<InTouchContextType>({
   personBondMap: new Map<number, Set<number>>(),
   bondPersonMap: new Map<number, Set<number>>(),
   tempBondMembers: new Set<number>(),
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  /* eslint-disable @typescript-eslint/no-unused-vars */
+  generatePersonId: function (): number {
+    throw new Error("Function not implemented.");
+  },
+  generateReminderId: function (): number {
+    throw new Error("Function not implemented.");
+  },
+  addTempBondMember: function (personID: number): void {
+    throw new Error("Function not implemented.");
+  },
+  clearTempBondMembers: function (): void {
+    throw new Error("Function not implemented.");
+  },
   createPerson: function (person: Person): Promise<void> {
     throw new Error("Function not implemented.");
   },
@@ -67,10 +77,10 @@ export const InTouchContext = createContext<InTouchContextType>({
   removeBond: function (bond: Bond): Promise<void> {
     throw new Error("Function not implemented.");
   },
-  createBondMember: function (
-    person_ids: Set<number>,
-    bond_id: number
-  ): Promise<void> {
+  updateBondCache: function (bond: Bond): Promise<void> {
+    throw new Error("Function not implemented.");
+  },
+  createBondMember: function (person_ids: Set<number>, bond_id: number): Promise<void> {
     throw new Error("Function not implemented.");
   },
   removeBondMember: function (bond: Bond, person: Person): Promise<void> {
@@ -88,34 +98,21 @@ export const InTouchContext = createContext<InTouchContextType>({
   getMembersOfBond: function (bond: Bond): Array<Person> {
     throw new Error("Function not implemented.");
   },
+  createReminder: function (reminder: string, person_id: number, bond_id: number): void {
+    throw new Error("Function not implemented.");
+  },
+  removeReminder: function (person_id: number): void {
+    throw new Error("Function not implemented.");
+  },
   generateBondId: function (): number {
     throw new Error("Function not implemented.");
   },
-  addTempBondMember: function (personID: number): void {
-    throw new Error("Function not implemented.");
-  },
-  clearTempBondMembers: function (): void {
-    throw new Error("Function not implemented.");
-  },
-  generatePersonId: function (): number {
-    throw new Error("Function not implemented.");
-  },
-  generateReminderId: function (): number {
-    throw new Error("Function not implemented.");
-  },
-  createReminder: function (reminder: String, person_id: number, bond_id: number) {
-    throw new Error("Function not implemented");
-  },
-  removeReminder: function (person_id: number) {
-    throw new Error("Function not implemented.");
-  },
-
   getRemindersOfPerson: function (person_id: number): Reminder[] {
     throw new Error("Function not implemented.");
   },
   getRemindersOfBond: function (bond_id: number): Reminder[] {
     throw new Error("Function not implemented.");
-  },
+  }
 });
 
 export const InTouchContextProvider: React.FC<{

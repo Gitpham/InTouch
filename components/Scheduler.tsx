@@ -29,7 +29,9 @@ import WeeklySchedulePicker from "./WeeklySchedulePicker";
 import MonthlySchedulePicker from "./MonthlySchedulePicker";
 import YearlySchedulePicker from "./YearlySchedulePicker";
 import { router, useLocalSearchParams } from "expo-router";
-import { replaceScheduleOfBond } from "@/context/ScheduleUtils";
+import { getScheduleType, replaceScheduleOfBond } from "@/context/ScheduleUtils";
+import { getBond } from "@/assets/db/BondRepo";
+import { InTouchContext } from "@/context/InTouchContext";
 
 
 interface SchedulerInterface {
@@ -41,6 +43,7 @@ export default function Scheduler( {bid, isFromBondScreen}:SchedulerInterface)  
     ScheduleFrequency.DAILY
   );
   const { createPotentialSchedule, hasEditedSchedule, markHasEditedSchedule } =  useContext(ScheduleContext);
+  const {updateBondCache} = useContext(InTouchContext)
   const db = useSQLiteContext();
   //DAILY STATE VARIABLES AND SETTERS
   const [dailyTime, setDailyTime] = useState(new Date());
@@ -140,16 +143,6 @@ export default function Scheduler( {bid, isFromBondScreen}:SchedulerInterface)  
     new Date()
   );
 
-
-  async function onCancelAllNotifications() {
-    try {
-      await cancelAllNotifications();
-      Alert.alert("canceled all scheduled Notificaionts");
-    } catch (e) {
-      console.error(e);
-      throw Error("failed to cancelAllNotifications");
-    }
-  }
 
   function onSegmentedControlValueChange(value) {
     setScheduleFrequency(value);
@@ -257,7 +250,15 @@ export default function Scheduler( {bid, isFromBondScreen}:SchedulerInterface)  
 
   async function onConfirmPress(schedule: Schedule) {
     await replaceScheduleOfBond(db, bid as number, schedule)
-    markHasEditedSchedule(!hasEditedSchedule)
+    markHasEditedSchedule(!hasEditedSchedule);
+    const currBond: Bond = await getBond(db, bid as number);
+    const newBond: Bond = {
+      bondName: currBond.bondName,
+      bond_id: currBond.bond_id,
+      schedule: getScheduleType(schedule),
+      typeOfCall: ""
+    }
+    await updateBondCache(newBond);
     router.back();
   }
 
@@ -385,16 +386,6 @@ export default function Scheduler( {bid, isFromBondScreen}:SchedulerInterface)  
 
           <View>
             <StandardButton title="Done" onPress={onDonePress}></StandardButton>
-            <StandardButton
-              title="cancel All Notificatios"
-              onPress={onCancelAllNotifications}
-            ></StandardButton>
-            <StandardButton
-              title="See All Notifications"
-              onPress={() => {
-                getAllScheduledNotifications();
-              }}
-            ></StandardButton>
           </View>
         </ScrollView>
       </SafeAreaView>

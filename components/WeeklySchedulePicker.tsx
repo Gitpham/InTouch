@@ -43,7 +43,6 @@ export default function WeeklySchedulePicker({
   sunTime,
   changeSunTime
 }) {
-  console.log("WeeklySchedulerRenders");
 
   function onSelectDayOfWeek(day: string) {
     switch (day) {
