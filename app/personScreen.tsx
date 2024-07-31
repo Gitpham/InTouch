@@ -10,6 +10,8 @@ import { Alert, FlatList, Pressable, StyleSheet, TouchableOpacity, View, Image, 
 import { router } from "expo-router";
 import { styles } from "@/constants/Stylesheet";
 import { DeleteIcon } from "@/components/DeleteIcon";
+import { callUtil, sendSMS } from "@/context/PhoneNumberUtils";
+import { useSQLiteContext } from "expo-sqlite";
 
 export default function PersonScreen() {
 
@@ -18,6 +20,7 @@ export default function PersonScreen() {
   const [person, setPerson] = useState<Person>()
   const [bonds, setBonds] = useState<Array<Bond>>();
   const [reminders, setReminders] = useState<Array<Reminder>>();
+  const db = useSQLiteContext();
 
 
   useEffect(() => {
@@ -117,12 +120,6 @@ export default function PersonScreen() {
       ]);
    }
 
-   // For texting and calling user
-   const sendSMS = (phoneNumber: string) => {
-    const url = `sms:${phoneNumber}`;
-    Linking.openURL(url).catch(err => console.error('Error:', err));
-  };
-
 
        return (
         <SafeAreaView style = {styles.stepContainer}>
@@ -148,7 +145,7 @@ export default function PersonScreen() {
                     fontSize: 24,
                     fontWeight: 'bold', 
                   }}
-                  onPress = {() => console.log("SUIII")}
+                  onPress = {() => callUtil(person as Person, db)}
                   />
                 </View>
 

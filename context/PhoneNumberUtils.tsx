@@ -64,7 +64,7 @@ const formatPhoneNumber = (phoneNumber: string): string => {
             members[0].bond_id,
             1
           );
-          return persToCall as Person;
+          return await persToCall as Person;
         }
       }
       // If there is no member markedd
@@ -102,7 +102,34 @@ const formatPhoneNumber = (phoneNumber: string): string => {
       Alert.alert("could not open url");
     }
   };
+
+const callUtil = async (person: Person, db: SQLite.SQLiteDatabase) => {
+  const phoneNumber: string = validateAndFormatPhoneNumber(
+    person.phoneNumber
+  );
+  const phoneURL: string = `tel:${phoneNumber}`;
+  const canOpen = await Linking.canOpenURL(phoneURL);
+
+  if (canOpen) {
+    Linking.openURL(phoneURL);
+  } else {
+    Alert.alert("could not open url");
+  }
+}
+
+// For texting user
+const sendSMS = (phoneNumber: string) => {
+  const url = `sms:${phoneNumber}`;
+  Linking.openURL(url).catch(err => console.error('Error:', err));
+};
+
   export {
     validateAndFormatPhoneNumber,
-    callPersonUtil
+    callPersonUtil,
+    callUtil,
+    sendSMS,
+    getNextToCallUtil
   }
+
+
+  
