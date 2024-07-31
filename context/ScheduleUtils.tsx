@@ -298,9 +298,7 @@ export function displaySchedule(schedule: Schedule_DB): React.JSX.Element {
   if(schedule.type == ScheduleFrequency.MONTHLY) {
     return (<View>
       <ThemedText darkColor="black">
-        Day of Week: {schedule.weekDay}
-        week of Month: {schedule.weekOfMonth}
-        Time: {schedule.time}
+        The {convertNumberToOrdinal(schedule.weekOfMonth as number)} {convertToDayOfWeek(schedule.weekDay as number)} of the month at {convertTo12HourTime(schedule.time)}
       </ThemedText>
     </View>)
   }
@@ -308,8 +306,7 @@ export function displaySchedule(schedule: Schedule_DB): React.JSX.Element {
   if(schedule.type == ScheduleFrequency.YEARLY) {
     return (<View>
       <ThemedText darkColor="black">
-        Date: {schedule.date}
-        Time: {schedule.time}
+        {schedule.date} at {convertTo12HourTime(schedule.time)}
       </ThemedText>
     </View>)
   }
@@ -444,6 +441,9 @@ export function convertTo12HourTime(timeString: string) {
  * @param dayNum sunday = 1
  */
 export function convertToDayOfWeek(dayNum: number){
+  const n: number = 1;
+  n.toLocaleString()
+
   switch(dayNum){
     case 1: {
       return "Sunday"
@@ -467,5 +467,44 @@ export function convertToDayOfWeek(dayNum: number){
       return "Saturday"
     } 
   }
+}
+
+export function convertNumberToOrdinal(num: number){
+  if (num < 1 || num > 10) {
+    throw new Error("convertNumberToOrdinal(): param must be between 1 and 10 inclusive!")
+  }
+  switch(num) {
+    case 1:{
+      return "first"
+    } 
+    case 2:{
+      return "second"
+    } 
+    case 3:{
+      return "third"
+    } 
+    case 4:{
+      return "fourth"
+    } 
+    case 5:{
+      return "fifth"
+    } 
+    case 6:{
+      return "sixth"
+    } 
+    case 7:{
+      return "seventh"
+    } 
+    case 8:{
+      return "eighth"
+    } 
+    case 9:{
+      return "ninth"
+    } 
+    case 10:{
+      return "tenth"
+    } 
+  }
+
 }
 
