@@ -1,26 +1,40 @@
 import { ThemedText } from "@/components/ThemedText";
-import { useContext, useState,  } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Alert, FlatList, TextInput } from "react-native";
-import { } from "react-native-gesture-handler";
+import {} from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
-import {  Button, ListItem, } from "@rneui/themed";
+import { Button, ListItem } from "@rneui/themed";
 import { StyleSheet, View } from "react-native";
-import { router,  } from "expo-router";
+import { router } from "expo-router";
 import { InTouchContext } from "@/context/InTouchContext";
 import { Bond, Person } from "@/constants/types";
 import { StandardButton } from "@/components/ButtonStandard";
 import React from "react";
 import { ScheduleContext } from "@/context/ScheduleContext";
-import { displayPotentialSchedule, generateNotificationSchedule, getScheduleType } from "@/context/ScheduleUtils";
+import {
+  displayPotentialSchedule,
+  generateNotificationSchedule,
+  getScheduleType,
+} from "@/context/ScheduleUtils";
 import { useSQLiteContext } from "expo-sqlite";
 
 export default function createGroupScreen() {
   // Data to be stored in record
   const [bondName, groupNameChange] = useState("");
-  const { createBond, generateBondId, tempBondMembers, clearTempBondMembers, createBondMember, peopleList } = useContext(InTouchContext);
-  const {potentialSchedule} = useContext(ScheduleContext)
+  const {
+    createBond,
+    generateBondId,
+    tempBondMembers,
+    clearTempBondMembers,
+    createBondMember,
+    peopleList,
+  } = useContext(InTouchContext);
+  const { potentialSchedule } = useContext(ScheduleContext);
   const bondID = generateBondId();
   const db = useSQLiteContext();
+  const [schedule, setSchedule] = useState(displayPotentialSchedule(potentialSchedule))
+
+  console.log("schedule: ", schedule)
 
   const bondToAdd: Bond = {
     bondName: bondName,
@@ -34,6 +48,12 @@ export default function createGroupScreen() {
     title = bondName;
   }
 
+
+  useEffect(() => {
+    setSchedule(displayPotentialSchedule(potentialSchedule))
+  }, [potentialSchedule])
+
+  
   async function onDonePress() {
     if (!bondName) {
       Alert.alert("Must enter a Bond name");
@@ -41,53 +61,45 @@ export default function createGroupScreen() {
     }
 
     try {
-    bondToAdd.schedule = getScheduleType(potentialSchedule)
-    await createBond(bondToAdd)
+      bondToAdd.schedule = getScheduleType(potentialSchedule);
+      await createBond(bondToAdd);
     } catch (e) {
       console.error(e);
-      throw Error("createGroupScreen onDonePress(): Error calling createbond()")
+      throw Error(
+        "createGroupScreen onDonePress(): Error calling createbond()"
+      );
     }
-      try {
-        createBondMember(tempBondMembers, bondID)
-      } catch (e) {
-        console.error(e);
-        throw Error ("failed to call createBondMember()")
-      }
+    try {
+      createBondMember(tempBondMembers, bondID);
+    } catch (e) {
+      console.error(e);
+      throw Error("failed to call createBondMember()");
+    }
     clearTempBondMembers();
-    generateNotificationSchedule(potentialSchedule, bondToAdd, db)
+    generateNotificationSchedule(potentialSchedule, bondToAdd, db);
     router.push("./(tabs)");
   }
 
-  function onCreateSchedule(){
-    router.navigate({pathname: "./createScheduleScreen", params: {bid: `20`, isFromBondScreen: "false"}})
+  function onCreateSchedule() {
+    router.navigate({
+      pathname: "./createScheduleScreen",
+      params: { bid: `20`, isFromBondScreen: "false" },
+    });
   }
 
-
-  const renderGroupMembers = ({ item }: { item}) => {
+  const renderGroupMembers = ({ item }: { item }) => {
     let personToShow: Person;
     peopleList.forEach((person: Person) => {
       if (person.person_id === item) {
         personToShow = person;
-
-    }
-  })
-  return (
-    <ListItem bottomDivider>
-      <ListItem.Content id={item.toString()}>
-        <ListItem.Title>
-          {personToShow.firstName} {personToShow.lastName}
-        </ListItem.Title>
-        <ListItem.Title>
-          Phone Number: {personToShow.phoneNumber} id: {item}
-        </ListItem.Title>
-      </ListItem.Content>
-    </ListItem>
-  );
+      }
+    });
   };
 
-
-
-
+  const renderPotentialSchedule = ({ item }: { item: any }) => {
+    console.log("item: ", item)
+    return (item);
+  };
 
   return (
     <SafeAreaView style={styles.stepContainer}>
@@ -110,26 +122,29 @@ export default function createGroupScreen() {
         }}
       ></TextInput>
       <View style={styles.centeredView}>
-      <ThemedText type="subtitle" style={styles.title}>
+        <ThemedText type="subtitle" style={styles.title}>
           Members
-      </ThemedText>
-
+        </ThemedText>
       </View>
       <FlatList
-        data={([...tempBondMembers])}
+        data={[...tempBondMembers]}
         renderItem={renderGroupMembers}
         keyExtractor={(item) => item}
       />
 
-        <View style={styles.centeredView}>
+
+      <View style={styles.centeredView}>
         <ThemedText type="subtitle" style={styles.title}>
           Schedule
-      </ThemedText>
-        {displayPotentialSchedule(potentialSchedule)}
+        </ThemedText>
 
-        </View>
+        <FlatList
+          data={[schedule]}
+          renderItem={renderPotentialSchedule}
+          keyExtractor={(item) => item}
+        />
 
-
+      </View>
 
 
       <Button
@@ -145,10 +160,9 @@ export default function createGroupScreen() {
       />
 
       <StandardButton
-        title ="Create Schedule"
+        title="Create Schedule"
         onPress={onCreateSchedule}
-        >
-      </StandardButton>
+      ></StandardButton>
 
       <Button
         title="Done"
@@ -190,4 +204,3 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 });
-
