@@ -38,12 +38,10 @@ export const generateNotificationSchedule = async (
   }
 
   if (isDailySchedule(potentialSchedule.schedule)) {
-    console.log("generateNotificationSchedule(): daily")
     const nid: string = await scheduleDailyNotification(
       potentialSchedule.schedule,
       bond
     );
-    console.log("daily nid: ", nid)
     writeDailyScheduleToDB(potentialSchedule.schedule, bond, nid, db);
     return;
   } else if (isWeeklySchedule(potentialSchedule.schedule)) {
@@ -51,7 +49,6 @@ export const generateNotificationSchedule = async (
       potentialSchedule.schedule,
       bond
     );
-    console.log("weekly nids: ", nids);
 
     await writeWeeklyScheduleToDB(potentialSchedule.schedule, bond, nids, db);
     return;
@@ -60,7 +57,6 @@ export const generateNotificationSchedule = async (
       potentialSchedule.schedule,
       bond
     );
-    console.log("monthly nids: ", nids);
 
     await writeMonthlyScheduleToDB(potentialSchedule.schedule, bond, nids, db);
     return;
@@ -70,7 +66,6 @@ export const generateNotificationSchedule = async (
         potentialSchedule.schedule,
         bond
       );
-      console.log("yearly nids: ", nids);
 
       await writeYearlyScheduleToDB(potentialSchedule.schedule, bond, nids, db);
       return;
@@ -81,8 +76,8 @@ export const generateNotificationSchedule = async (
       );
     }
   }
+  throw new Error("generateNotificationSchedule(): No Type Detected")
 
-  console.log("No type detected");
 };
 
 //WRITE DATABASE FUNCTIONS
@@ -405,10 +400,8 @@ export function displayPotentialSchedule(s: Schedule | undefined) {
   }
 
   if (isYearlySchedule(schedule)) {
-    console.log("displayPotentialSchedule(): yearlySchedule", schedule)
     const yearlySchedule: React.JSX.Element[] = [];
     schedule.datesInYear.forEach(d => {
-      console.log(d)
       yearlySchedule.push(
         <View>
           <ThemedText darkColor="black">
