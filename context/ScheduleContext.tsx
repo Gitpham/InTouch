@@ -94,7 +94,7 @@ export const ScheduleContextProvider: React.FC<{
   }
 
   const createPotentialSchedule = async (s: Schedule | undefined) => {
-    await setPotentialSchedule(s);
+    setPotentialSchedule(s);
   };
 
 

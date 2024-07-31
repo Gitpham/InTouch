@@ -28,9 +28,7 @@ export default function PeopleScreen() {
           <ListItem.Title>
             {item.firstName} {item.lastName}
           </ListItem.Title>
-          <ListItem.Title>
-            Phone Number: {item.phoneNumber} id: {item.person_id?.toString()}
-          </ListItem.Title>
+         
         </ListItem.Content>
         </Pressable>
 
