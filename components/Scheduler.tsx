@@ -18,7 +18,6 @@ import {
   YearlySchedule,
 } from "@/constants/types";
 import { ScheduleContext } from "@/context/ScheduleContext";
-import * as Notifications from "expo-notifications";
 import {
   cancelAllNotifications,
   getAllScheduledNotifications,
@@ -38,11 +37,10 @@ interface SchedulerInterface {
   isFromBondScreen: boolean
 }
 export default function Scheduler( {bid, isFromBondScreen}:SchedulerInterface)  {
-  const localParams = useLocalSearchParams()
   const [scheduleFrequency, setScheduleFrequency] = useState<ScheduleFrequency>(
     ScheduleFrequency.DAILY
   );
-  const { createPotentialSchedule, potentialSchedule, hasEditedSchedule, markHasEditedSchedule } =  useContext(ScheduleContext);
+  const { createPotentialSchedule, hasEditedSchedule, markHasEditedSchedule } =  useContext(ScheduleContext);
   const db = useSQLiteContext();
   //DAILY STATE VARIABLES AND SETTERS
   const [dailyTime, setDailyTime] = useState(new Date());
@@ -141,6 +139,11 @@ export default function Scheduler( {bid, isFromBondScreen}:SchedulerInterface)  
   const [selectedTimeInYear, setSelectedTimeInYear] = useState<Date>(
     new Date()
   );
+
+  useEffect(() => {
+    console.log("Scheduler: bid: ", bid)
+    console.log("Scheduler: isFromBondScreen: ", isFromBondScreen)
+  },[])
 
 
   async function onCancelAllNotifications() {
@@ -246,20 +249,30 @@ export default function Scheduler( {bid, isFromBondScreen}:SchedulerInterface)  
       } break;
       default:
         break;
-
     }
 
-    if(isFromBondScreen){
+    console.log("onDonePress: isFromBondScreen: ", isFromBondScreen, typeof isFromBondScreen)
+    console.log("onDonePress: bid: ", bid)
+
+    if(isFromBondScreen == false){
+      console.log('isFromBondFalse: ', isFromBondScreen)
+      createPotentialSchedule(pSchedule)
+      router.back();
+      return;
+    }
+    console.log("passes first if")
+
+    if(isFromBondScreen === true){
+      console.log("replace: ", isFromBondScreen)
       Alert.alert("Replace Schedule", "Clicking 'confirm' will replace your old schedule with the one you just made", [
         {text: "Confirm", onPress: () => onConfirmPress(pSchedule)},
         {text: "Cancel"}
       ])
+      return;
     }
+    console.log("passes second if")
 
-    if(!isFromBondScreen){
-      createPotentialSchedule(pSchedule)
-      router.back();
-    }
+
   }
 
   async function onConfirmPress(schedule: Schedule) {
