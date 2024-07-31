@@ -25,6 +25,7 @@ import * as SQLite from "expo-sqlite";
 import { View } from "react-native";
 import React, { JSXElementConstructor } from "react";
 import { ThemedText } from "@/components/ThemedText";
+import { getBond } from "@/assets/db/BondRepo";
 
 //SCHEDULE FUNCTIONS
 export const generateNotificationSchedule = async (
@@ -240,15 +241,27 @@ export const writeYearlyScheduleToDB = async (
   }
 };
 
-export async function deleteScheduleOfBond(db: SQLite.SQLiteDatabase, bid: number){
+export async function deleteScheduleAndNotificationsOfBond(db: SQLite.SQLiteDatabase, bid: number){
   try {
    await cancelNotificationsForBond(db, bid);
-  await deleteScheduleByBond(db, bid);
+    await deleteScheduleByBond(db, bid);
   return;
   } catch (e) {
     console.error(e);
     throw new Error("deleteScheduleOfBond() failed")
   }
+}
+
+export async function replaceScheduleOfBond(db: SQLite.SQLiteDatabase, bid: number, schedule: Schedule){
+  try {
+    await deleteScheduleAndNotificationsOfBond(db, bid)
+    const bond: Bond = await getBond(db, bid);
+    return await generateNotificationSchedule(schedule, bond, db);
+  } catch (e) {
+    console.error(e);
+    throw new Error("replaceScheduleOfBond() failed")
+  }
+
 }
 
 export function getScheduleType(schedule: Schedule): string{
@@ -348,13 +361,6 @@ export function displayPotentialSchedule(s: Schedule) {
       </View>)
     }
 
-    if(schedule.sunday != undefined) {
-      weeklySchedule.push(
-      <View>
-        <ThemedText>Sunday: {schedule.sunday.toTimeString()}</ThemedText>
-      </View>)
-    }
-
     if(schedule.friday != undefined) {
       weeklySchedule.push(
       <View>
@@ -394,8 +400,10 @@ export function displayPotentialSchedule(s: Schedule) {
   }
 
   if (isYearlySchedule(schedule)) {
+    console.log("displayPotentialSchedule(): yearlySchedule", schedule)
     const yearlySchedule: React.JSX.Element[] = [];
     schedule.datesInYear.forEach(d => {
+      console.log(d)
       yearlySchedule.push(
         <View>
           <ThemedText>
@@ -403,8 +411,9 @@ export function displayPotentialSchedule(s: Schedule) {
           </ThemedText>
         </View>
       )
-      return yearlySchedule;
     })
+    return (yearlySchedule)
+
   }
 }
 

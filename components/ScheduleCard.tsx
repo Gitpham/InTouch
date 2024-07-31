@@ -45,10 +45,6 @@ export default function ScheduleCard({bond}: ScheduleCardInterface) {
         }
     }
    
-    async function onCancelSchedule(){
-        await deleteScheduleOfBond(db, bond?.bond_id as number);
-      }
-    
       async function onModifySchedule() {
         router.navigate({pathname: "./createScheduleScreen", params: {id: `${bond?.bond_id}`, isFromBondScreen: "true"}})
       }
@@ -59,7 +55,7 @@ export default function ScheduleCard({bond}: ScheduleCardInterface) {
         <Card.Divider></Card.Divider>
         <ThemedText>Type of Schedule: {bond?.schedule} </ThemedText>
         {viewSchedule()}
-        <StandardButton title="Cancel Schedule" onPress={onCancelSchedule}></StandardButton>
-        <StandardButton title="Modify Schedule" onPress={onModifySchedule}></StandardButton>
+
+        <StandardButton title="Edit Schedule" onPress={onModifySchedule}></StandardButton>
       </Card>)
 }

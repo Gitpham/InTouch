@@ -106,3 +106,6 @@ export const getAllSchedules= async (db: SQLite.SQLiteDatabase): Promise<Schedul
         throw Error("Failed to getAllPersons()")
     }
 }
+
+
+
