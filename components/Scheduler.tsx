@@ -46,10 +46,11 @@ export default function Scheduler() {
   const [scheduleFrequency, setScheduleFrequency] = useState<ScheduleFrequency>(
     ScheduleFrequency.DAILY
   );
-  const { createPotentialSchedule, markHasEditedSchedule } =  useContext(ScheduleContext);
+  const { createPotentialSchedule, potentialSchedule } =  useContext(ScheduleContext);
   const db = useSQLiteContext();
   //DAILY STATE VARIABLES AND SETTERS
 
+  const [bid, setBid] = useState(-1)
   const [dailyTime, setDailyTime] = useState(new Date());
 
   function changeDailyTime(time: Date) {
@@ -150,6 +151,8 @@ export default function Scheduler() {
   useEffect(() => {
     const bool = localParams?.isFromBondScreen as boolean;
     setIsFromBondScreen(bool)
+    const bid = parseInt(localParams?.bid as string);
+    setBid(bid)
   }, [localParams])
 
 
@@ -169,6 +172,7 @@ export default function Scheduler() {
   }
 
   async function onDonePress() {
+
     switch (scheduleFrequency) {
       case ScheduleFrequency.DAILY:
         {
@@ -261,115 +265,20 @@ export default function Scheduler() {
       default:
         break;
     }
-    router.back();
+    if(isFromBondScreen){
+      Alert.alert("Replace Schedule", "Clicking 'confirm' will replace your old schedule with the one you just made", [
+        {text: "Confirm", onPress: onConfirmPress},
+        {text: "Cancel"}
+      ])
+    }
+
+    if(!isFromBondScreen){
+      router.back();
+    }
   }
 
-  /**
-   * replaces current schedule with new one.
-   * @param scheduleFrequency 
-   */
-  async function editSchedule(scheduleFrequency: ScheduleFrequency, ){
-
-    switch (scheduleFrequency) {
-      case ScheduleFrequency.DAILY:
-        {
-          const potentialDailySchedule: DailySchedule = {
-            time: dailyTime,
-          };
-          const potentialSchedule: Schedule = {
-            schedule: potentialDailySchedule,
-          };
-
-          replaceScheduleOfBond(db, bid, potentialSchedule)
-
-      
-
-        
-
-        }
-        break;
-      case ScheduleFrequency.WEEKLY:
-        {
-          const potentialWeeklySchedule: WeeklySchedule = {
-            monday: undefined,
-            tuesday: undefined,
-            wednesday: undefined,
-            thursday: undefined,
-            friday: undefined,
-            saturday: undefined,
-            sunday: undefined,
-          };
-          if (!mon && !tues && !weds && !thurs && !fri && !sat && !sun) {
-            Alert.alert("Must have some days checked for a weekly schedule");
-            break;
-          }
-          if (mon) {
-            potentialWeeklySchedule.monday = monTime;
-          }
-          if (tues) {
-            potentialWeeklySchedule.tuesday = tuesTime;
-          }
-          if (weds) {
-            potentialWeeklySchedule.wednesday = wedsTime;
-          }
-          if (thurs) {
-            potentialWeeklySchedule.thursday = thursTime;
-          }
-          if (fri) {
-            potentialWeeklySchedule.friday = friTime;
-          }
-          if (sat) {
-            potentialWeeklySchedule.saturday = satTime;
-          }
-          if (sun) {
-            potentialWeeklySchedule.sunday = sunTime;
-          }
-
-          const pSchedule: Schedule = {
-            schedule: potentialWeeklySchedule,
-          };
-          createPotentialSchedule(pSchedule);
-        }
-        break;
-      case ScheduleFrequency.MONTHLY:
-        {
-          const pMonthlySchedule: MonthlySchedule = {
-            daysInMonth: [],
-          };
-          monthlySet.forEach((d) => {
-            pMonthlySchedule.daysInMonth.push(d);
-          });
-
-          pMonthlySchedule.daysInMonth.forEach((d) => {
-            console.log(
-              "day of week: ",
-              d.dayOfWeek,
-              "week of month: ",
-              d.weekOfMonth
-            );
-          });
-
-          const pSchedule: Schedule = {
-            schedule: pMonthlySchedule,
-          };
-          createPotentialSchedule(pSchedule);
-        }
-        break;
-      case ScheduleFrequency.YEARLY: {
-        const pYearSchedule: YearlySchedule = {
-          datesInYear: datesInYear,
-        };
-        const pSchedule: Schedule = {
-          schedule: pYearSchedule,
-        };
-        createPotentialSchedule(pSchedule);
-      } break;
-      default:
-        break;
-    }
-    if(isFromBondScreen){
-      markHasEditedSchedule(true)
-    }
+  async function onConfirmPress() {
+    await replaceScheduleOfBond(db, bid, potentialSchedule)
     router.back();
   }
 

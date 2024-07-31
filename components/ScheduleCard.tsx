@@ -14,7 +14,6 @@ interface ScheduleCardInterface {
 }
 export default function ScheduleCard({bond}: ScheduleCardInterface) {
     const db = useSQLiteContext();
-    let schedules;
     const [showSchedule, setShowSchedule] = useState<React.JSX.Element[]>([])
     const {potentialSchedule, hasEditedSchedule, markHasEditedSchedule} = useContext(ScheduleContext)
 
@@ -34,19 +33,14 @@ export default function ScheduleCard({bond}: ScheduleCardInterface) {
         }
         initSchedule()
        
-    }, [])
+    }, [potentialSchedule])
 
     function viewSchedule(){
-        console.log("hasEditedSchedule: ", hasEditedSchedule)
-        if(hasEditedSchedule){
-            return displayPotentialSchedule(potentialSchedule);
-        } else {
-            return showSchedule
-        }
+        return showSchedule
     }
    
       async function onModifySchedule() {
-        router.navigate({pathname: "./createScheduleScreen", params: {id: `${bond?.bond_id}`, isFromBondScreen: "true"}})
+        router.navigate({pathname: "./createScheduleScreen", params: {bid: `${bond?.bond_id}`, isFromBondScreen: "true"}})
       }
     
 
