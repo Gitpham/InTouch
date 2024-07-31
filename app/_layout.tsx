@@ -6,20 +6,30 @@ import {
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import {  useEffect } from "react";
+import {  useEffect, useRef, useState } from "react";
 import "react-native-reanimated";
-
+import * as Notifications from "expo-notifications";
 import { useColorScheme } from "@/hooks/useColorScheme";
-
 import { SQLiteProvider } from "expo-sqlite";
 import { InTouchContextProvider } from "@/context/InTouchContext";
 import React from "react";
 import * as SQLite from 'expo-sqlite';
 import { createDB } from "@/assets/db/db";
 import { ScheduleContextProvider } from "@/context/ScheduleContext";
+import { Platform } from "react-native";
+import { callPersonUtil, } from "@/context/PhoneNumberUtils";
+
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+  }),
+});
 
 
 export default function RootLayout() {
@@ -30,26 +40,63 @@ export default function RootLayout() {
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
 
+  let db: SQLite.SQLiteDatabase;
+
+
   useEffect(() => {
-
-
     const initDB = async () => {
-      const db = await SQLite.openDatabaseAsync("nextToCall.db");
+      db = await SQLite.openDatabaseAsync("July26_ScheduleTable_2.db");
       createDB(db);
     };
-
     try {
       initDB();
-
     } catch (e) {
       console.error(e);
       console.log("failed to initDB()")
     }
-  });
 
+    if (Platform.OS === "android") {
+      Notifications.getNotificationChannelsAsync().then((value) =>
+        setChannels(value ?? [])
+      );
+      notificationListener.current =
+        Notifications.addNotificationReceivedListener((notification) => {
+          setNotification(notification);
+        });
+    }
+
+    responseListener.current =
+      Notifications.addNotificationResponseReceivedListener(
+        async (response) => {
+          console.log("Recieved Response!")
+          try {
+            callPersonUtil(response.notification, db)
+          } catch (e) {
+            console.error(e);
+            throw Error("failed to navigate away");
+          }
+        }
+      );
+
+    return () => {
+      notificationListener.current &&
+        Notifications.removeNotificationSubscription(
+          notificationListener.current
+        );
+      responseListener.current &&
+        Notifications.removeNotificationSubscription(responseListener.current);
+    };
+  }, []);
+
+  const [channels, setChannels] = useState<Notifications.NotificationChannel[]>(
+    []
+  );
+  const [notification, setNotification] = useState<
+    Notifications.Notification | undefined
+  >(undefined);
+  const notificationListener = useRef<Notifications.Subscription>();
+  const responseListener = useRef<Notifications.Subscription>();
   useEffect(() => {
-
-   
     if (loaded) {
       SplashScreen.hideAsync();
     }
@@ -61,7 +108,7 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <SQLiteProvider databaseName="nextToCall.db">
+      <SQLiteProvider databaseName="July26_ScheduleTable_2.db">
         <ScheduleContextProvider>
 
         <InTouchContextProvider>

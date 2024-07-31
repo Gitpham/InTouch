@@ -1,7 +1,5 @@
-import * as Notifications from "expo-notifications";
-import { registerForPushNotificationsAsync } from "@/context/NoticationUtil";
-import { useState, useRef, useEffect, useContext } from "react";
-import { Platform, View, Button, Text, SafeAreaView } from "react-native";
+import {  useContext } from "react";
+import {  SafeAreaView } from "react-native";
 import React from "react";
 import { getAllBonds } from "@/assets/db/BondRepo";
 import { clearDB, getTableNames } from "@/assets/db/db";
@@ -9,15 +7,31 @@ import { getAllPersonBonds } from "@/assets/db/PersonBondRepo";
 import { getAllPersons } from "@/assets/db/PersonRepo";
 import { getAllReminders } from "@/assets/db/ReminderRepo";
 import { StandardButton } from "@/components/ButtonStandard";
-import Scheduler from "@/components/Scheduler";
 import { ThemedText } from "@/components/ThemedText";
 import { InTouchContext } from "@/context/InTouchContext";
 import { useSQLiteContext } from "expo-sqlite";
+import { getAllSchedules } from "@/assets/db/ScheduleRepo";
+import { getAllScheduledNotifications, cancelAllNotifications } from "@/context/NotificationUtils";
 
    
    export default function statScreen() {
-    const {createBondMember, peopleList, bondList, getBondPersonMap, getPersonBondMap } = useContext(InTouchContext)
+    const {peopleList, getBondPersonMap, getPersonBondMap } = useContext(InTouchContext)
     const db = useSQLiteContext();
+
+    async function onDisplaySchedules() {
+      const s = await getAllSchedules(db)
+      console.log("schedules in db: ", s);
+    }
+  
+    async function onDisplayNotifications() {
+      console.log("getAllScheduledNotifications(): " , getAllScheduledNotifications())
+    }
+  
+  
+    async function clearScheduledNotifications() {
+      await cancelAllNotifications()
+    }
+  
 
 
 
@@ -88,7 +102,10 @@ import { useSQLiteContext } from "expo-sqlite";
             <StandardButton title="show personBondMap" onPress={onPressShowPersonBondMap}/>
 
             <StandardButton title="show tables" onPress={tableNames}/>
-              <Scheduler></Scheduler>
+
+              <StandardButton title="Display Schedules from DB" onPress={onDisplaySchedules}></StandardButton>
+        <StandardButton title="Display scheudleNotificaions" onPress={onDisplayNotifications}></StandardButton>
+        <StandardButton title="cancel all Notifications" onPress={clearScheduledNotifications}></StandardButton>
 
 
        </SafeAreaView>

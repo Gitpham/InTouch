@@ -130,18 +130,16 @@ export type DateInYear = {
 }
 
 export function isDateInYear(obj: any): obj is DateInYear {
-    return ((obj.date instanceof Date) && (obj.date instanceof obj.time))
+    return ((obj.date instanceof Date) && (obj.time instanceof Date))
 }
 export type YearlySchedule = {
     datesInYear: Set<DateInYear>
 }
 
 export function isYearlySchedule(obj: any): obj is YearlySchedule {
-    console.log("isyearlySchedule")
     if (!(obj.datesInYear instanceof Set)){
         return false;
     }
-
     if (obj.datesInYear.size < 1) {
         return false;
     }
@@ -152,8 +150,19 @@ export function isYearlySchedule(obj: any): obj is YearlySchedule {
         }
     })
     return true;
+
 }
   
 export type Schedule = {
     schedule: DailySchedule | WeeklySchedule | MonthlySchedule | YearlySchedule
   };
+
+export type Schedule_DB = {
+    type: string,
+    time: string,
+    weekDay: number | null,
+    weekOfMonth: number | null,
+    date: string | null,
+    nid: string,
+    bid: number,
+}

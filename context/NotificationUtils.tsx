@@ -1,5 +1,6 @@
 import * as Notifications from "expo-notifications";
 import * as Device from "expo-device";
+import * as SQLite from "expo-sqlite";
 import Constants from "expo-constants";
 import { Alert, Linking, Platform } from "react-native";
 import {
@@ -8,10 +9,12 @@ import {
   DateInYear,
   DayOfMonth,
   MonthlySchedule,
+  Schedule_DB,
   WeeklySchedule,
   YearlySchedule,
 } from "@/constants/types";
-import { uploadDailyScheduleDB } from "@/assets/db/DailyScheduleRepo";
+import { clearNotificationsDB, getNotificationsForBondDB } from "@/assets/db/NotificationRepo";
+import { getScheduleOfBond } from "@/assets/db/ScheduleRepo";
 
 export async function allowsNotificationsAsync() {
   const settings = await Notifications.getPermissionsAsync();
@@ -66,7 +69,7 @@ export async function cancelNotifications(notificationIDs: string[]) {
   }
 }
 
-const notificationContentDaily = (
+export const notificationContentDaily = (
   bond: Bond
 ): Notifications.NotificationContentInput => {
   return {
@@ -76,7 +79,7 @@ const notificationContentDaily = (
   };
 };
 
-const notificationContentWeekly = (
+export const notificationContentWeekly = (
   bond: Bond
 ): Notifications.NotificationContentInput => {
   return {
@@ -86,7 +89,7 @@ const notificationContentWeekly = (
   };
 };
 
-const notificationContentMonthly = (
+export const notificationContentMonthly = (
   bond: Bond
 ): Notifications.NotificationContentInput => {
   return {
@@ -96,7 +99,7 @@ const notificationContentMonthly = (
   };
 };
 
-const notificationContentYearly = (
+export const notificationContentYearly = (
   bond: Bond
 ): Notifications.NotificationContentInput => {
   return {
@@ -133,7 +136,12 @@ export async function scheduleDailyNotification(
   }
 }
 
-
+/**
+ * Sunday: 1, Sat: 7
+ * @param schedule 
+ * @param bond 
+ * @returns 
+ */
 export async function scheduleWeeklyNotification(
   schedule: WeeklySchedule,
   bond: Bond
@@ -216,7 +224,6 @@ export async function scheduleWeeklyNotification(
     };
 
     try {
-      console.log("wednesday");
       nids.push(await Notifications.scheduleNotificationAsync({
         content: notificationContentWeekly(bond),
         trigger: weeklyTrigger,
@@ -303,9 +310,8 @@ export async function scheduleMonthlyNotification(
   bond: Bond
 ): Promise<string[]> {
   const nids: string[] = [];
-  schedule.daysInMonth.forEach(async (d: DayOfMonth) => {
-    console.log("day in monthly schedule: ", d as DayOfMonth);
-
+  for(let i = 0; i < schedule.daysInMonth.length; i++) {
+    const d = schedule.daysInMonth[i]
     const weekOfMonth: number = Number(d.weekOfMonth);
     const dayOfWeek: number = Number(d.dayOfWeek);
     const trigger: Notifications.CalendarTriggerInput = {
@@ -315,7 +321,6 @@ export async function scheduleMonthlyNotification(
       minute: d.time.getMinutes(),
       repeats: true,
     };
-
     try {
       nids.push(await Notifications.scheduleNotificationAsync({
         content: notificationContentMonthly(bond),
@@ -327,38 +332,40 @@ export async function scheduleMonthlyNotification(
         `scheduleMonthlyNotification() failed to scheduleNotificationAsync for the ${d.dayOfWeek} of the ${d.weekOfMonth} week of Month`
       );
     }
-  });
+  }
+
   return nids
 }
 
 export async function scheduleYearlyNotification(
   schedule: YearlySchedule,
   bond: Bond
-){
-  schedule.datesInYear.forEach(async (d: DateInYear) => {
+): Promise<string[]>{
+  const nids: string[] = [];
+  const sIter = schedule.datesInYear.values();
+  for(let i = 0; i< schedule.datesInYear.size; i++){
+    const d = sIter.next().value
     const trigger: Notifications.YearlyTriggerInput = {
-      day: d.date.getDate(),
+      day: d.date.getUTCDate(),
       month: d.date.getMonth(),
       hour: d.time.getHours(),
       minute: d.time.getMinutes(),
       repeats: true
     }
     try {
-      await Notifications.scheduleNotificationAsync({
+      nids.push(await Notifications.scheduleNotificationAsync({
         content: notificationContentYearly(bond),
         trigger: trigger,
-      });
+      }));
     } catch (e) {
       console.error(e);
       throw new Error(
         `scheduleYearlyNotification() failed to scheduleNotificationAsync for ${d.getDate()} of ${d.getMonth()}`
       );
     }
-
-  })
-
-
-
+  }
+ 
+  return nids;
 }
 export async function getAllScheduledNotifications() {
   try {
@@ -423,5 +430,24 @@ async function registerForPushNotificationsAsync() {
 
   return token;
 }
+
+
+export async function cancelNotificationsForBond(db: SQLite.SQLiteDatabase, bid: number) {
+  const schedules: Schedule_DB[] = await getScheduleOfBond(db, bid);
+
+  for(let i = 0; i < schedules.length; i++){
+    const nid = schedules[i].nid;
+    try {
+    await Notifications.cancelScheduledNotificationAsync(nid);
+    } catch (e) {
+      console.error(e);
+      throw new Error("cancelNotificationsForBond() failed")
+    }
+  }
+}
+
+
+
+
 
 export { registerForPushNotificationsAsync };

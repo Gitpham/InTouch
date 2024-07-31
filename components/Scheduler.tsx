@@ -1,5 +1,5 @@
-import { useContext, useEffect, useRef, useState } from "react";
-import { View, Platform, Alert } from "react-native";
+import { useContext, useEffect, useState } from "react";
+import { View,Alert } from "react-native";
 import React from "react";
 import SegmentedControl from "@react-native-segmented-control/segmented-control";
 import { ThemedText } from "./ThemedText";
@@ -18,78 +18,31 @@ import {
   YearlySchedule,
 } from "@/constants/types";
 import { ScheduleContext } from "@/context/ScheduleContext";
-import * as Notifications from "expo-notifications";
 import {
   cancelAllNotifications,
   getAllScheduledNotifications,
-} from "@/context/NoticationUtil";
+} from "@/context/NotificationUtils";
 import { ScrollView } from "react-native";
 import { useSQLiteContext } from "expo-sqlite";
 import DailySchedulePicker from "./DailySchedulePicker";
 import WeeklySchedulePicker from "./WeeklySchedulePicker";
 import MonthlySchedulePicker from "./MonthlySchedulePicker";
 import YearlySchedulePicker from "./YearlySchedulePicker";
+import { router, useLocalSearchParams } from "expo-router";
+import { replaceScheduleOfBond } from "@/context/ScheduleUtils";
 
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: false,
-    shouldSetBadge: false,
-  }),
-});
 
-export default function Scheduler() {
-  useEffect(() => {
-    if (Platform.OS === "android") {
-      Notifications.getNotificationChannelsAsync().then((value) =>
-        setChannels(value ?? [])
-      );
-      notificationListener.current =
-        Notifications.addNotificationReceivedListener((notification) => {
-          setNotification(notification);
-        });
-    }
-
-    responseListener.current =
-      Notifications.addNotificationResponseReceivedListener(
-        async (response) => {
-          try {
-            callPerson(response.notification);
-          } catch (e) {
-            console.error(e);
-            throw Error("failed to navigate away");
-          }
-        }
-      );
-
-    return () => {
-      notificationListener.current &&
-        Notifications.removeNotificationSubscription(
-          notificationListener.current
-        );
-      responseListener.current &&
-        Notifications.removeNotificationSubscription(responseListener.current);
-    };
-  }, []);
-
-  const [channels, setChannels] = useState<Notifications.NotificationChannel[]>(
-    []
-  );
-  const [notification, setNotification] = useState<
-    Notifications.Notification | undefined
-  >(undefined);
-  const notificationListener = useRef<Notifications.Subscription>();
-  const responseListener = useRef<Notifications.Subscription>();
-
-  const db = useSQLiteContext();
+interface SchedulerInterface {
+  bid: number | undefined,
+  isFromBondScreen: boolean
+}
+export default function Scheduler( {bid, isFromBondScreen}:SchedulerInterface)  {
   const [scheduleFrequency, setScheduleFrequency] = useState<ScheduleFrequency>(
     ScheduleFrequency.DAILY
   );
-  const { createPotentialSchedule, generateSchedule, callPerson } =
-    useContext(ScheduleContext);
-
+  const { createPotentialSchedule, hasEditedSchedule, markHasEditedSchedule } =  useContext(ScheduleContext);
+  const db = useSQLiteContext();
   //DAILY STATE VARIABLES AND SETTERS
-
   const [dailyTime, setDailyTime] = useState(new Date());
 
   function changeDailyTime(time: Date) {
@@ -187,15 +140,6 @@ export default function Scheduler() {
     new Date()
   );
 
-  async function onGenerateNotificationPress() {
-    const testBond: Bond = {
-      bondName: "testBond",
-      bond_id: 5,
-      schedule: "weekly",
-      typeOfCall: "weekly",
-    };
-    await generateSchedule(testBond);
-  }
 
   async function onCancelAllNotifications() {
     try {
@@ -212,17 +156,16 @@ export default function Scheduler() {
   }
 
   async function onDonePress() {
+    let pSchedule: Schedule;
     switch (scheduleFrequency) {
       case ScheduleFrequency.DAILY:
         {
           const potentialDailySchedule: DailySchedule = {
             time: dailyTime,
           };
-          const potentialSchedule: Schedule = {
+          pSchedule = {
             schedule: potentialDailySchedule,
           };
-
-          await createPotentialSchedule(potentialSchedule);
         }
         break;
       case ScheduleFrequency.WEEKLY:
@@ -262,10 +205,9 @@ export default function Scheduler() {
             potentialWeeklySchedule.sunday = sunTime;
           }
 
-          const pSchedule: Schedule = {
+          pSchedule= {
             schedule: potentialWeeklySchedule,
           };
-          createPotentialSchedule(pSchedule);
         }
         break;
       case ScheduleFrequency.MONTHLY:
@@ -277,34 +219,46 @@ export default function Scheduler() {
             pMonthlySchedule.daysInMonth.push(d);
           });
 
-          pMonthlySchedule.daysInMonth.forEach((d) => {
-            console.log(
-              "day of week: ",
-              d.dayOfWeek,
-              "week of month: ",
-              d.weekOfMonth
-            );
-          });
-
-          const pSchedule: Schedule = {
+          pSchedule = {
             schedule: pMonthlySchedule,
           };
-          createPotentialSchedule(pSchedule);
         }
         break;
       case ScheduleFrequency.YEARLY: {
         const pYearSchedule: YearlySchedule = {
           datesInYear: datesInYear,
         };
-        const pSchedule: Schedule = {
+        pSchedule= {
           schedule: pYearSchedule,
         };
-        createPotentialSchedule(pSchedule);
-        return;
-      }
+  
+      } break;
       default:
         break;
     }
+
+
+    if(isFromBondScreen == false){
+      createPotentialSchedule(pSchedule)
+      router.back();
+      return;
+    }
+
+    if(isFromBondScreen === true){
+      Alert.alert("Replace Schedule", "Clicking 'confirm' will replace your old schedule with the one you just made", [
+        {text: "Confirm", onPress: () => onConfirmPress(pSchedule)},
+        {text: "Cancel"}
+      ])
+      return;
+    }
+
+
+  }
+
+  async function onConfirmPress(schedule: Schedule) {
+    await replaceScheduleOfBond(db, bid as number, schedule)
+    markHasEditedSchedule(!hasEditedSchedule)
+    router.back();
   }
 
   function dailySelector() {
@@ -431,10 +385,6 @@ export default function Scheduler() {
 
           <View>
             <StandardButton title="Done" onPress={onDonePress}></StandardButton>
-            <StandardButton
-              title="generateNotification"
-              onPress={onGenerateNotificationPress}
-            ></StandardButton>
             <StandardButton
               title="cancel All Notificatios"
               onPress={onCancelAllNotifications}

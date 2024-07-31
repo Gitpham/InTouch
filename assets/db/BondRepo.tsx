@@ -62,9 +62,26 @@ export const deleteBond = async (db: SQLite.SQLiteDatabase, bond: Bond) => {
 
 
 export const getAllBonds = async (db: SQLite.SQLiteDatabase) => {
-  const bonds = await db.getAllAsync<Bond>(`SELECT * FROM bond`);
-  // const people
-  // console.log("All persons in person", bonds)
-
-  return bonds;
+  try { 
+    return await db.getAllAsync<Bond>(`SELECT * FROM bond`);
+  } catch (e) {
+    console.error(e);
+    throw new Error("getAllBonds() failed")
+  }
 };
+
+
+export const getBond = async (db: SQLite.SQLiteDatabase, bid: number) => {
+  try { 
+    const statement = await db.prepareAsync(`SELECT * FROM bond
+      WHERE bond_id = ?
+      `);
+    const value: string[] = [bid.toString()];
+    const result = await statement.executeAsync(value);
+    return result.getFirstAsync();
+  } catch (e) {
+    console.error(e);
+    throw new Error("getAllBonds() failed")
+  }
+
+}

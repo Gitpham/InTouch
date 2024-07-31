@@ -431,12 +431,13 @@ export const InTouchContextProvider: React.FC<{
         throw Error("createBondMember(): bondID is undefined")
       }
 
-      await setBondPersonMap(addToBondPersonMap(person_ids, bond_id));
-      await setPersonBondMap(addToPersonBondMap(person_ids, bond_id));
+      setBondPersonMap(addToBondPersonMap(person_ids, bond_id));
+      setPersonBondMap(addToPersonBondMap(person_ids, bond_id));
 
-      person_ids.forEach(async (person_id) => {
-      await addPersonBond(db, person_id, bond_id);
-      });
+      for (const pid of person_ids) {
+        await addPersonBond(db, pid, bond_id);
+      }
+
 
     } catch (e) {
       console.error(e);
