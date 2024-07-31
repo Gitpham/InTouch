@@ -76,6 +76,7 @@ export default function createGroupScreen() {
     }
     clearTempBondMembers();
     generateNotificationSchedule(potentialSchedule, bondToAdd, db);
+    createPotentialSchedule(undefined)
     router.push("./(tabs)");
   }
 
@@ -87,7 +88,9 @@ export default function createGroupScreen() {
   }
 
   const renderGroupMembers = ({ item }: { item }) => {
+
     let personToShow: Person = peopleList[0];
+
     peopleList.forEach((person: Person) => {
       if (person.person_id === item) {
         personToShow = person;
@@ -133,12 +136,20 @@ export default function createGroupScreen() {
           Members
         </ThemedText>
       </View>
-      <FlatList
+      {tempBondMembers.size > 0 ? 
+        <FlatList
         nestedScrollEnabled={true}
         data={[...tempBondMembers]}
         renderItem={renderGroupMembers}
         keyExtractor={(item) => item.toString()}
-      />
+      /> :
+      <View style={styles.centeredView}>
+      <ThemedText darkColor="black">No members set</ThemedText>
+
+      </View>
+      
+    }
+    
     
         <StandardButton
         title="Add Group Member"
