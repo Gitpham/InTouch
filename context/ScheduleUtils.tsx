@@ -38,10 +38,12 @@ export const generateNotificationSchedule = async (
   }
 
   if (isDailySchedule(potentialSchedule.schedule)) {
+    console.log("generateNotificationSchedule(): daily")
     const nid: string = await scheduleDailyNotification(
       potentialSchedule.schedule,
       bond
     );
+    console.log("daily nid: ", nid)
     writeDailyScheduleToDB(potentialSchedule.schedule, bond, nid, db);
     return;
   } else if (isWeeklySchedule(potentialSchedule.schedule)) {
