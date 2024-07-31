@@ -30,7 +30,7 @@ export default function createGroupScreen() {
     createBondMember,
     peopleList,
   } = useContext(InTouchContext);
-  const { potentialSchedule } = useContext(ScheduleContext);
+  const { potentialSchedule, createPotentialSchedule } = useContext(ScheduleContext);
   const bondID = generateBondId();
   const db = useSQLiteContext();
   const [schedule, setSchedule] = useState(displayPotentialSchedule(potentialSchedule))
@@ -181,6 +181,7 @@ export default function createGroupScreen() {
         title="Cancel"
         onPress={() => {
           clearTempBondMembers();
+          createPotentialSchedule(undefined)
           router.back();
         }}
       ></StandardButton>

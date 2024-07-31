@@ -323,7 +323,7 @@ export function displayPotentialSchedule(s: Schedule | undefined) {
   if (isDailySchedule(schedule)) {
     return (
       <View>
-        <ThemedText darkColor="black">Daily: {schedule.time.toTimeString()}</ThemedText>
+        <ThemedText darkColor="black">Daily: {convertTo12HourTime(schedule.time.toTimeString())}</ThemedText>
       </View>
     )
   }
@@ -333,49 +333,49 @@ export function displayPotentialSchedule(s: Schedule | undefined) {
     if(schedule.monday != undefined) {
       weeklySchedule.push(
       <View>
-        <ThemedText darkColor="black">Monday: {schedule.monday.toTimeString()}</ThemedText>
+        <ThemedText darkColor="black">Monday: {convertTo12HourTime(schedule.monday.toTimeString())}</ThemedText>
       </View>)
     }
 
     if(schedule.tuesday != undefined) {
       weeklySchedule.push(
       <View>
-        <ThemedText darkColor="black">Tuesday: {schedule.tuesday.toTimeString()}</ThemedText>
+        <ThemedText darkColor="black">Tuesday: {convertTo12HourTime(schedule.tuesday.toTimeString())}</ThemedText>
       </View>)
     }
 
     if(schedule.wednesday != undefined) {
       weeklySchedule.push(
       <View>
-        <ThemedText darkColor="black">Wednesday: {schedule.wednesday.toTimeString()}</ThemedText>
+        <ThemedText darkColor="black">Wednesday: {convertTo12HourTime(schedule.wednesday.toTimeString())}</ThemedText>
       </View>)
     }
 
     if(schedule.thursday != undefined) {
       weeklySchedule.push(
       <View>
-        <ThemedText darkColor="black">Thursday: {schedule.thursday.toTimeString()}</ThemedText>
+        <ThemedText darkColor="black">Thursday: {convertTo12HourTime(schedule.thursday.toTimeString())}</ThemedText>
       </View>)
     }
 
     if(schedule.friday != undefined) {
       weeklySchedule.push(
       <View>
-        <ThemedText darkColor="black">Friday: {schedule.friday.toTimeString()}</ThemedText>
+        <ThemedText darkColor="black">Friday: {convertTo12HourTime(schedule.friday.toTimeString())}</ThemedText>
       </View>)
     }
 
     if(schedule.saturday != undefined) {
       weeklySchedule.push(
       <View>
-        <ThemedText>Saturday: {schedule.saturday.toTimeString()}</ThemedText>
+        <ThemedText darkColor="black">Saturday: {convertTo12HourTime(schedule.saturday.toTimeString())}</ThemedText>
       </View>)
     }
 
     if(schedule.sunday != undefined) {
       weeklySchedule.push(
       <View>
-        <ThemedText darkColor="black">Sunday: {schedule.sunday.toTimeString()}</ThemedText>
+        <ThemedText darkColor="black">Sunday: {convertTo12HourTime(schedule.sunday.toTimeString())}</ThemedText>
       </View>)
     }
     return (
@@ -386,9 +386,14 @@ export function displayPotentialSchedule(s: Schedule | undefined) {
   if (isMonthlySchedule(schedule)){
     const monthlySchedule: React.JSX.Element[] = [];
     schedule.daysInMonth.forEach(d => {
+      const week:string = convertNumberToOrdinal(parseInt(d.weekOfMonth) as number) as string;
+      const day: string = convertToDayOfWeek(parseInt(d.dayOfWeek) as number) as string
+      const time = convertTo12HourTime(d.time.toTimeString())
       monthlySchedule.push(
         <View>
-          <ThemedText darkColor="black">Time: {d.time.toTimeString()} Day of Week: {d.dayOfWeek} Week of Month: {d.weekOfMonth}</ThemedText>
+          <ThemedText darkColor="black">
+          The {week} {day} of the month at {time}
+          </ThemedText>
         </View>
 
       )
@@ -402,7 +407,7 @@ export function displayPotentialSchedule(s: Schedule | undefined) {
       yearlySchedule.push(
         <View>
           <ThemedText darkColor="black">
-            Date: {d.date.toDateString()} Time: {d.time.toTimeString()}
+           {convertToMonth(d.date.getUTCMonth())} {d.date.getUTCDate()} at {convertTo12HourTime(d.time.toTimeString())}
           </ThemedText>
         </View>
       )
@@ -441,70 +446,130 @@ export function convertTo12HourTime(timeString: string) {
  * @param dayNum sunday = 1
  */
 export function convertToDayOfWeek(dayNum: number){
-  const n: number = 1;
-  n.toLocaleString()
-
+  let weekDay: string;;
   switch(dayNum){
     case 1: {
-      return "Sunday"
-    } 
+
+      weekDay= "Sunday"
+    } break;
     case 2: {
-      return "Monday"
-    } 
+      weekDay= "Monday"
+    } break;
     case 3: {
-      return "Tuesday"
-    } 
+      weekDay= "Tuesday"
+    } break;
     case 4: {
-      return "Wednesday"
-    } 
+      weekDay= "Wednesday"
+    } break;
     case 5: {
-      return "Thursday"
-    } 
+      weekDay= "Thursday"
+    } break;
     case 6: {
-      return "Friday"
-    } 
+      weekDay= "Friday"
+    } break;
     case 7: {
-      return "Saturday"
-    } 
-  }
+      weekDay= "Saturday"
+    } break;
+    default: {
+      weekDay= ("didn't work: ")
+    }break;
+}
+return weekDay
+
 }
 
 export function convertNumberToOrdinal(num: number){
   if (num < 1 || num > 10) {
     throw new Error("convertNumberToOrdinal(): param must be between 1 and 10 inclusive!")
   }
+  let ordinal = "";
   switch(num) {
     case 1:{
-      return "first"
-    } 
+      ordinal = "first"
+    } break;
     case 2:{
-      return "second"
-    } 
+      ordinal= "second"
+    } break;
     case 3:{
-      return "third"
-    } 
-    case 4:{
-      return "fourth"
-    } 
-    case 5:{
-      return "fifth"
-    } 
-    case 6:{
-      return "sixth"
-    } 
-    case 7:{
-      return "seventh"
-    } 
-    case 8:{
-      return "eighth"
-    } 
-    case 9:{
-      return "ninth"
-    } 
-    case 10:{
-      return "tenth"
-    } 
-  }
+      ordinal= "third"
 
+    } break;
+    case 4:{
+      ordinal= "fourth"
+    } break;
+    case 5:{
+      ordinal= "fifth"
+    } break;
+    case 6:{
+      ordinal= "sixth"
+    } break;
+    case 7:{
+      ordinal= "seventh"
+    } break;
+    case 8:{
+      ordinal= "eighth"
+    } break;
+    case 9:{
+      ordinal= "ninth"
+    } break;
+    case 10:{
+      ordinal= "tenth"
+    } break;
+    default: {
+      ordinal= "didnt work";
+    } break;
+  }
+  return ordinal
 }
 
+
+export function convertToMonth(monthNum: number){
+  if (monthNum < 1 || monthNum > 12) {
+    throw new Error("convertToMonth(): param must be between 1 and 12 inclusive!")
+  }
+  let month = "";
+  switch(monthNum) {
+    case 1:{
+      month = "January"
+    } break;
+    case 2:{
+      month= "February"
+    } break;
+    case 3:{
+      month= "March"
+
+    } break;
+    case 4:{
+      month= "April"
+    } break;
+    case 5:{
+      month= "May"
+    } break;
+    case 6:{
+      month= "June"
+    } break;
+    case 7:{
+      month= "July"
+    } break;
+    case 8:{
+      month= "August"
+    } break;
+    case 9:{
+      month= "September"
+    } break;
+    case 10:{
+      month= "October"
+    } break;
+    case 11:{
+      month= "November"
+    } break;
+    case 12:{
+      month= "December"
+    } break;
+    default: {
+      month= "didnt work";
+    } break;
+  }
+  return month
+
+}

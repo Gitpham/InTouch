@@ -11,7 +11,7 @@ import React from "react";
 
 //TYPE
 type ScheduleContextType = {
-  createPotentialSchedule: (s: Schedule) => void;
+  createPotentialSchedule: (s: Schedule | undefined) => void;
   potentialSchedule: Schedule | undefined;
   hasEditedSchedule: boolean;
   markHasEditedSchedule: (s: boolean) => void;
@@ -70,7 +70,7 @@ export const printPotentialSchedule = (s: Schedule) => {
 
 //DECLARATION
 export const ScheduleContext = createContext<ScheduleContextType>({
-  createPotentialSchedule: function (s: Schedule): void {
+  createPotentialSchedule: function (s: Schedule | undefined): void {
     throw new Error("Function not implemented.");
   },
   potentialSchedule: {

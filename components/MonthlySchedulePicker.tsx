@@ -41,7 +41,6 @@ export default function MonthlySchedulePicker({
 
 
     function displayMonthlySet(){
-      console.log("displayMonthlySet()")
       if (monthlySet.size == 0) return (<Text>No Selected Dates</Text>)
 
       const currentDates: React.JSX.Element[] = [];
