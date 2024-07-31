@@ -140,11 +140,6 @@ export default function Scheduler( {bid, isFromBondScreen}:SchedulerInterface)  
     new Date()
   );
 
-  useEffect(() => {
-    console.log("Scheduler: bid: ", bid)
-    console.log("Scheduler: isFromBondScreen: ", isFromBondScreen)
-  },[])
-
 
   async function onCancelAllNotifications() {
     try {
@@ -224,15 +219,6 @@ export default function Scheduler( {bid, isFromBondScreen}:SchedulerInterface)  
             pMonthlySchedule.daysInMonth.push(d);
           });
 
-          pMonthlySchedule.daysInMonth.forEach((d) => {
-            console.log(
-              "day of week: ",
-              d.dayOfWeek,
-              "week of month: ",
-              d.weekOfMonth
-            );
-          });
-
           pSchedule = {
             schedule: pMonthlySchedule,
           };
@@ -251,32 +237,25 @@ export default function Scheduler( {bid, isFromBondScreen}:SchedulerInterface)  
         break;
     }
 
-    console.log("onDonePress: isFromBondScreen: ", isFromBondScreen, typeof isFromBondScreen)
-    console.log("onDonePress: bid: ", bid)
 
     if(isFromBondScreen == false){
-      console.log('isFromBondFalse: ', isFromBondScreen)
       createPotentialSchedule(pSchedule)
       router.back();
       return;
     }
-    console.log("passes first if")
 
     if(isFromBondScreen === true){
-      console.log("replace: ", isFromBondScreen)
       Alert.alert("Replace Schedule", "Clicking 'confirm' will replace your old schedule with the one you just made", [
         {text: "Confirm", onPress: () => onConfirmPress(pSchedule)},
         {text: "Cancel"}
       ])
       return;
     }
-    console.log("passes second if")
 
 
   }
 
   async function onConfirmPress(schedule: Schedule) {
-    console.log("onDonePress potentialSchedule: ,", schedule)
     await replaceScheduleOfBond(db, bid as number, schedule)
     markHasEditedSchedule(!hasEditedSchedule)
     router.back();

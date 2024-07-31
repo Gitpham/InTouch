@@ -18,8 +18,6 @@ export default function ScheduleCard({bond}: ScheduleCardInterface) {
     const { hasEditedSchedule,} = useContext(ScheduleContext)
 
     useEffect(() => {
-        console.log("ScheduleCard hasEditedSchedule: ", hasEditedSchedule)
-
         const initSchedule = async () => {
             setShowSchedule([])
             schedules = await getScheduleOfBond(db, bond.bond_id);

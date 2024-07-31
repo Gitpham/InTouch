@@ -12,7 +12,7 @@ import React from "react";
 //TYPE
 type ScheduleContextType = {
   createPotentialSchedule: (s: Schedule) => void;
-  potentialSchedule: Schedule;
+  potentialSchedule: Schedule | undefined;
   hasEditedSchedule: boolean;
   markHasEditedSchedule: (s: boolean) => void;
 };
@@ -85,7 +85,7 @@ export const ScheduleContextProvider: React.FC<{
   // eslint-disable-next-line react/prop-types
 }> = ({ children }) => {
   //STATE VARIABLES
-  const [potentialSchedule, setPotentialSchedule] = useState<Schedule>();
+  const [potentialSchedule, setPotentialSchedule] = useState<Schedule | undefined>();
   const [hasEditedSchedule, setHasEditedSchedule] = useState(false);
 
 
@@ -93,7 +93,7 @@ export const ScheduleContextProvider: React.FC<{
     setHasEditedSchedule(bool);
   }
 
-  const createPotentialSchedule = async (s: Schedule) => {
+  const createPotentialSchedule = async (s: Schedule | undefined) => {
     await setPotentialSchedule(s);
   };
 

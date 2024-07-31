@@ -433,12 +433,9 @@ async function registerForPushNotificationsAsync() {
 
 
 export async function cancelNotificationsForBond(db: SQLite.SQLiteDatabase, bid: number) {
-  console.log("cancelNotificationsForBond(): ")
   const schedules: Schedule_DB[] = await getScheduleOfBond(db, bid);
-  console.log("cancelNotificationsForBond(): schedules: ")
 
   for(let i = 0; i < schedules.length; i++){
-    console.log("cancelNotificationsForBond(): ", i)
     const nid = schedules[i].nid;
     try {
     await Notifications.cancelScheduledNotificationAsync(nid);

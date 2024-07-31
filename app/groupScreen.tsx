@@ -46,10 +46,11 @@ export default function groupScreen() {
       setMembers(p);
       const r = getRemindersOfBond(bondId);
       setReminders(r);
-
-   
     }
-  }, [bondPersonMap, reminderList]);
+  }, [bondPersonMap, reminderList, ]);
+
+
+
 
   const renderMembers = ({ item }: { item: Person }) => {
     return (
@@ -161,6 +162,7 @@ export default function groupScreen() {
             keyExtractor={(item) => item.person_id.toString()}
           />
         </Card>
+
 
         <StandardButton
           title="+Add Member"

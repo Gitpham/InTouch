@@ -323,12 +323,15 @@ export function displaySchedule(schedule: Schedule_DB): React.JSX.Element {
   
 }
 
-export function displayPotentialSchedule(s: Schedule) {
+export function displayPotentialSchedule(s: Schedule | undefined) {
+  if(s == undefined){
+    return (<ThemedText darkColor="black">No Schedule Set</ThemedText>)
+  }
   const schedule = s.schedule;
   if (isDailySchedule(schedule)) {
     return (
       <View>
-        <ThemedText>Daily: {schedule.time.toTimeString()}</ThemedText>
+        <ThemedText darkColor="black">Daily: {schedule.time.toTimeString()}</ThemedText>
       </View>
     )
   }
@@ -338,35 +341,35 @@ export function displayPotentialSchedule(s: Schedule) {
     if(schedule.monday != undefined) {
       weeklySchedule.push(
       <View>
-        <ThemedText>Monday: {schedule.monday.toTimeString()}</ThemedText>
+        <ThemedText darkColor="black">Monday: {schedule.monday.toTimeString()}</ThemedText>
       </View>)
     }
 
     if(schedule.tuesday != undefined) {
       weeklySchedule.push(
       <View>
-        <ThemedText>Tuesday: {schedule.tuesday.toTimeString()}</ThemedText>
+        <ThemedText darkColor="black">Tuesday: {schedule.tuesday.toTimeString()}</ThemedText>
       </View>)
     }
 
     if(schedule.wednesday != undefined) {
       weeklySchedule.push(
       <View>
-        <ThemedText>Wednesday: {schedule.wednesday.toTimeString()}</ThemedText>
+        <ThemedText darkColor="black">Wednesday: {schedule.wednesday.toTimeString()}</ThemedText>
       </View>)
     }
 
     if(schedule.thursday != undefined) {
       weeklySchedule.push(
       <View>
-        <ThemedText>Thursday: {schedule.thursday.toTimeString()}</ThemedText>
+        <ThemedText darkColor="black">Thursday: {schedule.thursday.toTimeString()}</ThemedText>
       </View>)
     }
 
     if(schedule.friday != undefined) {
       weeklySchedule.push(
       <View>
-        <ThemedText>Friday: {schedule.friday.toTimeString()}</ThemedText>
+        <ThemedText darkColor="black">Friday: {schedule.friday.toTimeString()}</ThemedText>
       </View>)
     }
 
@@ -380,7 +383,7 @@ export function displayPotentialSchedule(s: Schedule) {
     if(schedule.sunday != undefined) {
       weeklySchedule.push(
       <View>
-        <ThemedText>Sunday: {schedule.sunday.toTimeString()}</ThemedText>
+        <ThemedText darkColor="black">Sunday: {schedule.sunday.toTimeString()}</ThemedText>
       </View>)
     }
     return (
@@ -393,7 +396,7 @@ export function displayPotentialSchedule(s: Schedule) {
     schedule.daysInMonth.forEach(d => {
       monthlySchedule.push(
         <View>
-          <ThemedText>Time: {d.time.toTimeString()} Day of Week: {d.dayOfWeek} Week of Month: {d.weekOfMonth}</ThemedText>
+          <ThemedText darkColor="black">Time: {d.time.toTimeString()} Day of Week: {d.dayOfWeek} Week of Month: {d.weekOfMonth}</ThemedText>
         </View>
 
       )
@@ -408,7 +411,7 @@ export function displayPotentialSchedule(s: Schedule) {
       console.log(d)
       yearlySchedule.push(
         <View>
-          <ThemedText>
+          <ThemedText darkColor="black">
             Date: {d.date.toDateString()} Time: {d.time.toTimeString()}
           </ThemedText>
         </View>

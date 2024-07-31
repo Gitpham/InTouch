@@ -11,7 +11,7 @@ import { Bond, Person } from "@/constants/types";
 import { StandardButton } from "@/components/ButtonStandard";
 import React from "react";
 import { ScheduleContext } from "@/context/ScheduleContext";
-import { generateNotificationSchedule, getScheduleType } from "@/context/ScheduleUtils";
+import { displayPotentialSchedule, generateNotificationSchedule, getScheduleType } from "@/context/ScheduleUtils";
 import { useSQLiteContext } from "expo-sqlite";
 
 export default function createGroupScreen() {
@@ -120,6 +120,16 @@ export default function createGroupScreen() {
         renderItem={renderGroupMembers}
         keyExtractor={(item) => item}
       />
+
+        <View style={styles.centeredView}>
+        <ThemedText type="subtitle" style={styles.title}>
+          Schedule
+      </ThemedText>
+        {displayPotentialSchedule(potentialSchedule)}
+
+        </View>
+
+
 
 
       <Button
