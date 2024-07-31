@@ -54,7 +54,6 @@ export const deleteBond = async (db: SQLite.SQLiteDatabase, bond: Bond) => {
         console.error(error)
         throw Error("Failed to delete bond")
     } finally {
-        // console.log("finalize updatePerson async")
         statement.finalizeAsync()
     }
   }
@@ -70,7 +69,7 @@ export const getAllBonds = async (db: SQLite.SQLiteDatabase) => {
 };
 
 
-export const getBond = async (db: SQLite.SQLiteDatabase, bid: number): Promise<Bond> => {
+export const getBond = async (db: SQLite.SQLiteDatabase, bid: number): Promise<Bond | null> => {
   const statement = await db.prepareAsync(`SELECT * FROM bond
     WHERE bond_id = ?
     `);

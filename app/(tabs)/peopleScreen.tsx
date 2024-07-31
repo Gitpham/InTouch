@@ -1,7 +1,7 @@
 /* eslint-disable react/react-in-jsx-scope */
 import { ThemedText } from "@/components/ThemedText";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { FlatList, Pressable, StyleSheet } from "react-native";
+import { FlatList, Pressable, } from "react-native";
 import { ListItem } from "@rneui/themed";
 import { useContext, } from "react";
 import { router } from "expo-router";
@@ -22,7 +22,7 @@ export default function PeopleScreen() {
   const renderContacts = ({ item }: { item: Person }) => {
     return (
       <ListItem bottomDivider>
-        <Pressable onPress={() => onPersonPress(item.person_id)}>
+        <Pressable onPress={() => onPersonPress(item.person_id as number)}>
 
         <ListItem.Content id={item.person_id?.toString()}>
           <ListItem.Title>
@@ -43,7 +43,7 @@ export default function PeopleScreen() {
       <FlatList
         data={peopleList}
         renderItem={renderContacts}
-        keyExtractor={(item) => item.person_id.toString()}
+        keyExtractor={(item) => (item.person_id as number).toString()}
       />
 
       <StandardButton 

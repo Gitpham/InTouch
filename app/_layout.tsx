@@ -136,7 +136,7 @@ export default function RootLayout() {
             />
             <Stack.Screen
               name="personScreen"
-              options={{ headerTitle: "Person" }}
+              options={{ headerTitle: "" }}
             />
             <Stack.Screen
               name="createScheduleScreen"
