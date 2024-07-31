@@ -18,6 +18,7 @@ import { StandardButton } from "@/components/ButtonStandard";
 import { useSQLiteContext } from "expo-sqlite";
 import { ScheduleContext } from "@/context/ScheduleContext";
 import ScheduleCard from "@/components/ScheduleCard";
+import { cancelNotificationsForBond } from "@/context/NotificationUtils";
 
 export default function groupScreen() {
   const {
@@ -102,12 +103,16 @@ export default function groupScreen() {
     removeReminder(reminder_id);
   };
 
-  const deleteBond = () => {
+
+  const onDelete = async () => {
     if (bond) {
+      await cancelNotificationsForBond(db, bond.bond_id)
       removeBond(bond);
     }
     router.back();
-  };
+
+  }
+
 
 
 
@@ -171,7 +176,7 @@ export default function groupScreen() {
           title="Delete"
           buttonStyle={styles.redButton}
           titleStyle={styles.redTitle}
-          onPress={() => deleteBond()}
+          onPress={onDelete}
         />
       </ScrollView>
     </SafeAreaView>

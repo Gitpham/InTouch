@@ -32,25 +32,19 @@ import YearlySchedulePicker from "./YearlySchedulePicker";
 import { router, useLocalSearchParams } from "expo-router";
 import { replaceScheduleOfBond } from "@/context/ScheduleUtils";
 
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: false,
-    shouldSetBadge: false,
-  }),
-});
 
-export default function Scheduler() {
+interface SchedulerInterface {
+  bid: number | undefined,
+  isFromBondScreen: boolean
+}
+export default function Scheduler( {bid, isFromBondScreen}:SchedulerInterface)  {
   const localParams = useLocalSearchParams()
-  const [isFromBondScreen, setIsFromBondScreen] = useState(false);
   const [scheduleFrequency, setScheduleFrequency] = useState<ScheduleFrequency>(
     ScheduleFrequency.DAILY
   );
   const { createPotentialSchedule, potentialSchedule, hasEditedSchedule, markHasEditedSchedule } =  useContext(ScheduleContext);
   const db = useSQLiteContext();
   //DAILY STATE VARIABLES AND SETTERS
-
-  const [bid, setBid] = useState(-1)
   const [dailyTime, setDailyTime] = useState(new Date());
 
   function changeDailyTime(time: Date) {
@@ -147,14 +141,6 @@ export default function Scheduler() {
   const [selectedTimeInYear, setSelectedTimeInYear] = useState<Date>(
     new Date()
   );
-
-  useEffect(() => {
-    const bool = localParams?.isFromBondScreen as boolean;
-    setIsFromBondScreen(bool)
-    const bid = parseInt(localParams?.bid as string);
-    setBid(bid)
-  }, [localParams])
-
 
 
   async function onCancelAllNotifications() {
@@ -278,7 +264,7 @@ export default function Scheduler() {
 
   async function onConfirmPress(schedule: Schedule) {
     console.log("onDonePress potentialSchedule: ,", schedule)
-    await replaceScheduleOfBond(db, bid, schedule)
+    await replaceScheduleOfBond(db, bid as number, schedule)
     markHasEditedSchedule(!hasEditedSchedule)
     router.back();
   }

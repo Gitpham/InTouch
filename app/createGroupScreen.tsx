@@ -59,7 +59,7 @@ export default function createGroupScreen() {
   }
 
   function onCreateSchedule(){
-    router.navigate({pathname: "./createScheduleScreen", params: {id: `-1`, isFromBondScreen: "false"}})
+    router.navigate({pathname: "./createScheduleScreen", params: {bid: `-1`, isFromBondScreen: "false"}})
   }
 
 

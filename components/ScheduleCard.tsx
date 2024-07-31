@@ -15,7 +15,7 @@ interface ScheduleCardInterface {
 export default function ScheduleCard({bond}: ScheduleCardInterface) {
     const db = useSQLiteContext();
     const [showSchedule, setShowSchedule] = useState<React.JSX.Element[]>([])
-    const {potentialSchedule, hasEditedSchedule, markHasEditedSchedule} = useContext(ScheduleContext)
+    const { hasEditedSchedule,} = useContext(ScheduleContext)
 
     useEffect(() => {
         console.log("ScheduleCard hasEditedSchedule: ", hasEditedSchedule)
@@ -29,8 +29,6 @@ export default function ScheduleCard({bond}: ScheduleCardInterface) {
                      return [...prev, day] 
                 }
                 )
-
-                
             })
         }
         initSchedule()
