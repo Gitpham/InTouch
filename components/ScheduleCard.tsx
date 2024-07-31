@@ -43,9 +43,8 @@ export default function ScheduleCard({bond}: ScheduleCardInterface) {
     
 
     return (   <Card>
-        <Card.Title>Schedule</Card.Title>
+        <Card.Title>Schedule: {bond?.schedule}</Card.Title>
         <Card.Divider></Card.Divider>
-        <ThemedText darkColor="black" >Type of Schedule: {bond?.schedule} </ThemedText>
         {viewSchedule()}
 
         <StandardButton title="Edit Schedule" onPress={onModifySchedule}></StandardButton>

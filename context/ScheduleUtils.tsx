@@ -281,7 +281,8 @@ export function displaySchedule(schedule: Schedule_DB): React.JSX.Element {
   if(schedule.type == ScheduleFrequency.DAILY) {
     return (<View>
       <ThemedText darkColor="black">
-        Time of day: {schedule.time}
+        Time: {convertTo12HourTime
+      (schedule.time)}
       </ThemedText>
     </View>)
   }
@@ -289,8 +290,7 @@ export function displaySchedule(schedule: Schedule_DB): React.JSX.Element {
   if(schedule.type == ScheduleFrequency.WEEKLY) {
     return (<View>
       <ThemedText darkColor="black" >
-        Day of Week: {schedule.weekDay}
-        Time: {schedule.time}
+        {convertToDayOfWeek(schedule.weekDay as number)}s at {convertTo12HourTime(schedule.time)}
       </ThemedText>
     </View>)
   }
@@ -412,6 +412,60 @@ export function displayPotentialSchedule(s: Schedule | undefined) {
     })
     return (yearlySchedule)
 
+  }
+}
+
+export function convertTo12HourTime(timeString: string) {
+  // Extract the time part from the input string
+  if (timeString == null) {
+    throw new Error("convertFromToTimeStringTo12HourFormat(): parameter is null:")
+  }
+  const timePart = timeString?.match(/(\d{2}:\d{2}:\d{2})/)[0];
+
+  // Split the time part into hours, minutes, and seconds
+  const [hh, mm] = timePart.split(':');
+
+  // Convert the hour to a number and determine AM/PM
+  let hour = parseInt(hh, 10);
+  const period = hour >= 12 ? 'PM' : 'AM';
+
+  // Convert hour to 12-hour format
+  hour = hour % 12 || 12;
+
+  // Format the minute with leading zeros if needed
+  const formattedMinute = mm.padStart(2, '0');
+
+  // Return the formatted string
+  return `${hour}:${formattedMinute} ${period}`;
+}
+
+/**
+ * 
+ * @param dayNum sunday = 1
+ */
+export function convertToDayOfWeek(dayNum: number){
+  switch(dayNum){
+    case 1: {
+      return "Sunday"
+    } 
+    case 2: {
+      return "Monday"
+    } 
+    case 3: {
+      return "Tuesday"
+    } 
+    case 4: {
+      return "Wednesday"
+    } 
+    case 5: {
+      return "Thursday"
+    } 
+    case 6: {
+      return "Friday"
+    } 
+    case 7: {
+      return "Saturday"
+    } 
   }
 }
 
