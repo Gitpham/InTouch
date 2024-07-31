@@ -2,7 +2,8 @@ import { InTouchContext } from "@/context/InTouchContext";
 import { useContext } from "react";
 import { View, Text, Pressable } from "react-native";
 import React from "react";
-import { testB1, testB2,  testB6, testP1, testP2 } from "@/__mocks__/expo-sqlite";
+import { testB1, testB2,  testB6, testBondList, testP1, testP2 } from "@/__mocks__/expo-sqlite";
+import { Bond } from "@/constants/types";
 // import { Button } from "@rneui/themed";
 
 export default function InTouchContextDummyComponent() {
@@ -20,6 +21,7 @@ export default function InTouchContextDummyComponent() {
     tempBondMembers, 
     addTempBondMember, 
     clearTempBondMembers,
+    updateBondCache,
     // getBondPersonMap,
     // getPersonBondMap,
     // getBondsOfPerson,
@@ -60,6 +62,12 @@ export default function InTouchContextDummyComponent() {
 
   function onRemoveBondPress(): void {
     removeBond(testB1);
+  }
+
+  async function onUpdateBondCachePress() {
+    const updatedBond: Bond = testBondList[0];
+    updatedBond.schedule = "daily";
+    await updateBondCache(updatedBond)
   }
 
   function onCreateBondMemberPress(): void {
@@ -109,6 +117,10 @@ export default function InTouchContextDummyComponent() {
 
       <Pressable testID="removeBond" onPress={onRemoveBondPress}>
         <Text>RemoveBond</Text>
+      </Pressable>
+
+      <Pressable testID="updateBondCache" onPress={onUpdateBondCachePress}>
+        <Text>updateBondCache</Text>
       </Pressable>
 
       <Pressable testID="createBondMember" onPress={onCreateBondMemberPress}>

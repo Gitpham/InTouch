@@ -423,16 +423,10 @@ export const InTouchContextProvider: React.FC<{
 
     } catch (e) {
       console.error(e);
-      throw new Error("updateBondCache() failed: faild to updateBond()")
+      throw new Error("updateBondCache() failed: failed to updateBond()")
     }
-    //update cache
-    setBondList((bl) => {
-      const updatedList = bl.filter((b) => {
-        b.bond_id != newBond.bond_id
-      })
-      updatedList.push(newBond);
-      return updatedList;
-    });
+    const updatedBondList: Bond[] = bondList.filter((b) => b.bond_id != newBond.bond_id)
+    setBondList([...updatedBondList, newBond]);
   }
 
   // BOND MEMBER FUNCTIONS

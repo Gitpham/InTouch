@@ -77,6 +77,9 @@ export default function MonthlySchedulePicker({
 
   return (
     <>
+      
+      <Card>
+
       <View style={styles.rowOrientation}>
         <View style={{ flex: 0.37, flexDirection: "column" }}>
           <ThemedText darkColor="black" style={styles.title}>
@@ -89,10 +92,10 @@ export default function MonthlySchedulePicker({
               changeSelectedWeekOfMonth(itemValue);
             }}
           >
-            <Picker.Item label="First" value="1" />
-            <Picker.Item label="Second" value="2" />
-            <Picker.Item label="Third" value="3" />
-            <Picker.Item label="Fourth" value="4" />
+            <Picker.Item label="1st" value="1" />
+            <Picker.Item label="2nd" value="2" />
+            <Picker.Item label="3rd" value="3" />
+            <Picker.Item label="4th" value="4" />
           </Picker>
         </View>
 
@@ -107,13 +110,13 @@ export default function MonthlySchedulePicker({
               changeSelectedDayOfWeek(itemValue)
             }
           >
-            <Picker.Item label="Sunday" value="1" />
-            <Picker.Item label="Monday" value="2" />
-            <Picker.Item label="Tuesday" value="3" />
-            <Picker.Item label="Wednesday" value="4" />
-            <Picker.Item label="Thursday" value="5" />
-            <Picker.Item label="Friday" value="6" />
-            <Picker.Item label="Saturday" value="7" />
+            <Picker.Item label="Sun." value="1" />
+            <Picker.Item label="Mon." value="2" />
+            <Picker.Item label="Tues." value="3" />
+            <Picker.Item label="Weds." value="4" />
+            <Picker.Item label="Thurs." value="5" />
+            <Picker.Item label="Fri." value="6" />
+            <Picker.Item label="Sat." value="7" />
           </Picker>
         </View>
 
@@ -128,7 +131,8 @@ export default function MonthlySchedulePicker({
           ></DateTimePicker>
         </View>
       </View>
-      <Card>
+
+
         <StandardButton title="Add" onPress={onAddDayOfMonth}></StandardButton>
 
         <Card>

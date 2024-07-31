@@ -391,6 +391,54 @@ describe("integration tests for InTouchContext", () => {
       expect(bondListElement.props.children).toEqual(newExpectedValue);
       jest.useRealTimers();
     });
+
+    it("calling updateBondCache() with a valid bond should update the bondList state variable", async () => {
+      jest.useFakeTimers();
+
+      //CHECKS DEFAULT VALUE OF BOND LIST
+      render(<InTouchContextDummyComponent></InTouchContextDummyComponent>, {
+        wrapper: InTouchContextProvider,
+      });
+
+      await waitFor(() => {
+        expect(
+          screen.getByTestId("bondList").props.children.length
+        ).toBeGreaterThan(0); 
+      });
+
+      let bondListElement = screen.getByTestId("bondList");
+      const expectedValue = testBondList
+        .map((p) => `${p.bondName} ${p.schedule} ${p.typeOfCall} ${p.bond_id}`)
+        .join(", ");
+
+      expect(bondListElement.props.children).toEqual(expectedValue);
+
+      //call updateBondCache()
+      await userEvent.press(screen.getByTestId("updateBondCache"));
+      jest.advanceTimersByTime(500);
+
+      //check that bondList is updated
+      const updatedBond: Bond = testBondList[0];
+      updatedBond.schedule = "daily"
+      const updatedList = testBondList.filter((p) => p.bond_id != updatedBond.bond_id);
+      const expectedList = [...updatedList, updatedBond]
+      const newExpectedValue = expectedList
+        .map((p) => `${p.bondName} ${p.schedule} ${p.typeOfCall} ${p.bond_id}`)
+        .join(", ");
+
+      await waitFor(() => {
+        expect(
+          screen.getByTestId("bondList").props.children.length
+        ).toBeGreaterThan(0);
+      });
+
+      bondListElement = screen.getByTestId("bondList");
+      expect(bondListElement.props.children).toEqual(newExpectedValue);
+      jest.useRealTimers();
+    });
+
+
+
   });
 
   describe("personBond functions", () => {

@@ -15,7 +15,7 @@ import { getAllScheduledNotifications, cancelAllNotifications } from "@/context/
 
    
    export default function statScreen() {
-    const {peopleList, getBondPersonMap, getPersonBondMap } = useContext(InTouchContext)
+    const {peopleList, getBondPersonMap, getPersonBondMap, bondList } = useContext(InTouchContext)
     const db = useSQLiteContext();
 
     async function onDisplaySchedules() {
@@ -65,6 +65,10 @@ import { getAllScheduledNotifications, cancelAllNotifications } from "@/context/
 
     }
 
+    function onPressShowBondList() {
+     console.log("bondList: ", bondList)
+    }
+
     async function onPressClearDB() {
          clearDB(db)
     }
@@ -95,7 +99,9 @@ import { getAllScheduledNotifications, cancelAllNotifications } from "@/context/
 
             <StandardButton title="clear db" onPress={onPressClearDB}/>
 
-            <StandardButton title="print bonds" onPress={onPressShowBonds}/>
+            <StandardButton title="print bonds from db" onPress={onPressShowBonds}/>
+            <StandardButton title="print bondList" onPress={onPressShowBondList}/>
+
 
             <StandardButton title="show bondPersonMap" onPress={onPressShowBondPersonMap}/>
 
