@@ -112,8 +112,10 @@ export default function RootLayout() {
         <ScheduleContextProvider>
 
         <InTouchContextProvider>
-          <Stack>
-            <Stack.Screen name="index" options={{ headerShown: false }} />
+          <Stack screenOptions={{headerStyle: {
+          backgroundColor: 'white',
+        },}}>
+            <Stack.Screen name="index" options={{ headerShown: false  }} />
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
             <Stack.Screen name="+not-found" />
             <Stack.Screen
@@ -135,6 +137,10 @@ export default function RootLayout() {
             <Stack.Screen
               name="personScreen"
               options={{ headerTitle: "Person" }}
+            />
+            <Stack.Screen
+              name="createScheduleScreen"
+              options={{ headerTitle: ""}}
             />
             <Stack.Screen
               name="addReminderModal"

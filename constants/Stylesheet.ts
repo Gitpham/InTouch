@@ -23,7 +23,7 @@ export const styles = StyleSheet.create({
       flex: 1,
       backgroundColor: "white",
       gap: 8,
-      marginBottom: 8,
+      marginBottom: 0,
       flexDirection: "column",
       paddingTop: 10,
     },
