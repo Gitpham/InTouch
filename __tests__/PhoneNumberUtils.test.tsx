@@ -1,4 +1,26 @@
-import { validateAndFormatPhoneNumber } from "@/context/PhoneNumberUtils";
+import { mockDatabase } from "@/__mocks__/expo-sqlite";
+import { getNextToCallUtil, validateAndFormatPhoneNumber } from "@/context/PhoneNumberUtils";
+import { getPersonsOfBondDB } from "@/assets/db/PersonBondRepo";
+import { BondPerson } from "@/constants/types";
+jest.mock("@/assets/db/PersonBondRepo", () => {
+    const mockGetPersonsOfBondDB = jest.fn().mockImplementation(() => {
+        const bp: BondPerson = {
+            person_id: 1,
+            bond_id: 1,
+            nextToCall: 0
+        }
+        return bp;
+    })
+
+    return {
+        getPersonsOfBondDB: mockGetPersonsOfBondDB
+    }
+} )
+
+
+beforeEach(() => {
+    jest.clearAllMocks()
+})
 
 describe("PhoneNumber Utils", () => {
 
@@ -13,6 +35,26 @@ describe("PhoneNumber Utils", () => {
     it("validateAndFormatPhoneNumber() should throw error if number is != 12 digits", () => {
         const testNumber = "612";
         expect(() => validateAndFormatPhoneNumber(testNumber)).toThrow()
+    })
+
+    describe("getNextToCall()", () => {
+
+
+        describe("bond of size 1", () => {
+        it("should return the sole bondMember", () => {
+            const db = mockDatabase;
+            getNextToCallUtil(1, db);
+
+        })
+
+
+
+        })
+
+
+
+
+
     })
 
 

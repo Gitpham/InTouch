@@ -36,7 +36,6 @@ export const updateBond = async (
         console.error(error)
         throw Error("Failed to update bond")
     } finally {
-        // console.log("finalize updatePerson async")
         statement.finalizeAsync()
     }
 }

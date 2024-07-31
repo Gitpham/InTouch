@@ -33,7 +33,7 @@ export default function homeScreen() {
     <SafeAreaView style={styles.stepContainer}>
       <View style={styles.centeredView}>
         <ThemedText style={styles.title} type="title">
-          My Groups
+          My Bonds
         </ThemedText>
       </View>
 

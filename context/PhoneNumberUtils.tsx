@@ -3,7 +3,7 @@ import { getPerson } from "@/assets/db/PersonRepo";
 import { BondPerson, Person } from "@/constants/types";
 import * as SQLite from "expo-sqlite";
 import { Alert, Linking } from "react-native";
-
+import * as Notifications from "expo-notifications";
 
 const formatPhoneNumber = (phoneNumber: string): string => {
     // Remove all non-numeric characters
@@ -33,7 +33,7 @@ const formatPhoneNumber = (phoneNumber: string): string => {
   };
 
 
-  const getNextToCallUtil = async (bondID: number, db: SQLite.SQLiteDatabase): Promise<Person> => {
+  export const getNextToCallUtil = async (bondID: number, db: SQLite.SQLiteDatabase): Promise<Person> => {
     try {
       const members: BondPerson[] = await getPersonsOfBondDB(db, bondID);
       // IF SOMEBODY IS MARKED AND IS NOT END

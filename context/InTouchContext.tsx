@@ -1,4 +1,4 @@
-import { getAllBonds, addBond, deleteBond } from "@/assets/db/BondRepo";
+import { getAllBonds, addBond, deleteBond, updateBond } from "@/assets/db/BondRepo";
 import {
   addPersonBond,
   deletePersonBond,
@@ -27,13 +27,14 @@ type InTouchContextType = {
   removePerson: (person: Person) => Promise<void>;
   createBond: (bond: Bond) => Promise<void>;
   removeBond: (bond: Bond) => Promise<void>;
+  updateBondCache: (bond: Bond) => Promise<void>;
   createBondMember: (person_ids: Set<number>, bond_id: number) => Promise<void>;
   removeBondMember: (bond: Bond, person: Person) => Promise<void>;
   getBondPersonMap: () => void;
   getPersonBondMap: () => void;
   getBondsOfPerson: (person: Person) => Array<Bond>;
   getMembersOfBond: (bond: Bond) => Array<Person>;
-  createReminder: (reminder: String, person_id: number, bond_id?: number) => void;
+  createReminder: (reminder: string, person_id: number, bond_id?: number) => void;
   removeReminder: (person_id: number) => void;
   generateBondId: () => number;
   getRemindersOfPerson: (person_id: number) => Reminder[]
@@ -413,6 +414,30 @@ export const InTouchContextProvider: React.FC<{
     }
   }
 
+
+  /**
+   * replaces the bond where bond.bondID == newBond.bondID in the db and cache
+   * @param newBond 
+   */
+  async function updateBondCache(newBond: Bond) {
+    // update database
+    try {
+    await updateBond(db, newBond);
+
+    } catch (e) {
+      console.error(e);
+      throw new Error("updateBondCache() failed: faild to updateBond()")
+    }
+    //update cache
+    setBondList((bl) => {
+      const updatedList = bl.filter((b) => {
+        b.bond_id != newBond.bond_id
+      })
+      updatedList.push(newBond);
+      return updatedList;
+    });
+  }
+
   // BOND MEMBER FUNCTIONS
 
   function addTempBondMember(personID: number) {
@@ -670,6 +695,7 @@ export const InTouchContextProvider: React.FC<{
           removePerson,
           createBond,
           removeBond,
+          updateBondCache,
           createBondMember,
           removeBondMember,
           getBondPersonMap,

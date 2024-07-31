@@ -17,7 +17,6 @@ import { router } from "expo-router";
 import React from "react";
 import { StandardButton } from "@/components/ButtonStandard";
 import { useSQLiteContext } from "expo-sqlite";
-import { ScheduleContext } from "@/context/ScheduleContext";
 import ScheduleCard from "@/components/ScheduleCard";
 import { cancelNotificationsForBond } from "@/context/NotificationUtils";
 import { DeleteIcon } from "@/components/DeleteIcon";
@@ -148,16 +147,14 @@ export default function groupScreen() {
  }
 
   return (
-    <SafeAreaView style={styles.stepContainer}>
-      <ScrollView nestedScrollEnabled={true}>
-        <Card>
-          <Card.Title>Name: {bond?.bondName}</Card.Title>
-          <Card.Divider></Card.Divider>
-          <ThemedText darkColor="black">Number: </ThemedText>
-        </Card>
+      <ScrollView nestedScrollEnabled={true} style={{backgroundColor: "white"}}  >
+        <View style={styles.stepContainer}>
+       <View style = {styles.centeredView}>
+
+        <ThemedText darkColor="black" style={styles.title} type ="title">{bond?.bondName}</ThemedText>
+        </View>
+
         {bond ? <ScheduleCard bond={bond}></ScheduleCard> : <></>}
-
-
 
         <Card>
           <Card.Title>Reminders</Card.Title>
@@ -208,7 +205,8 @@ export default function groupScreen() {
           titleStyle={styles.redTitle}
           onPress={onDelete}
         />
+                </View>
+
       </ScrollView>
-    </SafeAreaView>
   );
 }

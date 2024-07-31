@@ -25,7 +25,16 @@ export const styles = StyleSheet.create({
       gap: 8,
       marginBottom: 8,
       flexDirection: "column",
-      paddingTop: 50,
+      paddingTop: 10,
+    },
+    entityContainer: {
+      flex: 1,
+      backgroundColor: "white",
+      gap: 8,
+      marginBottom: 8,
+      flexDirection: "column",
+      paddingTop: 10,
+      alignItems:'center',
     },
     homeContainer: {
         flex: 1,

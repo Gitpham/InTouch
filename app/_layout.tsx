@@ -121,6 +121,10 @@ export default function RootLayout() {
               options={{ headerBackTitle: "home", headerTitle: "" }}
             />
             <Stack.Screen
+              name="groupScreen"
+              options={{headerTitle: "" , headerBackTitleVisible: false}}
+            />
+            <Stack.Screen
               name="addMemberScreen"
               options={{ headerTitle: "" }}
             />
@@ -136,6 +140,8 @@ export default function RootLayout() {
               name="addReminderModal"
               options={{ headerTitle: "Add Reminders", presentation: "modal"}}
             />
+
+
           </Stack>
         </InTouchContextProvider>
         </ScheduleContextProvider>
