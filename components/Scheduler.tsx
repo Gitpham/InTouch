@@ -9,7 +9,7 @@ import { StandardButton } from "./ButtonStandard";
 import {
   Bond,
   DailySchedule,
-  DateInYear,
+  DateAndTime,
   DayOfMonth,
   MonthlySchedule,
   Schedule,
@@ -332,9 +332,9 @@ export default function Scheduler({
     setSelectedTimeInYear(selectedTime);
   }
 
-  const [datesInYear, setDatesInYear] = useState<Set<DateInYear>>(new Set());
+  const [datesInYear, setDatesInYear] = useState<Set<DateAndTime>>(new Set());
 
-  function changeDatesInYear(updatedDates: Set<DateInYear>) {
+  function changeDatesInYear(updatedDates: Set<DateAndTime>) {
     setDatesInYear(updatedDates);
   }
 

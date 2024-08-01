@@ -1,5 +1,5 @@
-import { Bond, DailySchedule, DateInYear, DayOfMonth, MonthlySchedule, WeeklySchedule, YearlySchedule } from "@/constants/types"
-import { notificationContentDaily, notificationContentMonthly, notificationContentWeekly, notificationContentYearly, scheduleDailyNotification, scheduleMonthlyNotification, scheduleWeeklyNotification, scheduleYearlyNotification } from "@/context/NotificationUtils"
+import { Bond, DailySchedule, DateAndTime, DayOfMonth, MonthlySchedule, WeeklySchedule, YearlySchedule } from "@/constants/types"
+import { notificationContentDaily,  notificationContentWeekly, notificationContentYearly, scheduleDailyNotification,  scheduleWeeklyNotification, scheduleYearlyNotification, scheduleWeekAndDayMonthlyNotification, notificationContentMonthly } from "@/context/NotificationUtils"
 import {scheduleNotificationAsync, WeeklyTriggerInput, CalendarTriggerInput, YearlyTriggerInput, DailyTriggerInput} from "expo-notifications";
 
 jest.mock("expo-notifications", () => {
@@ -199,7 +199,7 @@ describe("NotificationUtils: ", () => {
                 repeats: true,
             }
 
-            await scheduleMonthlyNotification(schedule,bond)
+            await scheduleWeekAndDayMonthlyNotification(schedule,bond)
             expect(scheduleNotificationAsync).toHaveBeenCalledTimes(1)
             expect(scheduleNotificationAsync).toHaveBeenCalledWith({content: expectedContent, trigger: expectedTrigger})
             
@@ -257,7 +257,7 @@ describe("NotificationUtils: ", () => {
                 repeats: true,
             }
 
-            await scheduleMonthlyNotification(schedule,bond)
+            await scheduleWeekAndDayMonthlyNotification(schedule,bond)
             expect(scheduleNotificationAsync).toHaveBeenCalledTimes(3)
             expect(scheduleNotificationAsync).toHaveBeenCalledWith({content: expectedContent, trigger: expectedTrigger})
             expect(scheduleNotificationAsync).toHaveBeenCalledWith({content: expectedContent, trigger: expectedTrigger1})
@@ -270,7 +270,7 @@ describe("NotificationUtils: ", () => {
         it("should call scheduleNotificationAsync 1x if yearlySchedule has 1 date", async () => {
             const date = new Date("1995-12-17T09:30:00")
             
-            const diy: DateInYear = {
+            const diy: DateAndTime = {
                 date: date,
                 time: date
             }
@@ -303,15 +303,15 @@ describe("NotificationUtils: ", () => {
             const date2 = new Date("2024-12-17T01:30:00")
 
             
-            const diy: DateInYear = {
+            const diy: DateAndTime = {
                 date: date,
                 time: date
             }
-            const diy1: DateInYear = {
+            const diy1: DateAndTime = {
                 date: date1,
                 time: date1
             }
-            const diy2: DateInYear = {
+            const diy2: DateAndTime = {
                 date: date2,
                 time: date2
             }

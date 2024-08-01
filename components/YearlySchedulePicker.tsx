@@ -5,7 +5,7 @@ import { Card } from "@rneui/themed";
 import React from "react";
 import { View, Text} from "react-native";
 import { StandardButton } from "./ButtonStandard";
-import { DateInYear } from "@/constants/types";
+import { DateAndTime} from "@/constants/types";
 import { convertTo12HourTime, convertToMonth } from "@/context/ScheduleUtils";
 import { styles } from "@/constants/Stylesheet";
 import { ThemedText } from "./ThemedText";
@@ -17,8 +17,8 @@ interface YearlySchedulePickerInterface {
     selectedTimeInYear: Date, 
     changeSelectedTimeInYear:(d: Date) => void,
 
-    datesInYear: Set<DateInYear>,
-    changeDatesInYear: (s: Set<DateInYear>)=> void,
+    datesInYear: Set<DateAndTime>,
+    changeDatesInYear: (s: Set<DateAndTime>)=> void,
 }
 
 
@@ -50,14 +50,14 @@ export default function YearlySchedulePicker({
 
 
     function addToYearlySchedule(day: Date, time: Date){
-        const newDateInYear: DateInYear = {
+        const newDateAndTime: DateAndTime = {
             date: day,
             time: time,
         }
 
-        const newSet: Set<DateInYear> = new Set(datesInYear)
+        const newSet: Set<DateAndTime> = new Set(datesInYear)
 
-        newSet.add(newDateInYear)
+        newSet.add(newDateAndTime)
         changeDatesInYear(newSet);
     }
 

@@ -6,14 +6,13 @@ import { Alert, Linking, Platform } from "react-native";
 import {
   Bond,
   DailySchedule,
-  DateInYear,
-  DayOfMonth,
+  DateAndTime,
+  isDateAndTime,
   MonthlySchedule,
   Schedule_DB,
   WeeklySchedule,
   YearlySchedule,
 } from "@/constants/types";
-import { clearNotificationsDB, getNotificationsForBondDB } from "@/assets/db/NotificationRepo";
 import { getScheduleOfBond } from "@/assets/db/ScheduleRepo";
 
 export async function allowsNotificationsAsync() {
@@ -305,7 +304,7 @@ export async function scheduleWeeklyNotification(
   return nids;
 }
 
-export async function scheduleMonthlyNotification(
+export async function scheduleWeekAndDayMonthlyNotification(
   schedule: MonthlySchedule,
   bond: Bond
 ): Promise<string[]> {
@@ -336,6 +335,46 @@ export async function scheduleMonthlyNotification(
 
   return nids
 }
+
+/**
+ * Schedules a monthly repeating notification for the dates the user provides. 
+ * 
+ * Eg: The 1st, 13th, 25th will have notifications for the 1st, 13th, 25th of each month
+ * @param schedule 
+ * @param bond 
+ * @returns 
+ */
+export async function scheduleDateMonthlyNotification(
+  schedule: MonthlySchedule,
+  bond: Bond
+): Promise<string[]> {
+  const nids: string[] = [];
+  for(let i = 0; i < schedule.daysInMonth.length; i++) {
+
+    const d = schedule.daysInMonth[i] as DateAndTime
+    isDateAndTime(d);
+
+    const trigger: Notifications.CalendarTriggerInputValue = {
+      day:  d.date.getDate(),
+      hour: d.time.getHours(),
+      minute: d.time.getMinutes(),
+    };
+
+    try {
+      nids.push(await Notifications.scheduleNotificationAsync({
+        content: notificationContentMonthly(bond),
+        trigger: trigger,
+      }));
+    } catch (e) {
+      console.error(e);
+      throw new Error(
+        `scheduleMonthlyNotification() failed to scheduleNotificationAsync for the ${d.date.getDate()} of the Month`
+      );
+    }
+  }
+  return nids
+}
+
 
 export async function scheduleYearlyNotification(
   schedule: YearlySchedule,

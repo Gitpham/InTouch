@@ -1,11 +1,11 @@
-import { DateInYear, isYearlySchedule, YearlySchedule } from "@/constants/types"
+import { DateAndTime, isYearlySchedule, YearlySchedule } from "@/constants/types"
 
 describe(" isType() fcns", () => {
 
     describe("isYearlySchedule()", () => {
 
         it("isYearlySchedule() should return true for a yearlySchedule of size 1", () => {
-            const d: DateInYear = {
+            const d: DateAndTime = {
                 date: new Date(),
                 time: new Date(),
             }
@@ -17,12 +17,12 @@ describe(" isType() fcns", () => {
         })
 
         it("isYearlySchedule() should return true for a yearlySchedule of size 2", () => {
-            const d1: DateInYear = {
+            const d1: DateAndTime = {
                 date: new Date(),
                 time: new Date(),
             }
 
-            const d2: DateInYear = {
+            const d2: DateAndTime = {
                 date: new Date(),
                 time: new Date(),
             }

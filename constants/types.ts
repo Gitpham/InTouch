@@ -104,7 +104,8 @@ export type DayOfMonth = {
 
 
 export type MonthlySchedule = {
-   daysInMonth: DayOfMonth[]
+   isWeekAndDay: boolean
+   daysInMonth: DayOfMonth[] | DateAndTime[]
 }
 
 export function isDayOfMonth(obj: any): obj is DayOfMonth{
@@ -115,7 +116,7 @@ export function isMonthlySchedule(obj: any): obj is MonthlySchedule {
 
    if (obj.daysInMonth != undefined) {
     obj.daysInMonth.forEach(d => {
-        if (!isDayOfMonth(d)){
+        if (!isDayOfMonth(d) && !isDateAndTime(d)){
             return false;
         }
     })
@@ -124,16 +125,17 @@ export function isMonthlySchedule(obj: any): obj is MonthlySchedule {
    return false;
 }
 
-export type DateInYear = {
+export type DateAndTime = {
     date: Date,
     time: Date,
 }
 
-export function isDateInYear(obj: any): obj is DateInYear {
+export function isDateAndTime(obj: any): obj is DateAndTime {
     return ((obj.date instanceof Date) && (obj.time instanceof Date))
 }
 export type YearlySchedule = {
-    datesInYear: Set<DateInYear>
+    datesInYear: Set<DateAndTime
+>
 }
 
 export function isYearlySchedule(obj: any): obj is YearlySchedule {
@@ -145,7 +147,7 @@ export function isYearlySchedule(obj: any): obj is YearlySchedule {
     }
 
     obj.datesInYear.forEach(d => {
-        if (!isDateInYear(d)){
+        if (!isDateAndTime(d)){
             return false;
         }
     })

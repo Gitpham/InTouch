@@ -1,6 +1,6 @@
 import { mockDatabase } from "@/__mocks__/expo-sqlite";
 import { uploadScheduleToDB } from "@/assets/db/ScheduleRepo";
-import { Bond, DailySchedule, DateInYear, DayOfMonth, MonthlySchedule, ScheduleFrequency, WeeklySchedule, YearlySchedule } from "@/constants/types";
+import { Bond, DailySchedule, DateAndTime, DayOfMonth, MonthlySchedule, ScheduleFrequency, WeeklySchedule, YearlySchedule } from "@/constants/types";
 import { writeDailyScheduleToDB, writeMonthlyScheduleToDB, writeWeeklyScheduleToDB, writeYearlyScheduleToDB } from "@/context/ScheduleUtils";
 import * as SQlite from "expo-sqlite";
 
@@ -280,12 +280,12 @@ describe("ScheduleUtils: ", () => {
     it("should call uploadScheduleToDB() 1x for yearlySchedule with 1 date", async () => {
         const date1 = new Date("1995-12-17T03:24:00")
     
-        const dateInYear: DateInYear = {
+        const dateAndTime: DateAndTime = {
             date: date1,
             time: date1
         }
         const schedule:YearlySchedule = {
-            datesInYear: new Set([dateInYear])
+            datesInYear: new Set([dateAndTime])
         }
         const bond: Bond = {
           bondName: "",
@@ -304,22 +304,22 @@ describe("ScheduleUtils: ", () => {
         const date2 = new Date("1995-12-17T09:30:00")
         const date3 = new Date("2000-12-17T10:30:00")
 
-        const dateInYear1: DateInYear = {
+        const dateAndTime1: DateAndTime = {
             date: date1,
             time: date1
         }
 
-        const dateInYear2: DateInYear = {
+        const dateAndTime2: DateAndTime = {
             date: date2,
             time: date2
         }
 
-        const dateInYear3: DateInYear = {
+        const dateAndTime3: DateAndTime = {
             date: date3,
             time: date3
         }
         const schedule:YearlySchedule = {
-            datesInYear: new Set([dateInYear1, dateInYear2, dateInYear3])
+            datesInYear: new Set([dateAndTime1, dateAndTime2, dateAndTime3])
         }
         const bond: Bond = {
           bondName: "",

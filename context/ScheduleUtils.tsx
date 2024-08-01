@@ -1,4 +1,7 @@
-import { deleteScheduleByBond, uploadScheduleToDB } from "@/assets/db/ScheduleRepo";
+import {
+  deleteScheduleByBond,
+  uploadScheduleToDB,
+} from "@/assets/db/ScheduleRepo";
 import {
   Schedule,
   Bond,
@@ -11,15 +14,16 @@ import {
   WeeklySchedule,
   MonthlySchedule,
   YearlySchedule,
-  DateInYear,
+  DateAndTime,
   Schedule_DB,
 } from "@/constants/types";
 import {
   scheduleDailyNotification,
   scheduleWeeklyNotification,
-  scheduleMonthlyNotification,
+  scheduleWeekAndDayMonthlyNotification,
   scheduleYearlyNotification,
   cancelNotificationsForBond,
+  scheduleDateMonthlyNotification,
 } from "./NotificationUtils";
 import * as SQLite from "expo-sqlite";
 import { View } from "react-native";
@@ -53,12 +57,31 @@ export const generateNotificationSchedule = async (
     await writeWeeklyScheduleToDB(potentialSchedule.schedule, bond, nids, db);
     return;
   } else if (isMonthlySchedule(potentialSchedule.schedule)) {
-    const nids: string[] = await scheduleMonthlyNotification(
-      potentialSchedule.schedule,
-      bond
-    );
+    let nids: string[];
+    if (potentialSchedule.schedule.isWeekAndDay) {
+      nids = await scheduleWeekAndDayMonthlyNotification(
+        potentialSchedule.schedule,
+        bond
+      );
+      await writeWeekAndDayMonthlyScheduleToDB(
+        potentialSchedule.schedule,
+        bond,
+        nids,
+        db
+      );
+    } else {
+      nids = await scheduleDateMonthlyNotification(
+        potentialSchedule.schedule,
+        bond
+      );
+      await writeDateMonthlyScheduleToDB(
+        potentialSchedule.schedule,
+        bond,
+        nids,
+        db
+      );
+    }
 
-    await writeMonthlyScheduleToDB(potentialSchedule.schedule, bond, nids, db);
     return;
   } else if (isYearlySchedule(potentialSchedule.schedule)) {
     try {
@@ -76,8 +99,7 @@ export const generateNotificationSchedule = async (
       );
     }
   }
-  throw new Error("generateNotificationSchedule(): No Type Detected")
-
+  throw new Error("generateNotificationSchedule(): No Type Detected");
 };
 
 //WRITE DATABASE FUNCTIONS
@@ -149,7 +171,6 @@ export const writeWeeklyScheduleToDB = async (
     timesOfWeek.push(schedule.saturday.toTimeString());
   }
 
-
   for (let i = 0; i < dayOfWeek.length; i++) {
     const time: string = timesOfWeek[i];
     const nid = nids[i];
@@ -172,19 +193,18 @@ export const writeWeeklyScheduleToDB = async (
   }
 };
 
-export const writeMonthlyScheduleToDB = async (
+export const writeWeekAndDayMonthlyScheduleToDB = async (
   schedule: MonthlySchedule,
   bond: Bond,
   nids: string[],
   db: SQLite.SQLiteDatabase
 ) => {
-
-  for(let i = 0; i < schedule.daysInMonth.length; i++) {
+  for (let i = 0; i < schedule.daysInMonth.length; i++) {
     const time: string = schedule.daysInMonth[i].time.toTimeString();
     const dayOfWeek: number = schedule.daysInMonth[i].dayOfWeek;
     const weekOfMonth: number = schedule.daysInMonth[i].weekOfMonth;
-    const bid = bond.bond_id
-    const nid = nids[i]
+    const bid = bond.bond_id;
+    const nid = nids[i];
     try {
       await uploadScheduleToDB(
         db,
@@ -196,12 +216,41 @@ export const writeMonthlyScheduleToDB = async (
         bid,
         nid
       );
-
-  }catch (e) {
-    console.error(e);
-    throw new Error("writeMonthlyScheduleToDB() failed");
+    } catch (e) {
+      console.error(e);
+      throw new Error("writeWeekAndDayMonthlyScheduleToDB() failed");
+    }
   }
-}
+};
+
+export const writeDateMonthlyScheduleToDB = async (
+  schedule: MonthlySchedule,
+  bond: Bond,
+  nids: string[],
+  db: SQLite.SQLiteDatabase
+) => {
+  for (let i = 0; i < schedule.daysInMonth.length; i++) {
+    const d = schedule.daysInMonth[i] as DateAndTime;
+    const time: string = d.time.toTimeString();
+    const date: string = d.date.toDateString();
+    const bid = bond.bond_id;
+    const nid = nids[i];
+    try {
+      await uploadScheduleToDB(
+        db,
+        ScheduleFrequency.MONTHLY,
+        time,
+        null,
+        null,
+        date,
+        bid,
+        nid
+      );
+    } catch (e) {
+      console.error(e);
+      throw new Error("writeWeekAndDayMonthlyScheduleToDB() failed");
+    }
+  }
 };
 
 export const writeYearlyScheduleToDB = async (
@@ -210,12 +259,10 @@ export const writeYearlyScheduleToDB = async (
   nids: string[],
   db: SQLite.SQLiteDatabase
 ) => {
-
   const scheduleIter = schedule.datesInYear.values();
 
-  for(let i = 0; i< schedule.datesInYear.size; i++) {
-
-    const d: DateInYear = scheduleIter.next().value
+  for (let i = 0; i < schedule.datesInYear.size; i++) {
+    const d: DateAndTime = scheduleIter.next().value;
     const time = d.time.toTimeString();
     const date = d.date.toDateString();
     const nid = nids[i];
@@ -238,338 +285,444 @@ export const writeYearlyScheduleToDB = async (
   }
 };
 
-export async function deleteScheduleAndNotificationsOfBond(db: SQLite.SQLiteDatabase, bid: number){
+export async function deleteScheduleAndNotificationsOfBond(
+  db: SQLite.SQLiteDatabase,
+  bid: number
+) {
   try {
-   await cancelNotificationsForBond(db, bid);
+    await cancelNotificationsForBond(db, bid);
     await deleteScheduleByBond(db, bid);
-  return;
+    return;
   } catch (e) {
     console.error(e);
-    throw new Error("deleteScheduleOfBond() failed")
+    throw new Error("deleteScheduleOfBond() failed");
   }
 }
 
-export async function replaceScheduleOfBond(db: SQLite.SQLiteDatabase, bid: number, schedule: Schedule){
+export async function replaceScheduleOfBond(
+  db: SQLite.SQLiteDatabase,
+  bid: number,
+  schedule: Schedule
+) {
   try {
-    await deleteScheduleAndNotificationsOfBond(db, bid)
+    await deleteScheduleAndNotificationsOfBond(db, bid);
     const bond: Bond = await getBond(db, bid);
     return await generateNotificationSchedule(schedule, bond, db);
   } catch (e) {
     console.error(e);
-    throw new Error("replaceScheduleOfBond() failed")
+    throw new Error("replaceScheduleOfBond() failed");
   }
-
 }
 
-export function getScheduleType(schedule: Schedule): string{
-  if(isDailySchedule(schedule.schedule)){
-    return "Daily"
+export function getScheduleType(schedule: Schedule): string {
+  if (isDailySchedule(schedule.schedule)) {
+    return "Daily";
   }
-  if (isWeeklySchedule(schedule.schedule)){
-    return "Weekly"
+  if (isWeeklySchedule(schedule.schedule)) {
+    return "Weekly";
   }
-  if (isMonthlySchedule(schedule.schedule)){
-    return "Monthly"
+  if (isMonthlySchedule(schedule.schedule)) {
+    return "Monthly";
   }
-  if(isYearlySchedule(schedule.schedule)){
-    return "Yearly"
+  if (isYearlySchedule(schedule.schedule)) {
+    return "Yearly";
   }
-  return "invalid type"
+  return "invalid type";
 }
 
 export function displaySchedule(schedule: Schedule_DB): React.JSX.Element {
-  if(schedule.type == ScheduleFrequency.DAILY) {
-    return (<View>
-      <ThemedText darkColor="black">
-        Time: {convertTo12HourTime
-      (schedule.time)}
-      </ThemedText>
-    </View>)
+  if (schedule.type == ScheduleFrequency.DAILY) {
+    return (
+      <View>
+        <ThemedText darkColor="black">
+          Time: {convertTo12HourTime(schedule.time)}
+        </ThemedText>
+      </View>
+    );
   }
 
-  if(schedule.type == ScheduleFrequency.WEEKLY) {
-    return (<View>
-      <ThemedText darkColor="black" >
-        {convertToDayOfWeek(schedule.weekDay as number)}s at {convertTo12HourTime(schedule.time)}
-      </ThemedText>
-    </View>)
+  if (schedule.type == ScheduleFrequency.WEEKLY) {
+    return (
+      <View>
+        <ThemedText darkColor="black">
+          {convertToDayOfWeek(schedule.weekDay as number)}s at{" "}
+          {convertTo12HourTime(schedule.time)}
+        </ThemedText>
+      </View>
+    );
   }
 
-  if(schedule.type == ScheduleFrequency.MONTHLY) {
-    return (<View>
-      <ThemedText darkColor="black">
-        The {convertNumberToOrdinal(schedule.weekOfMonth as number)} {convertToDayOfWeek(schedule.weekDay as number)} of the month at {convertTo12HourTime(schedule.time)}
-      </ThemedText>
-    </View>)
+  if (schedule.type == ScheduleFrequency.MONTHLY) {
+    return (
+      <View>
+        <ThemedText darkColor="black">
+          The {convertNumberToOrdinal(schedule.weekOfMonth as number)}{" "}
+          {convertToDayOfWeek(schedule.weekDay as number)} of the month at{" "}
+          {convertTo12HourTime(schedule.time)}
+        </ThemedText>
+      </View>
+    );
   }
 
-  if(schedule.type == ScheduleFrequency.YEARLY) {
-    return (<View>
-      <ThemedText darkColor="black">
-        {schedule.date} at {convertTo12HourTime(schedule.time)}
-      </ThemedText>
-    </View>)
+  if (schedule.type == ScheduleFrequency.YEARLY) {
+    return (
+      <View>
+        <ThemedText darkColor="black">
+          {schedule.date} at {convertTo12HourTime(schedule.time)}
+        </ThemedText>
+      </View>
+    );
   }
-  return (<View><ThemedText>Schedule Type invalid</ThemedText></View>)
-  
-  
+  return (
+    <View>
+      <ThemedText>Schedule Type invalid</ThemedText>
+    </View>
+  );
 }
 
 export function displayPotentialSchedule(s: Schedule | undefined) {
-  if(s == undefined){
-    return (<ThemedText darkColor="black">No Schedule Set</ThemedText>)
+  if (s == undefined) {
+    return <ThemedText darkColor="black">No Schedule Set</ThemedText>;
   }
   const schedule = s.schedule;
   if (isDailySchedule(schedule)) {
     return (
       <View>
-        <ThemedText darkColor="black">Daily: {convertTo12HourTime(schedule.time.toTimeString())}</ThemedText>
+        <ThemedText darkColor="black">
+          Daily: {convertTo12HourTime(schedule.time.toTimeString())}
+        </ThemedText>
       </View>
-    )
+    );
   }
 
   if (isWeeklySchedule(schedule)) {
     const weeklySchedule = [];
-    if(schedule.monday != undefined) {
+    if (schedule.monday != undefined) {
       weeklySchedule.push(
-      <View>
-        <ThemedText darkColor="black">Monday: {convertTo12HourTime(schedule.monday.toTimeString())}</ThemedText>
-      </View>)
+        <View>
+          <ThemedText darkColor="black">
+            Monday: {convertTo12HourTime(schedule.monday.toTimeString())}
+          </ThemedText>
+        </View>
+      );
     }
 
-    if(schedule.tuesday != undefined) {
+    if (schedule.tuesday != undefined) {
       weeklySchedule.push(
-      <View>
-        <ThemedText darkColor="black">Tuesday: {convertTo12HourTime(schedule.tuesday.toTimeString())}</ThemedText>
-      </View>)
+        <View>
+          <ThemedText darkColor="black">
+            Tuesday: {convertTo12HourTime(schedule.tuesday.toTimeString())}
+          </ThemedText>
+        </View>
+      );
     }
 
-    if(schedule.wednesday != undefined) {
+    if (schedule.wednesday != undefined) {
       weeklySchedule.push(
-      <View>
-        <ThemedText darkColor="black">Wednesday: {convertTo12HourTime(schedule.wednesday.toTimeString())}</ThemedText>
-      </View>)
+        <View>
+          <ThemedText darkColor="black">
+            Wednesday: {convertTo12HourTime(schedule.wednesday.toTimeString())}
+          </ThemedText>
+        </View>
+      );
     }
 
-    if(schedule.thursday != undefined) {
+    if (schedule.thursday != undefined) {
       weeklySchedule.push(
-      <View>
-        <ThemedText darkColor="black">Thursday: {convertTo12HourTime(schedule.thursday.toTimeString())}</ThemedText>
-      </View>)
+        <View>
+          <ThemedText darkColor="black">
+            Thursday: {convertTo12HourTime(schedule.thursday.toTimeString())}
+          </ThemedText>
+        </View>
+      );
     }
 
-    if(schedule.friday != undefined) {
+    if (schedule.friday != undefined) {
       weeklySchedule.push(
-      <View>
-        <ThemedText darkColor="black">Friday: {convertTo12HourTime(schedule.friday.toTimeString())}</ThemedText>
-      </View>)
+        <View>
+          <ThemedText darkColor="black">
+            Friday: {convertTo12HourTime(schedule.friday.toTimeString())}
+          </ThemedText>
+        </View>
+      );
     }
 
-    if(schedule.saturday != undefined) {
+    if (schedule.saturday != undefined) {
       weeklySchedule.push(
-      <View>
-        <ThemedText darkColor="black">Saturday: {convertTo12HourTime(schedule.saturday.toTimeString())}</ThemedText>
-      </View>)
+        <View>
+          <ThemedText darkColor="black">
+            Saturday: {convertTo12HourTime(schedule.saturday.toTimeString())}
+          </ThemedText>
+        </View>
+      );
     }
 
-    if(schedule.sunday != undefined) {
+    if (schedule.sunday != undefined) {
       weeklySchedule.push(
-      <View>
-        <ThemedText darkColor="black">Sunday: {convertTo12HourTime(schedule.sunday.toTimeString())}</ThemedText>
-      </View>)
+        <View>
+          <ThemedText darkColor="black">
+            Sunday: {convertTo12HourTime(schedule.sunday.toTimeString())}
+          </ThemedText>
+        </View>
+      );
     }
-    return (
-      weeklySchedule
-    )
+    return weeklySchedule;
   }
 
-  if (isMonthlySchedule(schedule)){
+  if (isMonthlySchedule(schedule)) {
     const monthlySchedule: React.JSX.Element[] = [];
-    schedule.daysInMonth.forEach(d => {
-      const week:string = convertNumberToOrdinal(parseInt(d.weekOfMonth) as number) as string;
-      const day: string = convertToDayOfWeek(parseInt(d.dayOfWeek) as number) as string
-      const time = convertTo12HourTime(d.time.toTimeString())
+    schedule.daysInMonth.forEach((d) => {
+      const week: string = convertNumberToOrdinal(
+        parseInt(d.weekOfMonth) as number
+      ) as string;
+      const day: string = convertToDayOfWeek(
+        parseInt(d.dayOfWeek) as number
+      ) as string;
+      const time = convertTo12HourTime(d.time.toTimeString());
       monthlySchedule.push(
         <View>
           <ThemedText darkColor="black">
-          The {week} {day} of the month at {time}
+            The {week} {day} of the month at {time}
           </ThemedText>
         </View>
-
-      )
-    })
+      );
+    });
     return monthlySchedule;
   }
 
   if (isYearlySchedule(schedule)) {
     const yearlySchedule: React.JSX.Element[] = [];
-    schedule.datesInYear.forEach(d => {
+    schedule.datesInYear.forEach((d) => {
       yearlySchedule.push(
         <View>
           <ThemedText darkColor="black">
-           {convertToMonth(d.date.getUTCMonth())} {d.date.getUTCDate()} at {convertTo12HourTime(d.time.toTimeString())}
+            {convertToMonth(d.date.getUTCMonth())} {d.date.getUTCDate()} at{" "}
+            {convertTo12HourTime(d.time.toTimeString())}
           </ThemedText>
         </View>
-      )
-    })
-    return (yearlySchedule)
-
+      );
+    });
+    return yearlySchedule;
   }
 }
 
 export function convertTo12HourTime(timeString: string) {
   // Extract the time part from the input string
   if (timeString == null) {
-    throw new Error("convertFromToTimeStringTo12HourFormat(): parameter is null:")
+    throw new Error(
+      "convertFromToTimeStringTo12HourFormat(): parameter is null:"
+    );
   }
   const timePart = timeString?.match(/(\d{2}:\d{2}:\d{2})/)[0];
 
   // Split the time part into hours, minutes, and seconds
-  const [hh, mm] = timePart.split(':');
+  const [hh, mm] = timePart.split(":");
 
   // Convert the hour to a number and determine AM/PM
   let hour = parseInt(hh, 10);
-  const period = hour >= 12 ? 'PM' : 'AM';
+  const period = hour >= 12 ? "PM" : "AM";
 
   // Convert hour to 12-hour format
   hour = hour % 12 || 12;
 
   // Format the minute with leading zeros if needed
-  const formattedMinute = mm.padStart(2, '0');
+  const formattedMinute = mm.padStart(2, "0");
 
   // Return the formatted string
   return `${hour}:${formattedMinute} ${period}`;
 }
 
 /**
- * 
+ *
  * @param dayNum sunday = 1
  */
-export function convertToDayOfWeek(dayNum: number){
-  let weekDay: string;;
-  switch(dayNum){
-    case 1: {
-
-      weekDay= "Sunday"
-    } break;
-    case 2: {
-      weekDay= "Monday"
-    } break;
-    case 3: {
-      weekDay= "Tuesday"
-    } break;
-    case 4: {
-      weekDay= "Wednesday"
-    } break;
-    case 5: {
-      weekDay= "Thursday"
-    } break;
-    case 6: {
-      weekDay= "Friday"
-    } break;
-    case 7: {
-      weekDay= "Saturday"
-    } break;
-    default: {
-      weekDay= ("didn't work: ")
-    }break;
+export function convertToDayOfWeek(dayNum: number) {
+  let weekDay: string;
+  switch (dayNum) {
+    case 1:
+      {
+        weekDay = "Sunday";
+      }
+      break;
+    case 2:
+      {
+        weekDay = "Monday";
+      }
+      break;
+    case 3:
+      {
+        weekDay = "Tuesday";
+      }
+      break;
+    case 4:
+      {
+        weekDay = "Wednesday";
+      }
+      break;
+    case 5:
+      {
+        weekDay = "Thursday";
+      }
+      break;
+    case 6:
+      {
+        weekDay = "Friday";
+      }
+      break;
+    case 7:
+      {
+        weekDay = "Saturday";
+      }
+      break;
+    default:
+      {
+        weekDay = "didn't work: ";
+      }
+      break;
+  }
+  return weekDay;
 }
-return weekDay
 
-}
-
-export function convertNumberToOrdinal(num: number){
+export function convertNumberToOrdinal(num: number) {
   if (num < 1 || num > 10) {
-    throw new Error("convertNumberToOrdinal(): param must be between 1 and 10 inclusive!")
+    throw new Error(
+      "convertNumberToOrdinal(): param must be between 1 and 10 inclusive!"
+    );
   }
   let ordinal = "";
-  switch(num) {
-    case 1:{
-      ordinal = "first"
-    } break;
-    case 2:{
-      ordinal= "second"
-    } break;
-    case 3:{
-      ordinal= "third"
-
-    } break;
-    case 4:{
-      ordinal= "fourth"
-    } break;
-    case 5:{
-      ordinal= "fifth"
-    } break;
-    case 6:{
-      ordinal= "sixth"
-    } break;
-    case 7:{
-      ordinal= "seventh"
-    } break;
-    case 8:{
-      ordinal= "eighth"
-    } break;
-    case 9:{
-      ordinal= "ninth"
-    } break;
-    case 10:{
-      ordinal= "tenth"
-    } break;
-    default: {
-      ordinal= "didnt work";
-    } break;
+  switch (num) {
+    case 1:
+      {
+        ordinal = "first";
+      }
+      break;
+    case 2:
+      {
+        ordinal = "second";
+      }
+      break;
+    case 3:
+      {
+        ordinal = "third";
+      }
+      break;
+    case 4:
+      {
+        ordinal = "fourth";
+      }
+      break;
+    case 5:
+      {
+        ordinal = "fifth";
+      }
+      break;
+    case 6:
+      {
+        ordinal = "sixth";
+      }
+      break;
+    case 7:
+      {
+        ordinal = "seventh";
+      }
+      break;
+    case 8:
+      {
+        ordinal = "eighth";
+      }
+      break;
+    case 9:
+      {
+        ordinal = "ninth";
+      }
+      break;
+    case 10:
+      {
+        ordinal = "tenth";
+      }
+      break;
+    default:
+      {
+        ordinal = "didnt work";
+      }
+      break;
   }
-  return ordinal
+  return ordinal;
 }
 
-
-export function convertToMonth(monthNum: number){
+export function convertToMonth(monthNum: number) {
   if (monthNum < 1 || monthNum > 12) {
-    throw new Error("convertToMonth(): param must be between 1 and 12 inclusive!")
+    throw new Error(
+      "convertToMonth(): param must be between 1 and 12 inclusive!"
+    );
   }
   let month = "";
-  switch(monthNum) {
-    case 1:{
-      month = "January"
-    } break;
-    case 2:{
-      month= "February"
-    } break;
-    case 3:{
-      month= "March"
-
-    } break;
-    case 4:{
-      month= "April"
-    } break;
-    case 5:{
-      month= "May"
-    } break;
-    case 6:{
-      month= "June"
-    } break;
-    case 7:{
-      month= "July"
-    } break;
-    case 8:{
-      month= "August"
-    } break;
-    case 9:{
-      month= "September"
-    } break;
-    case 10:{
-      month= "October"
-    } break;
-    case 11:{
-      month= "November"
-    } break;
-    case 12:{
-      month= "December"
-    } break;
-    default: {
-      month= "didnt work";
-    } break;
+  switch (monthNum) {
+    case 1:
+      {
+        month = "January";
+      }
+      break;
+    case 2:
+      {
+        month = "February";
+      }
+      break;
+    case 3:
+      {
+        month = "March";
+      }
+      break;
+    case 4:
+      {
+        month = "April";
+      }
+      break;
+    case 5:
+      {
+        month = "May";
+      }
+      break;
+    case 6:
+      {
+        month = "June";
+      }
+      break;
+    case 7:
+      {
+        month = "July";
+      }
+      break;
+    case 8:
+      {
+        month = "August";
+      }
+      break;
+    case 9:
+      {
+        month = "September";
+      }
+      break;
+    case 10:
+      {
+        month = "October";
+      }
+      break;
+    case 11:
+      {
+        month = "November";
+      }
+      break;
+    case 12:
+      {
+        month = "December";
+      }
+      break;
+    default:
+      {
+        month = "didnt work";
+      }
+      break;
   }
-  return month
-
+  return month;
 }
