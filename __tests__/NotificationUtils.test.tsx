@@ -1,5 +1,5 @@
 import { Bond, DailySchedule, DateAndTime, DayOfMonth, MonthlySchedule, WeeklySchedule, YearlySchedule } from "@/constants/types"
-import { notificationContentDaily,  notificationContentWeekly, notificationContentYearly, scheduleDailyNotification,  scheduleWeeklyNotification, scheduleYearlyNotification, scheduleWeekAndDayMonthlyNotification, notificationContentMonthly } from "@/context/NotificationUtils"
+import { notificationContentDaily,  notificationContentWeekly, notificationContentYearly, scheduleDailyNotification,  scheduleWeeklyNotification, scheduleYearlyNotification, scheduleWeekAndDayMonthlyNotification, notificationContentMonthly, scheduleDateMonthlyNotification } from "@/context/NotificationUtils"
 import {scheduleNotificationAsync, WeeklyTriggerInput, CalendarTriggerInput, YearlyTriggerInput, DailyTriggerInput} from "expo-notifications";
 
 jest.mock("expo-notifications", () => {
@@ -172,7 +172,7 @@ describe("NotificationUtils: ", () => {
 
     })
 
-    describe("scheduleMonthlyNotification: ", () => {
+    describe("scheduleWeekAndDayMonthlyNotification: ", () => {
 
         it("should call scheduleNotificationAsync 1x for MonthlySchedule with 1 date", async () => {
             const date = new Date("1995-12-17T09:30:00")
@@ -182,6 +182,7 @@ describe("NotificationUtils: ", () => {
                 time: date
             }
             const schedule: MonthlySchedule = {
+                isWeekAndDay: false,
                 daysInMonth: [dom]
             }
             const bond: Bond = {
@@ -254,6 +255,93 @@ describe("NotificationUtils: ", () => {
                  weekday: dom2.dayOfWeek,
                 hour: dom2.time.getHours(),
                 minute: dom2.time.getMinutes(),
+                repeats: true,
+            }
+
+            await scheduleWeekAndDayMonthlyNotification(schedule,bond)
+            expect(scheduleNotificationAsync).toHaveBeenCalledTimes(3)
+            expect(scheduleNotificationAsync).toHaveBeenCalledWith({content: expectedContent, trigger: expectedTrigger})
+            expect(scheduleNotificationAsync).toHaveBeenCalledWith({content: expectedContent, trigger: expectedTrigger1})
+            expect(scheduleNotificationAsync).toHaveBeenCalledWith({content: expectedContent, trigger: expectedTrigger2})
+        })
+    })
+
+    describe("scheduleDateMonthlyNotification: ", () => {
+
+        it("should call scheduleNotificationAsync 1x for MonthlySchedule with 1 date", async () => {
+            const date = new Date("1995-12-17T09:30:00")
+            const dt: DateAndTime = {
+                date: date,
+                time: date
+            }
+            const schedule: MonthlySchedule = {
+                isWeekAndDay: true,
+                daysInMonth: [dt]
+            }
+            const bond: Bond = {
+                bondName: "a",
+                bond_id: 1,
+                schedule: "a",
+                typeOfCall: "Monthly"
+            }
+            const expectedContent = notificationContentMonthly(bond);
+            const expectedTrigger: CalendarTriggerInput = {
+                day: dt.date.getDate(),
+                hour: dt.time.getHours(),
+                minute: dt.time.getMinutes(),
+                repeats: true,
+            }
+
+            await scheduleDateMonthlyNotification(schedule,bond)
+            expect(scheduleNotificationAsync).toHaveBeenCalledTimes(1)
+            expect(scheduleNotificationAsync).toHaveBeenCalledWith({content: expectedContent, trigger: expectedTrigger})
+            
+        })
+
+        it("should call scheduleNotificationAsync 3x for MonthlySchedule with 3 dates", async () => {
+            const date = new Date("1995-12-17T09:30:00")
+            const date1 = new Date("1995-14-17T09:30:00")
+            const date2 = new Date("1995-15-17T10:30:00")
+
+            const dt: DateAndTime = {
+                date: date,
+                time: date
+            }
+            const dt1: DateAndTime = {
+                date: date1,
+                time: date1
+            }
+            const dt2: DateAndTime = {
+                date: date2,
+                time: date2
+            }
+            const schedule: MonthlySchedule = {
+                isWeekAndDay: false,
+                daysInMonth: [dt, dt1, dt2]
+            }
+            const bond: Bond = {
+                bondName: "a",
+                bond_id: 1,
+                schedule: "a",
+                typeOfCall: "Monthly"
+            }
+            const expectedContent = notificationContentMonthly(bond);
+            const expectedTrigger: CalendarTriggerInput = {
+                day: dt.date.getDate(),
+                hour: dt.time.getHours(),
+                minute: dt.time.getMinutes(),
+                repeats: true,
+            }
+            const expectedTrigger1: CalendarTriggerInput = {
+                day: dt1.date.getDate(),
+                hour: dt1.time.getHours(),
+                minute: dt1.time.getMinutes(),
+                repeats: true,
+            }
+            const expectedTrigger2: CalendarTriggerInput = {
+                day: dt2.date.getDate(),
+                hour: dt2.time.getHours(),
+                minute: dt2.time.getMinutes(),
                 repeats: true,
             }
 

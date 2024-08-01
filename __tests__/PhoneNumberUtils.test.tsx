@@ -37,25 +37,7 @@ describe("PhoneNumber Utils", () => {
         expect(() => validateAndFormatPhoneNumber(testNumber)).toThrow()
     })
 
-    describe("getNextToCall()", () => {
-
-
-        describe("bond of size 1", () => {
-        it("should return the sole bondMember", () => {
-            const db = mockDatabase;
-            getNextToCallUtil(1, db);
-
-        })
-
-
-
-        })
-
-
-
-
-
-    })
+ 
 
 
 })

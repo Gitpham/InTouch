@@ -14,7 +14,6 @@ export const addReminder = async (db: SQLite.SQLiteDatabase, reminder: Reminder)
         value = [`${reminder.reminder_id}`, null, `${reminder.bond_id}`, reminder.reminder, reminder.date]
     }
 
-    console.log('Values to be inserted:', value);
     try {
         return await statement.executeAsync(value);
 

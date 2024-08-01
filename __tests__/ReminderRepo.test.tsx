@@ -23,6 +23,7 @@ describe("ReminderRepo unit tests", () => {
 
     it("addReminder() should call db with the correct sql", async () => {
         const r: Reminder = reminderA4;
+        const reminderID: string = r.reminder_id.toString();
     
         const db = await openDatabaseAsync("name")
 
@@ -31,9 +32,9 @@ describe("ReminderRepo unit tests", () => {
           "INSERT INTO reminder (reminder_id, person_id, bond_id, reminder, date) VALUES (?, ?, ?, ?, ?)"
         );
         expect(mockExecuteAsync).toHaveBeenCalledWith([
-            r.reminder_id,
+            r.reminder_id.toString(),
             r.person_id,
-            r.bond_id,
+            r.bond_id?.toString(),
             r.reminder,
             r.date
         ]);
@@ -45,9 +46,9 @@ describe("ReminderRepo unit tests", () => {
         const db = await openDatabaseAsync("name");
         await deleteReminder(db, r.reminder_id);
         const expectedSql = `
-           DELETE FROM reminder
-            WHERE reminder_id = ?
-            `;
+       DELETE FROM reminder
+      WHERE reminder_id = ?
+        `;
     
         expect(mockPrepareAsync).toHaveBeenCalledWith(expectedSql);
     

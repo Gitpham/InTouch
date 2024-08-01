@@ -354,10 +354,11 @@ export async function scheduleDateMonthlyNotification(
     const d = schedule.daysInMonth[i] as DateAndTime
     isDateAndTime(d);
 
-    const trigger: Notifications.CalendarTriggerInputValue = {
+    const trigger: Notifications.CalendarTriggerInput = {
       day:  d.date.getDate(),
       hour: d.time.getHours(),
       minute: d.time.getMinutes(),
+      repeats: true,
     };
 
     try {
