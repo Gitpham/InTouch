@@ -1,10 +1,7 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { View, Alert } from "react-native";
 import React from "react";
 import SegmentedControl from "@react-native-segmented-control/segmented-control";
-import { ThemedText } from "./ThemedText";
-import { StyleSheet } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { StandardButton } from "./ButtonStandard";
 import {
   Bond,
@@ -18,7 +15,6 @@ import {
   YearlySchedule,
 } from "@/constants/types";
 import { ScheduleContext } from "@/context/ScheduleContext";
-import { ScrollView } from "react-native";
 import { useSQLiteContext } from "expo-sqlite";
 import DailySchedulePicker from "./DailySchedulePicker";
 import WeeklySchedulePicker from "./WeeklySchedulePicker";
@@ -140,6 +136,16 @@ export default function Scheduler({
     setMonthlySet(updatedMonthSet);
   }
 
+  const [selectedMonthDate, setSelectedMonthDate] = useState(new Date());
+  function changeSelectedMonthDate(updatedDate: Date){
+    setSelectedMonthDate(updatedDate);
+  } 
+
+
+  const [selectedMonthDateTime, setSelectedMonthDateTime] = useState(new Date())
+  function changeSelectedMonthDateTime(updatedTime: Date) {
+    setSelectedMonthDateTime(updatedTime);
+  }
   //Yearly State variables
   const [selectedDayInYear, setSelectedDayInYear] = useState<Date>(new Date());
   const [selectedTimeInYear, setSelectedTimeInYear] = useState<Date>(
@@ -321,6 +327,12 @@ export default function Scheduler({
         changeMonthlyTime={changeMonthlyTime}
         monthlySet={monthlySet}
         changeMonthlySet={changeMonthlySet}
+
+        selectedMonthDate={selectedMonthDate}
+        changeSelectedMonthDate={changeSelectedMonthDate}
+
+        selectedMonthDateTime={selectedMonthDateTime}
+        changeSelectedMonthDateTime={changeSelectedMonthDateTime}
       ></MonthlySchedulePicker>
     );
   }

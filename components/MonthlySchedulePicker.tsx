@@ -1,6 +1,6 @@
 import { Card } from "@rneui/themed";
-import React from "react";
-import { View, Text, ScrollView  } from "react-native";
+import React, { useState } from "react";
+import { View, Text, ScrollView } from "react-native";
 import { StandardButton } from "./ButtonStandard";
 import DateTimePicker, {
   DateTimePickerEvent,
@@ -14,6 +14,7 @@ import {
 } from "@/context/ScheduleUtils";
 import { styles } from "@/constants/Stylesheet";
 import { ThemedText } from "./ThemedText";
+import { CheckBox, Divider } from "@rneui/base";
 
 interface MonthlySchedulePickerInterface {
   selectedWeekOfMonth: number;
@@ -27,6 +28,12 @@ interface MonthlySchedulePickerInterface {
 
   monthlySet: Set<DayOfMonth>;
   changeMonthlySet: (u: Set<DayOfMonth>) => void;
+
+  selectedMonthDate: Date;
+  changeSelectedMonthDate: (d: Date) => void;
+
+  selectedMonthDateTime: Date;
+  changeSelectedMonthDateTime: (t: Date) => void;
 }
 
 export default function MonthlySchedulePicker({
@@ -41,7 +48,20 @@ export default function MonthlySchedulePicker({
 
   monthlySet,
   changeMonthlySet,
+
+  selectedMonthDate,
+  changeSelectedMonthDate,
+
+  selectedMonthDateTime,
+  changeSelectedMonthDateTime,
 }: MonthlySchedulePickerInterface) {
+
+    const [onTheIsChecked, setOnTheIsChecked] = useState(true)
+    const [eachIsChecked, setEachIsChecked] = useState(false)
+
+
+
+
   function displayMonthlySet() {
     if (monthlySet.size == 0) return <Text>No Selected Dates</Text>;
 
@@ -75,26 +95,23 @@ export default function MonthlySchedulePicker({
     return;
   }
 
-  return (
-    <ScrollView style={{padding: 10}}>
-      <Card>
-        <Text style={styles.title}>Current Monthly Schedule: </Text>
-        {displayMonthlySet()}
-        <StandardButton
-          title="Clear current schedule"
-          onPress={() => {
-            changeMonthlySet(new Set());
-          }}
-        ></StandardButton>
-      </Card>
+  function onOnThePressed() {
+    setOnTheIsChecked(!onTheIsChecked);
+    setEachIsChecked(!eachIsChecked)
+  }
 
-      <View style={styles.rowOrientation}>
-        <View style={{ flex: 0.37, flexDirection: "column" }}>
-          <ThemedText darkColor="black" style={styles.title}>
-            Week of Month
-          </ThemedText>
+  function onEachPressed() {
+    setOnTheIsChecked(!onTheIsChecked);
+    setEachIsChecked(!eachIsChecked)
+  }
+
+  function displayOnThePicker() {
+
+    return (
+      <View style={styles.centeredView}>
+      <View style={styles.rowOrientation }>
+        <View style={{ flex: 0.5, flexDirection: "column" }}>
           <Picker
-            style={{ borderBlockColor: "black" }}
             selectedValue={selectedWeekOfMonth}
             onValueChange={(itemValue, itemIndex) => {
               changeSelectedWeekOfMonth(itemValue);
@@ -107,12 +124,8 @@ export default function MonthlySchedulePicker({
           </Picker>
         </View>
 
-        <View style={{ flex: 0.37, flexDirection: "column" }}>
-          <ThemedText darkColor="black" style={styles.title}>
-            Day of Week
-          </ThemedText>
+        <View style={{ flex: 0.5, flexDirection: "column" }}>
           <Picker
-            style={{ flex: 0.37 }}
             selectedValue={selectedDayOfWeek}
             onValueChange={(itemValue, itemIndex) =>
               changeSelectedDayOfWeek(itemValue)
@@ -127,21 +140,65 @@ export default function MonthlySchedulePicker({
             <Picker.Item label="Sat." value="7" />
           </Picker>
         </View>
-
-        <View style={{ flex: 0.25, flexDirection: "column" }}>
-          <ThemedText darkColor="black" style={styles.title}>
-            Time
-          </ThemedText>
-          <DateTimePicker
-            value={monthlyTime}
-            mode="time"
-            onChange={(e, d) => changeMonthlyTime(d)}
-          ></DateTimePicker>
-        </View>
-
       </View>
-      <StandardButton title="Add" onPress={onAddDayOfMonth}></StandardButton>
+      <ThemedText style={styles.title}> Of the month at </ThemedText>
+      <View>
+        <DateTimePicker
+          value={monthlyTime}
+          mode="time"
+          onChange={(e, d) => changeMonthlyTime(d)}
+        ></DateTimePicker>
+      </View>
+      </View>
 
+    )
+    
+  }
+
+  function displayMonthlyDatePicker() {
+
+    return (
+      <View>
+        <DateTimePicker
+        minimumDate={new Date()}
+      value={selectedMonthDate}
+      onChange={(e, d) => {
+          changeSelectedMonthDate(d)
+      }}
+      >
+      </DateTimePicker>
+  </View>
+    )
+
+  }
+
+  return (
+    <ScrollView style={{ padding: 10 }}>
+    
+      <Card>
+      <View style={styles.rowOrientation}>
+        <CheckBox checked={onTheIsChecked} onPress={onOnThePressed}title="On the" />
+        <CheckBox checked={eachIsChecked} onPress={onEachPressed} title="Each" />
+      </View>
+      {
+        onTheIsChecked ? 
+        displayOnThePicker() :
+        displayMonthlyDatePicker()
+      }
+     
+      </Card>
+
+      <StandardButton title="Add" onPress={onAddDayOfMonth}></StandardButton>
+      <Card>
+        <Text style={styles.title}>Current Monthly Schedule: </Text>
+        {displayMonthlySet()}
+        <StandardButton
+          title="Clear current schedule"
+          onPress={() => {
+            changeMonthlySet(new Set());
+          }}
+        ></StandardButton>
+      </Card>
     </ScrollView>
   );
 }

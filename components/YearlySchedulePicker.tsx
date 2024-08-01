@@ -70,6 +70,7 @@ export default function YearlySchedulePicker({
             <View>
                 <DateTimePicker
                 mode="date"
+                display="inline"
                 value={selectedDayInYear}
                 onChange={(e, d) => {
                     changeSelectedDayInYear(d)
