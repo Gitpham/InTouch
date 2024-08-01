@@ -345,7 +345,7 @@ describe("NotificationUtils: ", () => {
                 repeats: true,
             }
 
-            await scheduleWeekAndDayMonthlyNotification(schedule,bond)
+            await scheduleDateMonthlyNotification(schedule,bond)
             expect(scheduleNotificationAsync).toHaveBeenCalledTimes(3)
             expect(scheduleNotificationAsync).toHaveBeenCalledWith({content: expectedContent, trigger: expectedTrigger})
             expect(scheduleNotificationAsync).toHaveBeenCalledWith({content: expectedContent, trigger: expectedTrigger1})

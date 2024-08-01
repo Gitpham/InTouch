@@ -1,7 +1,7 @@
 import { mockDatabase } from "@/__mocks__/expo-sqlite";
 import { uploadScheduleToDB } from "@/assets/db/ScheduleRepo";
 import { Bond, DailySchedule, DateAndTime, DayOfMonth, MonthlySchedule, ScheduleFrequency, WeeklySchedule, YearlySchedule } from "@/constants/types";
-import { writeDailyScheduleToDB, writeMonthlyScheduleToDB, writeWeeklyScheduleToDB, writeYearlyScheduleToDB } from "@/context/ScheduleUtils";
+import { writeDailyScheduleToDB, writeDateMonthlyScheduleToDB, writeWeekAndDayMonthlyScheduleToDB, writeWeeklyScheduleToDB, writeYearlyScheduleToDB } from "@/context/ScheduleUtils";
 import * as SQlite from "expo-sqlite";
 
 jest.mock("@/assets/db/ScheduleRepo", () => {
@@ -184,7 +184,7 @@ describe("ScheduleUtils: ", () => {
     })
   })
 
-  describe("writeMonthlyScheduleToDB(): ", () => {
+  describe("writeWeekAndDayMonthlyScheduleToDB(): ", () => {
 
     it("calling with a monthlySchedule with 1 day should call uploadScheduleToDB() 1x", async () => {
         const currTime = new Date();
@@ -205,7 +205,7 @@ describe("ScheduleUtils: ", () => {
         };
         const nids = ["a"];
 
-        await writeMonthlyScheduleToDB(schedule, bond, nids, db);
+        await writeWeekAndDayMonthlyScheduleToDB(schedule, bond, nids, db);
         expect(uploadScheduleToDB).toHaveBeenCalledTimes(1);
         expect(uploadScheduleToDB).toHaveBeenCalledWith(db, ScheduleFrequency.MONTHLY, currTime.toTimeString(), 1, 1, null, bond.bond_id, nids[0])
 
@@ -261,7 +261,7 @@ describe("ScheduleUtils: ", () => {
         };
         const nids = ["a", "b", "c", "d", "e", "f", "g"];
 
-        await writeMonthlyScheduleToDB(schedule, bond, nids, db);
+        await writeWeekAndDayMonthlyScheduleToDB(schedule, bond, nids, db);
         expect(uploadScheduleToDB).toHaveBeenCalledTimes(7);
         expect(uploadScheduleToDB).toHaveBeenCalledWith(db, ScheduleFrequency.MONTHLY, time1.toTimeString(), day1.dayOfWeek, day1.weekOfMonth, null, bond.bond_id, nids[0])
         expect(uploadScheduleToDB).toHaveBeenCalledWith(db, ScheduleFrequency.MONTHLY, time1.toTimeString(), day2.dayOfWeek, day2.weekOfMonth, null, bond.bond_id, nids[1])
@@ -270,6 +270,90 @@ describe("ScheduleUtils: ", () => {
         expect(uploadScheduleToDB).toHaveBeenCalledWith(db, ScheduleFrequency.MONTHLY, time2.toTimeString(), day5.dayOfWeek, day5.weekOfMonth, null, bond.bond_id, nids[4])
         expect(uploadScheduleToDB).toHaveBeenCalledWith(db, ScheduleFrequency.MONTHLY, time2.toTimeString(), day6.dayOfWeek, day6.weekOfMonth, null, bond.bond_id, nids[5])
         expect(uploadScheduleToDB).toHaveBeenCalledWith(db, ScheduleFrequency.MONTHLY, time2.toTimeString(), day7.dayOfWeek, day7.weekOfMonth, null, bond.bond_id, nids[6])
+    })
+
+  })
+
+  describe("writeDateMonthlyScheduleToDB(): ", () => {
+
+    it("calling with a monthlySchedule with 1 day should call uploadScheduleToDB() 1x", async () => {
+      const date1 = new Date("1995-12-17T03:24:00")
+    
+        const dateAndTime: DateAndTime = {
+            date: date1,
+            time: date1,
+        }
+        const schedule: MonthlySchedule = {
+          isWeekAndDay: false,
+            daysInMonth: [dateAndTime]
+        }
+        const bond: Bond = {
+          bondName: "",
+          bond_id: 1,
+          schedule: "",
+          typeOfCall: "",
+        };
+        const nids = ["a"];
+
+        await writeDateMonthlyScheduleToDB(schedule, bond, nids, db);
+        expect(uploadScheduleToDB).toHaveBeenCalledTimes(1);
+        expect(uploadScheduleToDB).toHaveBeenCalledWith(db, ScheduleFrequency.MONTHLY, date1.toTimeString(), null, null, date1.toDateString(), bond.bond_id, nids[0])
+
+    })
+
+    it("calling with a monthlySchedule with 7 day should call uploadScheduleToDB() 7x", async () => {
+        const date1 = new Date("1995-12-17T03:24:00")
+        const date2 = new Date("1995-12-17T05:30:00")
+
+        const day1: DateAndTime = {
+            date: date1,
+            time: date1,
+        }
+        const day2: DateAndTime = {
+          date: date1,
+          time: date1,
+        }
+        const day3: DateAndTime = {
+          date: date1,
+          time: date1,
+        }
+        const day4: DateAndTime = {
+          date: date1,
+          time: date1,
+        }
+        const day5: DateAndTime = {
+          date: date2,
+          time: date2,
+        }
+        const day6: DateAndTime = {
+          date: date2,
+          time: date2,
+        }
+        const day7: DateAndTime = {
+          date: date2,
+          time: date2,
+        }
+        const schedule: MonthlySchedule = {
+            isWeekAndDay: false,
+            daysInMonth: [day1, day2, day3, day4, day5, day6, day7]
+        }
+        const bond: Bond = {
+          bondName: "",
+          bond_id: 1,
+          schedule: "",
+          typeOfCall: "",
+        };
+        const nids = ["a", "b", "c", "d", "e", "f", "g"];
+
+        await writeDateMonthlyScheduleToDB(schedule, bond, nids, db);
+        expect(uploadScheduleToDB).toHaveBeenCalledTimes(7);
+        expect(uploadScheduleToDB).toHaveBeenCalledWith(db, ScheduleFrequency.MONTHLY, date1.toTimeString(), null, null, date1.toDateString(), bond.bond_id, nids[0])
+        expect(uploadScheduleToDB).toHaveBeenCalledWith(db, ScheduleFrequency.MONTHLY, date1.toTimeString(), null, null, date1.toDateString(), bond.bond_id, nids[1])
+        expect(uploadScheduleToDB).toHaveBeenCalledWith(db, ScheduleFrequency.MONTHLY, date1.toTimeString(), null, null, date1.toDateString(), bond.bond_id, nids[2])
+        expect(uploadScheduleToDB).toHaveBeenCalledWith(db, ScheduleFrequency.MONTHLY, date1.toTimeString(), null, null, date1.toDateString(), bond.bond_id, nids[3])
+        expect(uploadScheduleToDB).toHaveBeenCalledWith(db, ScheduleFrequency.MONTHLY, date2.toTimeString(), null, null, date2.toDateString(), bond.bond_id, nids[4])
+        expect(uploadScheduleToDB).toHaveBeenCalledWith(db, ScheduleFrequency.MONTHLY, date2.toTimeString(), null, null, date2.toDateString(), bond.bond_id, nids[5])
+        expect(uploadScheduleToDB).toHaveBeenCalledWith(db, ScheduleFrequency.MONTHLY, date2.toTimeString(), null, null, date2.toDateString(), bond.bond_id, nids[6])
     })
 
   })
