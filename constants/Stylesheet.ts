@@ -27,6 +27,13 @@ export const styles = StyleSheet.create({
       flexDirection: "column",
       paddingTop: 50,
     },
+    smallContainer: {
+      flex: 1,
+      backgroundColor: "White",
+      flexDirection: "column",
+      paddingTop: 10,
+      paddingBottom: 10,
+    },
     homeContainer: {
         flex: 1,
         backgroundColor: 'white',
