@@ -1,6 +1,6 @@
 import { Card } from "@rneui/themed";
 import React from "react";
-import { Alert, View, Text } from "react-native";
+import { View, Text, ScrollView  } from "react-native";
 import { StandardButton } from "./ButtonStandard";
 import DateTimePicker, {
   DateTimePickerEvent,
@@ -76,9 +76,17 @@ export default function MonthlySchedulePicker({
   }
 
   return (
-    <>
-      
+    <ScrollView style={{padding: 10}}>
       <Card>
+        <Text style={styles.title}>Current Monthly Schedule: </Text>
+        {displayMonthlySet()}
+        <StandardButton
+          title="Clear current schedule"
+          onPress={() => {
+            changeMonthlySet(new Set());
+          }}
+        ></StandardButton>
+      </Card>
 
       <View style={styles.rowOrientation}>
         <View style={{ flex: 0.37, flexDirection: "column" }}>
@@ -130,23 +138,10 @@ export default function MonthlySchedulePicker({
             onChange={(e, d) => changeMonthlyTime(d)}
           ></DateTimePicker>
         </View>
+
       </View>
+      <StandardButton title="Add" onPress={onAddDayOfMonth}></StandardButton>
 
-
-        <StandardButton title="Add" onPress={onAddDayOfMonth}></StandardButton>
-
-        <Card>
-          <Text>Current Monthly Schedule: </Text>
-          {displayMonthlySet()}
-        </Card>
-
-        <StandardButton
-          title="Clear current schedule"
-          onPress={() => {
-            changeMonthlySet(new Set());
-          }}
-        ></StandardButton>
-      </Card>
-    </>
+    </ScrollView>
   );
 }

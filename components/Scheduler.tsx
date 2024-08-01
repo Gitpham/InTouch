@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { View,Alert } from "react-native";
+import { View, Alert } from "react-native";
 import React from "react";
 import SegmentedControl from "@react-native-segmented-control/segmented-control";
 import { ThemedText } from "./ThemedText";
@@ -25,22 +25,28 @@ import WeeklySchedulePicker from "./WeeklySchedulePicker";
 import MonthlySchedulePicker from "./MonthlySchedulePicker";
 import YearlySchedulePicker from "./YearlySchedulePicker";
 import { router, useLocalSearchParams } from "expo-router";
-import { getScheduleType, replaceScheduleOfBond } from "@/context/ScheduleUtils";
+import {
+  getScheduleType,
+  replaceScheduleOfBond,
+} from "@/context/ScheduleUtils";
 import { getBond } from "@/assets/db/BondRepo";
 import { InTouchContext } from "@/context/InTouchContext";
 import { styles } from "@/constants/Stylesheet";
 
-
 interface SchedulerInterface {
-  bid: number | undefined,
-  isFromBondScreen: boolean
+  bid: number | undefined;
+  isFromBondScreen: boolean;
 }
-export default function Scheduler( {bid, isFromBondScreen}:SchedulerInterface)  {
+export default function Scheduler({
+  bid,
+  isFromBondScreen,
+}: SchedulerInterface) {
   const [scheduleFrequency, setScheduleFrequency] = useState<ScheduleFrequency>(
     ScheduleFrequency.DAILY
   );
-  const { createPotentialSchedule, hasEditedSchedule, markHasEditedSchedule } =  useContext(ScheduleContext);
-  const {updateBondCache} = useContext(InTouchContext)
+  const { createPotentialSchedule, hasEditedSchedule, markHasEditedSchedule } =
+    useContext(ScheduleContext);
+  const { updateBondCache } = useContext(InTouchContext);
   const db = useSQLiteContext();
   //DAILY STATE VARIABLES AND SETTERS
   const [dailyTime, setDailyTime] = useState(new Date());
@@ -140,7 +146,6 @@ export default function Scheduler( {bid, isFromBondScreen}:SchedulerInterface)  
     new Date()
   );
 
-
   function onSegmentedControlValueChange(value) {
     setScheduleFrequency(value);
   }
@@ -195,7 +200,7 @@ export default function Scheduler( {bid, isFromBondScreen}:SchedulerInterface)  
             potentialWeeklySchedule.sunday = sunTime;
           }
 
-          pSchedule= {
+          pSchedule = {
             schedule: potentialWeeklySchedule,
           };
         }
@@ -214,47 +219,49 @@ export default function Scheduler( {bid, isFromBondScreen}:SchedulerInterface)  
           };
         }
         break;
-      case ScheduleFrequency.YEARLY: {
-        const pYearSchedule: YearlySchedule = {
-          datesInYear: datesInYear,
-        };
-        pSchedule= {
-          schedule: pYearSchedule,
-        };
-  
-      } break;
+      case ScheduleFrequency.YEARLY:
+        {
+          const pYearSchedule: YearlySchedule = {
+            datesInYear: datesInYear,
+          };
+          pSchedule = {
+            schedule: pYearSchedule,
+          };
+        }
+        break;
       default:
         break;
     }
 
-
-    if(isFromBondScreen == false){
-      createPotentialSchedule(pSchedule)
+    if (isFromBondScreen == false) {
+      createPotentialSchedule(pSchedule);
       router.back();
       return;
     }
 
-    if(isFromBondScreen === true){
-      Alert.alert("Replace Schedule", "Clicking 'confirm' will replace your old schedule with the one you just made", [
-        {text: "Confirm", onPress: () => onConfirmPress(pSchedule)},
-        {text: "Cancel"}
-      ])
+    if (isFromBondScreen === true) {
+      Alert.alert(
+        "Replace Schedule",
+        "Clicking 'confirm' will replace your old schedule with the one you just made",
+        [
+          { text: "Confirm", onPress: () => onConfirmPress(pSchedule) },
+          { text: "Cancel" },
+        ]
+      );
       return;
     }
-
-
   }
 
   async function onConfirmPress(schedule: Schedule) {
-    await replaceScheduleOfBond(db, bid as number, schedule)
+    await replaceScheduleOfBond(db, bid as number, schedule);
     markHasEditedSchedule(!hasEditedSchedule);
     const currBond: Bond = await getBond(db, bid as number);
     const newBond: Bond = {
       bondName: currBond.bondName,
       bond_id: currBond.bond_id,
       schedule: getScheduleType(schedule),
-      typeOfCall: ""
-    }
+      typeOfCall: "",
+    };
     await updateBondCache(newBond);
     router.back();
   }
@@ -359,33 +366,25 @@ export default function Scheduler( {bid, isFromBondScreen}:SchedulerInterface)  
   }
 
   return (
-    <>
-      <SafeAreaView style={styles.stepContainer}>
-        <ScrollView>
-          <View style={styles.centeredView}>
-            <ThemedText type="title" style={styles.title}>
-              Schedule
-            </ThemedText>
-          </View>
+    <View style={styles.stepContainer}>
+      <View style={styles.centeredView}></View>
 
-          <View>
-            <SegmentedControl
-              onValueChange={onSegmentedControlValueChange}
-              values={[
-                ScheduleFrequency.DAILY,
-                ScheduleFrequency.WEEKLY,
-                ScheduleFrequency.MONTHLY,
-                ScheduleFrequency.YEARLY,
-              ]}
-            ></SegmentedControl>
-            {displayScheduleSelectors()}
-          </View>
+      <View>
+        <SegmentedControl
+          onValueChange={onSegmentedControlValueChange}
+          values={[
+            ScheduleFrequency.DAILY,
+            ScheduleFrequency.WEEKLY,
+            ScheduleFrequency.MONTHLY,
+            ScheduleFrequency.YEARLY,
+          ]}
+        ></SegmentedControl>
+        {displayScheduleSelectors()}
+      </View>
 
-          <View>
-            <StandardButton title="Done" onPress={onDonePress}></StandardButton>
-          </View>
-        </ScrollView>
-      </SafeAreaView>
-    </>
+      <View>
+        <StandardButton title="Done" onPress={onDonePress}></StandardButton>
+      </View>
+    </View>
   );
 }

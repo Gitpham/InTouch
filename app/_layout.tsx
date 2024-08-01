@@ -18,6 +18,7 @@ import { createDB } from "@/assets/db/db";
 import { ScheduleContextProvider } from "@/context/ScheduleContext";
 import { Platform } from "react-native";
 import { callPersonUtil, } from "@/context/PhoneNumberUtils";
+import { styles } from "@/constants/Stylesheet";
 
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
@@ -140,7 +141,7 @@ export default function RootLayout() {
             />
             <Stack.Screen
               name="createScheduleScreen"
-              options={{ headerTitle: ""}}
+              options={{  headerTitle: "Schedule", headerTitleStyle: {color: "black", fontSize: "30"}}}
             />
             <Stack.Screen
               name="addReminderModal"
