@@ -1,5 +1,5 @@
 import {  useContext } from "react";
-import {  SafeAreaView } from "react-native";
+import {  SafeAreaView, ScrollView } from "react-native";
 import React from "react";
 import { getAllBonds } from "@/assets/db/BondRepo";
 import { clearDB, getTableNames } from "@/assets/db/db";
@@ -87,6 +87,9 @@ import { getAllScheduledNotifications, cancelAllNotifications } from "@/context/
 
       return (
        <SafeAreaView>
+          <ScrollView>
+
+       
          
             <ThemedText type= 'title'> Testing Reminder Screen </ThemedText>
             <StandardButton title="getAllBondMembersMember" onPress={onTestAddMember}/>
@@ -112,7 +115,7 @@ import { getAllScheduledNotifications, cancelAllNotifications } from "@/context/
               <StandardButton title="Display Schedules from DB" onPress={onDisplaySchedules}></StandardButton>
         <StandardButton title="Display scheudleNotificaions" onPress={onDisplayNotifications}></StandardButton>
         <StandardButton title="cancel all Notifications" onPress={clearScheduledNotifications}></StandardButton>
-
+        </ScrollView>
 
        </SafeAreaView>
 

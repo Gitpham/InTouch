@@ -292,6 +292,7 @@ export async function deleteScheduleAndNotificationsOfBond(
   bid: number
 ) {
   try {
+    console.log("deleteScheduleAndNotificationsOfBond(): ")
     await cancelNotificationsForBond(db, bid);
     await deleteScheduleByBond(db, bid);
     return;

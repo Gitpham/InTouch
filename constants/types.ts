@@ -165,6 +165,6 @@ export type Schedule_DB = {
     weekDay: number | null,
     weekOfMonth: number | null,
     date: string | null,
-    nid: string,
-    bid: number,
+    notification_id: string,
+    bond_id: number,
 }
