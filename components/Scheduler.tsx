@@ -115,11 +115,25 @@ export default function Scheduler({
     setSunTime(time);
   }
 
-  //Yearly State variables
-  const [selectedDayInYear, setSelectedDayInYear] = useState<Date>(new Date());
-  const [selectedTimeInYear, setSelectedTimeInYear] = useState<Date>(
-    new Date()
-  );
+  //MONTHLY PICKER PROPS
+  const [dayWeekMonthSet, setDayWeekMonthSet] = useState<Set<DayOfMonth>>(new Set());
+  function changeDayWeekMonthSet(updatedMonthSet: Set<DayOfMonth>) {
+    setDayWeekMonthSet(updatedMonthSet);
+  }
+
+  const [dateMonthSet, setDateMonthSet] = useState<Set<DateAndTime>>(new Set());
+  function changeDateMonthSet(updatedMonthSet: Set<DateAndTime>) {
+    setDateMonthSet(updatedMonthSet);
+  }
+
+
+  //YEARLY PROPS
+  const [datesInYear, setDatesInYear] = useState<Set<DateAndTime>>(new Set());
+
+  function changeDatesInYear(updatedDates: Set<DateAndTime>) {
+    setDatesInYear(updatedDates);
+  }
+
 
   function onSegmentedControlValueChange(value) {
     setScheduleFrequency(value);
@@ -252,6 +266,10 @@ export default function Scheduler({
     router.back();
   }
 
+  function onCancelPress() {
+    router.back();
+  }
+
   function dailySelector() {
     return (
       <DailySchedulePicker
@@ -296,15 +314,6 @@ export default function Scheduler({
     );
   }
 
-  const [dayWeekMonthSet, setDayWeekMonthSet] = useState<Set<DayOfMonth>>(new Set());
-  function changeDayWeekMonthSet(updatedMonthSet: Set<DayOfMonth>) {
-    setDayWeekMonthSet(updatedMonthSet);
-  }
-
-  const [dateMonthSet, setDateMonthSet] = useState<Set<DateAndTime>>(new Set());
-  function changeDateMonthSet(updatedMonthSet: Set<DateAndTime>) {
-    setDateMonthSet(updatedMonthSet);
-  }
   function monthlySelector() {
     return (
       <MonthlySchedulePicker
@@ -317,26 +326,10 @@ export default function Scheduler({
     );
   }
 
-  function changeSelectedDayInYear(selectedDay: Date) {
-    setSelectedDayInYear(selectedDay);
-  }
-  function changeSelectedTimeInYear(selectedTime: Date) {
-    setSelectedTimeInYear(selectedTime);
-  }
-
-  const [datesInYear, setDatesInYear] = useState<Set<DateAndTime>>(new Set());
-
-  function changeDatesInYear(updatedDates: Set<DateAndTime>) {
-    setDatesInYear(updatedDates);
-  }
 
   function yearlySelector() {
     return (
       <YearlySchedulePicker
-        selectedTimeInYear={selectedTimeInYear}
-        changeSelectedTimeInYear={changeSelectedTimeInYear}
-        selectedDayInYear={selectedDayInYear}
-        changeSelectedDayInYear={changeSelectedDayInYear}
         datesInYear={datesInYear}
         changeDatesInYear={changeDatesInYear}
       ></YearlySchedulePicker>
@@ -377,6 +370,10 @@ export default function Scheduler({
 
       <View>
         <StandardButton title="Submit" onPress={onSubmitPress}></StandardButton>
+      </View>
+
+      <View>
+        <StandardButton title="Cancel" onPress={onCancelPress}></StandardButton>
       </View>
     </View>
     </ScrollView>

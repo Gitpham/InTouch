@@ -2,7 +2,7 @@ import DateTimePicker, {
     DateTimePickerEvent,
   } from "@react-native-community/datetimepicker";
 import { Card } from "@rneui/themed";
-import React from "react";
+import React, { useState } from "react";
 import { View, Text} from "react-native";
 import { StandardButton } from "./ButtonStandard";
 import { DateAndTime} from "@/constants/types";
@@ -11,11 +11,6 @@ import { styles } from "@/constants/Stylesheet";
 import { ThemedText } from "./ThemedText";
 
 interface YearlySchedulePickerInterface {
-    selectedDayInYear: Date,
-    changeSelectedDayInYear: (d: Date) => void,
-
-    selectedTimeInYear: Date, 
-    changeSelectedTimeInYear:(d: Date) => void,
 
     datesInYear: Set<DateAndTime>,
     changeDatesInYear: (s: Set<DateAndTime>)=> void,
@@ -23,15 +18,16 @@ interface YearlySchedulePickerInterface {
 
 
 export default function YearlySchedulePicker({
-    selectedDayInYear,
-    changeSelectedDayInYear,
-
-    selectedTimeInYear, 
-    changeSelectedTimeInYear,
-
     datesInYear,
     changeDatesInYear,
 }: YearlySchedulePickerInterface) {
+
+    const [selectedDayInYear, setSelectedDayInYear] = useState<Date>(new Date());
+    const [selectedTimeInYear, setSelectedTimeInYear] = useState<Date>(
+      new Date()
+    );
+
+
 
     function displayYearlySet(){
         if (datesInYear.size == 0) return (<Text>No Selected Dates</Text>)
@@ -73,7 +69,7 @@ export default function YearlySchedulePicker({
                 display="inline"
                 value={selectedDayInYear}
                 onChange={(e, d) => {
-                    changeSelectedDayInYear(d)
+                    setSelectedDayInYear(d)
                 }}
                 >
                 </DateTimePicker>
@@ -82,7 +78,7 @@ export default function YearlySchedulePicker({
                 mode="time"
                 value={selectedTimeInYear}
                 onChange={(e, d) => {
-                    changeSelectedTimeInYear(d)
+                    setSelectedTimeInYear(d)
                 }}
                 >
                 </DateTimePicker>
