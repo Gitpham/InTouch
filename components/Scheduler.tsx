@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { View, Alert } from "react-native";
+import { View, Alert, ScrollView } from "react-native";
 import React from "react";
 import SegmentedControl from "@react-native-segmented-control/segmented-control";
 import { StandardButton } from "./ButtonStandard";
@@ -115,37 +115,6 @@ export default function Scheduler({
     setSunTime(time);
   }
 
-  //MONTHLY STATE VARIABLES AND SETTERS
-  const [selectedWeekOfMonth, setSelectedWeekOfMonth] = useState<number>(1);
-  function changeSelectedWeekOfMonth(week: number) {
-    setSelectedWeekOfMonth(week);
-  }
-
-  const [selectedDayOfWeek, setSelectedDayOfWeek] = useState<number>(1);
-  function changeSelectedDayOfWeek(day: number) {
-    setSelectedDayOfWeek(day);
-  }
-
-  const [monthlyTime, setMonthlyTime] = useState(new Date());
-  function changeMonthlyTime(time: Date) {
-    setMonthlyTime(time);
-  }
-
-  const [monthlySet, setMonthlySet] = useState<Set<DayOfMonth>>(new Set());
-  function changeMonthlySet(updatedMonthSet: Set<DayOfMonth>) {
-    setMonthlySet(updatedMonthSet);
-  }
-
-  const [selectedMonthDate, setSelectedMonthDate] = useState(new Date());
-  function changeSelectedMonthDate(updatedDate: Date){
-    setSelectedMonthDate(updatedDate);
-  } 
-
-
-  const [selectedMonthDateTime, setSelectedMonthDateTime] = useState(new Date())
-  function changeSelectedMonthDateTime(updatedTime: Date) {
-    setSelectedMonthDateTime(updatedTime);
-  }
   //Yearly State variables
   const [selectedDayInYear, setSelectedDayInYear] = useState<Date>(new Date());
   const [selectedTimeInYear, setSelectedTimeInYear] = useState<Date>(
@@ -316,23 +285,23 @@ export default function Scheduler({
     );
   }
 
+  const [dayWeekMonthSet, setDayWeekMonthSet] = useState<Set<DayOfMonth>>(new Set());
+  function changeDayWeekMonthSet(updatedMonthSet: Set<DayOfMonth>) {
+    setDayWeekMonthSet(updatedMonthSet);
+  }
+
+  const [dateMonthSet, setDateMonthSet] = useState<Set<DateAndTime>>(new Set());
+  function changeDateMonthSet(updatedMonthSet: Set<DateAndTime>) {
+    setDateMonthSet(updatedMonthSet);
+  }
   function monthlySelector() {
     return (
       <MonthlySchedulePicker
-        selectedWeekOfMonth={selectedWeekOfMonth}
-        changeSelectedWeekOfMonth={changeSelectedWeekOfMonth}
-        selectedDayOfWeek={selectedDayOfWeek}
-        changeSelectedDayOfWeek={changeSelectedDayOfWeek}
-        monthlyTime={monthlyTime}
-        changeMonthlyTime={changeMonthlyTime}
-        monthlySet={monthlySet}
-        changeMonthlySet={changeMonthlySet}
+        dayWeekMonthSet={dayWeekMonthSet}
+        changeDayWeekMonthSet={changeDayWeekMonthSet}
 
-        selectedMonthDate={selectedMonthDate}
-        changeSelectedMonthDate={changeSelectedMonthDate}
-
-        selectedMonthDateTime={selectedMonthDateTime}
-        changeSelectedMonthDateTime={changeSelectedMonthDateTime}
+        dateMonthSet={dateMonthSet}
+        changeDateMonthSet={changeDateMonthSet}
       ></MonthlySchedulePicker>
     );
   }
@@ -378,6 +347,7 @@ export default function Scheduler({
   }
 
   return (
+    <ScrollView  alwaysBounceVertical={false} style={{backgroundColor:"white"}}>
     <View style={styles.stepContainer}>
       <View style={styles.centeredView}></View>
 
@@ -395,8 +365,9 @@ export default function Scheduler({
       </View>
 
       <View>
-        <StandardButton title="Done" onPress={onDonePress}></StandardButton>
+        <StandardButton title="Submit" onPress={onDonePress}></StandardButton>
       </View>
     </View>
+    </ScrollView>
   );
 }
