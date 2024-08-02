@@ -5,7 +5,7 @@ import {} from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button, Card, ListItem } from "@rneui/themed";
 import { View } from "react-native";
-import { router, useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams, useNavigation } from "expo-router";
 import { InTouchContext } from "@/context/InTouchContext";
 import { Bond, Person } from "@/constants/types";
 import { StandardButton } from "@/components/ButtonStandard";
@@ -52,11 +52,11 @@ export default function createGroupScreen() {
     title = bondName;
   }
 
+
   useEffect(() => {
     setSchedule(displayPotentialSchedule(potentialSchedule));
     if (potentialSchedule != undefined){
     setHasCreatedSchedule(true)
-
     }
   }, [potentialSchedule]);
 

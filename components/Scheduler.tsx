@@ -263,14 +263,11 @@ export default function Scheduler({
       typeOfCall: "",
     };
     await updateBondCache(newBond);
-    router.navigate({pathname: "./createGroupScreen"})
-    // router.back();
+    router.back();
   }
 
   function onCancelPress() {
-    router.navigate({pathname: "./createGroupScreen"})
-
-    // router.back();
+    router.back();
   }
 
   function dailySelector() {
