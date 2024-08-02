@@ -8,9 +8,11 @@ import { InTouchContext } from "@/context/InTouchContext";
 import { StandardButton } from "@/components/ButtonStandard";
 import { Bond } from "@/constants/types";
 import { styles } from "@/constants/Stylesheet"
+import { ScheduleContext } from "@/context/ScheduleContext";
 
 export default function homeScreen() {
   const { bondList } = useContext(InTouchContext);
+  const {createPotentialSchedule} = useContext(ScheduleContext)
 
   function onBondPress (bond: Bond) {
     router.navigate({pathname: "../groupScreen", params: {id: `${bond.bond_id}`} })
@@ -44,7 +46,10 @@ export default function homeScreen() {
 
       <StandardButton
       title={"+Add Bond"}
-      onPress={() => router.push("../createGroupScreen")}>
+      onPress={() => {
+        createPotentialSchedule(undefined)
+        router.push("../createGroupScreen")}
+        }>
       </StandardButton>
 
     </SafeAreaView>

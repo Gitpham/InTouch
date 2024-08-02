@@ -5,7 +5,7 @@ import {} from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button, Card, ListItem } from "@rneui/themed";
 import { View } from "react-native";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { InTouchContext } from "@/context/InTouchContext";
 import { Bond, Person } from "@/constants/types";
 import { StandardButton } from "@/components/ButtonStandard";
@@ -38,6 +38,8 @@ export default function createGroupScreen() {
     displayPotentialSchedule(potentialSchedule)
   );
 
+  const [hasCreatedSchedule, setHasCreatedSchedule] = useState(false);
+
   const bondToAdd: Bond = {
     bondName: bondName,
     typeOfCall: "",
@@ -52,6 +54,10 @@ export default function createGroupScreen() {
 
   useEffect(() => {
     setSchedule(displayPotentialSchedule(potentialSchedule));
+    if (potentialSchedule != undefined){
+    setHasCreatedSchedule(true)
+
+    }
   }, [potentialSchedule]);
 
   async function onDonePress() {
@@ -173,18 +179,24 @@ export default function createGroupScreen() {
           />
         </View>
 
-        <StandardButton
-          title="Create Schedule"
-          onPress={onCreateSchedule}
-        ></StandardButton>
+          { hasCreatedSchedule ?
+            <StandardButton title="Edit Schedule" onPress={onCreateSchedule}></StandardButton> :
+            <StandardButton
+            title="Create Schedule"
+            onPress={onCreateSchedule}
+          ></StandardButton>
+          
+
+
+          }
+      
         </Card>
 
             <View style={styles.rowOrientation}>
           
-        <StandardButton title="Submit Bond" onPress={onDonePress} style={{flex: .5}}/>
+        <StandardButton title="Submit Bond" onPress={onDonePress}/>
 
         <StandardButton
-        style={{flex: .5}}
           title="Cancel"
           onPress={() => {
             clearTempBondMembers();
