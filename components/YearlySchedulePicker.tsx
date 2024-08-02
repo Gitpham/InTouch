@@ -63,10 +63,9 @@ export default function YearlySchedulePicker({
 
     return (
         <Card>
-            <View>
+            <View style={styles.rowOrientation}>
                 <DateTimePicker
                 mode="date"
-                display="inline"
                 value={selectedDayInYear}
                 onChange={(e, d) => {
                     setSelectedDayInYear(d)
@@ -83,14 +82,15 @@ export default function YearlySchedulePicker({
                 >
                 </DateTimePicker>
             </View>
-            <View>
-                <ThemedText darkColor = "black" style={styles.title}>Current Yearly Schedule</ThemedText>
-                {displayYearlySet()}
-            </View>
             <StandardButton title="Add Date"
             onPress={() => addToYearlySchedule(selectedDayInYear, selectedTimeInYear)}
             ></StandardButton>
 
+            <View>
+                <ThemedText darkColor = "black" style={styles.title}>Current Yearly Schedule</ThemedText>
+                {displayYearlySet()}
+            </View>
+        
             <StandardButton title="Clear Schedule" onPress={clearYearlySchedule}></StandardButton>
             
         </Card>

@@ -47,7 +47,7 @@ export default function createGroupScreen() {
     bond_id: bondID,
   };
 
-  let title = "Create Group";
+  let title = "untitled";
   if (bondName) {
     title = bondName;
   }
@@ -126,9 +126,10 @@ export default function createGroupScreen() {
       <ScrollView nestedScrollEnabled={true}>
         <View style={styles.centeredView}>
           <ThemedText type="title" style={styles.title}>
-            {title}
+            Bond Name: {title}
           </ThemedText>
         </View>
+
         <TextInput
           onChangeText={groupNameChange}
           value={bondName}
