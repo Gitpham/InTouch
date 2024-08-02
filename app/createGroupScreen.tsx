@@ -3,7 +3,7 @@ import { useContext, useEffect, useState } from "react";
 import { Alert, FlatList, ScrollView, TextInput } from "react-native";
 import {} from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Button, ListItem } from "@rneui/themed";
+import { Button, Card, ListItem } from "@rneui/themed";
 import { View } from "react-native";
 import { router } from "expo-router";
 import { InTouchContext } from "@/context/InTouchContext";
@@ -30,10 +30,13 @@ export default function createGroupScreen() {
     createBondMember,
     peopleList,
   } = useContext(InTouchContext);
-  const { potentialSchedule, createPotentialSchedule } = useContext(ScheduleContext);
+  const { potentialSchedule, createPotentialSchedule } =
+    useContext(ScheduleContext);
   const bondID = generateBondId();
   const db = useSQLiteContext();
-  const [schedule, setSchedule] = useState(displayPotentialSchedule(potentialSchedule))
+  const [schedule, setSchedule] = useState(
+    displayPotentialSchedule(potentialSchedule)
+  );
 
   const bondToAdd: Bond = {
     bondName: bondName,
@@ -47,11 +50,9 @@ export default function createGroupScreen() {
     title = bondName;
   }
 
-
   useEffect(() => {
-    setSchedule(displayPotentialSchedule(potentialSchedule))
-  }, [potentialSchedule])
-
+    setSchedule(displayPotentialSchedule(potentialSchedule));
+  }, [potentialSchedule]);
 
   async function onDonePress() {
     if (!bondName) {
@@ -76,7 +77,7 @@ export default function createGroupScreen() {
     }
     clearTempBondMembers();
     generateNotificationSchedule(potentialSchedule, bondToAdd, db);
-    createPotentialSchedule(undefined)
+    createPotentialSchedule(undefined);
     router.push("./(tabs)");
   }
 
@@ -88,7 +89,6 @@ export default function createGroupScreen() {
   }
 
   const renderGroupMembers = ({ item }: { item }) => {
-
     let personToShow: Person = peopleList[0];
 
     peopleList.forEach((person: Person) => {
@@ -112,92 +112,88 @@ export default function createGroupScreen() {
   };
 
   const renderPotentialSchedule = ({ item }: { item: any }) => {
-    return (item);
+    return item;
   };
 
   return (
-
     <SafeAreaView style={styles.stepContainer}>
       <ScrollView nestedScrollEnabled={true}>
+        <View style={styles.centeredView}>
+          <ThemedText type="title" style={styles.title}>
+            {title}
+          </ThemedText>
+        </View>
+        <TextInput
+          onChangeText={groupNameChange}
+          value={bondName}
+          placeholder="Enter Group Name"
+          style={styles.textInput}
+        ></TextInput>
 
-      <View style={styles.centeredView}>
-        <ThemedText type="title" style={styles.title}>
-          {title}
-        </ThemedText>
-      </View>
-      <TextInput
-        onChangeText={groupNameChange}
-        value={bondName}
-        placeholder="Enter Group Name"
-        style = {styles.textInput}
-      ></TextInput>
-      <View style={styles.centeredView}>
-        <ThemedText type="subtitle" style={styles.title}>
-          Members
-        </ThemedText>
-      </View>
-      {tempBondMembers.size > 0 ? 
-        <FlatList
-        nestedScrollEnabled={true}
-        data={[...tempBondMembers]}
-        renderItem={renderGroupMembers}
-        keyExtractor={(item) => item.toString()}
-      /> :
-      <View style={styles.centeredView}>
-      <ThemedText darkColor="black">No members set</ThemedText>
+        <Card>
+          <View style={styles.centeredView}>
+            <ThemedText type="subtitle" style={styles.title}>
+              Members
+            </ThemedText>
+          </View>
+          {tempBondMembers.size > 0 ? (
+            <FlatList
+              nestedScrollEnabled={true}
+              data={[...tempBondMembers]}
+              renderItem={renderGroupMembers}
+              keyExtractor={(item) => item.toString()}
+            />
+          ) : (
+            <View style={styles.centeredView}>
+              <ThemedText darkColor="black">No members set</ThemedText>
+            </View>
+          )}
 
-      </View>
-      
-    }
-    
-    
+          <StandardButton
+            title="Add Group Member"
+            onPress={() =>
+              router.navigate({
+                pathname: "./addMemberScreen",
+                params: { bond_id: bondID },
+              })
+            }
+          />
+        </Card>
+
+        <Card>
+        <View style={styles.centeredView}>
+          <ThemedText type="subtitle" style={styles.title}>
+            Schedule
+          </ThemedText>
+
+          <FlatList
+            data={[schedule]}
+            renderItem={renderPotentialSchedule}
+            keyExtractor={(item) => item}
+          />
+        </View>
+
         <StandardButton
-        title="Add Group Member"
-        onPress={() =>
-          router.navigate({
-            pathname: "./addMemberScreen",
-            params: { bond_id: bondID },
-          })
-        }
-      />
+          title="Create Schedule"
+          onPress={onCreateSchedule}
+        ></StandardButton>
+        </Card>
 
+            <View style={styles.rowOrientation}>
+          
+        <StandardButton title="Submit Bond" onPress={onDonePress} style={{flex: .5}}/>
 
-      <View style={styles.centeredView}>
-        <ThemedText type="subtitle" style={styles.title}>
-          Schedule
-        </ThemedText>
-
-        <FlatList
-          data={[schedule]}
-          renderItem={renderPotentialSchedule}
-          keyExtractor={(item) => item}
-        />
-
-      </View>
-
-
-    
-
-      <StandardButton
-        title="Create Schedule"
-        onPress={onCreateSchedule}
-      ></StandardButton>
-
-      <StandardButton
-        title="Done"
-        onPress={onDonePress}
-      />
-
-      <StandardButton
-        title="Cancel"
-        onPress={() => {
-          clearTempBondMembers();
-          createPotentialSchedule(undefined)
-          router.back();
-        }}
-      ></StandardButton>
-            </ScrollView>
-
+        <StandardButton
+        style={{flex: .5}}
+          title="Cancel"
+          onPress={() => {
+            clearTempBondMembers();
+            createPotentialSchedule(undefined);
+            router.back();
+          }}
+        ></StandardButton>
+          </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }

@@ -125,7 +125,7 @@ export default function Scheduler({
     setScheduleFrequency(value);
   }
 
-  async function onDonePress() {
+  async function onSubmitPress() {
     let pSchedule: Schedule;
     switch (scheduleFrequency) {
       case ScheduleFrequency.DAILY:
@@ -183,12 +183,23 @@ export default function Scheduler({
       case ScheduleFrequency.MONTHLY:
         {
           const pMonthlySchedule: MonthlySchedule = {
+            isWeekAndDay: false,
             daysInMonth: [],
           };
-          monthlySet.forEach((d) => {
-            pMonthlySchedule.daysInMonth.push(d);
-          });
+          if (dayWeekMonthSet.size > 0){
+            pMonthlySchedule.isWeekAndDay = true;
+            dayWeekMonthSet.forEach((d) => {
+              pMonthlySchedule.daysInMonth.push(d);
+            });
+            pSchedule = {
+              schedule: pMonthlySchedule,
+            };
+            break;
+          }
 
+          dateMonthSet.forEach((d) => {
+            pMonthlySchedule.daysInMonth.push(d);
+          })
           pSchedule = {
             schedule: pMonthlySchedule,
           };
@@ -365,7 +376,7 @@ export default function Scheduler({
       </View>
 
       <View>
-        <StandardButton title="Submit" onPress={onDonePress}></StandardButton>
+        <StandardButton title="Submit" onPress={onSubmitPress}></StandardButton>
       </View>
     </View>
     </ScrollView>
