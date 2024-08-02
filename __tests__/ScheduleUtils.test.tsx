@@ -1,23 +1,96 @@
 import { mockDatabase } from "@/__mocks__/expo-sqlite";
 import { uploadScheduleToDB } from "@/assets/db/ScheduleRepo";
-import { Bond, DailySchedule, DateAndTime, DayOfMonth, MonthlySchedule, ScheduleFrequency, WeeklySchedule, YearlySchedule } from "@/constants/types";
-import { writeDailyScheduleToDB, writeDateMonthlyScheduleToDB, writeWeekAndDayMonthlyScheduleToDB, writeWeeklyScheduleToDB, writeYearlyScheduleToDB } from "@/context/ScheduleUtils";
-import * as SQlite from "expo-sqlite";
+import {
+  Bond,
+  DailySchedule,
+  DateAndTime,
+  DayOfMonth,
+  MonthlySchedule,
+  Schedule,
+  ScheduleFrequency,
+  WeeklySchedule,
+  YearlySchedule,
+} from "@/constants/types";
+import {
+  scheduleDailyNotification,
+  scheduleDateMonthlyNotification,
+  scheduleWeekAndDayMonthlyNotification,
+  scheduleWeeklyNotification,
+  scheduleYearlyNotification,
+} from "@/context/NotificationUtils";
+import {
+  generateNotificationSchedule,
+  writeDailyScheduleToDB,
+  writeDateMonthlyScheduleToDB,
+  writeWeekAndDayMonthlyScheduleToDB,
+  writeWeeklyScheduleToDB,
+  writeYearlyScheduleToDB,
+} from "@/context/ScheduleUtils";
+
+jest.mock("@/context/NotificationUtils", () => {
+  const mockScheduleDailyNotification = jest.fn().mockImplementation(() => {
+    return Promise.resolve("1");
+  });
+
+  const mockScheduleWeeklyNotification = jest.fn().mockImplementation(() => {
+    return Promise.resolve(["1", "2"]);
+  });
+
+  const mockScheduleWeekAndDayMonthlyNotification = jest
+    .fn()
+    .mockImplementation((schedule: MonthlySchedule) => {
+      const nids: string[] = [];
+      schedule.daysInMonth.forEach((d) => {
+        nids.push("1");
+      });
+      return nids;
+    });
+
+  const mockScheduleDateMonthlyNotification = jest
+  .fn()
+  .mockImplementation((schedule: MonthlySchedule) => {
+    const nids: string[] = [];
+    schedule.daysInMonth.forEach((d) => {
+      nids.push("1");
+    });
+    return nids;
+  });
+
+  const mockScheduleYearlyNotification = jest
+  .fn()
+  .mockImplementation((schedule: YearlySchedule) => {
+    const nids: string[] = [];
+    schedule.datesInYear.forEach((d) => {
+      nids.push("1");
+    });
+    return nids;
+  });
+
+  return {
+    __esModule: true,
+    scheduleDailyNotification: mockScheduleDailyNotification,
+    scheduleWeeklyNotification: mockScheduleWeeklyNotification,
+    scheduleWeekAndDayMonthlyNotification: mockScheduleWeekAndDayMonthlyNotification,
+    scheduleDateMonthlyNotification: mockScheduleDateMonthlyNotification,
+    scheduleYearlyNotification: mockScheduleYearlyNotification
+  };
+});
 
 jest.mock("@/assets/db/ScheduleRepo", () => {
   const mockUploadScheduleToDB = jest.fn().mockImplementation(() => {
     return Promise.resolve();
   });
   return {
+    __esModule: true,
     uploadScheduleToDB: mockUploadScheduleToDB,
   };
 });
 
 describe("ScheduleUtils: ", () => {
-    let db;
+  let db;
   beforeEach(() => {
     jest.clearAllMocks();
-    db = mockDatabase
+    db = mockDatabase;
   });
 
   describe("writeWeeklyScheduleToDB() ", () => {
@@ -163,262 +236,553 @@ describe("ScheduleUtils: ", () => {
     });
   });
 
-
   describe("writeDailyScheduleToDB(): ", () => {
-
     it("given a daily schedule at currtime, it should call uploadScheduleToDB() with correct arguments", async () => {
-        const currTime = new Date();
-        const schedule: DailySchedule = {
-            time: currTime
-        }
-        const bond: Bond = {
-          bondName: "",
-          bond_id: 1,
-          schedule: "",
-          typeOfCall: "",
-        };
-        const nid = "a";
-        await writeDailyScheduleToDB(schedule, bond, nid, db);
-        expect(uploadScheduleToDB).toHaveBeenCalledTimes(1)
-        expect(uploadScheduleToDB).toHaveBeenCalledWith(db, ScheduleFrequency.DAILY, currTime.toTimeString(), null, null, null, bond.bond_id, nid)
-    })
-  })
+      const currTime = new Date();
+      const schedule: DailySchedule = {
+        time: currTime,
+      };
+      const bond: Bond = {
+        bondName: "",
+        bond_id: 1,
+        schedule: "",
+        typeOfCall: "",
+      };
+      const nid = "a";
+      await writeDailyScheduleToDB(schedule, bond, nid, db);
+      expect(uploadScheduleToDB).toHaveBeenCalledTimes(1);
+      expect(uploadScheduleToDB).toHaveBeenCalledWith(
+        db,
+        ScheduleFrequency.DAILY,
+        currTime.toTimeString(),
+        null,
+        null,
+        null,
+        bond.bond_id,
+        nid
+      );
+    });
+  });
 
   describe("writeWeekAndDayMonthlyScheduleToDB(): ", () => {
-
     it("calling with a monthlySchedule with 1 day should call uploadScheduleToDB() 1x", async () => {
-        const currTime = new Date();
-    
-        const dayInMonth: DayOfMonth = {
-            weekOfMonth: 1,
-            dayOfWeek: 1,
-            time: currTime
-        }
-        const schedule: MonthlySchedule = {
-            daysInMonth: [dayInMonth]
-        }
-        const bond: Bond = {
-          bondName: "",
-          bond_id: 1,
-          schedule: "",
-          typeOfCall: "",
-        };
-        const nids = ["a"];
+      const currTime = new Date();
 
-        await writeWeekAndDayMonthlyScheduleToDB(schedule, bond, nids, db);
-        expect(uploadScheduleToDB).toHaveBeenCalledTimes(1);
-        expect(uploadScheduleToDB).toHaveBeenCalledWith(db, ScheduleFrequency.MONTHLY, currTime.toTimeString(), 1, 1, null, bond.bond_id, nids[0])
+      const dayInMonth: DayOfMonth = {
+        weekOfMonth: 1,
+        dayOfWeek: 1,
+        time: currTime,
+      };
+      const schedule: MonthlySchedule = {
+        daysInMonth: [dayInMonth],
+      };
+      const bond: Bond = {
+        bondName: "",
+        bond_id: 1,
+        schedule: "",
+        typeOfCall: "",
+      };
+      const nids = ["a"];
 
-    })
+      await writeWeekAndDayMonthlyScheduleToDB(schedule, bond, nids, db);
+      expect(uploadScheduleToDB).toHaveBeenCalledTimes(1);
+      expect(uploadScheduleToDB).toHaveBeenCalledWith(
+        db,
+        ScheduleFrequency.MONTHLY,
+        currTime.toTimeString(),
+        1,
+        1,
+        null,
+        bond.bond_id,
+        nids[0]
+      );
+    });
 
     it("calling with a monthlySchedule with 7 day should call uploadScheduleToDB() 7x", async () => {
-        const time1 = new Date("1995-12-17T03:24:00")
-        const time2 = new Date("1995-12-17T05:30:00")
+      const time1 = new Date("1995-12-17T03:24:00");
+      const time2 = new Date("1995-12-17T05:30:00");
 
-        const day1: DayOfMonth = {
-            weekOfMonth: 1,
-            dayOfWeek: 1,
-            time: time1
-        }
-        const day2: DayOfMonth = {
-            weekOfMonth: 2,
-            dayOfWeek: 1,
-            time: time1
-        }
-        const day3: DayOfMonth = {
-            weekOfMonth: 3,
-            dayOfWeek: 1,
-            time: time1
-        }
-        const day4: DayOfMonth = {
-            weekOfMonth: 4,
-            dayOfWeek: 1,
-            time: time1
-        }
-        const day5: DayOfMonth = {
-            weekOfMonth: 1,
-            dayOfWeek: 2,
-            time: time2
-        }
-        const day6: DayOfMonth = {
-            weekOfMonth: 1,
-            dayOfWeek: 3,
-            time: time2
-        }
-        const day7: DayOfMonth = {
-            weekOfMonth: 1,
-            dayOfWeek: 4,
-            time: time2
-        }
-        const schedule: MonthlySchedule = {
-            daysInMonth: [day1, day2, day3, day4, day5, day6, day7]
-        }
-        const bond: Bond = {
-          bondName: "",
-          bond_id: 1,
-          schedule: "",
-          typeOfCall: "",
-        };
-        const nids = ["a", "b", "c", "d", "e", "f", "g"];
+      const day1: DayOfMonth = {
+        weekOfMonth: 1,
+        dayOfWeek: 1,
+        time: time1,
+      };
+      const day2: DayOfMonth = {
+        weekOfMonth: 2,
+        dayOfWeek: 1,
+        time: time1,
+      };
+      const day3: DayOfMonth = {
+        weekOfMonth: 3,
+        dayOfWeek: 1,
+        time: time1,
+      };
+      const day4: DayOfMonth = {
+        weekOfMonth: 4,
+        dayOfWeek: 1,
+        time: time1,
+      };
+      const day5: DayOfMonth = {
+        weekOfMonth: 1,
+        dayOfWeek: 2,
+        time: time2,
+      };
+      const day6: DayOfMonth = {
+        weekOfMonth: 1,
+        dayOfWeek: 3,
+        time: time2,
+      };
+      const day7: DayOfMonth = {
+        weekOfMonth: 1,
+        dayOfWeek: 4,
+        time: time2,
+      };
+      const schedule: MonthlySchedule = {
+        daysInMonth: [day1, day2, day3, day4, day5, day6, day7],
+      };
+      const bond: Bond = {
+        bondName: "",
+        bond_id: 1,
+        schedule: "",
+        typeOfCall: "",
+      };
+      const nids = ["a", "b", "c", "d", "e", "f", "g"];
 
-        await writeWeekAndDayMonthlyScheduleToDB(schedule, bond, nids, db);
-        expect(uploadScheduleToDB).toHaveBeenCalledTimes(7);
-        expect(uploadScheduleToDB).toHaveBeenCalledWith(db, ScheduleFrequency.MONTHLY, time1.toTimeString(), day1.dayOfWeek, day1.weekOfMonth, null, bond.bond_id, nids[0])
-        expect(uploadScheduleToDB).toHaveBeenCalledWith(db, ScheduleFrequency.MONTHLY, time1.toTimeString(), day2.dayOfWeek, day2.weekOfMonth, null, bond.bond_id, nids[1])
-        expect(uploadScheduleToDB).toHaveBeenCalledWith(db, ScheduleFrequency.MONTHLY, time1.toTimeString(), day3.dayOfWeek, day3.weekOfMonth, null, bond.bond_id, nids[2])
-        expect(uploadScheduleToDB).toHaveBeenCalledWith(db, ScheduleFrequency.MONTHLY, time1.toTimeString(), day4.dayOfWeek, day4.weekOfMonth, null, bond.bond_id, nids[3])
-        expect(uploadScheduleToDB).toHaveBeenCalledWith(db, ScheduleFrequency.MONTHLY, time2.toTimeString(), day5.dayOfWeek, day5.weekOfMonth, null, bond.bond_id, nids[4])
-        expect(uploadScheduleToDB).toHaveBeenCalledWith(db, ScheduleFrequency.MONTHLY, time2.toTimeString(), day6.dayOfWeek, day6.weekOfMonth, null, bond.bond_id, nids[5])
-        expect(uploadScheduleToDB).toHaveBeenCalledWith(db, ScheduleFrequency.MONTHLY, time2.toTimeString(), day7.dayOfWeek, day7.weekOfMonth, null, bond.bond_id, nids[6])
-    })
-
-  })
+      await writeWeekAndDayMonthlyScheduleToDB(schedule, bond, nids, db);
+      expect(uploadScheduleToDB).toHaveBeenCalledTimes(7);
+      expect(uploadScheduleToDB).toHaveBeenCalledWith(
+        db,
+        ScheduleFrequency.MONTHLY,
+        time1.toTimeString(),
+        day1.dayOfWeek,
+        day1.weekOfMonth,
+        null,
+        bond.bond_id,
+        nids[0]
+      );
+      expect(uploadScheduleToDB).toHaveBeenCalledWith(
+        db,
+        ScheduleFrequency.MONTHLY,
+        time1.toTimeString(),
+        day2.dayOfWeek,
+        day2.weekOfMonth,
+        null,
+        bond.bond_id,
+        nids[1]
+      );
+      expect(uploadScheduleToDB).toHaveBeenCalledWith(
+        db,
+        ScheduleFrequency.MONTHLY,
+        time1.toTimeString(),
+        day3.dayOfWeek,
+        day3.weekOfMonth,
+        null,
+        bond.bond_id,
+        nids[2]
+      );
+      expect(uploadScheduleToDB).toHaveBeenCalledWith(
+        db,
+        ScheduleFrequency.MONTHLY,
+        time1.toTimeString(),
+        day4.dayOfWeek,
+        day4.weekOfMonth,
+        null,
+        bond.bond_id,
+        nids[3]
+      );
+      expect(uploadScheduleToDB).toHaveBeenCalledWith(
+        db,
+        ScheduleFrequency.MONTHLY,
+        time2.toTimeString(),
+        day5.dayOfWeek,
+        day5.weekOfMonth,
+        null,
+        bond.bond_id,
+        nids[4]
+      );
+      expect(uploadScheduleToDB).toHaveBeenCalledWith(
+        db,
+        ScheduleFrequency.MONTHLY,
+        time2.toTimeString(),
+        day6.dayOfWeek,
+        day6.weekOfMonth,
+        null,
+        bond.bond_id,
+        nids[5]
+      );
+      expect(uploadScheduleToDB).toHaveBeenCalledWith(
+        db,
+        ScheduleFrequency.MONTHLY,
+        time2.toTimeString(),
+        day7.dayOfWeek,
+        day7.weekOfMonth,
+        null,
+        bond.bond_id,
+        nids[6]
+      );
+    });
+  });
 
   describe("writeDateMonthlyScheduleToDB(): ", () => {
-
     it("calling with a monthlySchedule with 1 day should call uploadScheduleToDB() 1x", async () => {
-      const date1 = new Date("1995-12-17T03:24:00")
-    
-        const dateAndTime: DateAndTime = {
-            date: date1,
-            time: date1,
-        }
-        const schedule: MonthlySchedule = {
-          isWeekAndDay: false,
-            daysInMonth: [dateAndTime]
-        }
-        const bond: Bond = {
-          bondName: "",
-          bond_id: 1,
-          schedule: "",
-          typeOfCall: "",
-        };
-        const nids = ["a"];
+      const date1 = new Date("1995-12-17T03:24:00");
 
-        await writeDateMonthlyScheduleToDB(schedule, bond, nids, db);
-        expect(uploadScheduleToDB).toHaveBeenCalledTimes(1);
-        expect(uploadScheduleToDB).toHaveBeenCalledWith(db, ScheduleFrequency.MONTHLY, date1.toTimeString(), null, null, date1.toDateString(), bond.bond_id, nids[0])
+      const dateAndTime: DateAndTime = {
+        date: date1,
+        time: date1,
+      };
+      const schedule: MonthlySchedule = {
+        isWeekAndDay: false,
+        daysInMonth: [dateAndTime],
+      };
+      const bond: Bond = {
+        bondName: "",
+        bond_id: 1,
+        schedule: "",
+        typeOfCall: "",
+      };
+      const nids = ["a"];
 
-    })
+      await writeDateMonthlyScheduleToDB(schedule, bond, nids, db);
+      expect(uploadScheduleToDB).toHaveBeenCalledTimes(1);
+      expect(uploadScheduleToDB).toHaveBeenCalledWith(
+        db,
+        ScheduleFrequency.MONTHLY,
+        date1.toTimeString(),
+        null,
+        null,
+        date1.toDateString(),
+        bond.bond_id,
+        nids[0]
+      );
+    });
 
     it("calling with a monthlySchedule with 7 day should call uploadScheduleToDB() 7x", async () => {
-        const date1 = new Date("1995-12-17T03:24:00")
-        const date2 = new Date("1995-12-17T05:30:00")
+      const date1 = new Date("1995-12-17T03:24:00");
+      const date2 = new Date("1995-12-17T05:30:00");
 
-        const day1: DateAndTime = {
-            date: date1,
-            time: date1,
-        }
-        const day2: DateAndTime = {
-          date: date1,
-          time: date1,
-        }
-        const day3: DateAndTime = {
-          date: date1,
-          time: date1,
-        }
-        const day4: DateAndTime = {
-          date: date1,
-          time: date1,
-        }
-        const day5: DateAndTime = {
-          date: date2,
-          time: date2,
-        }
-        const day6: DateAndTime = {
-          date: date2,
-          time: date2,
-        }
-        const day7: DateAndTime = {
-          date: date2,
-          time: date2,
-        }
-        const schedule: MonthlySchedule = {
-            isWeekAndDay: false,
-            daysInMonth: [day1, day2, day3, day4, day5, day6, day7]
-        }
-        const bond: Bond = {
-          bondName: "",
-          bond_id: 1,
-          schedule: "",
-          typeOfCall: "",
-        };
-        const nids = ["a", "b", "c", "d", "e", "f", "g"];
+      const day1: DateAndTime = {
+        date: date1,
+        time: date1,
+      };
+      const day2: DateAndTime = {
+        date: date1,
+        time: date1,
+      };
+      const day3: DateAndTime = {
+        date: date1,
+        time: date1,
+      };
+      const day4: DateAndTime = {
+        date: date1,
+        time: date1,
+      };
+      const day5: DateAndTime = {
+        date: date2,
+        time: date2,
+      };
+      const day6: DateAndTime = {
+        date: date2,
+        time: date2,
+      };
+      const day7: DateAndTime = {
+        date: date2,
+        time: date2,
+      };
+      const schedule: MonthlySchedule = {
+        isWeekAndDay: false,
+        daysInMonth: [day1, day2, day3, day4, day5, day6, day7],
+      };
+      const bond: Bond = {
+        bondName: "",
+        bond_id: 1,
+        schedule: "",
+        typeOfCall: "",
+      };
+      const nids = ["a", "b", "c", "d", "e", "f", "g"];
 
-        await writeDateMonthlyScheduleToDB(schedule, bond, nids, db);
-        expect(uploadScheduleToDB).toHaveBeenCalledTimes(7);
-        expect(uploadScheduleToDB).toHaveBeenCalledWith(db, ScheduleFrequency.MONTHLY, date1.toTimeString(), null, null, date1.toDateString(), bond.bond_id, nids[0])
-        expect(uploadScheduleToDB).toHaveBeenCalledWith(db, ScheduleFrequency.MONTHLY, date1.toTimeString(), null, null, date1.toDateString(), bond.bond_id, nids[1])
-        expect(uploadScheduleToDB).toHaveBeenCalledWith(db, ScheduleFrequency.MONTHLY, date1.toTimeString(), null, null, date1.toDateString(), bond.bond_id, nids[2])
-        expect(uploadScheduleToDB).toHaveBeenCalledWith(db, ScheduleFrequency.MONTHLY, date1.toTimeString(), null, null, date1.toDateString(), bond.bond_id, nids[3])
-        expect(uploadScheduleToDB).toHaveBeenCalledWith(db, ScheduleFrequency.MONTHLY, date2.toTimeString(), null, null, date2.toDateString(), bond.bond_id, nids[4])
-        expect(uploadScheduleToDB).toHaveBeenCalledWith(db, ScheduleFrequency.MONTHLY, date2.toTimeString(), null, null, date2.toDateString(), bond.bond_id, nids[5])
-        expect(uploadScheduleToDB).toHaveBeenCalledWith(db, ScheduleFrequency.MONTHLY, date2.toTimeString(), null, null, date2.toDateString(), bond.bond_id, nids[6])
-    })
-
-  })
-
+      await writeDateMonthlyScheduleToDB(schedule, bond, nids, db);
+      expect(uploadScheduleToDB).toHaveBeenCalledTimes(7);
+      expect(uploadScheduleToDB).toHaveBeenCalledWith(
+        db,
+        ScheduleFrequency.MONTHLY,
+        date1.toTimeString(),
+        null,
+        null,
+        date1.toDateString(),
+        bond.bond_id,
+        nids[0]
+      );
+      expect(uploadScheduleToDB).toHaveBeenCalledWith(
+        db,
+        ScheduleFrequency.MONTHLY,
+        date1.toTimeString(),
+        null,
+        null,
+        date1.toDateString(),
+        bond.bond_id,
+        nids[1]
+      );
+      expect(uploadScheduleToDB).toHaveBeenCalledWith(
+        db,
+        ScheduleFrequency.MONTHLY,
+        date1.toTimeString(),
+        null,
+        null,
+        date1.toDateString(),
+        bond.bond_id,
+        nids[2]
+      );
+      expect(uploadScheduleToDB).toHaveBeenCalledWith(
+        db,
+        ScheduleFrequency.MONTHLY,
+        date1.toTimeString(),
+        null,
+        null,
+        date1.toDateString(),
+        bond.bond_id,
+        nids[3]
+      );
+      expect(uploadScheduleToDB).toHaveBeenCalledWith(
+        db,
+        ScheduleFrequency.MONTHLY,
+        date2.toTimeString(),
+        null,
+        null,
+        date2.toDateString(),
+        bond.bond_id,
+        nids[4]
+      );
+      expect(uploadScheduleToDB).toHaveBeenCalledWith(
+        db,
+        ScheduleFrequency.MONTHLY,
+        date2.toTimeString(),
+        null,
+        null,
+        date2.toDateString(),
+        bond.bond_id,
+        nids[5]
+      );
+      expect(uploadScheduleToDB).toHaveBeenCalledWith(
+        db,
+        ScheduleFrequency.MONTHLY,
+        date2.toTimeString(),
+        null,
+        null,
+        date2.toDateString(),
+        bond.bond_id,
+        nids[6]
+      );
+    });
+  });
 
   describe("writeYearlyScheduleToDB(): ", () => {
-
     it("should call uploadScheduleToDB() 1x for yearlySchedule with 1 date", async () => {
-        const date1 = new Date("1995-12-17T03:24:00")
-    
-        const dateAndTime: DateAndTime = {
-            date: date1,
-            time: date1
-        }
-        const schedule:YearlySchedule = {
-            datesInYear: new Set([dateAndTime])
-        }
-        const bond: Bond = {
-          bondName: "",
-          bond_id: 1,
-          schedule: "",
-          typeOfCall: "",
-        };
-        const nids = ["a"];
-        await writeYearlyScheduleToDB(schedule, bond, nids, db)
-        expect(uploadScheduleToDB).toHaveBeenCalledTimes(1)
-        expect(uploadScheduleToDB).toHaveBeenCalledWith(db, ScheduleFrequency.YEARLY, date1.toTimeString(), null, null, date1.toDateString(), bond.bond_id, nids[0] )
-    })
+      const date1 = new Date("1995-12-17T03:24:00");
+
+      const dateAndTime: DateAndTime = {
+        date: date1,
+        time: date1,
+      };
+      const schedule: YearlySchedule = {
+        datesInYear: new Set([dateAndTime]),
+      };
+      const bond: Bond = {
+        bondName: "",
+        bond_id: 1,
+        schedule: "",
+        typeOfCall: "",
+      };
+      const nids = ["a"];
+      await writeYearlyScheduleToDB(schedule, bond, nids, db);
+      expect(uploadScheduleToDB).toHaveBeenCalledTimes(1);
+      expect(uploadScheduleToDB).toHaveBeenCalledWith(
+        db,
+        ScheduleFrequency.YEARLY,
+        date1.toTimeString(),
+        null,
+        null,
+        date1.toDateString(),
+        bond.bond_id,
+        nids[0]
+      );
+    });
 
     it("should call uploadScheduleToDB() xx for yearlySchedule with 3 dates", async () => {
-        const date1 = new Date("1995-12-17T03:24:00")
-        const date2 = new Date("1995-12-17T09:30:00")
-        const date3 = new Date("2000-12-17T10:30:00")
+      const date1 = new Date("1995-12-17T03:24:00");
+      const date2 = new Date("1995-12-17T09:30:00");
+      const date3 = new Date("2000-12-17T10:30:00");
 
-        const dateAndTime1: DateAndTime = {
-            date: date1,
-            time: date1
-        }
+      const dateAndTime1: DateAndTime = {
+        date: date1,
+        time: date1,
+      };
 
-        const dateAndTime2: DateAndTime = {
-            date: date2,
-            time: date2
-        }
+      const dateAndTime2: DateAndTime = {
+        date: date2,
+        time: date2,
+      };
 
-        const dateAndTime3: DateAndTime = {
-            date: date3,
-            time: date3
-        }
-        const schedule:YearlySchedule = {
-            datesInYear: new Set([dateAndTime1, dateAndTime2, dateAndTime3])
-        }
-        const bond: Bond = {
-          bondName: "",
-          bond_id: 1,
-          schedule: "",
-          typeOfCall: "",
-        };
-        const nids = ["a", "b", "c"];
-        await writeYearlyScheduleToDB(schedule, bond, nids, db)
-        expect(uploadScheduleToDB).toHaveBeenCalledTimes(3)
-        expect(uploadScheduleToDB).toHaveBeenCalledWith(db, ScheduleFrequency.YEARLY, date1.toTimeString(), null, null, date1.toDateString(), bond.bond_id, nids[0] )
-        expect(uploadScheduleToDB).toHaveBeenCalledWith(db, ScheduleFrequency.YEARLY, date2.toTimeString(), null, null, date2.toDateString(), bond.bond_id, nids[1] )
-        // expect(uploadScheduleToDB).toHaveBeenCalledWith(db, ScheduleFrequency.YEARLY, date3.toTimeString(), null, null, date3.toDateString(), bond.bond_id, nids[2] )
-    })
+      const dateAndTime3: DateAndTime = {
+        date: date3,
+        time: date3,
+      };
+      const schedule: YearlySchedule = {
+        datesInYear: new Set([dateAndTime1, dateAndTime2, dateAndTime3]),
+      };
+      const bond: Bond = {
+        bondName: "",
+        bond_id: 1,
+        schedule: "",
+        typeOfCall: "",
+      };
+      const nids = ["a", "b", "c"];
+      await writeYearlyScheduleToDB(schedule, bond, nids, db);
+      expect(uploadScheduleToDB).toHaveBeenCalledTimes(3);
+      expect(uploadScheduleToDB).toHaveBeenCalledWith(
+        db,
+        ScheduleFrequency.YEARLY,
+        date1.toTimeString(),
+        null,
+        null,
+        date1.toDateString(),
+        bond.bond_id,
+        nids[0]
+      );
+      expect(uploadScheduleToDB).toHaveBeenCalledWith(
+        db,
+        ScheduleFrequency.YEARLY,
+        date2.toTimeString(),
+        null,
+        null,
+        date2.toDateString(),
+        bond.bond_id,
+        nids[1]
+      );
+      // expect(uploadScheduleToDB).toHaveBeenCalledWith(db, ScheduleFrequency.YEARLY, date3.toTimeString(), null, null, date3.toDateString(), bond.bond_id, nids[2] )
+    });
+  });
 
-  })
+  describe("generateNotificationSchedule(): ", () => {
+    it("should generate a dailySchedule when potentialSchedule.schedule is DailySchedule", async () => {
+      const date = new Date("1995-12-17T03:24:00");
+      const dailySchedule: DailySchedule = {
+        time: date,
+      };
+      const schedule: Schedule = {
+        schedule: dailySchedule,
+      };
+      const bond: Bond = {
+        bondName: "",
+        bond_id: 1,
+        schedule: "",
+        typeOfCall: "",
+      };
 
+      await generateNotificationSchedule(schedule, bond, db);
+      expect(scheduleDailyNotification).toHaveBeenCalledTimes(1);
+      expect(uploadScheduleToDB).toHaveBeenCalledTimes(1);
+    });
+
+    it("should generate a weeklySchedule when potentialSchedule.schedule is WeeklySchedule", async () => {
+      const date = new Date("1995-12-17T03:24:00");
+      const weeklySchedule: WeeklySchedule = {
+        monday: date,
+        tuesday: date,
+        wednesday: undefined,
+        thursday: undefined,
+        friday: undefined,
+        saturday: undefined,
+        sunday: undefined,
+      };
+      const schedule: Schedule = {
+        schedule: weeklySchedule,
+      };
+      const bond: Bond = {
+        bondName: "",
+        bond_id: 1,
+        schedule: "",
+        typeOfCall: "",
+      };
+
+      await generateNotificationSchedule(schedule, bond, db);
+      expect(scheduleWeeklyNotification).toHaveBeenCalledTimes(1);
+      expect(uploadScheduleToDB).toHaveBeenCalledTimes(2);
+    });
+
+    it("should call scheduleWeekAndDayMonthlyNotification when potentialSchedule.schedule is monthlySchedule with isWeekAndDAy=true", async () => {
+      const date = new Date("1995-12-17T03:24:00");
+      const dayOfMonth: DayOfMonth = {
+        weekOfMonth: 1,
+        dayOfWeek: 1,
+        time: date,
+      };
+      const monthlySchedule: MonthlySchedule = {
+        isWeekAndDay: true,
+        daysInMonth: [dayOfMonth],
+      };
+      const schedule: Schedule = {
+        schedule: monthlySchedule,
+      };
+      const bond: Bond = {
+        bondName: "",
+        bond_id: 1,
+        schedule: "",
+        typeOfCall: "",
+      };
+
+      await generateNotificationSchedule(schedule, bond, db);
+      expect(scheduleWeekAndDayMonthlyNotification).toHaveBeenCalledTimes(1);
+      expect(uploadScheduleToDB).toHaveBeenCalledTimes(1);
+    });
+
+    it("should call scheduleDateMonthlyNotification when potentialSchedule.schedule is monthlySchedule with isWeekAndDAy=false", async () => {
+      const date = new Date("1995-12-17T03:24:00");
+      const dateAndTime: DateAndTime = {
+        date: date,
+        time: date,
+      };
+      const monthlySchedule: MonthlySchedule = {
+        isWeekAndDay: false,
+        daysInMonth: [dateAndTime],
+      };
+      const schedule: Schedule = {
+        schedule: monthlySchedule,
+      };
+      const bond: Bond = {
+        bondName: "",
+        bond_id: 1,
+        schedule: "",
+        typeOfCall: "",
+      };
+
+      await generateNotificationSchedule(schedule, bond, db);
+      expect(scheduleDateMonthlyNotification).toHaveBeenCalledTimes(1);
+      expect(uploadScheduleToDB).toHaveBeenCalledTimes(1);
+    });
+
+    it("should call scheduleYearlyNotification when potentialSchedule.schedule is YearlySchedule", async () => {
+      const date = new Date("1995-12-17T03:24:00");
+      const dateInYear: DateAndTime = {
+        date: date,
+        time: date,
+      };
+      const monthlySchedule: YearlySchedule = {
+        datesInYear: new Set([dateInYear])
+      };
+      const schedule: Schedule = {
+        schedule: monthlySchedule,
+      };
+      const bond: Bond = {
+        bondName: "",
+        bond_id: 1,
+        schedule: "",
+        typeOfCall: "",
+      };
+
+      await generateNotificationSchedule(schedule, bond, db);
+      expect(scheduleYearlyNotification).toHaveBeenCalledTimes(1);
+      expect(uploadScheduleToDB).toHaveBeenCalledTimes(1);
+    });
+  });
 });

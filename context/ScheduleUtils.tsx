@@ -16,6 +16,7 @@ import {
   YearlySchedule,
   DateAndTime,
   Schedule_DB,
+  DayOfMonth,
 } from "@/constants/types";
 import {
   scheduleDailyNotification,
@@ -56,9 +57,10 @@ export const generateNotificationSchedule = async (
 
     await writeWeeklyScheduleToDB(potentialSchedule.schedule, bond, nids, db);
     return;
-  } else if (isMonthlySchedule(potentialSchedule.schedule)) {
+  } 
+  else if (isMonthlySchedule(potentialSchedule.schedule)) {
     let nids: string[];
-    if (potentialSchedule.schedule.isWeekAndDay) {
+    if (potentialSchedule.schedule.isWeekAndDay == true) {
       nids = await scheduleWeekAndDayMonthlyNotification(
         potentialSchedule.schedule,
         bond
@@ -471,22 +473,44 @@ export function displayPotentialSchedule(s: Schedule | undefined) {
 
   if (isMonthlySchedule(schedule)) {
     const monthlySchedule: React.JSX.Element[] = [];
-    schedule.daysInMonth.forEach((d) => {
-      const week: string = convertNumberToOrdinal(
-        parseInt(d.weekOfMonth) as number
-      ) as string;
-      const day: string = convertToDayOfWeek(
-        parseInt(d.dayOfWeek) as number
-      ) as string;
-      const time = convertTo12HourTime(d.time.toTimeString());
+
+    if (schedule.isWeekAndDay) {
+      schedule.daysInMonth.forEach((day) => {
+        const d: DayOfMonth = day as DayOfMonth;
+        const week: string = convertNumberToOrdinal(
+          parseInt(d.weekOfMonth) as number
+        ) as string;
+        const dayOfWeek: string = convertToDayOfWeek(
+          parseInt(d.dayOfWeek) as number
+        ) as string;
+        const time = convertTo12HourTime(d.time.toTimeString());
+        monthlySchedule.push(
+          <View>
+            <ThemedText darkColor="black">
+              The {week} {dayOfWeek} of the month at {time}
+            </ThemedText>
+          </View>
+        );
+      });
+      return monthlySchedule
+    }
+
+    schedule.daysInMonth.forEach((day) => {
+      const d: DateAndTime = day as DateAndTime;
+      const date = d.date.getDate();
+      const time = convertTo12HourTime(d.time.toTimeString())
+
       monthlySchedule.push(
         <View>
           <ThemedText darkColor="black">
-            The {week} {day} of the month at {time}
+            The {date} of the month at {time}
           </ThemedText>
         </View>
       );
-    });
+
+
+    })
+
     return monthlySchedule;
   }
 
