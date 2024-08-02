@@ -292,7 +292,6 @@ export async function deleteScheduleAndNotificationsOfBond(
   bid: number
 ) {
   try {
-    console.log("deleteScheduleAndNotificationsOfBond(): ")
     await cancelNotificationsForBond(db, bid);
     await deleteScheduleByBond(db, bid);
     return;
@@ -356,6 +355,15 @@ export function displaySchedule(schedule: Schedule_DB): React.JSX.Element {
   }
 
   if (schedule.type == ScheduleFrequency.MONTHLY) {
+    if(schedule.date != null){
+      return (
+        <View>
+          <ThemedText darkColor="black">
+            The {convertNumberToOrdinal(+convertDateStringToDayOfMonth(schedule.date))} of the month at {convertTo12HourTime(schedule.time)}
+          </ThemedText>
+        </View>
+      );
+    }
     return (
       <View>
         <ThemedText darkColor="black">
@@ -610,9 +618,7 @@ export function convertToDayOfWeek(dayNum: number) {
 
 export function convertNumberToOrdinal(num: number) {
   if (num < 1 || num > 10) {
-    throw new Error(
-      "convertNumberToOrdinal(): param must be between 1 and 10 inclusive!"
-    );
+    return num;
   }
   let ordinal = "";
   switch (num) {
@@ -750,4 +756,13 @@ export function convertToMonth(monthNum: number) {
       break;
   }
   return month;
+}
+
+export function convertDateStringToDayOfMonth(date: string){
+  const regex = /\b\d{2}\b/;
+  const match = date.match(regex);
+  if (match == null){
+    throw new Error("convertDateStringToDayOfMonth(): date does not have a 2 digit word representing the days")
+  }
+  return match[0]
 }
