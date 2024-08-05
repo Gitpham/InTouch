@@ -13,6 +13,7 @@ import ScheduleCard from "@/components/ScheduleCard";
 import { cancelNotificationsForBond } from "@/context/NotificationUtils";
 import { DeleteIcon } from "@/components/DeleteIcon";
 import { stackViews, styles } from "@/constants/Stylesheet";
+import { Divider } from "@rneui/base";
 
 export default function groupScreen() {
   const {
@@ -154,13 +155,13 @@ export default function groupScreen() {
   };
 
   return (
-    // <ScrollView nestedScrollEnabled={true} style={{ backgroundColor: "white" }}>
     <View style={stackView}>
       <View style={styles.centeredView}>
         <ThemedText darkColor="black" style={styles.title} type="title">
           {bond?.bondName}
         </ThemedText>
       </View>
+      <Divider></Divider>
       {bond ? <ScheduleCard bond={bond}></ScheduleCard> : <></>}
 
       <Card containerStyle={{ flex: 2 }}>
@@ -209,12 +210,16 @@ export default function groupScreen() {
       >
       <Button
         title="Delete"
-        buttonStyle={styles.redButton}
+        buttonStyle={{
+          margin: 10,
+          backgroundColor: "white",
+          borderColor: "red",
+          borderWidth: 2,
+        }}
         titleStyle={styles.redTitle}
         onPress={onDelete}
       />
        </View>
     </View>
-    // </ScrollView>
   );
 }

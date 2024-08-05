@@ -1,7 +1,7 @@
 import { ThemedText } from "@/components/ThemedText";
 import { useContext, useState } from "react";
 import { Alert, FlatList, Pressable } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import {  ListItem } from "@rneui/themed";
 import {  View } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
@@ -9,8 +9,9 @@ import * as Contacts from "expo-contacts";
 import { InTouchContext } from "@/context/InTouchContext";
 import { StandardButton } from "@/components/ButtonStandard";
 import { Person } from "@/constants/types";
-import { styles } from "@/constants/Stylesheet"
+import { stackViews, styles } from "@/constants/Stylesheet"
 import React from "react";
+import { Divider } from "@rneui/base";
 
 export default function addMemberScreen() {
   const { createPerson, addTempBondMember, generatePersonId , tempBondMembers, peopleList, bondPersonMap, createBondMember } = useContext(InTouchContext);
@@ -18,6 +19,9 @@ export default function addMemberScreen() {
   const localParams = useLocalSearchParams();
   const bond_id = +localParams.bond_id;
   const group_screen = +localParams.group_screen;
+  const stackView = stackViews()
+  const insets = useSafeAreaInsets();
+
 
   async function importFromContacts() {
     const { status } = await Contacts.requestPermissionsAsync();
@@ -48,7 +52,7 @@ export default function addMemberScreen() {
       }
     }
   }
-  const addBondMember = ({ item }: { item: Person }) => {
+  const renderPeopleNotInBond = ({ item }: { item: Person }) => {
     if (!tempBondMembers.has(item.person_id as number)) {
       const bond_members = bondPersonMap.get(bond_id);
       if (bond_members && bond_members.has(item.person_id as number)) {
@@ -81,18 +85,27 @@ export default function addMemberScreen() {
 
 
   return (
-    <SafeAreaView style={styles.stepContainer}>
-      <View style={styles.centeredView}>
+    <View style={{flex: 1,
+      backgroundColor: "white",
+      gap: 2,
+      flexDirection: "column",
+      paddingBottom: insets.bottom,
+      justifyContent: 'flex-start',
+      alignContent: 'flex-start',}}>
+      <View style={{ justifyContent: 'center', alignItems: 'center', 
+        // borderWidth: 1
+        }}>
         {(bond_id !== -1) ?  (
         <>
         <ThemedText type="subtitle" style={styles.title}>
           Choose From inTouch Contacts
         </ThemedText>
+        <Divider></Divider>
       
       <FlatList
         data={peopleList}
         style = {styles.flatList}
-        renderItem={addBondMember}
+        renderItem={renderPeopleNotInBond}
         keyExtractor={(item) => item.person_id.toString()}
       />
       </>) :  null}
@@ -115,6 +128,6 @@ export default function addMemberScreen() {
         title="Done"
         onPress={() => onDonePress()}
       />
-    </SafeAreaView>
+    </View>
   );
 }
