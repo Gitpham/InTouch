@@ -4,6 +4,7 @@ import { BondPerson, Person } from "@/constants/types";
 import * as SQLite from "expo-sqlite";
 import { Alert, Linking } from "react-native";
 import * as Notifications from "expo-notifications";
+import { router } from "expo-router";
 
 const formatPhoneNumber = (phoneNumber: string): string => {
     // Remove all non-numeric characters
@@ -95,6 +96,7 @@ const formatPhoneNumber = (phoneNumber: string): string => {
     );
     const phoneURL: string = `tel:${phoneNumber}`;
     const canOpen = await Linking.canOpenURL(phoneURL);
+    router.navigate({pathname: "./personScreen", params: {id: `${toCall.person_id}`} })
 
     if (canOpen) {
       Linking.openURL(phoneURL);
