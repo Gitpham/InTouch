@@ -60,6 +60,12 @@ export const styles = StyleSheet.create({
       justifyContent: 'space-between',
       alignItems: 'center',
     },
+    btnOrientation: {
+      flex: .3,
+      flexDirection: "row",
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
     nameContainer: {
       flex: 1,
       marginRight: 10, // Adds space between delete button and name

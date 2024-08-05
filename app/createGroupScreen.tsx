@@ -193,7 +193,7 @@ export default function createGroupScreen() {
       
         </Card>
 
-            <View style={styles.rowOrientation}>
+            <View style={styles.btnOrientation}>
           
         <StandardButton title="Submit Bond" onPress={onDonePress}/>
 

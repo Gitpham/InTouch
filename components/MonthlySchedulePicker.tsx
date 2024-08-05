@@ -30,19 +30,19 @@ export default function MonthlySchedulePicker({
 
   dateMonthSet,
   changeDateMonthSet,
-
 }: MonthlySchedulePickerInterface) {
   const [onTheIsChecked, setOnTheIsChecked] = useState(true);
   const [eachIsChecked, setEachIsChecked] = useState(false);
-  const [selectedDayOfMonth, setSelectedDayOfMonth] = useState<number>(1)
+  const [selectedDayOfMonth, setSelectedDayOfMonth] = useState<number>(1);
   const [selectedWeekOfMonth, setSelectedWeekOfMonth] = useState<number>(1);
   const [selectedDayOfWeek, setSelectedDayOfWeek] = useState<number>(1);
   const [monthlyTime, setMonthlyTime] = useState(new Date());
-  const [selectedMonthDateTime, setSelectedMonthDateTime] = useState(new Date())
-
+  const [selectedMonthDateTime, setSelectedMonthDateTime] = useState(
+    new Date()
+  );
 
   function displayMonthlySet() {
-    if(onTheIsChecked){
+    if (onTheIsChecked) {
       if (dayWeekMonthSet.size == 0) return <Text>No Selected Dates</Text>;
 
       const currentDates: React.JSX.Element[] = [];
@@ -67,22 +67,22 @@ export default function MonthlySchedulePicker({
     dateMonthSet.forEach((d) => {
       currentDates.push(
         <Text id={"" + i}>
-          Each {d.date.getDate()} of the month at {convertTo12HourTime(d.time.toTimeString())}
+          Each {d.date.getDate()} of the month at{" "}
+          {convertTo12HourTime(d.time.toTimeString())}
         </Text>
       );
       i++;
     });
     return <>{currentDates}</>;
-   
   }
 
   function onClearSchedule() {
-    if(onTheIsChecked){
-      changeDayWeekMonthSet(new Set())
-      return
+    if (onTheIsChecked) {
+      changeDayWeekMonthSet(new Set());
+      return;
     }
 
-    changeDateMonthSet(new Set())
+    changeDateMonthSet(new Set());
   }
 
   function onAddDay() {
@@ -96,13 +96,19 @@ export default function MonthlySchedulePicker({
       const newDay = new Set([day]);
 
       if (!dayWeekMonthSet.has(day)) {
-        changeDayWeekMonthSet(new Set<DayOfMonth>([...dayWeekMonthSet, ...newDay]));
+        changeDayWeekMonthSet(
+          new Set<DayOfMonth>([...dayWeekMonthSet, ...newDay])
+        );
       }
       return;
     }
 
     const today = new Date();
-    const newDate = new Date(today.getUTCFullYear(), today.getUTCMonth(), selectedDayOfMonth)
+    const newDate = new Date(
+      today.getUTCFullYear(),
+      today.getUTCMonth(),
+      selectedDayOfMonth
+    );
     const day: DateAndTime = {
       date: newDate,
       time: selectedMonthDateTime,
@@ -113,29 +119,27 @@ export default function MonthlySchedulePicker({
     if (!dateMonthSet.has(day)) {
       changeDateMonthSet(new Set<DateAndTime>([...dateMonthSet, ...newDay]));
     }
-    return
+    return;
   }
 
   function onOnThePressed() {
     setOnTheIsChecked(!onTheIsChecked);
     setEachIsChecked(!eachIsChecked);
-    changeDateMonthSet(new Set())
+    changeDateMonthSet(new Set());
   }
 
   function onEachPressed() {
     setOnTheIsChecked(!onTheIsChecked);
     setEachIsChecked(!eachIsChecked);
-    changeDayWeekMonthSet(new Set())
+    changeDayWeekMonthSet(new Set());
   }
 
   function displayOnThePicker() {
     return (
       <View style={styles.stepContainer}>
-        {/* <View style={styles.rowOrientation }> */}
-        <View
-        // style={{ flex: 0.5, flexDirection: "column" }}
-        >
+        <View style={{ borderWidth: 1, borderRadius: 10, }}>
           <Picker
+            itemStyle={{ height: 150 }}
             selectedValue={selectedWeekOfMonth}
             onValueChange={(itemValue, itemIndex) => {
               setSelectedWeekOfMonth(itemValue);
@@ -148,10 +152,9 @@ export default function MonthlySchedulePicker({
           </Picker>
         </View>
 
-        <View
-        // style={{ flex: 0.5, flexDirection: "column" }}
-        >
+        <View style={{ borderWidth: 1, borderRadius: 10 }}>
           <Picker
+            itemStyle={{ height: 150 }}
             selectedValue={selectedDayOfWeek}
             onValueChange={(itemValue, itemIndex) =>
               setSelectedDayOfWeek(itemValue)
@@ -165,12 +168,13 @@ export default function MonthlySchedulePicker({
             <Picker.Item label="Friday" value="6" />
             <Picker.Item label="Saturday" value="7" />
           </Picker>
-          {/* </View> */}
         </View>
+
         <View style={styles.centeredView}>
           <ThemedText style={styles.title}>OF THE MONTH AT </ThemedText>
         </View>
-        <View style={styles.centeredView}>
+
+        <View style={{ alignItems: "center", flex: 0.5, borderWidth: 1, borderRadius: 10 }}>
           <DateTimePicker
             value={monthlyTime}
             mode="time"
@@ -185,9 +189,11 @@ export default function MonthlySchedulePicker({
     return (
       <View style={styles.stepContainer}>
         <View style={styles.centeredView}>
-          {/* <Text style={styles.title}>{selectedMonthDate.getDate()} OF THE MONTH</Text> */}
         </View>
+        <View style={{borderWidth: 1}}>
+
         <Picker
+          itemStyle={{height: 150}}
           selectedValue={selectedDayOfMonth}
           onValueChange={(itemValue, itemIndex) => {
             setSelectedDayOfMonth(itemValue);
@@ -225,16 +231,8 @@ export default function MonthlySchedulePicker({
           <Picker.Item label="30" value="30" />
           <Picker.Item label="31" value="31" />
         </Picker>
+        </View>
 
-        {/* <DateTimePicker style={{alignSelf:"flex-start"}}
-        minimumDate={getFirstDateOfMonth(new Date())}
-        maximumDate={getLastDateOfMonth(new Date())}
-      value={selectedMonthDate}
-      onChange={(e, d) => {
-          changeSelectedMonthDate(d)
-      }}
-      >
-      </DateTimePicker> */}
 
         <View style={styles.centeredView}>
           <ThemedText style={styles.title}>OF THE MONTH AT </ThemedText>
@@ -251,7 +249,17 @@ export default function MonthlySchedulePicker({
   }
 
   return (
-    <View style={{ padding: 10 }}>
+    <View style={{ padding: 10, flex: 1 }}>
+      <Card>
+        <View style={styles.centeredView}>
+          <Text style={styles.title}>Current Monthly Schedule: </Text>
+        </View>
+        {displayMonthlySet()}
+        <StandardButton
+          title="Clear current schedule"
+          onPress={onClearSchedule}
+        ></StandardButton>
+      </Card>
       <Card>
         <View style={styles.centeredView}>
           <ThemedText darkColor="black" style={styles.title}>
@@ -272,17 +280,6 @@ export default function MonthlySchedulePicker({
         </View>
         {onTheIsChecked ? displayOnThePicker() : displayMonthlyDatePicker()}
         <StandardButton title="Add" onPress={onAddDay}></StandardButton>
-      </Card>
-
-      <Card>
-        <View style={styles.centeredView}>
-          <Text style={styles.title}>Current Monthly Schedule: </Text>
-        </View>
-        {displayMonthlySet()}
-        <StandardButton
-          title="Clear current schedule"
-          onPress={onClearSchedule}
-        ></StandardButton>
       </Card>
     </View>
   );

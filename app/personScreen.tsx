@@ -135,12 +135,7 @@ export default function PersonScreen() {
         </View>
 
         <View
-          style={{
-            flex: 0.5,
-            flexDirection: "row",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
+          style={styles.btnOrientation}
         >
             <Button
               title="Call"
@@ -200,7 +195,7 @@ export default function PersonScreen() {
         />
 
         <Card>
-          <Card.Title>Groups</Card.Title>
+          <Card.Title>Bonds</Card.Title>
           <FlatList
             data={bonds}
             renderItem={renderBonds}

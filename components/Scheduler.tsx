@@ -116,7 +116,9 @@ export default function Scheduler({
   }
 
   //MONTHLY PICKER PROPS
-  const [dayWeekMonthSet, setDayWeekMonthSet] = useState<Set<DayOfMonth>>(new Set());
+  const [dayWeekMonthSet, setDayWeekMonthSet] = useState<Set<DayOfMonth>>(
+    new Set()
+  );
   function changeDayWeekMonthSet(updatedMonthSet: Set<DayOfMonth>) {
     setDayWeekMonthSet(updatedMonthSet);
   }
@@ -126,14 +128,12 @@ export default function Scheduler({
     setDateMonthSet(updatedMonthSet);
   }
 
-
   //YEARLY PROPS
   const [datesInYear, setDatesInYear] = useState<Set<DateAndTime>>(new Set());
 
   function changeDatesInYear(updatedDates: Set<DateAndTime>) {
     setDatesInYear(updatedDates);
   }
-
 
   function onSegmentedControlValueChange(value) {
     setScheduleFrequency(value);
@@ -200,7 +200,7 @@ export default function Scheduler({
             isWeekAndDay: false,
             daysInMonth: [],
           };
-          if (dayWeekMonthSet.size > 0){
+          if (dayWeekMonthSet.size > 0) {
             pMonthlySchedule.isWeekAndDay = true;
             dayWeekMonthSet.forEach((d) => {
               pMonthlySchedule.daysInMonth.push(d);
@@ -213,7 +213,7 @@ export default function Scheduler({
 
           dateMonthSet.forEach((d) => {
             pMonthlySchedule.daysInMonth.push(d);
-          })
+          });
           pSchedule = {
             schedule: pMonthlySchedule,
           };
@@ -319,13 +319,11 @@ export default function Scheduler({
       <MonthlySchedulePicker
         dayWeekMonthSet={dayWeekMonthSet}
         changeDayWeekMonthSet={changeDayWeekMonthSet}
-
         dateMonthSet={dateMonthSet}
         changeDateMonthSet={changeDateMonthSet}
       ></MonthlySchedulePicker>
     );
   }
-
 
   function yearlySelector() {
     return (
@@ -351,31 +349,38 @@ export default function Scheduler({
   }
 
   return (
-    <ScrollView  alwaysBounceVertical={false} style={{backgroundColor:"white"}}>
-    <View style={styles.stepContainer}>
-      <View style={styles.centeredView}></View>
+    <ScrollView
+      alwaysBounceVertical={false}
+      style={{ backgroundColor: "white" }}
+    >
+      <View style={styles.stepContainer}>
+        <View style={styles.centeredView}></View>
 
-      <View>
-        <SegmentedControl
-          onValueChange={onSegmentedControlValueChange}
-          values={[
-            ScheduleFrequency.DAILY,
-            ScheduleFrequency.WEEKLY,
-            ScheduleFrequency.MONTHLY,
-            ScheduleFrequency.YEARLY,
-          ]}
-        ></SegmentedControl>
-        {displayScheduleSelectors()}
-      </View>
+        <View>
+          <SegmentedControl
+            onValueChange={onSegmentedControlValueChange}
+            values={[
+              ScheduleFrequency.DAILY,
+              ScheduleFrequency.WEEKLY,
+              ScheduleFrequency.MONTHLY,
+              ScheduleFrequency.YEARLY,
+            ]}
+          ></SegmentedControl>
+          {displayScheduleSelectors()}
+        </View>
 
-      <View>
-        <StandardButton title="Submit" onPress={onSubmitPress}></StandardButton>
-      </View>
+        <View style={styles.btnOrientation}>
+          <StandardButton
+            title="Submit"
+            onPress={onSubmitPress}
+          ></StandardButton>
 
-      <View>
-        <StandardButton title="Cancel" onPress={onCancelPress}></StandardButton>
+          <StandardButton
+            title="Cancel"
+            onPress={onCancelPress}
+          ></StandardButton>
+        </View>
       </View>
-    </View>
     </ScrollView>
   );
 }
