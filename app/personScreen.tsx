@@ -9,9 +9,7 @@ import {
   Alert,
   FlatList,
   Pressable,
-
-  ScrollView ,
-
+  ScrollView,
   View,
   Linking,
 } from "react-native";
@@ -128,97 +126,95 @@ export default function PersonScreen() {
   };
 
   return (
-    <ScrollView nestedScrollEnabled={true} style={{backgroundColor: "white"}} >
-
-    <View style={styles.stepContainer}>
-      <View style={styles.centeredView}>
-        <ThemedText darkColor="black" style={styles.title} type="title">
-          {person?.firstName} {person?.lastName}
-        </ThemedText>
-      </View>
-
-      <View style={styles.centeredView}>
-        <View style={{ width: 150 }}>
-          <Button
-            title="Call"
-            buttonStyle={{
-              margin: 10,
-              backgroundColor: "red",
-              borderColor: "black",
-              borderWidth: 2,
-            }}
-            titleStyle={{
-              fontSize: 24,
-              fontWeight: "bold",
-            }}
-            onPress={() => console.log("SUIII")}
-          />
+    <ScrollView nestedScrollEnabled={true} style={{ backgroundColor: "white" }}>
+      <View style={styles.stepContainer}>
+        <View style={styles.centeredView}>
+          <ThemedText darkColor="black" style={styles.title} type="title">
+            {person?.firstName} {person?.lastName}
+          </ThemedText>
         </View>
 
-        <Pressable
-          onPress={() => sendSMS(person?.phoneNumber.toString() as string)}
+        <View
+          style={{
+            flex: 0.5,
+            flexDirection: "row",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
         >
-          <ThemedText
-            style={{
-              fontSize: 16,
-              marginTop: 10,
-              color: "black",
-              textDecorationLine: "underline",
-            }}
-          >
-            Text
-          </ThemedText>
-        </Pressable>
+            <Button
+              title="Call"
+              buttonStyle={{
+                margin: 10,
+                backgroundColor: "darkorchid",
+                borderColor: "black",
+                borderWidth: 2,
+              }}
+              titleStyle={{
+                fontSize: 24,
+                fontWeight: "bold",
+              }}
+              onPress={() => console.log("SUIII")}
+            />
+            <Button
+              title="Text"
+              buttonStyle={{
+                margin: 10,
+                backgroundColor: "deepskyblue",
+                borderColor: "black",
+                borderWidth: 2,
+              }}
+              titleStyle={{
+                fontSize: 24,
+                fontWeight: "bold",
+              }}
+              onPress={() => sendSMS(person?.phoneNumber.toString() as string)}
+            />
+        </View>
+
+        <Card>
+          <Card.Title>Phone</Card.Title>
+          <Card.Divider></Card.Divider>
+          <ThemedText darkColor="black">{person?.phoneNumber}</ThemedText>
+        </Card>
+
+        <Card>
+          <Card.Title>Reminders</Card.Title>
+          <FlatList
+            data={reminders}
+            renderItem={renderReminders}
+            keyExtractor={(item) => item.reminder_id.toString()}
+          />
+        </Card>
+
+        <Button
+          title="+Add Reminder"
+          buttonStyle={styles.button}
+          titleStyle={styles.title}
+          onPress={() =>
+            router.navigate({
+              pathname: "./addReminderModal",
+              params: { person_id: person?.person_id, bond_id: -1 },
+            })
+          }
+        />
+
+        <Card>
+          <Card.Title>Groups</Card.Title>
+          <FlatList
+            data={bonds}
+            renderItem={renderBonds}
+            keyExtractor={(item) => item.bond_id.toString()}
+          />
+        </Card>
+
+        <Button
+          title="Delete"
+          buttonStyle={styles.redButton}
+          titleStyle={styles.redTitle}
+          onPress={() => deletePerson()}
+        />
       </View>
-
-      <Card>
-        <Card.Title>
-          Phone
-        </Card.Title>
-        <Card.Divider></Card.Divider>
-        <ThemedText darkColor="black">{person?.phoneNumber}</ThemedText>
-      </Card>
-
-    
-
-      <Card>
-        <Card.Title>Reminders</Card.Title>
-        <FlatList
-          data={reminders}
-          renderItem={renderReminders}
-          keyExtractor={(item) => item.reminder_id.toString()}
-        />
-      </Card>
-
-      <Button
-        title="+Add Reminder"
-        buttonStyle={styles.button}
-        titleStyle={styles.title}
-        onPress={() =>
-          router.navigate({
-            pathname: "./addReminderModal",
-            params: { person_id: person?.person_id, bond_id: -1 },
-          })
-        }
-      />
-
-      <Card>
-        <Card.Title>Groups</Card.Title>
-        <FlatList
-          data={bonds}
-          renderItem={renderBonds}
-          keyExtractor={(item) => item.bond_id.toString()}
-        />
-      </Card>
-
-      <Button
-        title="Delete"
-        buttonStyle={styles.redButton}
-        titleStyle={styles.redTitle}
-        onPress={() => deletePerson()}
-      />
-    </View>
     </ScrollView>
-
   );
 }
