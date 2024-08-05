@@ -14,7 +14,7 @@ import { styles } from "@/constants/Stylesheet"
 import React from "react";
 
 export default function addMemberScreen() {
-  const { createPerson, addTempBondMember, generatePersonId , tempBondMembers, peopleList, bondPersonMap, createBondMember } = useContext(InTouchContext);
+  const { createPerson, addTempBondMember, generatePersonId , tempBondMembers, peopleList, bondPersonMap, createBondMember, clearTempBondMembers } = useContext(InTouchContext);
   const [ refresh, setRefresh] = useState(false)
   const [memberFirstName, memFirstNameChange] = useState("");
   const [memberLastName, memLastNameChange] = useState("");
@@ -30,7 +30,7 @@ export default function addMemberScreen() {
 
     const peopleToShow = peopleList.filter((p) => {
       if (!tempBondMembers.has(p.person_id as number)) {
-        const bond_members = bondPersonMap.get(bondId);
+        const bond_members = bondPersonMap.get(+localParams.bond_id);
         if (!bond_members) {
           return p;
         }
@@ -38,11 +38,16 @@ export default function addMemberScreen() {
         else if (!bond_members.has(p.person_id as number)) {
           return p;
         }
+
+        else {
+          return null;
+        }
       }
     });
 
+    console.log(peopleToShow)
     setMembersToShow(peopleToShow)
-  }, [localParams.bond_id, tempBondMembers, peopleList]);
+  }, [, tempBondMembers, peopleList]);
   
   const group_screen = +localParams.group_screen;
 
@@ -99,6 +104,7 @@ export default function addMemberScreen() {
     if (group_screen === 1) {
       createBondMember(tempBondMembers, bondId);
     }
+    clearTempBondMembers();
     router.back()
   }
 
