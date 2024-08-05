@@ -12,10 +12,12 @@ import {
   ScrollView,
   View,
   Linking,
+  Text,
 } from "react-native";
 import { router } from "expo-router";
-import { styles } from "@/constants/Stylesheet";
+import { stackViews, styles } from "@/constants/Stylesheet";
 import { DeleteIcon } from "@/components/DeleteIcon";
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function PersonScreen() {
   const {
@@ -30,6 +32,7 @@ export default function PersonScreen() {
   const [person, setPerson] = useState<Person>();
   const [bonds, setBonds] = useState<Array<Bond>>();
   const [reminders, setReminders] = useState<Array<Reminder>>();
+  const stackView = stackViews();
 
   useEffect(() => {
     const personId: number = Number(localParams.id);
@@ -120,67 +123,69 @@ export default function PersonScreen() {
   };
 
   // For texting and calling user
-  const sendSMS = (phoneNumber: string) => {
+  const sendSMS = async (phoneNumber: string) => {
     const url = `sms:${phoneNumber}`;
-    Linking.openURL(url).catch((err) => console.error("Error:", err));
+    try{
+      await Linking.openURL(url);
+    } catch (e) {
+      console.error(e);
+      throw new Error("personScreen: sendSMS(): failed")
+    }
   };
 
   return (
-    <ScrollView nestedScrollEnabled={true} style={{ backgroundColor: "white" }}>
-      <View style={styles.stepContainer}>
-        <View style={styles.centeredView}>
-          <ThemedText darkColor="black" style={styles.title} type="title">
-            {person?.firstName} {person?.lastName}
-          </ThemedText>
-        </View>
+    // <View
+    // // nestedScrollEnabled={true}
+    // style={{ backgroundColor: "white" }}>
+    <View
+      style={stackView}
+    >
+      <View style={styles.centeredView}>
+        <ThemedText darkColor="black" style={styles.title} type="title">
+          {person?.firstName} {person?.lastName}
+        </ThemedText>
+      </View>
 
+      <View
+        style={{
+          flex: .5,
+          flexDirection: "row",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
         <View
-          style={styles.btnOrientation}
+          style={styles.callBtn}
         >
-            <Button
-              title="Call"
-              buttonStyle={{
-                margin: 10,
-                backgroundColor: "darkorchid",
-                borderColor: "black",
-                borderWidth: 2,
-              }}
-              titleStyle={{
-                fontSize: 24,
-                fontWeight: "bold",
-              }}
-              onPress={() => console.log("SUIII")}
-            />
-            <Button
-              title="Text"
-              buttonStyle={{
-                margin: 10,
-                backgroundColor: "deepskyblue",
-                borderColor: "black",
-                borderWidth: 2,
-              }}
-              titleStyle={{
-                fontSize: 24,
-                fontWeight: "bold",
-              }}
-              onPress={() => sendSMS(person?.phoneNumber.toString() as string)}
-            />
+          <Pressable>
+            <Text style={{color: 'purple' }}>Call</Text>
+          </Pressable>
         </View>
+        <View
+          style={styles.textBtn}
+        >
+          <Pressable              
+           onPress={() => sendSMS(person?.phoneNumber.toString() as string)}
+          >
+            <Text style={{color: 'green', fontWeight: 'bold' }}>Text</Text>
+          </Pressable>
+        </View>
+      </View>
 
-        <Card>
-          <Card.Title>Phone</Card.Title>
-          <Card.Divider></Card.Divider>
-          <ThemedText darkColor="black">{person?.phoneNumber}</ThemedText>
-        </Card>
+      <Card containerStyle={{ flex: 1 }}>
+        <Card.Title>Phone</Card.Title>
+        <Card.Divider></Card.Divider>
+        <ThemedText darkColor="black">{person?.phoneNumber}</ThemedText>
+      </Card>
 
-        <Card>
-          <Card.Title>Reminders</Card.Title>
-          <FlatList
-            data={reminders}
-            renderItem={renderReminders}
-            keyExtractor={(item) => item.reminder_id.toString()}
-          />
-        </Card>
+      <Card containerStyle={{ flex: 3 }}>
+        <Card.Title>Reminders</Card.Title>
+        <FlatList
+          style={{ height: "50%" }}
+          data={reminders}
+          renderItem={renderReminders}
+          keyExtractor={(item) => item.reminder_id.toString()}
+        />
 
         <Button
           title="+Add Reminder"
@@ -193,23 +198,35 @@ export default function PersonScreen() {
             })
           }
         />
+      </Card>
 
-        <Card>
-          <Card.Title>Bonds</Card.Title>
-          <FlatList
-            data={bonds}
-            renderItem={renderBonds}
-            keyExtractor={(item) => item.bond_id.toString()}
-          />
-        </Card>
+      <Card containerStyle={{ flex: 3 }}>
+        <Card.Title>Bonds</Card.Title>
+        <FlatList
+          style={{ height: "50%" }}
+          data={bonds}
+          renderItem={renderBonds}
+          keyExtractor={(item) => item.bond_id.toString()}
+        />
+      </Card>
 
+
+  
+
+      <View style={{alignContent: 'center', justifyContent: 'center', alignItems: 'center'}}>
         <Button
           title="Delete"
-          buttonStyle={styles.redButton}
+          buttonStyle={{
+            margin: 10,
+            backgroundColor: "white",
+            borderColor: "red",
+            borderWidth: 2,
+
+          }}
           titleStyle={styles.redTitle}
           onPress={() => deletePerson()}
         />
       </View>
-    </ScrollView>
+    </View>
   );
 }

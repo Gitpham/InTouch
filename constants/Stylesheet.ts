@@ -1,11 +1,46 @@
-import { StyleSheet } from "react-native"
+import { StyleProp, StyleSheet, ViewStyle } from "react-native"
+import { useSafeAreaInsets } from "react-native-safe-area-context"
+
+export function stackViews(): StyleProp<ViewStyle>{
+  const insets = useSafeAreaInsets();
+  return ({
+    flex: 1,
+    backgroundColor: "white",
+    gap: 2,
+    flexDirection: "column",
+    paddingBottom: insets.bottom,
+  })
+}
 
 export const styles = StyleSheet.create({
+
     button: {
       margin: 10,
       backgroundColor: "white",
       borderColor: "black",
       borderWidth: 2,
+    },
+    callBtn: {
+      height: "100%",
+      width: "30%",
+      margin: 10,
+      borderColor: "darkorchid",
+      borderWidth: 2,
+      alignContent: 'center',
+      alignItems: 'center',
+      justifyContent: 'center'
+
+    },
+    textBtn: {
+      height: "100%",
+      width: "30%",
+      margin: 10,
+      borderColor: "green",
+      borderWidth: 2,
+      alignContent: 'center',
+      alignItems: 'center',
+      justifyContent: 'center'
+
     },
     title: {
       color: "black",
@@ -18,6 +53,7 @@ export const styles = StyleSheet.create({
       backgroundColor: "white",
       borderColor: "red",
       borderWidth: 2,
+      width: '80%',
     },
     redTitle: {
       color: "red",
