@@ -1,16 +1,10 @@
 import { ThemedText } from "@/components/ThemedText";
-import {
-  FlatList,
-  Pressable,
-  ScrollView,
-  View,
-  Alert,
-} from "react-native";
+import { FlatList, Pressable, ScrollView, View, Alert } from "react-native";
 import { Card, ListItem, Button } from "@rneui/themed";
 import { useLocalSearchParams } from "expo-router";
 import { useContext, useEffect, useState } from "react";
 import { InTouchContext } from "@/context/InTouchContext";
-import { Bond, Person, Reminder,} from "@/constants/types";
+import { Bond, Person, Reminder } from "@/constants/types";
 import { router } from "expo-router";
 import React from "react";
 import { StandardButton } from "@/components/ButtonStandard";
@@ -18,7 +12,7 @@ import { useSQLiteContext } from "expo-sqlite";
 import ScheduleCard from "@/components/ScheduleCard";
 import { cancelNotificationsForBond } from "@/context/NotificationUtils";
 import { DeleteIcon } from "@/components/DeleteIcon";
-import { styles } from "@/constants/Stylesheet";
+import { stackViews, styles } from "@/constants/Stylesheet";
 
 export default function groupScreen() {
   const {
@@ -36,10 +30,11 @@ export default function groupScreen() {
   const [members, setMembers] = useState<Array<Person>>();
   const [reminders, setReminders] = useState<Array<Reminder>>();
   const db = useSQLiteContext();
+  const stackView = stackViews();
 
   useEffect(() => {
     const bondId: number = +(localParams.id as string);
-    const bond_index = bondList.findIndex(item => item.bond_id === bondId)
+    const bond_index = bondList.findIndex((item) => item.bond_id === bondId);
     if (bond_index !== -1) {
       const b: Bond = bondList[bond_index];
       setBond(b);
@@ -50,26 +45,32 @@ export default function groupScreen() {
     }
   }, [bondPersonMap, reminderList, bondList]);
 
-
-
-
   const renderMembers = ({ item }: { item: Person }) => {
     return (
       <ListItem bottomDivider>
         <ListItem.Content id={item.person_id?.toString()}>
-        <View style = {styles.rowOrientation}>
-          <View style = {styles.nameContainer}>
-            <Pressable onPress = {() => {router.navigate({pathname: "./personScreen", params: {id: `${item.person_id}`}})}}>
-              <ListItem.Title>
-                {item.firstName} {item.lastName}
-              </ListItem.Title>
+          <View style={styles.rowOrientation}>
+            <View style={styles.nameContainer}>
+              <Pressable
+                onPress={() => {
+                  router.navigate({
+                    pathname: "./personScreen",
+                    params: { id: `${item.person_id}` },
+                  });
+                }}
+              >
+                <ListItem.Title>
+                  {item.firstName} {item.lastName}
+                </ListItem.Title>
+              </Pressable>
+            </View>
+            <Pressable
+              onPress={() => {
+                deletePersonAlert(item);
+              }}
+            >
+              <DeleteIcon></DeleteIcon>
             </Pressable>
-          </View>
-          <Pressable
-            onPress = {() => {deletePersonAlert(item)}}
-          >
-            <DeleteIcon></DeleteIcon>
-          </Pressable>
           </View>
         </ListItem.Content>
       </ListItem>
@@ -81,23 +82,19 @@ export default function groupScreen() {
       return (
         <ListItem bottomDivider>
           <ListItem.Content id={item.reminder_id.toString()}>
-            <View style = {styles.rowOrientation}>
-            <View style = {styles.nameContainer}>
-              <ListItem.Title style = {styles.date}>
-                {item.date}
-              </ListItem.Title>
-            <ListItem.Title>
-              {item.reminder} 
-            </ListItem.Title>
-            </View>
+            <View style={styles.rowOrientation}>
+              <View style={styles.nameContainer}>
+                <ListItem.Title style={styles.date}>{item.date}</ListItem.Title>
+                <ListItem.Title>{item.reminder}</ListItem.Title>
+              </View>
             </View>
           </ListItem.Content>
           <Pressable
-           onPress={() => deleteReminderAlert(item.reminder_id)}
-           style={styles.touchable}>
+            onPress={() => deleteReminderAlert(item.reminder_id)}
+            style={styles.touchable}
+          >
             <DeleteIcon></DeleteIcon>
-           </Pressable>
-  
+          </Pressable>
         </ListItem>
       );
     } else {
@@ -109,60 +106,71 @@ export default function groupScreen() {
     removeReminder(reminder_id);
   };
 
-
   const onDelete = async () => {
     if (bond) {
-      await cancelNotificationsForBond(db, bond.bond_id)
+      await cancelNotificationsForBond(db, bond.bond_id);
       removeBond(bond);
     }
     router.back();
-
-  }
+  };
 
   const deletePersonAlert = (person: Person) => {
-    const name = person.firstName + " " + person.lastName
+    const name = person.firstName + " " + person.lastName;
     Alert.alert(`Remove ${name} from ${bond?.bondName}?`, "", [
-      {text: 'Cancel',
-        onPress: () => console.log('Cancel Pressed'),
-        style: 'cancel',},
-      {text: 'OK',
-        onPress: () => {if (bond) {removeBondMember(bond, person)}},
-        isPreferred: true
+      {
+        text: "Cancel",
+        onPress: () => console.log("Cancel Pressed"),
+        style: "cancel",
+      },
+      {
+        text: "OK",
+        onPress: () => {
+          if (bond) {
+            removeBondMember(bond, person);
+          }
+        },
+        isPreferred: true,
       },
     ]);
-  }
+  };
 
   const deleteReminderAlert = (reminder_id: number) => {
-    Alert.alert(`Delete reminder for ${bond?.bondName}?`, "",[
-      {text: 'Cancel',
-        onPress: () => console.log('Cancel Pressed'),
-        style: 'cancel',},
-      {text: 'OK',
-        onPress: () => {if (bond) {deleteReminder(reminder_id)}},
-        isPreferred: true
+    Alert.alert(`Delete reminder for ${bond?.bondName}?`, "", [
+      {
+        text: "Cancel",
+        onPress: () => console.log("Cancel Pressed"),
+        style: "cancel",
+      },
+      {
+        text: "OK",
+        onPress: () => {
+          if (bond) {
+            deleteReminder(reminder_id);
+          }
+        },
+        isPreferred: true,
       },
     ]);
- }
+  };
 
   return (
-      <ScrollView nestedScrollEnabled={true} style={{backgroundColor: "white"}}  >
-        <View style={styles.stepContainer}>
-       <View style = {styles.centeredView}>
+    // <ScrollView nestedScrollEnabled={true} style={{ backgroundColor: "white" }}>
+    <View style={stackView}>
+      <View style={styles.centeredView}>
+        <ThemedText darkColor="black" style={styles.title} type="title">
+          {bond?.bondName}
+        </ThemedText>
+      </View>
+      {bond ? <ScheduleCard bond={bond}></ScheduleCard> : <></>}
 
-        <ThemedText darkColor="black" style={styles.title} type ="title">{bond?.bondName}</ThemedText>
-        </View>
-
-        {bond ? <ScheduleCard bond={bond}></ScheduleCard> : <></>}
-
-        <Card>
-          <Card.Title>Reminders</Card.Title>
-          <FlatList
-            data={reminders}
-            renderItem={renderReminders}
-            keyExtractor={(item) => item.reminder_id.toString()}
-          />
-        </Card>
-
+      <Card containerStyle={{ flex: 2 }}>
+        <Card.Title>Reminders</Card.Title>
+        <FlatList
+          style={{ height: "50%" }}
+          data={reminders}
+          renderItem={renderReminders}
+          keyExtractor={(item) => item.reminder_id.toString()}
+        />
         <Button
           title="+Add Reminder"
           buttonStyle={styles.button}
@@ -174,19 +182,17 @@ export default function groupScreen() {
             })
           }
         />
+      </Card>
 
-        <Card>
-          <Card.Title>Members</Card.Title>
-          <FlatList
-            nestedScrollEnabled={true}
-            style={styles.flatList}
-            data={members}
-            renderItem={renderMembers}
-            keyExtractor={(item) => item.person_id.toString()}
-          />
-        </Card>
-
-
+      <Card containerStyle={{ flex: 2 }}>
+        <Card.Title>Members</Card.Title>
+        <FlatList
+          nestedScrollEnabled={true}
+          style={{ height: "50%" }}
+          data={members}
+          renderItem={renderMembers}
+          keyExtractor={(item) => item.person_id.toString()}
+        />
         <StandardButton
           title="+Add Member"
           onPress={() => {
@@ -196,15 +202,19 @@ export default function groupScreen() {
             });
           }}
         />
+      </Card>
+      <View
+      style={{alignContent: 'center', justifyContent: 'center', alignItems: 'center'}}
 
-        <Button
-          title="Delete"
-          buttonStyle={styles.redButton}
-          titleStyle={styles.redTitle}
-          onPress={onDelete}
-        />
-                </View>
-
-      </ScrollView>
+      >
+      <Button
+        title="Delete"
+        buttonStyle={styles.redButton}
+        titleStyle={styles.redTitle}
+        onPress={onDelete}
+      />
+       </View>
+    </View>
+    // </ScrollView>
   );
 }

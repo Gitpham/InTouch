@@ -213,7 +213,9 @@ export default function PersonScreen() {
 
   
 
-      <View style={{alignContent: 'center', justifyContent: 'center', alignItems: 'center'}}>
+      <View 
+      style={{alignContent: 'center', justifyContent: 'center', alignItems: 'center'}}
+      >
         <Button
           title="Delete"
           buttonStyle={{

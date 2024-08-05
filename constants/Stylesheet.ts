@@ -9,6 +9,9 @@ export function stackViews(): StyleProp<ViewStyle>{
     gap: 2,
     flexDirection: "column",
     paddingBottom: insets.bottom,
+    justifyContent: 'center',
+    alignContent: 'center',
+    // alignItems: 'center',
   })
 }
 

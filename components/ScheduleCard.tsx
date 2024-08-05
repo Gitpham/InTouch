@@ -42,7 +42,7 @@ export default function ScheduleCard({bond}: ScheduleCardInterface) {
       }
     
 
-    return (   <Card>
+    return (   <Card containerStyle={{flex: 2}}>
         <Card.Title>Schedule: {bond?.schedule}</Card.Title>
         <Card.Divider></Card.Divider>
         {viewSchedule()}
