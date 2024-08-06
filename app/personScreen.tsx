@@ -17,6 +17,7 @@ import { router } from "expo-router";
 import { stackViews, styles } from "@/constants/Stylesheet";
 import { DeleteIcon } from "@/components/DeleteIcon";
 import { useSQLiteContext } from "expo-sqlite";
+import CallTextButton from "@/components/CallTextButton";
 export default function PersonScreen() {
   const {
     peopleList,
@@ -145,31 +146,7 @@ export default function PersonScreen() {
         </ThemedText>
       </View>
 
-      <View
-        style={{
-          flex: .5,
-          flexDirection: "row",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <View
-          style={styles.callBtn}
-        >
-          <Pressable>
-            <Text style={{color: 'purple' }}>Call</Text>
-          </Pressable>
-        </View>
-        <View
-          style={styles.textBtn}
-        >
-          <Pressable              
-           onPress={() => sendSMS(person?.phoneNumber.toString() as string)}
-          >
-            <Text style={{color: 'green', fontWeight: 'bold' }}>Text</Text>
-          </Pressable>
-        </View>
-      </View>
+     <CallTextButton person={person as Person}></CallTextButton>
 
       <Card containerStyle={{ flex: 1 }}>
         <Card.Title>Phone</Card.Title>

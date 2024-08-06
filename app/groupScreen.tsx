@@ -13,13 +13,12 @@ import ScheduleCard from "@/components/ScheduleCard";
 import { cancelNotificationsForBond } from "@/context/NotificationUtils";
 import { DeleteIcon } from "@/components/DeleteIcon";
 import { stackViews, styles } from "@/constants/Stylesheet";
-import { Divider } from "@rneui/base";
-import { styles } from "@/constants/Stylesheet";
 import {
   sendSMS,
   getNextToCallUtil,
   callUtil,
 } from "@/context/PhoneNumberUtils";
+import CallTextButton from "@/components/CallTextButton";
 
 export default function groupScreen() {
   const {
@@ -179,6 +178,8 @@ export default function groupScreen() {
         </ThemedText>
       </View>
 
+      <CallTextButton person={nextToCall as Person}></CallTextButton>
+
       {bond ? <ScheduleCard bond={bond}></ScheduleCard> : <></>}
       <View style={styles.centeredView}>
         <ThemedText
@@ -190,37 +191,7 @@ export default function groupScreen() {
         >
           Next to Call {`${nextToCall?.firstName} ${nextToCall?.lastName}`}
         </ThemedText>
-        <View style={{ width: 150 }}>
-          <Button
-            title="Call"
-            buttonStyle={{
-              margin: 10,
-              backgroundColor: "red",
-              borderColor: "black",
-              borderWidth: 2,
-            }}
-            titleStyle={{
-              fontSize: 24,
-              fontWeight: "bold",
-            }}
-            onPress={() => callUtil(nextToCall as Person, db)}
-          />
-        </View>
-
-        <Pressable
-          onPress={() => sendSMS(nextToCall?.phoneNumber.toString() as string)}
-        >
-          <ThemedText
-            style={{
-              fontSize: 16,
-              marginTop: 10,
-              color: "black",
-              textDecorationLine: "underline",
-            }}
-          >
-            Text
-          </ThemedText>
-        </Pressable>
+       
       </View>
 
       <Card>
@@ -231,7 +202,7 @@ export default function groupScreen() {
           keyExtractor={(item) => item.reminder_id.toString()}
         />
 
-        <Button
+        <StandardButton
           title="+Add Reminder"
           onPress={() =>
             router.navigate({

@@ -1,17 +1,12 @@
 import { ThemedText } from "@/components/ThemedText";
-import { useContext, useState } from "react";
-import { Alert, FlatList, Pressable } from "react-native";
+import { Alert, FlatList, Pressable, ScrollView } from "react-native";
 import {
   SafeAreaView,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
-import { ListItem } from "@rneui/themed";
 import { View } from "react-native";
 import { useContext, useEffect, useState } from "react";
-import { Alert, FlatList, Pressable, ScrollView, TextInput } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { ListItem, Card, SearchBar } from "@rneui/themed";
-import {  View } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import * as Contacts from "expo-contacts";
 import { InTouchContext } from "@/context/InTouchContext";
@@ -20,7 +15,6 @@ import AddMemberManual from "@/components/AddMemberManual";
 import { Person } from "@/constants/types";
 import { stackViews, styles } from "@/constants/Stylesheet";
 import React from "react";
-import { Card, Divider } from "@rneui/base";
 
 export default function addMemberScreen() {
   const { createPerson, addTempBondMember, generatePersonId , tempBondMembers, peopleList, bondPersonMap, createBondMember, clearTempBondMembers } = useContext(InTouchContext);
