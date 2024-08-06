@@ -100,10 +100,17 @@ export const styles = StyleSheet.create({
       alignItems: 'center',
     },
     btnOrientation: {
-      flex: .3,
+      flex: 1,
       flexDirection: "row",
-      justifyContent: 'center',
+      justifyContent: 'space-between',
       alignItems: 'center',
+    },
+    cardTitleBtn: {
+      height: 50,
+      flexDirection: "row",
+      justifyContent: 'space-around',
+      alignItems: 'center',
+
     },
     nameContainer: {
       flex: 1,

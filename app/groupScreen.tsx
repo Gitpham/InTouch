@@ -1,5 +1,5 @@
 import { ThemedText } from "@/components/ThemedText";
-import { FlatList, Pressable, ScrollView, View, Alert } from "react-native";
+import { FlatList, Pressable, ScrollView, View, Alert, Text } from "react-native";
 import { Card, ListItem, Button } from "@rneui/themed";
 import { useLocalSearchParams } from "expo-router";
 import { useContext, useEffect, useState } from "react";
@@ -186,7 +186,12 @@ export default function groupScreen() {
       </Card>
 
       <Card containerStyle={{ flex: 2 }}>
-        <Card.Title>Members</Card.Title>
+   
+        <Card.Title>
+          Members
+          </Card.Title>
+
+
         <FlatList
           nestedScrollEnabled={true}
           style={{ height: "50%" }}
