@@ -202,7 +202,7 @@ export default function groupScreen() {
         onPress={() => {
           router.navigate({
             pathname: "./reminderBondScreen",
-            params: { bid: bond?.bond_id },
+            params: { bid: bond?.bond_id, bondName: bond?.bondName },
           })
 
 

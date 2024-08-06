@@ -22,6 +22,7 @@ export default function ReminderBondScreen() {
 
   const [bond, setBond] = useState<Bond>();
   const stackView = stackViews();
+  const bondName = localSearchParams.bondName
 
   useEffect(() => {
     const bid = parseInt(localSearchParams.bid);
@@ -96,7 +97,7 @@ export default function ReminderBondScreen() {
     <View style={stackView}>
       <Stack.Screen
         options={{
-          headerTitle: bond?.bondName,
+          headerTitle: ` ${bondName} Reminders`,
         }}
       />
       <FlatList
