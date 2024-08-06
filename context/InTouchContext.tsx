@@ -515,7 +515,7 @@ export const InTouchContextProvider: React.FC<{
 
   async function removeBondMember(bond: Bond, person: Person) {
     try {
-      await deletePersonBond(db, person, bond);
+      await deletePersonBond(db, person.person_id, bond.bond_id);
       setPersonBondMap(removeFromPersonBondMap(bond, person))
       setBondPersonMap(removeFromBondPersonMap(bond, person))
     } catch (e) {

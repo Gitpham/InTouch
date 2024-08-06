@@ -7,28 +7,75 @@ import {
 } from "react-native-safe-area-context";
 import { ListItem } from "@rneui/themed";
 import { View } from "react-native";
+import { useContext, useEffect, useState } from "react";
+import { Alert, FlatList, Pressable, ScrollView, TextInput } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { ListItem, Card, SearchBar } from "@rneui/themed";
+import {  View } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import * as Contacts from "expo-contacts";
 import { InTouchContext } from "@/context/InTouchContext";
 import { StandardButton } from "@/components/ButtonStandard";
+import AddMemberManual from "@/components/AddMemberManual";
 import { Person } from "@/constants/types";
 import { stackViews, styles } from "@/constants/Stylesheet";
 import React from "react";
 import { Card, Divider } from "@rneui/base";
 
 export default function addMemberScreen() {
-  const {
-    createPerson,
-    addTempBondMember,
-    generatePersonId,
-    tempBondMembers,
-    peopleList,
-    bondPersonMap,
-    createBondMember,
-  } = useContext(InTouchContext);
-  const [refresh, setRefresh] = useState(false);
+  const { createPerson, addTempBondMember, generatePersonId , tempBondMembers, peopleList, bondPersonMap, createBondMember, clearTempBondMembers } = useContext(InTouchContext);
+  const [ refresh, setRefresh ] = useState(false)
+  const [memberFirstName, memFirstNameChange] = useState("");
+  const [memberLastName, memLastNameChange] = useState("");
+  const [ search, setSearch ] = useState("")
+  const [memberNumber, memNumberChange] = useState("");
+  const [bondId, setBondID] = useState<number>(-1);
+  const [isVisible, setIsVisible] = useState(false);
+  const [membersToShow, setMembersToShow] = useState<Array<Person>>([])
+  
   const localParams = useLocalSearchParams();
-  const bond_id = +localParams.bond_id;
+
+  useEffect(() => {
+    setBondID(+localParams.bond_id);
+
+    let peopleToShow = peopleList.filter((p) => {
+      if (!tempBondMembers.has(p.person_id as number)) {
+        const bond_members = bondPersonMap.get(+localParams.bond_id);
+        if (!bond_members) {
+          return p;
+        }
+
+        else if (!bond_members.has(p.person_id as number)) {
+          return p;
+        }
+
+        else {
+          return null;
+        }
+      }
+    });
+
+    if (search !== "") {
+       peopleToShow = membersToShow.filter((p) => {
+        let name = p.firstName;
+        if (p.lastName) {
+          name += " "
+          name += p.lastName;
+        }
+
+        if (name.includes(search)) {
+          console.log(name)
+          return p;
+        }
+        else {
+          return null;
+        }
+      })
+
+    }
+    setMembersToShow(peopleToShow)
+  }, [tempBondMembers, peopleList, search]);
+  
   const group_screen = +localParams.group_screen;
   const stackView = stackViews();
   const insets = useSafeAreaInsets();
@@ -38,11 +85,10 @@ export default function addMemberScreen() {
 
     if (status === "granted") {
       const person = await Contacts.presentContactPickerAsync();
-      console.log("Person: ", person);
-      console.log("firstName: ", person?.firstName);
       if (person) {
         // Generate unique person id
         const personID = generatePersonId();
+
 
         const newContact: Person = {
           firstName: person?.firstName as string,
@@ -51,22 +97,12 @@ export default function addMemberScreen() {
           person_id: undefined,
         };
         await createPerson(newContact);
-
-        if (bond_id !== -1) {
-          console.log("addTBondMember");
-          addTempBondMember(personID);
-        }
       } else {
         Alert.alert("unable to add from contacts");
       }
     }
   }
-  const renderPeopleNotInBond = ({ item }: { item: Person }) => {
-    if (!tempBondMembers.has(item.person_id as number)) {
-      const bond_members = bondPersonMap.get(bond_id);
-      if (bond_members && bond_members.has(item.person_id as number)) {
-        return null;
-      }
+  const addBondMember = ({ item }: { item: Person }) => {
       return (
         <ListItem bottomDivider>
           <Pressable
@@ -87,65 +123,93 @@ export default function addMemberScreen() {
           </Pressable>
         </ListItem>
       );
-    }
-    return null;
   };
 
   const onDonePress = () => {
     if (group_screen === 1) {
-      createBondMember(tempBondMembers, bond_id);
+      createBondMember(tempBondMembers, bondId);
     }
-    router.back();
+    clearTempBondMembers();
+    router.back()
+  }
+
+  const updateSearch = (search: string) => {
+    setSearch(search);
   };
 
+
   return (
-    <View
-      style={{
-        flex: 1,
-        backgroundColor: "white",
-        gap: 2,
-        flexDirection: "column",
-        paddingBottom: insets.bottom,
-        justifyContent: "flex-start",
-        alignContent: "flex-start",
-      }}
-    >
-      <Card>
-        <View style={{ justifyContent: "center", alignItems: "center" }}>
-          {bond_id !== -1 ? (
-            <>
-              <ThemedText type="subtitle" style={styles.title}>
-                Choose From inTouch Contacts
-              </ThemedText>
-              <Divider></Divider>
-
-              <FlatList
-                data={peopleList}
-                style={styles.flatList}
-                renderItem={renderPeopleNotInBond}
-                keyExtractor={(item) => item.person_id.toString()}
-              />
-            </>
-          ) : null}
-        </View>
-      </Card>
-
+    <SafeAreaView style={styles.stepContainer}>
+      <ScrollView nestedScrollEnabled={true}>
+      <View style = {styles.centeredView}>
+        <ThemedText type = "title" style = {styles.title}>Add Member</ThemedText>
+      </View>
       <StandardButton
-        title="Create Contact Manually"
+        title="Create New Contact"
         onPress={() => {
-          router.navigate({
-            pathname: "./addMemberManualScreen",
-            params: { bond_id: localParams.bond_id },
-          });
+          const newVisible = !isVisible;
+          setIsVisible(newVisible);
         }}
       />
+      
+      {isVisible && 
+      <View style = {{paddingTop: 10, paddingBottom: 10, borderColor: "black", borderWidth: 2, borderRadius: 10}}>
+        <AddMemberManual
+        memberFirstName={memberFirstName}
+        memFirstNameChange={memFirstNameChange}
+        memberLastName={memberLastName}
+        memLastNameChange={memLastNameChange}
+        memberNumber={memberNumber}
+        memNumberChange={memNumberChange}
+        bondId={bondId}
+        setBondID={setBondID}
+        isVisible={isVisible}
+        setIsVisible={setIsVisible}
+      />
+      </View>}
 
       <StandardButton
         title="Import from Contacts"
         onPress={importFromContacts}
       />
 
-      <StandardButton title="Done" onPress={() => onDonePress()} />
-    </View>
+{((bondId !== -1) && (peopleList.length !== 0)) ?
+      (
+
+
+
+      <Card>
+      <Card.Title>Choose From inTouch Contacts</Card.Title>
+    
+      <View style={styles.centeredView}>
+      <SearchBar
+        placeholder ="Search inTouch Contacts"
+        onChangeText={updateSearch}
+        value={search}
+        containerStyle={{ height: 50, width: 300 }} // Adjust outer container height
+        inputContainerStyle={{ height: 30, width: 280 }} // Adjust input container height
+        inputStyle={{ fontSize: 14 }} // Adjust font size
+      />
+      <FlatList
+        data={membersToShow}
+        style = {styles.flatList}
+        renderItem={addBondMember}
+        keyExtractor={(item) => item.person_id.toString()}
+      />
+      </View>
+      </Card>) :  null}
+
+      <StandardButton
+        title="Save"
+        onPress={() => onDonePress()}
+      />
+
+      <StandardButton
+        title="Cancel"
+        onPress={() => router.back()}
+
+      /> 
+      </ScrollView>
+      </SafeAreaView>
   );
 }

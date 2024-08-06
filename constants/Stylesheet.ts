@@ -78,6 +78,13 @@ export const styles = StyleSheet.create({
       paddingTop: 10,
       alignItems:'center',
     },
+    smallContainer: {
+      flex: 1,
+      backgroundColor: "White",
+      flexDirection: "column",
+      paddingTop: 10,
+      paddingBottom: 10,
+    },
     homeContainer: {
         flex: 1,
         backgroundColor: 'white',

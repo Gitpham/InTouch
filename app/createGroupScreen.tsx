@@ -62,7 +62,17 @@ export default function createGroupScreen() {
 
   async function onDonePress() {
     if (!bondName) {
-      Alert.alert("Must enter a Bond name");
+      Alert.alert("Invalid Bond", "Please enter a name for this bond");
+      return;
+    }
+
+    if (tempBondMembers.size === 0) {
+      Alert.alert("Invalid Bond", "Bond must have at least one member");
+      return;
+    }
+
+    if (!potentialSchedule) {
+      Alert.alert("Invalid Bond", "Please choose a schedule")
       return;
     }
 
@@ -81,10 +91,10 @@ export default function createGroupScreen() {
       console.error(e);
       throw Error("failed to call createBondMember()");
     }
-    clearTempBondMembers();
     generateNotificationSchedule(potentialSchedule, bondToAdd, db);
     createPotentialSchedule(undefined);
     router.push("./(tabs)");
+    clearTempBondMembers();
   }
 
   function onCreateSchedule() {

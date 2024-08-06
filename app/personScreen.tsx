@@ -9,7 +9,6 @@ import {
   Alert,
   FlatList,
   Pressable,
-  ScrollView,
   View,
   Linking,
   Text,
@@ -17,8 +16,7 @@ import {
 import { router } from "expo-router";
 import { stackViews, styles } from "@/constants/Stylesheet";
 import { DeleteIcon } from "@/components/DeleteIcon";
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-
+import { useSQLiteContext } from "expo-sqlite";
 export default function PersonScreen() {
   const {
     peopleList,
@@ -32,6 +30,7 @@ export default function PersonScreen() {
   const [person, setPerson] = useState<Person>();
   const [bonds, setBonds] = useState<Array<Bond>>();
   const [reminders, setReminders] = useState<Array<Reminder>>();
+  const db = useSQLiteContext();
   const stackView = stackViews();
 
   useEffect(() => {

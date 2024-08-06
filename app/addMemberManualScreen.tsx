@@ -10,6 +10,7 @@ import { InTouchContext } from "@/context/InTouchContext";
 import { Person } from "@/constants/types";
 import { styles } from "@/constants/Stylesheet"
 import { StandardButton } from "@/components/ButtonStandard";
+import { phoneNumberVerifier } from "@/context/PhoneNumberUtils";
 
 export default function addMemberManualScreen() {
   const router = useRouter();
@@ -82,7 +83,9 @@ export default function addMemberManualScreen() {
       <StandardButton
         title="Create Contact"
         onPress={() => {
+          if (phoneNumberVerifier(memberNumber.trim())) {
           savePerson();
+          }
         }}
       />
 

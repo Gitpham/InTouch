@@ -14,6 +14,12 @@ import { cancelNotificationsForBond } from "@/context/NotificationUtils";
 import { DeleteIcon } from "@/components/DeleteIcon";
 import { stackViews, styles } from "@/constants/Stylesheet";
 import { Divider } from "@rneui/base";
+import { styles } from "@/constants/Stylesheet";
+import {
+  sendSMS,
+  getNextToCallUtil,
+  callUtil,
+} from "@/context/PhoneNumberUtils";
 
 export default function groupScreen() {
   const {
@@ -30,21 +36,33 @@ export default function groupScreen() {
   const [bond, setBond] = useState<Bond>();
   const [members, setMembers] = useState<Array<Person>>();
   const [reminders, setReminders] = useState<Array<Reminder>>();
+  const [nextToCall, setNextToCall] = useState<Person>();
   const db = useSQLiteContext();
   const stackView = stackViews();
 
   useEffect(() => {
-    const bondId: number = +(localParams.id as string);
-    const bond_index = bondList.findIndex((item) => item.bond_id === bondId);
-    if (bond_index !== -1) {
-      const b: Bond = bondList[bond_index];
-      setBond(b);
-      const p = getMembersOfBond(b);
-      setMembers(p);
-      const r = getRemindersOfBond(bondId);
-      setReminders(r);
+    const fetchData = async () => {
+      const bondId: number = +(localParams.id as string);
+      const bond_index = bondList.findIndex((item) => item.bond_id === bondId);
+      if (bond_index !== -1) {
+        const b: Bond = bondList[bond_index];
+        setBond(b);
+        const p = getMembersOfBond(b);
+        setMembers(p);
+        const r = getRemindersOfBond(bondId);
+        setReminders(r);
+        const n = await getNextToCallUtil(b.bond_id, db);
+        setNextToCall(n);
+      }
+    };
+
+    try {
+      fetchData();
+    } catch (e) {
+      console.error(e);
+      console.log("Could not get Next to call");
     }
-  }, [bondPersonMap, reminderList, bondList]);
+  }, [bondPersonMap, reminderList]);
 
   const renderMembers = ({ item }: { item: Person }) => {
     return (
@@ -116,7 +134,10 @@ export default function groupScreen() {
   };
 
   const deletePersonAlert = (person: Person) => {
-    const name = person.firstName + " " + person.lastName;
+    let name = person.firstName + " ";
+    if (person.lastName) {
+      name += person.lastName + " ";
+    }
     Alert.alert(`Remove ${name} from ${bond?.bondName}?`, "", [
       {
         text: "Cancel",
@@ -137,11 +158,7 @@ export default function groupScreen() {
 
   const deleteReminderAlert = (reminder_id: number) => {
     Alert.alert(`Delete reminder for ${bond?.bondName}?`, "", [
-      {
-        text: "Cancel",
-        onPress: () => console.log("Cancel Pressed"),
-        style: "cancel",
-      },
+      { text: "Cancel", onPress: () => {}, style: "cancel" },
       {
         text: "OK",
         onPress: () => {
@@ -161,17 +178,60 @@ export default function groupScreen() {
           {bond?.bondName}
         </ThemedText>
       </View>
-      {bond ? <ScheduleCard bond={bond}></ScheduleCard> : <></>}
 
-      <Card containerStyle={{ flex: 2 }}>
+      {bond ? <ScheduleCard bond={bond}></ScheduleCard> : <></>}
+      <View style={styles.centeredView}>
+        <ThemedText
+          style={{
+            color: "black",
+            marginTop: 10,
+            marginBottom: 10,
+          }}
+        >
+          Next to Call {`${nextToCall?.firstName} ${nextToCall?.lastName}`}
+        </ThemedText>
+        <View style={{ width: 150 }}>
+          <Button
+            title="Call"
+            buttonStyle={{
+              margin: 10,
+              backgroundColor: "red",
+              borderColor: "black",
+              borderWidth: 2,
+            }}
+            titleStyle={{
+              fontSize: 24,
+              fontWeight: "bold",
+            }}
+            onPress={() => callUtil(nextToCall as Person, db)}
+          />
+        </View>
+
+        <Pressable
+          onPress={() => sendSMS(nextToCall?.phoneNumber.toString() as string)}
+        >
+          <ThemedText
+            style={{
+              fontSize: 16,
+              marginTop: 10,
+              color: "black",
+              textDecorationLine: "underline",
+            }}
+          >
+            Text
+          </ThemedText>
+        </Pressable>
+      </View>
+
+      <Card>
         <Card.Title>Reminders</Card.Title>
         <FlatList
-          style={{ height: "50%" }}
           data={reminders}
           renderItem={renderReminders}
           keyExtractor={(item) => item.reminder_id.toString()}
         />
-        <StandardButton
+
+        <Button
           title="+Add Reminder"
           onPress={() =>
             router.navigate({
@@ -202,21 +262,24 @@ export default function groupScreen() {
         />
       </Card>
       <View
-      style={{alignContent: 'center', justifyContent: 'center', alignItems: 'center'}}
-
-      >
-      <Button
-        title="Delete"
-        buttonStyle={{
-          margin: 10,
-          backgroundColor: "white",
-          borderColor: "red",
-          borderWidth: 2,
+        style={{
+          alignContent: "center",
+          justifyContent: "center",
+          alignItems: "center",
         }}
-        titleStyle={styles.redTitle}
-        onPress={onDelete}
-      />
-       </View>
+      >
+        <Button
+          title="Delete"
+          buttonStyle={{
+            margin: 10,
+            backgroundColor: "white",
+            borderColor: "red",
+            borderWidth: 2,
+          }}
+          titleStyle={styles.redTitle}
+          onPress={onDelete}
+        />
+      </View>
     </View>
   );
 }

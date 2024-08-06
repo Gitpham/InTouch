@@ -20,15 +20,13 @@ export const addPersonBond = async (db: SQLite.SQLiteDatabase, person_id: number
 
 }
 
-export const deletePersonBond = async (db: SQLite.SQLiteDatabase, person: Person, bond: Bond) => {
+export const deletePersonBond = async (db: SQLite.SQLiteDatabase, person_id: number, bond_id: number) => {
 
     const statement = await db.prepareAsync(`
        DELETE FROM person_bond
         WHERE person_id = ? AND bond_id = ?
         `);
-
-    const value: string[] = [(person.person_id as number).toString(), bond.bond_id.toString()]
-
+    const value = [person_id, bond_id]
     try {
         return await statement.executeAsync(value)
     } catch (error) {
