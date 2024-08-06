@@ -177,10 +177,6 @@ export default function groupScreen() {
           {bond?.bondName}
         </ThemedText>
       </View>
-
-      <CallTextButton person={nextToCall as Person}></CallTextButton>
-
-      {bond ? <ScheduleCard bond={bond}></ScheduleCard> : <></>}
       <View style={styles.centeredView}>
         <ThemedText
           style={{
@@ -194,14 +190,24 @@ export default function groupScreen() {
        
       </View>
 
+      <CallTextButton person={nextToCall as Person}></CallTextButton>
+
+      {bond ? <ScheduleCard bond={bond}></ScheduleCard> : <></>}
+   
+
       <Card>
         <Card.Title>Reminders</Card.Title>
-        <FlatList
-          data={reminders}
-          renderItem={renderReminders}
-          keyExtractor={(item) => item.reminder_id.toString()}
-        />
+        <StandardButton 
+        title="See All Reminders" 
+        onPress={() => {
+          router.navigate({
+            pathname: "./reminderBondScreen",
+            params: { bid: bond?.bond_id },
+          })
 
+
+        }}
+        ></StandardButton>
         <StandardButton
           title="+Add Reminder"
           onPress={() =>
