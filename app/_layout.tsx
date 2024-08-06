@@ -113,9 +113,14 @@ export default function RootLayout() {
         <ScheduleContextProvider>
 
         <InTouchContextProvider>
-          <Stack screenOptions={{headerStyle: {
-          backgroundColor: 'white',
-        },}}>
+          <Stack screenOptions={{
+            headerShadowVisible: false,
+            headerStyle: {
+              backgroundColor: 'white', 
+        },
+
+        
+        }}>
             <Stack.Screen name="index" options={{ headerShown: false  }} />
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
             <Stack.Screen name="+not-found" />
@@ -125,7 +130,7 @@ export default function RootLayout() {
             />
             <Stack.Screen
               name="groupScreen"
-              options={{headerTitle: "" , headerBackTitleVisible: false}}
+              options={{headerTitle: "" , headerBackTitleVisible: false , }}
             />
             <Stack.Screen
               name="addMemberScreen"
