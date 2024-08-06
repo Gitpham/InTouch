@@ -161,7 +161,6 @@ export default function groupScreen() {
           {bond?.bondName}
         </ThemedText>
       </View>
-      <Divider></Divider>
       {bond ? <ScheduleCard bond={bond}></ScheduleCard> : <></>}
 
       <Card containerStyle={{ flex: 2 }}>
