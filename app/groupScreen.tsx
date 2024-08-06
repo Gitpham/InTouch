@@ -1,5 +1,5 @@
 import { ThemedText } from "@/components/ThemedText";
-import { FlatList, Pressable, ScrollView, View, Alert } from "react-native";
+import { FlatList, Pressable, ScrollView, View, Alert, Text } from "react-native";
 import { Card, ListItem, Button } from "@rneui/themed";
 import { useLocalSearchParams } from "expo-router";
 import { useContext, useEffect, useState } from "react";
@@ -63,36 +63,42 @@ export default function groupScreen() {
     }
   }, [bondPersonMap, reminderList]);
 
-  const renderMembers = ({ item }: { item: Person }) => {
-    return (
-      <ListItem bottomDivider>
-        <ListItem.Content id={item.person_id?.toString()}>
-          <View style={styles.rowOrientation}>
-            <View style={styles.nameContainer}>
+  const renderMembers = (members: Person[]) => {
+    const memberList: React.JSX.Element[] = [];
+
+    members.forEach((p) => {
+      memberList.push(
+        <ListItem bottomDivider>
+          <ListItem.Content id={p.person_id?.toString()}>
+            <View style={styles.rowOrientation}>
+              <View style={styles.nameContainer}>
+                <Pressable
+                  onPress={() => {
+                    router.navigate({
+                      pathname: "./personScreen",
+                      params: { id: `${p.person_id}` },
+                    });
+                  }}
+                >
+                  <ListItem.Title>
+                    {p.firstName} {p.lastName}
+                  </ListItem.Title>
+                </Pressable>
+              </View>
               <Pressable
                 onPress={() => {
-                  router.navigate({
-                    pathname: "./personScreen",
-                    params: { id: `${item.person_id}` },
-                  });
+                  deletePersonAlert(p);
                 }}
               >
-                <ListItem.Title>
-                  {item.firstName} {item.lastName}
-                </ListItem.Title>
+                <DeleteIcon></DeleteIcon>
               </Pressable>
             </View>
-            <Pressable
-              onPress={() => {
-                deletePersonAlert(item);
-              }}
-            >
-              <DeleteIcon></DeleteIcon>
-            </Pressable>
-          </View>
-        </ListItem.Content>
-      </ListItem>
-    );
+          </ListItem.Content>
+        </ListItem>
+      );
+    });
+
+    return memberList;
   };
 
   const renderReminders = ({ item }: { item: Reminder }) => {
@@ -171,7 +177,7 @@ export default function groupScreen() {
   };
 
   return (
-    <View style={stackView}>
+    <ScrollView style={{backgroundColor: 'white'}}>
       <View style={styles.centeredView}>
         <ThemedText darkColor="black" style={styles.title} type="title">
           {bond?.bondName}
@@ -187,26 +193,22 @@ export default function groupScreen() {
         >
           Next to Call {`${nextToCall?.firstName} ${nextToCall?.lastName}`}
         </ThemedText>
-       
       </View>
 
       <CallTextButton person={nextToCall as Person}></CallTextButton>
 
       {bond ? <ScheduleCard bond={bond}></ScheduleCard> : <></>}
-   
 
       <Card>
         <Card.Title>Reminders</Card.Title>
-        <StandardButton 
-        title="See All Reminders" 
-        onPress={() => {
-          router.navigate({
-            pathname: "./reminderBondScreen",
-            params: { bid: bond?.bond_id, bondName: bond?.bondName },
-          })
-
-
-        }}
+        <StandardButton
+          title="See All Reminders"
+          onPress={() => {
+            router.navigate({
+              pathname: "./reminderBondScreen",
+              params: { bid: bond?.bond_id, bondName: bond?.bondName },
+            });
+          }}
         ></StandardButton>
         <StandardButton
           title="+Add Reminder"
@@ -221,13 +223,15 @@ export default function groupScreen() {
 
       <Card containerStyle={{ flex: 2 }}>
         <Card.Title>Members</Card.Title>
-        <FlatList
-          nestedScrollEnabled={true}
-          style={{ height: "50%" }}
-          data={members}
-          renderItem={renderMembers}
-          keyExtractor={(item) => item.person_id.toString()}
-        />
+        {
+
+          members != undefined ?
+
+        
+        renderMembers(members) :
+        <Text>No Members</Text>
+      
+      }
         <StandardButton
           title="+Add Member"
           onPress={() => {
@@ -257,6 +261,6 @@ export default function groupScreen() {
           onPress={onDelete}
         />
       </View>
-    </View>
+    </ScrollView>
   );
 }

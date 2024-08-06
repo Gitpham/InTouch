@@ -136,10 +136,7 @@ export default function RootLayout() {
               name="addMemberScreen"
               options={{ headerTitle: "" }}
             />
-            <Stack.Screen
-              name="addMemberManualScreen"
-              options={{ headerShown: false }}
-            />
+     
             <Stack.Screen
               name="personScreen"
               options={{ headerTitle: "", headerBackTitleVisible: false }}
