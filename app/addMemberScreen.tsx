@@ -22,7 +22,7 @@ export default function addMemberScreen() {
   const [memberNumber, memNumberChange] = useState("");
   const [bondId, setBondID] = useState<number>(-1);
   const [isVisible, setIsVisible] = useState(false);
-  const [membersToShow, setMembersToShow] = useState<Array<Person>>()
+  const [membersToShow, setMembersToShow] = useState<Array<Person>>([])
   
   const localParams = useLocalSearchParams();
 
@@ -46,25 +46,24 @@ export default function addMemberScreen() {
       }
     });
 
-    if (search != "") {
-      peopleToShow = peopleToShow.filter((p) => {
+    if (search !== "") {
+       peopleToShow = membersToShow.filter((p) => {
         let name = p.firstName;
-        let combinedName = p.firstName
         if (p.lastName) {
           name += " "
           name += p.lastName;
-          combinedName += p.lastName
         }
 
         if (name.includes(search)) {
+          console.log(name)
           return p;
         }
         else {
           return null;
         }
       })
-    } 
 
+    }
     setMembersToShow(peopleToShow)
   }, [tempBondMembers, peopleList, search]);
   
@@ -159,18 +158,22 @@ export default function addMemberScreen() {
       />
 
 {((bondId !== -1) && (peopleList.length !== 0)) ?
-      (<>
+      (
+
+
+
+      <Card>
+      <Card.Title>Choose From inTouch Contacts</Card.Title>
+    
+      <View style={styles.centeredView}>
       <SearchBar
         placeholder ="Search inTouch Contacts"
         onChangeText={updateSearch}
         value={search}
-        />
-
-      <Card>
-      <Card.Title>Choose From inTouch Contacts</Card.Title>
-      <View style={styles.centeredView}>
-    
-        
+        containerStyle={{ height: 50, width: 300 }} // Adjust outer container height
+        inputContainerStyle={{ height: 30, width: 280 }} // Adjust input container height
+        inputStyle={{ fontSize: 14 }} // Adjust font size
+      />
       <FlatList
         data={membersToShow}
         style = {styles.flatList}
@@ -178,8 +181,7 @@ export default function addMemberScreen() {
         keyExtractor={(item) => item.person_id.toString()}
       />
       </View>
-      </Card>
-      </>) :  null}
+      </Card>) :  null}
 
       <StandardButton
         title="Save"
