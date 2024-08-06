@@ -1,37 +1,46 @@
 import { ThemedText } from "@/components/ThemedText";
 import { useContext, useState } from "react";
 import { Alert, FlatList, Pressable } from "react-native";
-import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
-import {  ListItem } from "@rneui/themed";
-import {  View } from "react-native";
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
+import { ListItem } from "@rneui/themed";
+import { View } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import * as Contacts from "expo-contacts";
 import { InTouchContext } from "@/context/InTouchContext";
 import { StandardButton } from "@/components/ButtonStandard";
 import { Person } from "@/constants/types";
-import { stackViews, styles } from "@/constants/Stylesheet"
+import { stackViews, styles } from "@/constants/Stylesheet";
 import React from "react";
-import { Divider } from "@rneui/base";
+import { Card, Divider } from "@rneui/base";
 
 export default function addMemberScreen() {
-  const { createPerson, addTempBondMember, generatePersonId , tempBondMembers, peopleList, bondPersonMap, createBondMember } = useContext(InTouchContext);
-  const [ refresh, setRefresh] = useState(false)
+  const {
+    createPerson,
+    addTempBondMember,
+    generatePersonId,
+    tempBondMembers,
+    peopleList,
+    bondPersonMap,
+    createBondMember,
+  } = useContext(InTouchContext);
+  const [refresh, setRefresh] = useState(false);
   const localParams = useLocalSearchParams();
   const bond_id = +localParams.bond_id;
   const group_screen = +localParams.group_screen;
-  const stackView = stackViews()
+  const stackView = stackViews();
   const insets = useSafeAreaInsets();
-
 
   async function importFromContacts() {
     const { status } = await Contacts.requestPermissionsAsync();
 
     if (status === "granted") {
       const person = await Contacts.presentContactPickerAsync();
-      console.log("Person: ", person)
-      console.log("firstName: ", person?.firstName)
+      console.log("Person: ", person);
+      console.log("firstName: ", person?.firstName);
       if (person) {
-
         // Generate unique person id
         const personID = generatePersonId();
 
@@ -42,11 +51,11 @@ export default function addMemberScreen() {
           person_id: undefined,
         };
         await createPerson(newContact);
-        
+
         if (bond_id !== -1) {
-          console.log("addTBondMember")
+          console.log("addTBondMember");
           addTempBondMember(personID);
-          }
+        }
       } else {
         Alert.alert("unable to add from contacts");
       }
@@ -60,13 +69,19 @@ export default function addMemberScreen() {
       }
       return (
         <ListItem bottomDivider>
-          <Pressable onPress={() => { addTempBondMember(item.person_id as number); setRefresh((oldValue) => !oldValue); }}>
+          <Pressable
+            onPress={() => {
+              addTempBondMember(item.person_id as number);
+              setRefresh((oldValue) => !oldValue);
+            }}
+          >
             <ListItem.Content id={item.person_id?.toString()}>
               <ListItem.Title>
                 {item.firstName} {item.lastName}
               </ListItem.Title>
               <ListItem.Title>
-                Phone Number: {item.phoneNumber} id: {item.person_id?.toString()}
+                Phone Number: {item.phoneNumber} id:{" "}
+                {item.person_id?.toString()}
               </ListItem.Title>
             </ListItem.Content>
           </Pressable>
@@ -80,41 +95,48 @@ export default function addMemberScreen() {
     if (group_screen === 1) {
       createBondMember(tempBondMembers, bond_id);
     }
-    router.back()
-  }
-
+    router.back();
+  };
 
   return (
-    <View style={{flex: 1,
-      backgroundColor: "white",
-      gap: 2,
-      flexDirection: "column",
-      paddingBottom: insets.bottom,
-      justifyContent: 'flex-start',
-      alignContent: 'flex-start',}}>
-      <View style={{ justifyContent: 'center', alignItems: 'center', 
-        }}>
-        {(bond_id !== -1) ?  (
-        <>
-        <ThemedText type="subtitle" style={styles.title}>
-          Choose From inTouch Contacts
-        </ThemedText>
-        <Divider></Divider>
-      
-      <FlatList
-        data={peopleList}
-        style = {styles.flatList}
-        renderItem={renderPeopleNotInBond}
-        keyExtractor={(item) => item.person_id.toString()}
-      />
-      </>) :  null}
-      </View>
+    <View
+      style={{
+        flex: 1,
+        backgroundColor: "white",
+        gap: 2,
+        flexDirection: "column",
+        paddingBottom: insets.bottom,
+        justifyContent: "flex-start",
+        alignContent: "flex-start",
+      }}
+    >
+      <Card>
+        <View style={{ justifyContent: "center", alignItems: "center" }}>
+          {bond_id !== -1 ? (
+            <>
+              <ThemedText type="subtitle" style={styles.title}>
+                Choose From inTouch Contacts
+              </ThemedText>
+              <Divider></Divider>
 
+              <FlatList
+                data={peopleList}
+                style={styles.flatList}
+                renderItem={renderPeopleNotInBond}
+                keyExtractor={(item) => item.person_id.toString()}
+              />
+            </>
+          ) : null}
+        </View>
+      </Card>
 
       <StandardButton
         title="Create Contact Manually"
         onPress={() => {
-          router.navigate({pathname: "./addMemberManualScreen", params: {bond_id: localParams.bond_id}});
+          router.navigate({
+            pathname: "./addMemberManualScreen",
+            params: { bond_id: localParams.bond_id },
+          });
         }}
       />
 
@@ -123,10 +145,7 @@ export default function addMemberScreen() {
         onPress={importFromContacts}
       />
 
-      <StandardButton
-        title="Done"
-        onPress={() => onDonePress()}
-      />
+      <StandardButton title="Done" onPress={() => onDonePress()} />
     </View>
   );
 }

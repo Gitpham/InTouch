@@ -171,10 +171,8 @@ export default function groupScreen() {
           renderItem={renderReminders}
           keyExtractor={(item) => item.reminder_id.toString()}
         />
-        <Button
+        <StandardButton
           title="+Add Reminder"
-          buttonStyle={styles.button}
-          titleStyle={styles.title}
           onPress={() =>
             router.navigate({
               pathname: "./addReminderModal",
