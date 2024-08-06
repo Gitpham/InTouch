@@ -24,7 +24,7 @@ export const deletePersonBond = async (db: SQLite.SQLiteDatabase, person: Person
 
     const statement = await db.prepareAsync(`
        DELETE FROM person_bond
-        WHERE person_id = ? & bond_id = ?
+        WHERE person_id = ? AND bond_id = ?
         `);
 
     const value: string[] = [(person.person_id as number).toString(), bond.bond_id.toString()]

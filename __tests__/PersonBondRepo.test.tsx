@@ -65,7 +65,7 @@ describe("PersonBondRepo Unit Tests", () => {
 
     const expectedStatement = `
        DELETE FROM person_bond
-        WHERE person_id = ? & bond_id = ?
+        WHERE person_id = ? AND bond_id = ?
         `;
     const expectedValue = [p.person_id.toString(), b.bond_id.toString()];
 
