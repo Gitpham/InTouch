@@ -93,7 +93,6 @@ export default function addMemberScreen() {
       justifyContent: 'flex-start',
       alignContent: 'flex-start',}}>
       <View style={{ justifyContent: 'center', alignItems: 'center', 
-        // borderWidth: 1
         }}>
         {(bond_id !== -1) ?  (
         <>
