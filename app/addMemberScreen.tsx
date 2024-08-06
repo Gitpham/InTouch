@@ -1,8 +1,8 @@
 import { ThemedText } from "@/components/ThemedText";
 import { useContext, useEffect, useState } from "react";
-import { Alert, FlatList, Pressable, ScrollView } from "react-native";
+import { Alert, FlatList, Pressable, ScrollView, TextInput } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { ListItem, Card } from "@rneui/themed";
+import { ListItem, Card, SearchBar } from "@rneui/themed";
 import {  View } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import * as Contacts from "expo-contacts";
@@ -18,6 +18,7 @@ export default function addMemberScreen() {
   const [ refresh, setRefresh ] = useState(false)
   const [memberFirstName, memFirstNameChange] = useState("");
   const [memberLastName, memLastNameChange] = useState("");
+  const [ search, setSearch ] = useState("")
   const [memberNumber, memNumberChange] = useState("");
   const [bondId, setBondID] = useState<number>(-1);
   const [isVisible, setIsVisible] = useState(false);
@@ -28,7 +29,7 @@ export default function addMemberScreen() {
   useEffect(() => {
     setBondID(+localParams.bond_id);
 
-    const peopleToShow = peopleList.filter((p) => {
+    let peopleToShow = peopleList.filter((p) => {
       if (!tempBondMembers.has(p.person_id as number)) {
         const bond_members = bondPersonMap.get(+localParams.bond_id);
         if (!bond_members) {
@@ -45,9 +46,27 @@ export default function addMemberScreen() {
       }
     });
 
+    if (search != "") {
+      peopleToShow = peopleToShow.filter((p) => {
+        let name = p.firstName;
+        let combinedName = p.firstName
+        if (p.lastName) {
+          name += " "
+          name += p.lastName;
+          combinedName += p.lastName
+        }
+
+        if (name.includes(search)) {
+          return p;
+        }
+        else {
+          return null;
+        }
+      })
+    } 
 
     setMembersToShow(peopleToShow)
-  }, [tempBondMembers, peopleList]);
+  }, [tempBondMembers, peopleList, search]);
   
   const group_screen = +localParams.group_screen;
 
@@ -61,15 +80,10 @@ export default function addMemberScreen() {
         // Generate unique person id
         const personID = generatePersonId();
 
-        const lastName = ""
-
-        if (person.lastName) {
-          lastName = person.lastName
-        }
 
         const newContact: Person = {
           firstName: person?.firstName as string,
-          lastName: lastName,
+          lastName: person?.lastName as string,
           phoneNumber: person?.phoneNumbers?.[0]?.number as string,
           person_id: undefined,
         };
@@ -103,6 +117,10 @@ export default function addMemberScreen() {
     clearTempBondMembers();
     router.back()
   }
+
+  const updateSearch = (search: string) => {
+    setSearch(search);
+  };
 
 
   return (
@@ -140,22 +158,28 @@ export default function addMemberScreen() {
         onPress={importFromContacts}
       />
 
+{((bondId !== -1) && (peopleList.length !== 0)) ?
+      (<>
+      <SearchBar
+        placeholder ="Search inTouch Contacts"
+        onChangeText={updateSearch}
+        value={search}
+        />
+
       <Card>
       <Card.Title>Choose From inTouch Contacts</Card.Title>
       <View style={styles.centeredView}>
-        {((bondId !== -1) && (peopleList.length !== 0)) ?  (
-
-          
-      
+    
+        
       <FlatList
         data={membersToShow}
         style = {styles.flatList}
         renderItem={addBondMember}
         keyExtractor={(item) => item.person_id.toString()}
       />
-      ) :  null}
       </View>
       </Card>
+      </>) :  null}
 
       <StandardButton
         title="Save"

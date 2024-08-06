@@ -91,7 +91,7 @@ export default function groupScreen() {
 
   const renderReminders = ({ item }: { item: Reminder }) => {
     if (item) {
-      return (
+      return (  
         <ListItem bottomDivider>
           <ListItem.Content id={item.reminder_id.toString()}>
             <View style = {styles.rowOrientation}>
@@ -133,7 +133,10 @@ export default function groupScreen() {
   }
 
   const deletePersonAlert = (person: Person) => {
-    const name = person.firstName + " " + person.lastName
+    let name = person.firstName + " "
+    if (person.lastName) {
+      name += person.lastName + " "
+    }
     Alert.alert(`Remove ${name} from ${bond?.bondName}?`, "", [
       {text: 'Cancel',
         onPress: () => console.log('Cancel Pressed'),
@@ -148,7 +151,7 @@ export default function groupScreen() {
   const deleteReminderAlert = (reminder_id: number) => {
     Alert.alert(`Delete reminder for ${bond?.bondName}?`, "",[
       {text: 'Cancel',
-        onPress: () => console.log('Cancel Pressed'),
+        onPress: () => {},
         style: 'cancel',},
       {text: 'OK',
         onPress: () => {if (bond) {deleteReminder(reminder_id)}},
