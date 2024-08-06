@@ -10,7 +10,7 @@ import React from "react";
 import { ListItem } from "@rneui/base";
 import { stackViews, styles } from "@/constants/Stylesheet";
 import { DeleteIcon } from "@/components/DeleteIcon";
-import { useLocalSearchParams } from "expo-router";
+import { router, Stack, useLocalSearchParams } from "expo-router";
 import { getBond } from "@/assets/db/BondRepo";
 import { useSQLiteContext } from "expo-sqlite";
 
@@ -20,7 +20,6 @@ export default function ReminderBondScreen() {
   const { reminderList, peopleList, bondList, removeReminder } =
     useContext(InTouchContext);
 
-  const [bondReminders, setBondReminders] = useState<Reminder[]>();
   const [bond, setBond] = useState<Bond>();
   const stackView = stackViews();
 
@@ -37,42 +36,34 @@ export default function ReminderBondScreen() {
       }
     };
     fetchData();
-
-    setBondReminders(
-      reminderList.filter((r) => {
-        if (r.bond_id) {
-          return r.bond_id == bid;
-        }
-        return;
-      })
-    );
   }, []);
 
-
   const renderReminder = ({ item }: { item: Reminder }) => {
-    if (item) {
-      return (
-        <ListItem bottomDivider>
-          <ListItem.Content id={item.reminder_id.toString()}>
-            <View style={styles.rowOrientation}>
-              <View style={styles.nameContainer}>
-                <ListItem.Title style={styles.name}>
-                  {bond?.bondName + " "}
-                </ListItem.Title>
+    if (item.bond_id) {
+      if (item.bond_id == bond?.bond_id) {
+        return (
+          <ListItem bottomDivider>
+            <ListItem.Content id={item.reminder_id.toString()}>
+              <View style={styles.rowOrientation}>
+                <View style={styles.nameContainer}>
+                  <ListItem.Title style={styles.name}>
+                    {bond?.bondName + " "}
+                  </ListItem.Title>
+                </View>
+                <ListItem.Title style={styles.date}>{item.date}</ListItem.Title>
               </View>
-              <ListItem.Title style={styles.date}>{item.date}</ListItem.Title>
-            </View>
-            <ListItem.Title>{item.reminder}</ListItem.Title>
-          </ListItem.Content>
+              <ListItem.Title>{item.reminder}</ListItem.Title>
+            </ListItem.Content>
 
-          <Pressable
-            onPress={() => deleteReminderAlert(item)}
-            style={styles.touchable}
-          >
-            <DeleteIcon></DeleteIcon>
-          </Pressable>
-        </ListItem>
-      );
+            <Pressable
+              onPress={() => deleteReminderAlert(item)}
+              style={styles.touchable}
+            >
+              <DeleteIcon></DeleteIcon>
+            </Pressable>
+          </ListItem>
+        );
+      }
     } else {
       return <ListItem bottomDivider></ListItem>;
     }
@@ -103,11 +94,24 @@ export default function ReminderBondScreen() {
 
   return (
     <View style={stackView}>
-
+      <Stack.Screen
+        options={{
+          headerTitle: bond?.bondName,
+        }}
+      />
       <FlatList
-        data={bondReminders}
+        data={reminderList}
         renderItem={renderReminder}
         keyExtractor={(item) => item.reminder_id.toString()}
+      />
+      <StandardButton
+        title="+Add Reminder"
+        onPress={() =>
+          router.navigate({
+            pathname: "./addReminderModal",
+            params: { person_id: -1, bond_id: bond.bond_id },
+          })
+        }
       />
     </View>
   );

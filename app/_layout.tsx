@@ -152,6 +152,10 @@ export default function RootLayout() {
               name="addReminderModal"
               options={{ headerTitle: "Add Reminders", presentation: "modal"}}
             />
+            <Stack.Screen
+              name="reminderBondScreen"
+              options={{ headerTitle: "", headerBackTitleVisible: false }}
+            />
 
           </Stack>
         </InTouchContextProvider>
