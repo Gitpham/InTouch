@@ -1,5 +1,12 @@
 import { ThemedText } from "@/components/ThemedText";
-import { FlatList, Pressable, ScrollView, View, Alert, Text } from "react-native";
+import {
+  FlatList,
+  Pressable,
+  ScrollView,
+  View,
+  Alert,
+  Text,
+} from "react-native";
 import { Card, ListItem, Button } from "@rneui/themed";
 import { useLocalSearchParams } from "expo-router";
 import { useContext, useEffect, useState } from "react";
@@ -101,30 +108,39 @@ export default function groupScreen() {
     return memberList;
   };
 
-  const renderReminders = ({ item }: { item: Reminder }) => {
-    if (item) {
-      return (
-        <ListItem bottomDivider>
-          <ListItem.Content id={item.reminder_id.toString()}>
-            <View style={styles.rowOrientation}>
-              <View style={styles.nameContainer}>
-                <ListItem.Title style={styles.date}>{item.date}</ListItem.Title>
-                <ListItem.Title>{item.reminder}</ListItem.Title>
+  const showReminders = (reminders: Reminder[]) => {
+    const reminderList = [];
+
+    let index = 0;
+    for (const reminder of reminders) {
+      if (index < 3) {
+        reminderList.push(
+          <ListItem bottomDivider>
+            <ListItem.Content id={reminder?.reminder_id.toString()}>
+              <View style={styles.rowOrientation}>
+                <View style={styles.nameContainer}>
+                  <ListItem.Title style={styles.date}>
+                    {reminder?.date}
+                  </ListItem.Title>
+                  <ListItem.Title>{reminder?.reminder}</ListItem.Title>
+                </View>
               </View>
-            </View>
-          </ListItem.Content>
-          <Pressable
-            onPress={() => deleteReminderAlert(item.reminder_id)}
-            style={styles.touchable}
-          >
-            <DeleteIcon></DeleteIcon>
-          </Pressable>
-        </ListItem>
-      );
-    } else {
-      return <ListItem bottomDivider></ListItem>;
+            </ListItem.Content>
+            <Pressable
+              onPress={() => deleteReminderAlert(reminder.reminder_id)}
+              style={styles.touchable}
+            >
+              <DeleteIcon></DeleteIcon>
+            </Pressable>
+          </ListItem>
+        );
+      }
+      index++;
     }
+
+    return reminderList;
   };
+
 
   const deleteReminder = (reminder_id: number) => {
     removeReminder(reminder_id);
@@ -177,7 +193,7 @@ export default function groupScreen() {
   };
 
   return (
-    <ScrollView style={{backgroundColor: 'white'}}>
+    <ScrollView style={{ backgroundColor: "white" }}>
       <View style={styles.centeredView}>
         <ThemedText darkColor="black" style={styles.title} type="title">
           {bond?.bondName}
@@ -201,6 +217,12 @@ export default function groupScreen() {
 
       <Card>
         <Card.Title>Reminders</Card.Title>
+        {
+          reminderList != undefined ?
+          showReminders(reminderList) :
+          <Text>No Reminders!</Text>
+        }
+
         <StandardButton
           title="See All Reminders"
           onPress={() => {
@@ -223,15 +245,11 @@ export default function groupScreen() {
 
       <Card containerStyle={{ flex: 2 }}>
         <Card.Title>Members</Card.Title>
-        {
-
-          members != undefined ?
-
-        
-        renderMembers(members) :
-        <Text>No Members</Text>
-      
-      }
+        {members != undefined ? (
+          renderMembers(members)
+        ) : (
+          <Text>No Members</Text>
+        )}
         <StandardButton
           title="+Add Member"
           onPress={() => {
