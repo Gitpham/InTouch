@@ -114,33 +114,34 @@ export default function groupScreen() {
     let index = 0;
     for (const reminder of reminders) {
       if (index < 3) {
-        reminderList.push(
-          <ListItem bottomDivider>
-            <ListItem.Content id={reminder?.reminder_id.toString()}>
-              <View style={styles.rowOrientation}>
-                <View style={styles.nameContainer}>
-                  <ListItem.Title style={styles.date}>
-                    {reminder?.date}
-                  </ListItem.Title>
-                  <ListItem.Title>{reminder?.reminder}</ListItem.Title>
+        if (reminder.bond_id && reminder.bond_id == bond?.bond_id) {
+          reminderList.push(
+            <ListItem bottomDivider>
+              <ListItem.Content id={reminder?.reminder_id.toString()}>
+                <View style={styles.rowOrientation}>
+                  <View style={styles.nameContainer}>
+                    <ListItem.Title style={styles.date}>
+                      {reminder?.date}
+                    </ListItem.Title>
+                    <ListItem.Title>{reminder?.reminder}</ListItem.Title>
+                  </View>
                 </View>
-              </View>
-            </ListItem.Content>
-            <Pressable
-              onPress={() => deleteReminderAlert(reminder.reminder_id)}
-              style={styles.touchable}
-            >
-              <DeleteIcon></DeleteIcon>
-            </Pressable>
-          </ListItem>
-        );
+              </ListItem.Content>
+              <Pressable
+                onPress={() => deleteReminderAlert(reminder.reminder_id)}
+                style={styles.touchable}
+              >
+                <DeleteIcon></DeleteIcon>
+              </Pressable>
+            </ListItem>
+          );
+          index++;
+        }
       }
-      index++;
     }
 
     return reminderList;
   };
-
 
   const deleteReminder = (reminder_id: number) => {
     removeReminder(reminder_id);
@@ -217,11 +218,11 @@ export default function groupScreen() {
 
       <Card>
         <Card.Title>Reminders</Card.Title>
-        {
-          reminderList != undefined ?
-          showReminders(reminderList) :
+        {reminderList != undefined ? (
+          showReminders(reminderList)
+        ) : (
           <Text>No Reminders!</Text>
-        }
+        )}
 
         <StandardButton
           title="See All Reminders"
