@@ -3,7 +3,7 @@ import { useContext, useEffect, useState } from "react";
 import { Alert, FlatList, ScrollView, TextInput } from "react-native";
 import {} from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Button, Card, ListItem } from "@rneui/themed";
+import { Text, Card, ListItem } from "@rneui/themed";
 import { View } from "react-native";
 import { router, useLocalSearchParams, useNavigation } from "expo-router";
 import { InTouchContext } from "@/context/InTouchContext";
@@ -105,28 +105,30 @@ export default function createGroupScreen() {
     });
   }
 
-  const renderGroupMembers = ({ item }: { item }) => {
+
+  const showBondMembers = (tempBondMembers: Set<number>) => {
+    const bondMemberList: React.JSX.Element[] = [];
     let personToShow: Person = peopleList[0];
+      peopleList.forEach((person: Person) => {
+        if (tempBondMembers.has(person.person_id as number)) {
+          personToShow = person;
+          bondMemberList.push(
+            <ListItem bottomDivider>
+            <ListItem.Content id={person.person_id?.toString()}>
+              <ListItem.Title>
+                {personToShow.firstName} {personToShow.lastName}
+              </ListItem.Title>
+              <ListItem.Title>
+                Phone Number: {personToShow.phoneNumber}
+              </ListItem.Title>
+            </ListItem.Content>
+          </ListItem>
+          )
+        }
+    })
+    return bondMemberList
+  }
 
-    peopleList.forEach((person: Person) => {
-      if (person.person_id === item) {
-        personToShow = person;
-      }
-    });
-
-    return (
-      <ListItem bottomDivider>
-        <ListItem.Content id={item.toString()}>
-          <ListItem.Title>
-            {personToShow.firstName} {personToShow.lastName}
-          </ListItem.Title>
-          <ListItem.Title>
-            Phone Number: {personToShow.phoneNumber} id: {item}
-          </ListItem.Title>
-        </ListItem.Content>
-      </ListItem>
-    );
-  };
 
   const renderPotentialSchedule = ({ item }: { item: any }) => {
     return item;
@@ -154,7 +156,13 @@ export default function createGroupScreen() {
               Members
             </ThemedText>
           </View>
-          {tempBondMembers.size > 0 ? (
+
+          {
+            tempBondMembers.size > 0 ? 
+            showBondMembers(tempBondMembers) :
+            <Text>No Members Yet</Text>
+          }
+          {/* {tempBondMembers.size > 0 ? (
             <FlatList
               nestedScrollEnabled={true}
               data={[...tempBondMembers]}
@@ -165,7 +173,7 @@ export default function createGroupScreen() {
             <View style={styles.centeredView}>
               <ThemedText darkColor="black">No members set</ThemedText>
             </View>
-          )}
+          )} */}
 
           <StandardButton
             title="Add Bond Member"
