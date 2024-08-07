@@ -36,7 +36,10 @@ export default function ReminderScreen() {
       else {
         for (const person of peopleList) {
           if (person.person_id === reminder.person_id) {
-            toBeReturned = person.firstName + " " + person.lastName?.trim()
+            if (person.lastName != undefined) {
+             return toBeReturned = person.firstName + " " + person.lastName?.trim()
+            }
+            return person.firstName
           }
         }
       }
