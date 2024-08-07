@@ -13,65 +13,118 @@ import { DeleteIcon } from "@/components/DeleteIcon";
 import { router, Stack, useLocalSearchParams } from "expo-router";
 import { getBond } from "@/assets/db/BondRepo";
 import { useSQLiteContext } from "expo-sqlite";
+import { getPerson } from "@/assets/db/PersonRepo";
 
 export default function ReminderBondScreen() {
   const localSearchParams = useLocalSearchParams();
   const db = useSQLiteContext();
-  const { reminderList, peopleList, bondList, removeReminder } =
-    useContext(InTouchContext);
-
+  const { reminderList, removeReminder } = useContext(InTouchContext);
   const [bond, setBond] = useState<Bond>();
+  const [person, setPerson] = useState<Person>();
   const stackView = stackViews();
-  const bondName = localSearchParams.bondName
+  const bondName = localSearchParams.bondName;
+  const personName = localSearchParams.personName;
+  const isFromBond: boolean = localSearchParams.bid != undefined ? true : false;
 
   useEffect(() => {
-    const bid = parseInt(localSearchParams.bid);
+    console.log("is from bond: ", isFromBond);
 
     const fetchData = async () => {
-      try {
-        const b = await getBond(db, bid);
-        setBond(b);
-      } catch (e) {
-        console.error(e);
-        throw new Error("reminderBondScreen(): failed to call getBond()");
+      if (isFromBond) {
+        const bid = parseInt(localSearchParams.bid);
+        try {
+          const b = await getBond(db, bid);
+          setBond(b);
+        } catch (e) {
+          console.error(e);
+          throw new Error("reminderBondScreen(): failed to call getBond()");
+        }
+      } else {
+        const pid = parseInt(localSearchParams.pid);
+        try {
+          const p = await getPerson(db, pid);
+          setPerson(p);
+        } catch (e) {
+          console.error(e);
+          throw new Error("reminderBondScreen(): failed to call getPerson()");
+        }
       }
     };
     fetchData();
   }, []);
 
   const renderReminder = ({ item }: { item: Reminder }) => {
-    if (item.bond_id) {
-      if (item.bond_id == bond?.bond_id) {
-        return (
-          <ListItem bottomDivider>
-            <ListItem.Content id={item.reminder_id.toString()}>
-              <View style={styles.rowOrientation}>
-                <View style={styles.nameContainer}>
-                  <ListItem.Title style={styles.name}>
-                    {bond?.bondName + " "}
+    if (isFromBond) {
+
+      if (item.bond_id) {
+        if (item.bond_id == bond?.bond_id) {
+          return (
+            <ListItem bottomDivider>
+              <ListItem.Content id={item.reminder_id.toString()}>
+                <View style={styles.rowOrientation}>
+                  <View style={styles.nameContainer}>
+                    <ListItem.Title style={styles.name}>
+                      {bond?.bondName + " "}
+                    </ListItem.Title>
+                  </View>
+                  <ListItem.Title style={styles.date}>
+                    {item.date}
                   </ListItem.Title>
                 </View>
-                <ListItem.Title style={styles.date}>{item.date}</ListItem.Title>
-              </View>
-              <ListItem.Title>{item.reminder}</ListItem.Title>
-            </ListItem.Content>
+                <ListItem.Title>{item.reminder}</ListItem.Title>
+              </ListItem.Content>
 
-            <Pressable
-              onPress={() => deleteReminderAlert(item)}
-              style={styles.touchable}
-            >
-              <DeleteIcon></DeleteIcon>
-            </Pressable>
-          </ListItem>
-        );
-      }
+              <Pressable
+                onPress={() => deleteReminderAlert(item)}
+                style={styles.touchable}
+              >
+                <DeleteIcon></DeleteIcon>
+              </Pressable>
+            </ListItem>
+          );
+        }
+      } 
+
     } else {
-      return <ListItem bottomDivider></ListItem>;
+      if (item.person_id) {
+        if (item.person_id == person?.person_id) {
+          return (
+            <ListItem bottomDivider>
+              <ListItem.Content id={item.reminder_id.toString()}>
+                <View style={styles.rowOrientation}>
+                  <View style={styles.nameContainer}>
+                    <ListItem.Title style={styles.name}>
+                      {person.firstName + " " + person.lastName}
+                    </ListItem.Title>
+                  </View>
+                  <ListItem.Title style={styles.date}>
+                    {item.date}
+                  </ListItem.Title>
+                </View>
+                <ListItem.Title>{item.reminder}</ListItem.Title>
+              </ListItem.Content>
+              <Pressable
+                onPress={() => deleteReminderAlert(item)}
+                style={styles.touchable}
+              >
+                <DeleteIcon></DeleteIcon>
+              </Pressable>
+            </ListItem>
+          );
+        }
+      } 
     }
   };
 
   const deleteReminderAlert = (reminder: Reminder) => {
-    Alert.alert(`Delete reminder for ${bond?.bondName}?`, "", [
+    let alertMessage: string;
+    if (isFromBond) {
+      alertMessage = `Delete reminder for ${bond?.bondName}?`;
+    } else {
+      alertMessage = `Delete reminder for ${person?.firstName}?`;
+    }
+
+    Alert.alert(alertMessage, "", [
       {
         text: "Cancel",
         onPress: () => console.log("Cancel Pressed"),
@@ -93,11 +146,27 @@ export default function ReminderBondScreen() {
     removeReminder(reminder_id);
   };
 
+  const onAddReminder = () => {
+    if (isFromBond){
+      router.navigate({
+        pathname: "./addReminderModal",
+        params: { person_id: -1, bond_id: bond.bond_id },
+      })
+    } else {
+      router.navigate({
+        pathname: "./addReminderModal",
+        params: { person_id: person?.person_id, bond_id: -1 },
+      })
+    }
+  }
+
   return (
     <View style={stackView}>
       <Stack.Screen
         options={{
-          headerTitle: ` ${bondName} Reminders`,
+          headerTitle: isFromBond
+            ? ` ${bondName} Reminders`
+            : ` ${personName} Reminders`,
         }}
       />
       <FlatList
@@ -107,12 +176,7 @@ export default function ReminderBondScreen() {
       />
       <StandardButton
         title="+Add Reminder"
-        onPress={() =>
-          router.navigate({
-            pathname: "./addReminderModal",
-            params: { person_id: -1, bond_id: bond.bond_id },
-          })
-        }
+        onPress={onAddReminder }
       />
     </View>
   );

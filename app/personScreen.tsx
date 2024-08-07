@@ -5,19 +5,13 @@ import { Card, ListItem, Button } from "@rneui/themed";
 import { useLocalSearchParams } from "expo-router";
 import { useContext, useEffect, useState } from "react";
 import { InTouchContext } from "@/context/InTouchContext";
-import {
-  Alert,
-  FlatList,
-  Pressable,
-  View,
-  Linking,
-  Text,
-} from "react-native";
+import { Alert, FlatList, Pressable, View, Linking, Text } from "react-native";
 import { router } from "expo-router";
 import { stackViews, styles } from "@/constants/Stylesheet";
 import { DeleteIcon } from "@/components/DeleteIcon";
 import { useSQLiteContext } from "expo-sqlite";
 import CallTextButton from "@/components/CallTextButton";
+import { StandardButton } from "@/components/ButtonStandard";
 export default function PersonScreen() {
   const {
     peopleList,
@@ -65,29 +59,40 @@ export default function PersonScreen() {
       return <ListItem bottomDivider></ListItem>;
     }
   };
-  const renderReminders = ({ item }: { item: Reminder }) => {
-    if (item) {
-      return (
-        <ListItem bottomDivider>
-          <ListItem.Content id={item.reminder_id.toString()}>
-            <View style={styles.rowOrientation}>
-              <View style={styles.nameContainer}>
-                <ListItem.Title style={styles.date}>{item.date}</ListItem.Title>
-                <ListItem.Title>{item.reminder}</ListItem.Title>
-              </View>
-            </View>
-          </ListItem.Content>
-          <Pressable
-            onPress={() => deleteReminderAlert(item.reminder_id)}
-            style={styles.touchable}
-          >
-            <DeleteIcon></DeleteIcon>
-          </Pressable>
-        </ListItem>
-      );
-    } else {
-      return <ListItem bottomDivider></ListItem>;
+
+  const showReminders = (reminders: Reminder[]) => {
+    const reminderList = [];
+
+    let index = 0;
+    for (const reminder of reminders) {
+      if (index < 3) {
+        if (reminder.person_id && reminder.person_id == person?.person_id) {
+          reminderList.push(
+            <ListItem bottomDivider>
+              <ListItem.Content id={reminder?.reminder_id.toString()}>
+                <View style={styles.rowOrientation}>
+                  <View style={styles.nameContainer}>
+                    <ListItem.Title style={styles.date}>
+                      {reminder?.date}
+                    </ListItem.Title>
+                    <ListItem.Title>{reminder?.reminder}</ListItem.Title>
+                  </View>
+                </View>
+              </ListItem.Content>
+              <Pressable
+                onPress={() => deleteReminderAlert(reminder.reminder_id)}
+                style={styles.touchable}
+              >
+                <DeleteIcon></DeleteIcon>
+              </Pressable>
+            </ListItem>
+          );
+          index++;
+        }
+      }
     }
+
+    return reminderList;
   };
 
   // Delete functions
@@ -125,11 +130,11 @@ export default function PersonScreen() {
   // For texting and calling user
   const sendSMS = async (phoneNumber: string) => {
     const url = `sms:${phoneNumber}`;
-    try{
+    try {
       await Linking.openURL(url);
     } catch (e) {
       console.error(e);
-      throw new Error("personScreen: sendSMS(): failed")
+      throw new Error("personScreen: sendSMS(): failed");
     }
   };
 
@@ -137,16 +142,14 @@ export default function PersonScreen() {
     // <View
     // // nestedScrollEnabled={true}
     // style={{ backgroundColor: "white" }}>
-    <View
-      style={stackView}
-    >
+    <View style={stackView}>
       <View style={styles.centeredView}>
         <ThemedText darkColor="black" style={styles.title} type="title">
           {person?.firstName} {person?.lastName}
         </ThemedText>
       </View>
 
-     <CallTextButton person={person as Person}></CallTextButton>
+      <CallTextButton person={person as Person}></CallTextButton>
 
       <Card containerStyle={{ flex: 1 }}>
         <Card.Title>Phone</Card.Title>
@@ -156,12 +159,21 @@ export default function PersonScreen() {
 
       <Card containerStyle={{ flex: 3 }}>
         <Card.Title>Reminders</Card.Title>
-        <FlatList
-          style={{ height: "50%" }}
-          data={reminders}
-          renderItem={renderReminders}
-          keyExtractor={(item) => item.reminder_id.toString()}
-        />
+        {reminderList != undefined ? (
+          showReminders(reminderList)
+        ) : (
+          <Text>No Reminders Set</Text>
+        )}
+
+        <StandardButton
+          title="See All Reminders"
+          onPress={() => {
+            router.navigate({
+              pathname: "./reminderBondScreen",
+              params: { pid: person?.person_id, personName: `${person?.firstName} ${person?.lastName}` },
+            });
+          }}
+        ></StandardButton>
 
         <Button
           title="+Add Reminder"
@@ -186,11 +198,12 @@ export default function PersonScreen() {
         />
       </Card>
 
-
-  
-
-      <View 
-      style={{alignContent: 'center', justifyContent: 'center', alignItems: 'center'}}
+      <View
+        style={{
+          alignContent: "center",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
       >
         <Button
           title="Delete"
@@ -199,7 +212,6 @@ export default function PersonScreen() {
             backgroundColor: "white",
             borderColor: "red",
             borderWidth: 2,
-
           }}
           titleStyle={styles.redTitle}
           onPress={() => deletePerson()}
