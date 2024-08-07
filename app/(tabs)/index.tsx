@@ -2,7 +2,7 @@ import { ThemedText } from "@/components/ThemedText";
 import React, { useContext } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {  ListItem } from "@rneui/themed";
-import {  View, FlatList, Pressable } from "react-native";
+import {  View, FlatList, Pressable, Text } from "react-native";
 import { router } from "expo-router";
 import { InTouchContext } from "@/context/InTouchContext";
 import { StandardButton } from "@/components/ButtonStandard";

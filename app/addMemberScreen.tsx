@@ -17,7 +17,7 @@ import { stackViews, styles } from "@/constants/Stylesheet";
 import React from "react";
 
 export default function addMemberScreen() {
-  const { createPerson, addTempBondMember, generatePersonId , tempBondMembers, peopleList, bondPersonMap, createBondMember, clearTempBondMembers } = useContext(InTouchContext);
+  const { createPerson, addTempBondMember, tempBondMembers, peopleList, bondPersonMap, createBondMember, clearTempBondMembers } = useContext(InTouchContext);
   const [ refresh, setRefresh ] = useState(false)
   const [memberFirstName, memFirstNameChange] = useState("");
   const [memberLastName, memLastNameChange] = useState("");
@@ -28,6 +28,8 @@ export default function addMemberScreen() {
   const [membersToShow, setMembersToShow] = useState<Array<Person>>([])
   
   const localParams = useLocalSearchParams();
+  const group_screen = +localParams.group_screen;
+
 
   useEffect(() => {
     setBondID(+localParams.bond_id);
@@ -70,9 +72,6 @@ export default function addMemberScreen() {
     setMembersToShow(peopleToShow)
   }, [tempBondMembers, peopleList, search]);
   
-  const group_screen = +localParams.group_screen;
-  const stackView = stackViews();
-  const insets = useSafeAreaInsets();
 
   async function importFromContacts() {
     const { status } = await Contacts.requestPermissionsAsync();
@@ -81,9 +80,6 @@ export default function addMemberScreen() {
       const person = await Contacts.presentContactPickerAsync();
       if (person) {
         // Generate unique person id
-        const personID = generatePersonId();
-
-
         const newContact: Person = {
           firstName: person?.firstName as string,
           lastName: person?.lastName as string,
@@ -96,7 +92,7 @@ export default function addMemberScreen() {
       }
     }
   }
-  const addBondMember = ({ item }: { item: Person }) => {
+  const renderInTouchContacts = ({ item }: { item: Person }) => {
       return (
         <ListItem bottomDivider>
           <Pressable
@@ -119,11 +115,12 @@ export default function addMemberScreen() {
       );
   };
 
-  const onDonePress = () => {
+  const onSavePress = () => {
+    console.log("group_screen: ", group_screen)
     if (group_screen === 1) {
       createBondMember(tempBondMembers, bondId);
+      clearTempBondMembers();
     }
-    clearTempBondMembers();
     router.back()
   }
 
@@ -134,7 +131,6 @@ export default function addMemberScreen() {
 
   return (
     <SafeAreaView style={styles.stepContainer}>
-      <ScrollView nestedScrollEnabled={true}>
       <View style = {styles.centeredView}>
         <ThemedText type = "title" style = {styles.title}>Add Member</ThemedText>
       </View>
@@ -187,7 +183,7 @@ export default function addMemberScreen() {
       <FlatList
         data={membersToShow}
         style = {styles.flatList}
-        renderItem={addBondMember}
+        renderItem={renderInTouchContacts}
         keyExtractor={(item) => item.person_id.toString()}
       />
       </View>
@@ -195,7 +191,7 @@ export default function addMemberScreen() {
 
       <StandardButton
         title="Save"
-        onPress={() => onDonePress()}
+        onPress={() => onSavePress()}
       />
 
       <StandardButton
@@ -203,7 +199,6 @@ export default function addMemberScreen() {
         onPress={() => router.back()}
 
       /> 
-      </ScrollView>
       </SafeAreaView>
   );
 }

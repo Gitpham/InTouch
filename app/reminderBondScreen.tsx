@@ -1,10 +1,8 @@
 import { StandardButton } from "@/components/ButtonStandard";
-import { ThemedText } from "@/components/ThemedText";
-import { ScrollView } from "react-native-gesture-handler";
-import { SafeAreaView } from "react-native-safe-area-context";
+
 import { InTouchContext } from "@/context/InTouchContext";
 import { useContext, useEffect, useState } from "react";
-import { Pressable, StyleSheet, FlatList, View, Alert } from "react-native";
+import { Pressable, Text, FlatList, View, Alert } from "react-native";
 import { Bond, Person, Reminder } from "@/constants/types";
 import React from "react";
 import { ListItem } from "@rneui/base";
@@ -27,9 +25,9 @@ export default function ReminderBondScreen() {
   const isFromBond: boolean = localSearchParams.bid != undefined ? true : false;
 
   useEffect(() => {
-    console.log("is from bond: ", isFromBond);
 
     const fetchData = async () => {
+      console.log("reminderBondScreen useEffect() render");
       if (isFromBond) {
         const bid = parseInt(localSearchParams.bid);
         try {
@@ -161,7 +159,7 @@ export default function ReminderBondScreen() {
   }
 
   return (
-    <View style={stackView}>
+    <View style={{flex: 1, backgroundColor: 'white'}} >
       <Stack.Screen
         options={{
           headerTitle: isFromBond
@@ -169,15 +167,20 @@ export default function ReminderBondScreen() {
             : ` ${personName} Reminders`,
         }}
       />
-      <FlatList
+      <View style={{flex : 1}}>
+
+     <FlatList
+       
         data={reminderList}
         renderItem={renderReminder}
         keyExtractor={(item) => item.reminder_id.toString()}
-      />
+      /> 
       <StandardButton
         title="+Add Reminder"
         onPress={onAddReminder }
       />
+    </View>
+
     </View>
   );
 }

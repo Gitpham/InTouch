@@ -108,44 +108,8 @@ export default function groupScreen() {
     return memberList;
   };
 
-  const showReminders = (reminders: Reminder[]) => {
-    const reminderList = [];
 
-    let index = 0;
-    for (const reminder of reminders) {
-      if (index < 3) {
-        if (reminder.bond_id && reminder.bond_id == bond?.bond_id) {
-          reminderList.push(
-            <ListItem bottomDivider>
-              <ListItem.Content id={reminder?.reminder_id.toString()}>
-                <View style={styles.rowOrientation}>
-                  <View style={styles.nameContainer}>
-                    <ListItem.Title style={styles.date}>
-                      {reminder?.date}
-                    </ListItem.Title>
-                    <ListItem.Title>{reminder?.reminder}</ListItem.Title>
-                  </View>
-                </View>
-              </ListItem.Content>
-              <Pressable
-                onPress={() => deleteReminderAlert(reminder.reminder_id)}
-                style={styles.touchable}
-              >
-                <DeleteIcon></DeleteIcon>
-              </Pressable>
-            </ListItem>
-          );
-          index++;
-        }
-      }
-    }
 
-    return reminderList;
-  };
-
-  const deleteReminder = (reminder_id: number) => {
-    removeReminder(reminder_id);
-  };
 
   const onDelete = async () => {
     if (bond) {
@@ -178,20 +142,7 @@ export default function groupScreen() {
     ]);
   };
 
-  const deleteReminderAlert = (reminder_id: number) => {
-    Alert.alert(`Delete reminder for ${bond?.bondName}?`, "", [
-      { text: "Cancel", onPress: () => {}, style: "cancel" },
-      {
-        text: "OK",
-        onPress: () => {
-          if (bond) {
-            deleteReminder(reminder_id);
-          }
-        },
-        isPreferred: true,
-      },
-    ]);
-  };
+
 
   return (
     <ScrollView

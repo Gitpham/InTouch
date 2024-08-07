@@ -432,6 +432,7 @@ export const InTouchContextProvider: React.FC<{
   // BOND MEMBER FUNCTIONS
 
   function addTempBondMember(personID: number) {
+    console.log("addTemptBondMember")
     const newTempMembers = new Set<number>(tempBondMembers)
     newTempMembers.add(personID)
     setTempBondMembers(newTempMembers);

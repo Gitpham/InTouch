@@ -9,7 +9,7 @@ import { router, useLocalSearchParams, useNavigation } from "expo-router";
 import { InTouchContext } from "@/context/InTouchContext";
 import { Bond, Person } from "@/constants/types";
 import { StandardButton } from "@/components/ButtonStandard";
-import { styles } from "@/constants/Stylesheet";
+import { stackViews, styles } from "@/constants/Stylesheet";
 import React from "react";
 import { ScheduleContext } from "@/context/ScheduleContext";
 import {
@@ -34,6 +34,7 @@ export default function createGroupScreen() {
     useContext(ScheduleContext);
   const bondID = generateBondId();
   const db = useSQLiteContext();
+  const stackView = stackViews();
   const [schedule, setSchedule] = useState(
     displayPotentialSchedule(potentialSchedule)
   );
@@ -132,8 +133,8 @@ export default function createGroupScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.stepContainer}>
-      <ScrollView nestedScrollEnabled={true}>
+    <ScrollView contentContainerStyle={stackView}>
+    {/* <SafeAreaView style={styles.stepContainer}> */}
         <View style={styles.centeredView}>
           <ThemedText type="title" style={styles.title}>
             Bond Name: {title}
@@ -167,7 +168,7 @@ export default function createGroupScreen() {
           )}
 
           <StandardButton
-            title="Add Group Member"
+            title="Add Bond Member"
             onPress={() =>
               router.navigate({
                 pathname: "./addMemberScreen",
@@ -216,7 +217,8 @@ export default function createGroupScreen() {
           }}
         ></StandardButton>
           </View>
-      </ScrollView>
-    </SafeAreaView>
+    {/* </SafeAreaView> */}
+    </ScrollView>
+
   );
 }
