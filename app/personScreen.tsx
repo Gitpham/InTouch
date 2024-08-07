@@ -91,6 +91,24 @@ export default function PersonScreen() {
   };
 
   // Delete functions
+  const onDeleteAlert = () => {
+    let name = person?.firstName
+    if (person?.lastName) {
+      name += person.lastName
+    }
+    Alert.alert(`Delete ${name} from your inTouch contacts?`, "This will delete all associated reminders and remove them from any bond",
+     [{
+        text: "Cancel",
+        onPress: () => {},
+        style: "cancel",
+      },
+      {
+        text: "OK",
+        onPress: () => deletePerson(),
+        isPreferred: true,
+      },
+    ]);
+  }
   const deletePerson = () => {
     if (person) {
       removePerson(person);
@@ -120,17 +138,6 @@ export default function PersonScreen() {
         isPreferred: true,
       },
     ]);
-  };
-
-  // For texting and calling user
-  const sendSMS = async (phoneNumber: string) => {
-    const url = `sms:${phoneNumber}`;
-    try{
-      await Linking.openURL(url);
-    } catch (e) {
-      console.error(e);
-      throw new Error("personScreen: sendSMS(): failed")
-    }
   };
 
   return (
@@ -202,7 +209,7 @@ export default function PersonScreen() {
 
           }}
           titleStyle={styles.redTitle}
-          onPress={() => deletePerson()}
+          onPress={() => onDeleteAlert()}
         />
       </View>
     </View>

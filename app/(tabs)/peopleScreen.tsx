@@ -38,7 +38,7 @@ export default function PeopleScreen() {
   
   return (
     <SafeAreaView style={styles.stepContainer}>
-      <View style = {styles.centeredView}><ThemedText type="title" style = {styles.title}> People Screen </ThemedText></View>
+      <View style = {styles.centeredView}><ThemedText type="title" style = {styles.title}> inTouch Contacts </ThemedText></View>
 
       <FlatList
         data={peopleList}

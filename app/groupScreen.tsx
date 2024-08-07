@@ -15,7 +15,7 @@ import { DeleteIcon } from "@/components/DeleteIcon";
 import { stackViews, styles } from "@/constants/Stylesheet";
 import {
   sendSMS,
-  getNextToCallUtil,
+  displayNextToCall,
   callUtil,
 } from "@/context/PhoneNumberUtils";
 import CallTextButton from "@/components/CallTextButton";
@@ -50,7 +50,7 @@ export default function groupScreen() {
         setMembers(p);
         const r = getRemindersOfBond(bondId);
         setReminders(r);
-        const n = await getNextToCallUtil(b.bond_id, db);
+        const n = await displayNextToCall(b.bond_id, db);
         setNextToCall(n);
       }
     };
@@ -123,6 +123,22 @@ export default function groupScreen() {
   const deleteReminder = (reminder_id: number) => {
     removeReminder(reminder_id);
   };
+
+  const onDeleteAlert = () => {
+    Alert.alert(`Delete ${bond?.bondName} from your bonds?`, "This will delete all associated reminders and schedule",
+     [{
+        text: "Cancel",
+        onPress: () => {},
+        style: "cancel",
+      },
+      {
+        text: "OK",
+        onPress: () => onDelete(),
+        isPreferred: true,
+      },
+    ]);
+  }
+
 
   const onDelete = async () => {
     if (bond) {
@@ -248,7 +264,7 @@ export default function groupScreen() {
             borderWidth: 2,
           }}
           titleStyle={styles.redTitle}
-          onPress={onDelete}
+          onPress={() => onDeleteAlert()}
         />
       </View>
     </View>
