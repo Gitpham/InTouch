@@ -40,7 +40,6 @@ export const deleteReminder = async (db: SQLite.SQLiteDatabase, reminder_id: num
         console.error(error)
         throw Error("Failed to delete person")
     } finally {
-        // console.log("finalize updatePerson async")
         statement.finalizeAsync()
     }
 }

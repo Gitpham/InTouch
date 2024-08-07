@@ -432,7 +432,6 @@ export const InTouchContextProvider: React.FC<{
   // BOND MEMBER FUNCTIONS
 
   function addTempBondMember(personID: number) {
-    console.log("addTemptBondMember")
     const newTempMembers = new Set<number>(tempBondMembers)
     newTempMembers.add(personID)
     setTempBondMembers(newTempMembers);
@@ -609,8 +608,6 @@ export const InTouchContextProvider: React.FC<{
   }
 
   async function createReminder(reminder: string, person_id: number, bond_id: number) {
-    
-    console.log("person_id: ", person_id, " bond_id: ", bond_id)
     const date = new Date;
     // Extract date from date object
     const day = String(date.getDay()).padStart(2, '0');

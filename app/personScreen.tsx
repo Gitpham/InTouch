@@ -112,7 +112,9 @@ export default function PersonScreen() {
         <ThemedText darkColor="black">{person?.phoneNumber}</ThemedText>
       </Card>
 
-      <ReminderDisplayCard person={person} bond={undefined} />
+    {person ?       <ReminderDisplayCard person={person} bond={undefined} /> : <></>
+  
+  }
 
       <Card containerStyle={{ flex: 3 }}>
         <Card.Title>Bonds</Card.Title>

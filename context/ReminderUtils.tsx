@@ -11,7 +11,6 @@ export function getReminderName(reminder: Reminder, bondList: Bond[], peopleList
     if (isBond) {
       for (const bond of bondList) {
         if (bond.bond_id === reminder.bond_id) {
-          console.log(bond.bondName)
           toBeReturned = bond.bondName;
           return toBeReturned;
         }

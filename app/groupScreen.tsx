@@ -36,7 +36,6 @@ export default function groupScreen() {
     removeBond,
     bondPersonMap,
     getRemindersOfBond,
-    removeReminder,
     reminderList,
   } = useContext(InTouchContext);
   const localParams = useLocalSearchParams();
@@ -164,10 +163,7 @@ export default function groupScreen() {
 
       {bond ? <ScheduleCard bond={bond}></ScheduleCard> : <></>}
 
-      <ReminderDisplayCard
-        person={undefined}
-        bond={bond}
-      />
+      {bond ? <ReminderDisplayCard person={undefined} bond={bond} /> : <></>}
 
       <Card containerStyle={{ flex: 2 }}>
         <Card.Title>Members</Card.Title>

@@ -28,7 +28,6 @@ export default function ReminderBondScreen() {
   useEffect(() => {
 
     const fetchData = async () => {
-      console.log("reminderBondScreen useEffect() render");
       if (isFromBond) {
         const bid = parseInt(localSearchParams.bid);
         try {
