@@ -15,16 +15,19 @@ import AddMemberManual from "@/components/AddMemberManual";
 import { Person } from "@/constants/types";
 import { stackViews, styles } from "@/constants/Stylesheet";
 import React from "react";
+import ConfirmationMessage from "@/components/ConfirmationMessage";
 
 export default function addMemberScreen() {
   const { createPerson, addTempBondMember, generatePersonId , tempBondMembers, peopleList, bondPersonMap, createBondMember, clearTempBondMembers } = useContext(InTouchContext);
   const [ refresh, setRefresh ] = useState(false)
   const [memberFirstName, memFirstNameChange] = useState("");
   const [memberLastName, memLastNameChange] = useState("");
+  const [ name, setName ] = useState("")
   const [ search, setSearch ] = useState("")
   const [memberNumber, memNumberChange] = useState("");
   const [bondId, setBondID] = useState<number>(-1);
   const [isVisible, setIsVisible] = useState(false);
+  const [isConfirmationVisible, setConfirmationVisible ] = useState(false);
   const [membersToShow, setMembersToShow] = useState<Array<Person>>([])
   
   const localParams = useLocalSearchParams();
@@ -103,6 +106,15 @@ export default function addMemberScreen() {
             onPress={() => {
               addTempBondMember(item.person_id as number);
               setRefresh((oldValue) => !oldValue);
+
+              let name = item.firstName.trim()
+              if (item.lastName) {
+                name += " "
+                name += item.lastName
+              }
+              setName(name)
+              setConfirmationVisible(true)
+              setTimeout(() => setConfirmationVisible(false), 100)
             }}
           >
             <ListItem.Content id={item.person_id?.toString()}>
@@ -137,7 +149,9 @@ export default function addMemberScreen() {
       <ScrollView nestedScrollEnabled={true}>
       <View style = {styles.centeredView}>
         <ThemedText type = "title" style = {styles.title}>Add Member</ThemedText>
+        
       </View>
+      <ConfirmationMessage message={`Added ${name}`} show={isConfirmationVisible}/>
       <StandardButton
         title="Create New Contact"
         onPress={() => {
@@ -167,11 +181,8 @@ export default function addMemberScreen() {
         onPress={importFromContacts}
       />
 
-{((bondId !== -1) && (peopleList.length !== 0)) ?
+      {((bondId !== -1) && (peopleList.length !== 0)) ?
       (
-
-
-
       <Card>
       <Card.Title>Choose From inTouch Contacts</Card.Title>
     

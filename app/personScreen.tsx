@@ -92,8 +92,9 @@ export default function PersonScreen() {
 
   // Delete functions
   const onDeleteAlert = () => {
-    let name = person?.firstName
+    let name = person?.firstName.trim()
     if (person?.lastName) {
+      name += " "
       name += person.lastName
     }
     Alert.alert(`Delete ${name} from your inTouch contacts?`, "This will delete all associated reminders and remove them from any bond",
@@ -121,7 +122,10 @@ export default function PersonScreen() {
   };
 
   const deleteReminderAlert = (reminder_id: number) => {
-    const name = person?.firstName + " " + person?.lastName;
+    let name = person?.firstName.trim() + " "
+    if (person?.lastName) {
+      name += person.lastName.trim()
+    }
     Alert.alert(`Delete reminder for ${name}?`, "", [
       {
         text: "Cancel",

@@ -19,6 +19,7 @@ import {
   callUtil,
 } from "@/context/PhoneNumberUtils";
 import CallTextButton from "@/components/CallTextButton";
+import DeleteMessage from "@/components/DeleteMessage";
 
 export default function groupScreen() {
   const {
@@ -36,6 +37,8 @@ export default function groupScreen() {
   const [members, setMembers] = useState<Array<Person>>();
   const [reminders, setReminders] = useState<Array<Reminder>>();
   const [nextToCall, setNextToCall] = useState<Person>();
+  const [isDeleteVisible, setDeleteVisible] = useState(false)
+  const [name, setName] = useState("")
   const db = useSQLiteContext();
   const stackView = stackViews();
 
@@ -149,11 +152,11 @@ export default function groupScreen() {
   };
 
   const deletePersonAlert = (person: Person) => {
-    let name = person.firstName + " ";
+    let name = person.firstName.trim() + " ";
     if (person.lastName) {
       name += person.lastName + " ";
     }
-    Alert.alert(`Remove ${name} from ${bond?.bondName}?`, "", [
+    Alert.alert(`Remove ${name} from ${bond?.bondName.trim()}?`, "", [
       {
         text: "Cancel",
         onPress: () => console.log("Cancel Pressed"),
@@ -164,6 +167,14 @@ export default function groupScreen() {
         onPress: () => {
           if (bond) {
             removeBondMember(bond, person);
+            let name = person.firstName.trim();
+            if (person.lastName) {
+              name += " ";
+              name += person.lastName.trim();
+            }
+            setName(name);
+            setDeleteVisible(true);
+            setTimeout(() => setDeleteVisible(false), 100);
           }
         },
         isPreferred: true,
@@ -172,7 +183,7 @@ export default function groupScreen() {
   };
 
   const deleteReminderAlert = (reminder_id: number) => {
-    Alert.alert(`Delete reminder for ${bond?.bondName}?`, "", [
+    Alert.alert(`Delete reminder for ${bond?.bondName.trim()}?`, "", [
       { text: "Cancel", onPress: () => {}, style: "cancel" },
       {
         text: "OK",
@@ -193,6 +204,7 @@ export default function groupScreen() {
           {bond?.bondName}
         </ThemedText>
       </View>
+      <DeleteMessage message = {`Removed ${name} from ${bond?.bondName}`} show = {isDeleteVisible}/>
 
       <CallTextButton person={nextToCall as Person}></CallTextButton>
 

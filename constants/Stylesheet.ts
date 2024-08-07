@@ -133,6 +133,17 @@ export const styles = StyleSheet.create({
         height: 15,
         marginLeft: 10,
     },
+    confirmationLogo: {
+      width: 10,
+      height: 10,
+    },
+    confirmationLogoContainer: {
+      marginRight: 5
+    },
+    confirmationContent: {
+      flexDirection: 'row',
+      alignItems: 'center',
+   },
     textInput: {
         height: 40,
         margin: 13,
@@ -143,5 +154,19 @@ export const styles = StyleSheet.create({
     },
     indentedView: {
         paddingLeft: 10,
+    },
+    messageContainer: {
+      backgroundColor: 'white',
+      padding: 5,
+      borderRadius: 5,
+      zIndex: 1000,
+      justifyContent: 'center',
+      alignSelf: 'center',
+      width: 300,
+      height: 30,
+      flexDirection: "row"
+    },
+    confirmationText: {
+        color: '#4CAF50',
     },
   })
