@@ -4,7 +4,7 @@ import { Card, ListItem, Button } from "@rneui/themed";
 import { useLocalSearchParams } from "expo-router";
 import { useContext, useEffect, useState } from "react";
 import { InTouchContext } from "@/context/InTouchContext";
-import { Bond, Person, Reminder } from "@/constants/types";
+import { Bond, BondPerson, Person, Reminder } from "@/constants/types";
 import { router } from "expo-router";
 import React from "react";
 import { StandardButton } from "@/components/ButtonStandard";
@@ -17,9 +17,11 @@ import {
   sendSMS,
   displayNextToCall,
   callUtil,
+  getNextToCallUtil,
 } from "@/context/PhoneNumberUtils";
 import CallTextButton from "@/components/CallTextButton";
 import DeleteMessage from "@/components/DeleteMessage";
+import { getPersonsOfBondDB } from "@/assets/db/PersonBondRepo";
 
 export default function groupScreen() {
   const {
@@ -53,7 +55,10 @@ export default function groupScreen() {
         setMembers(p);
         const r = getRemindersOfBond(bondId);
         setReminders(r);
-        const n = await displayNextToCall(b.bond_id, db);
+        let n = await displayNextToCall(b.bond_id, db);
+        if (!n) {
+          n = await getNextToCallUtil(b.bond_id, db);
+        }
         setNextToCall(n);
       }
     };
@@ -164,9 +169,10 @@ export default function groupScreen() {
       },
       {
         text: "OK",
-        onPress: () => {
+        onPress: async () => {
           if (bond) {
             removeBondMember(bond, person);
+            // Display delete message
             let name = person.firstName.trim();
             if (person.lastName) {
               name += " ";

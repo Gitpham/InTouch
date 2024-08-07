@@ -134,8 +134,9 @@ export default function addMemberScreen() {
   const onDonePress = () => {
     if (group_screen === 1) {
       createBondMember(tempBondMembers, bondId);
+      clearTempBondMembers();
     }
-    clearTempBondMembers();
+
     router.back()
   }
 
