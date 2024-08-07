@@ -61,7 +61,7 @@ export default function groupScreen() {
       console.error(e);
       console.log("Could not get Next to call");
     }
-  }, [bondPersonMap, reminderList]);
+  }, [bondPersonMap, reminderList, bondList]);
 
   const renderMembers = ({ item }: { item: Person }) => {
     return (
