@@ -10,45 +10,15 @@ import React from "react";
 import { ListItem } from "@rneui/base";
 import { styles } from "@/constants/Stylesheet"
 import { DeleteIcon } from "@/components/DeleteIcon";
+import { getReminderName } from "@/context/ReminderUtils";
 
 
 export default function ReminderScreen() {
   const { reminderList, peopleList, bondList, removeReminder } = useContext(InTouchContext);
 
-  function associateReminder(reminder: Reminder) {
-      let toBeReturned = ""
-      let isBond = false; 
-      if (reminder.bond_id) {
-            isBond = true;
-      }
-      
-      // Bond reminder
-      if (isBond) {
-        for (const bond of bondList) {
-          if (bond.bond_id === reminder.bond_id) {
-            console.log(bond.bondName)
-            toBeReturned = bond.bondName;
-            return toBeReturned;
-          }
-        }
-      }
-      // Person Reminder
-      else {
-        for (const person of peopleList) {
-          if (person.person_id === reminder.person_id) {
-            if (person.lastName != undefined) {
-             return toBeReturned = person.firstName + " " + person.lastName?.trim()
-            }
-            return person.firstName
-          }
-        }
-      }
-
-      return toBeReturned;
-  }
   const renderReminder = ({ item }: { item: Reminder }) => {
     if (item) {
-          const name = associateReminder(item)
+          const name = getReminderName(item, bondList, peopleList)
       return (
         <ListItem bottomDivider>
           <ListItem.Content id={item.reminder_id.toString()}>
@@ -85,7 +55,7 @@ export default function ReminderScreen() {
   }
 
   const deleteReminderAlert = (reminder: Reminder) => {
-    const name = associateReminder(reminder)
+    const name = getReminderName(reminder, bondList, peopleList)
     Alert.alert(`Delete reminder for ${name}?`, "",[
       {text: 'Cancel',
         onPress: () => console.log('Cancel Pressed'),

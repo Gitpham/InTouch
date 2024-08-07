@@ -107,10 +107,6 @@ export default function groupScreen() {
 
     return memberList;
   };
-
-
-
-
   const onDelete = async () => {
     if (bond) {
       await cancelNotificationsForBond(db, bond.bond_id);
@@ -171,8 +167,6 @@ export default function groupScreen() {
       {bond ? <ScheduleCard bond={bond}></ScheduleCard> : <></>}
 
       <ReminderDisplayCard
-        reminderList={reminderList}
-        showReminders={showReminders}
         person={undefined}
         bond={bond}
       />

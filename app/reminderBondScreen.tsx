@@ -12,11 +12,12 @@ import { router, Stack, useLocalSearchParams } from "expo-router";
 import { getBond } from "@/assets/db/BondRepo";
 import { useSQLiteContext } from "expo-sqlite";
 import { getPerson } from "@/assets/db/PersonRepo";
+import { getReminderName } from "@/context/ReminderUtils";
 
 export default function ReminderBondScreen() {
   const localSearchParams = useLocalSearchParams();
   const db = useSQLiteContext();
-  const { reminderList, removeReminder } = useContext(InTouchContext);
+  const { reminderList, removeReminder, bondList, peopleList } = useContext(InTouchContext);
   const [bond, setBond] = useState<Bond>();
   const [person, setPerson] = useState<Person>();
   const stackView = stackViews();
@@ -62,7 +63,7 @@ export default function ReminderBondScreen() {
                 <View style={styles.rowOrientation}>
                   <View style={styles.nameContainer}>
                     <ListItem.Title style={styles.name}>
-                      {bond?.bondName + " "}
+                      {getReminderName(item, bondList, peopleList)}
                     </ListItem.Title>
                   </View>
                   <ListItem.Title style={styles.date}>
@@ -92,7 +93,7 @@ export default function ReminderBondScreen() {
                 <View style={styles.rowOrientation}>
                   <View style={styles.nameContainer}>
                     <ListItem.Title style={styles.name}>
-                      {person.firstName + " " + person.lastName}
+                    {getReminderName(item, bondList, peopleList)}
                     </ListItem.Title>
                   </View>
                   <ListItem.Title style={styles.date}>
