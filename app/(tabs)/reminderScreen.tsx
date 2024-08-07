@@ -28,7 +28,7 @@ export default function ReminderScreen() {
           if (bond.bond_id === reminder.bond_id) {
             console.log(bond.bondName)
             toBeReturned = bond.bondName;
-            break;
+            return toBeReturned;
           }
         }
       }
@@ -36,7 +36,7 @@ export default function ReminderScreen() {
       else {
         for (const person of peopleList) {
           if (person.person_id === reminder.person_id) {
-            toBeReturned = person.firstName + " " + person.lastName.trim()
+            toBeReturned = person.firstName + " " + person.lastName?.trim()
           }
         }
       }

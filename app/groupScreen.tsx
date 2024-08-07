@@ -26,6 +26,7 @@ import {
   callUtil,
 } from "@/context/PhoneNumberUtils";
 import CallTextButton from "@/components/CallTextButton";
+import ReminderDisplayCard from "@/components/ReminderDisplayCard";
 
 export default function groupScreen() {
   const {
@@ -72,7 +73,6 @@ export default function groupScreen() {
 
   const renderMembers = (members: Person[]) => {
     const memberList: React.JSX.Element[] = [];
-
     members.forEach((p) => {
       memberList.push(
         <ListItem bottomDivider>
@@ -194,7 +194,10 @@ export default function groupScreen() {
   };
 
   return (
-    <ScrollView  contentContainerStyle={stackView} style={{backgroundColor: 'white'}}>
+    <ScrollView
+      contentContainerStyle={stackView}
+      style={{ backgroundColor: "white" }}
+    >
       <View style={styles.centeredView}>
         <ThemedText darkColor="black" style={styles.title} type="title">
           {bond?.bondName}
@@ -216,33 +219,12 @@ export default function groupScreen() {
 
       {bond ? <ScheduleCard bond={bond}></ScheduleCard> : <></>}
 
-      <Card>
-        <Card.Title>Reminders</Card.Title>
-        {reminderList != undefined ? (
-          showReminders(reminderList)
-        ) : (
-          <Text>No Reminders!</Text>
-        )}
-
-        <StandardButton
-          title="See All Reminders"
-          onPress={() => {
-            router.navigate({
-              pathname: "./reminderBondScreen",
-              params: { bid: bond?.bond_id, bondName: bond?.bondName },
-            });
-          }}
-        ></StandardButton>
-        <StandardButton
-          title="+Add Reminder"
-          onPress={() =>
-            router.navigate({
-              pathname: "./addReminderModal",
-              params: { person_id: -1, bond_id: bond.bond_id },
-            })
-          }
-        />
-      </Card>
+      <ReminderDisplayCard
+        reminderList={reminderList}
+        showReminders={showReminders}
+        person={undefined}
+        bond={bond}
+      />
 
       <Card containerStyle={{ flex: 2 }}>
         <Card.Title>Members</Card.Title>

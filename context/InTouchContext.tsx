@@ -609,6 +609,7 @@ export const InTouchContextProvider: React.FC<{
 
   async function createReminder(reminder: string, person_id: number, bond_id: number) {
     
+    console.log("person_id: ", person_id, " bond_id: ", bond_id)
     const date = new Date;
     // Extract date from date object
     const day = String(date.getDay()).padStart(2, '0');
@@ -634,7 +635,7 @@ export const InTouchContextProvider: React.FC<{
     await addReminder(db, reminderToAdd)
     } catch (e) {
       console.error(e);
-      console.log("Failed to create reminder")
+      throw new Error("createReminder(): Failed to create reminder")
     }
 
   }

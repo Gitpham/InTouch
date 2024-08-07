@@ -1,9 +1,7 @@
-import { View, StyleSheet, TextInput } from 'react-native';
-import { Link, router } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import { Bond, Person, Reminder } from "@/constants/types";
-import { Button } from "@rneui/themed";
-import { useContext, useEffect, useState } from "react";
+import { View,  TextInput } from 'react-native';
+import {router } from 'expo-router';
+import React from 'react';
+import { useContext,  useState } from "react";
 import { useLocalSearchParams } from "expo-router";
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ThemedText } from '@/components/ThemedText';import { StandardButton } from '@/components/ButtonStandard';
