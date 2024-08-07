@@ -93,11 +93,17 @@ export default function WeeklySchedulePicker({
           onPress={() => onSelectDayOfWeek("mon")}
           title="Monday"
         ></CheckBox>
-        <DateTimePicker
+        {
+          mon == true ? 
+          <DateTimePicker
           value={monTime}
           mode="time"
           onChange={(e, d) => changeMonTime(d)}
-        ></DateTimePicker>
+        ></DateTimePicker> 
+        : 
+        <></>
+        }
+       
       </View>
 
       <View style={{ flexDirection: "row" }}>
@@ -106,11 +112,16 @@ export default function WeeklySchedulePicker({
           onPress={() => onSelectDayOfWeek("tues")}
           title="Tuesday"
         ></CheckBox>
-        <DateTimePicker
+        {
+          tues == true ? 
+          <DateTimePicker
           value={tuesTime}
           mode="time"
           onChange={(e, d) => changeTuesTime(d)}
-        ></DateTimePicker>
+        ></DateTimePicker> 
+        : 
+        <></>
+        }
       </View>
 
       <View style={{ flexDirection: "row" }}>
@@ -119,11 +130,17 @@ export default function WeeklySchedulePicker({
           onPress={() => onSelectDayOfWeek("weds")}
           title="Wednesday"
         ></CheckBox>
-        <DateTimePicker
+        {
+          weds ? 
+          <DateTimePicker
           value={wedsTime}
           mode="time"
           onChange={(e, d) => changeWedsTime(d)}
         ></DateTimePicker>
+        :
+        <></>
+        }
+       
       </View>
 
       <View style={{ flexDirection: "row" }}>
@@ -132,11 +149,17 @@ export default function WeeklySchedulePicker({
           onPress={() => onSelectDayOfWeek("thurs")}
           title="Thursday"
         ></CheckBox>
-        <DateTimePicker
+        {
+          thurs ? 
+          <DateTimePicker
           value={thursTime}
           mode="time"
           onChange={(e, d) => changeThursTime(d)}
         ></DateTimePicker>
+        :
+        <></>
+
+        }
       </View>
 
       <View style={{ flexDirection: "row" }}>
@@ -145,11 +168,17 @@ export default function WeeklySchedulePicker({
           onPress={() => onSelectDayOfWeek("fri")}
           title="Friday"
         ></CheckBox>
-        <DateTimePicker
-          value={friTime}
-          mode="time"
-          onChange={(e, d) => changeFriTime(d)}
-        ></DateTimePicker>
+        {
+         fri ? 
+         <DateTimePicker
+         value={friTime}
+         mode="time"
+         onChange={(e, d) => changeFriTime(d)}
+       ></DateTimePicker>
+          :
+          <></>
+        }
+
       </View>
 
       <View style={{ flexDirection: "row" }}>
@@ -158,11 +187,17 @@ export default function WeeklySchedulePicker({
           onPress={() => onSelectDayOfWeek("sat")}
           title="Saturday"
         ></CheckBox>
-        <DateTimePicker
+        {
+          sat ? 
+          <DateTimePicker
           value={satTime}
           mode="time"
           onChange={(e, d) => changeSatTime(d)}
         ></DateTimePicker>
+        :
+        <></>
+        }
+  
       </View>
 
       <View style={{ flexDirection: "row" }}>
@@ -171,11 +206,16 @@ export default function WeeklySchedulePicker({
           onPress={() => onSelectDayOfWeek("sun")}
           title="Sunday"
         ></CheckBox>
-        <DateTimePicker
+        {
+          sun ? 
+          <DateTimePicker
           value={sunTime}
           mode="time"
           onChange={(e, d) => changeSunTime(d)}
         ></DateTimePicker>
+        :
+        <></>
+        }   
       </View>
     </Card>
   );
