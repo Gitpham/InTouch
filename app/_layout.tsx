@@ -150,7 +150,7 @@ export default function RootLayout() {
               options={{ headerTitle: "Add Reminders", presentation: "modal"}}
             />
             <Stack.Screen
-              name="reminderEnitityScreen"
+              name="reminderEntityScreen"
               options={{ headerTitle: "", headerBackTitleVisible: false }}
             />
 
