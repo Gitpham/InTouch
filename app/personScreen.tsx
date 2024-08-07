@@ -3,9 +3,9 @@ import { ThemedText } from "@/components/ThemedText";
 import { Bond, Person, Reminder, formatDate } from "@/constants/types";
 import { Card, ListItem, Button } from "@rneui/themed";
 import { useLocalSearchParams } from "expo-router";
-import { useContext, useEffect, useState } from "react";
+import { JSX, useContext, useEffect, useState } from "react";
 import { InTouchContext } from "@/context/InTouchContext";
-import { Alert, FlatList, Pressable, View, Linking, Text } from "react-native";
+import { Alert, FlatList, Pressable, View, Linking, Text, ScrollView } from "react-native";
 import { router } from "expo-router";
 import { stackViews, styles } from "@/constants/Stylesheet";
 import { DeleteIcon } from "@/components/DeleteIcon";
@@ -44,21 +44,40 @@ export default function PersonScreen() {
   }, [reminderList]);
 
   // Rendering functions for flatlists
-  const renderBonds = ({ item }: { item: Bond }) => {
-    if (item) {
-      return (
+
+  const showBonds = (bonds: Bond[]) => {
+    const bondList: JSX.Element[] = [];
+
+    bonds.forEach(b => {
+      bondList.push(
         <ListItem bottomDivider>
-          <Pressable>
-            <ListItem.Content id={item.bond_id.toString()}>
-              <ListItem.Title>{item.bondName}</ListItem.Title>
-            </ListItem.Content>
-          </Pressable>
-        </ListItem>
-      );
-    } else {
-      return <ListItem bottomDivider></ListItem>;
-    }
-  };
+        <Pressable>
+          <ListItem.Content id={b.bond_id.toString()}>
+            <ListItem.Title>{b.bondName}</ListItem.Title>
+          </ListItem.Content>
+        </Pressable>
+      </ListItem>
+
+      )
+    })
+
+    return bondList
+  }
+  // const renderBonds = ({ item }: { item: Bond }) => {
+  //   if (item) {
+  //     return (
+  //       <ListItem bottomDivider>
+  //         <Pressable>
+  //           <ListItem.Content id={item.bond_id.toString()}>
+  //             <ListItem.Title>{item.bondName}</ListItem.Title>
+  //           </ListItem.Content>
+  //         </Pressable>
+  //       </ListItem>
+  //     );
+  //   } else {
+  //     return <ListItem bottomDivider></ListItem>;
+  //   }
+  // };
 
   const showReminders = (reminders: Reminder[]) => {
     const reminderList = [];
@@ -139,10 +158,10 @@ export default function PersonScreen() {
   };
 
   return (
-    // <View
-    // // nestedScrollEnabled={true}
-    // style={{ backgroundColor: "white" }}>
-    <View style={stackView}>
+    <ScrollView
+    // nestedScrollEnabled={true}
+    style={{ backgroundColor: "white" }}>
+    {/* <View style={stackView}> */}
       <View style={styles.centeredView}>
         <ThemedText darkColor="black" style={styles.title} type="title">
           {person?.firstName} {person?.lastName}
@@ -190,12 +209,11 @@ export default function PersonScreen() {
 
       <Card containerStyle={{ flex: 3 }}>
         <Card.Title>Bonds</Card.Title>
-        <FlatList
-          style={{ height: "50%" }}
-          data={bonds}
-          renderItem={renderBonds}
-          keyExtractor={(item) => item.bond_id.toString()}
-        />
+        {
+          bonds != undefined?
+          showBonds(bonds) :
+          <Text>No Bonds Yet!</Text>
+        }
       </Card>
 
       <View
@@ -217,6 +235,6 @@ export default function PersonScreen() {
           onPress={() => deletePerson()}
         />
       </View>
-    </View>
+    </ScrollView>
   );
 }
