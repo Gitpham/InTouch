@@ -137,6 +137,17 @@ export default function groupScreen() {
     ]);
   }
 
+  const trimName = (person: Person) => {
+    if (person) {let name = person.firstName.trim();
+    if (person.lastName) {
+      name += " ";
+      name += person.lastName.trim();
+    }
+
+    return name;
+  }
+  }
+
   const deletePersonAlert = (person: Person) => {
     let name = person.firstName.trim() + " ";
     if (person.lastName) {
@@ -154,12 +165,8 @@ export default function groupScreen() {
           if (bond) {
             removeBondMember(bond, person);
             // Display delete message
-            let name = person.firstName.trim();
-            if (person.lastName) {
-              name += " ";
-              name += person.lastName.trim();
-            }
-            setName(name);
+            const name = trimName(person);
+            setName(name as string);
             setDeleteVisible(true);
             setTimeout(() => setDeleteVisible(false), 100);
           }
@@ -179,11 +186,6 @@ export default function groupScreen() {
           {bond?.bondName}
         </ThemedText>
       </View>
-      <DeleteMessage message = {`Removed ${name} from ${bond?.bondName}`} show = {isDeleteVisible}/>
-
-      <CallTextButton person={nextToCall as Person}></CallTextButton>
-
-      {bond ? <ScheduleCard bond={bond}></ScheduleCard> : <></>}
       <View style={styles.centeredView}>
         <ThemedText
           style={{
@@ -192,9 +194,10 @@ export default function groupScreen() {
             marginBottom: 10,
           }}
         >
-          Next to Call {`${nextToCall?.firstName} ${nextToCall?.lastName}`}
+          Next to Call {`${trimName(nextToCall as Person)}`}
         </ThemedText>
       </View>
+      <DeleteMessage message = {`Removed ${name} from ${bond?.bondName}`} show = {isDeleteVisible}/>
 
       <CallTextButton person={nextToCall as Person}></CallTextButton>
 
