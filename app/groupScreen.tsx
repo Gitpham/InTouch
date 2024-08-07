@@ -194,7 +194,7 @@ export default function groupScreen() {
   };
 
   return (
-    <ScrollView style={{ backgroundColor: "white" }}>
+    <ScrollView  contentContainerStyle={stackView} style={{backgroundColor: 'white'}}>
       <View style={styles.centeredView}>
         <ThemedText darkColor="black" style={styles.title} type="title">
           {bond?.bondName}

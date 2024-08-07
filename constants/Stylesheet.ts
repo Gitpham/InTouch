@@ -4,13 +4,10 @@ import { useSafeAreaInsets } from "react-native-safe-area-context"
 export function stackViews(): StyleProp<ViewStyle>{
   const insets = useSafeAreaInsets();
   return ({
-    flex: 1,
     backgroundColor: "white",
     gap: 2,
-    flexDirection: "column",
     paddingBottom: insets.bottom,
-    justifyContent: 'center',
-    alignContent: 'center',
+
     // alignItems: 'center',
   })
 }

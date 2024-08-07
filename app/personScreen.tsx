@@ -159,8 +159,8 @@ export default function PersonScreen() {
 
   return (
     <ScrollView
-    // nestedScrollEnabled={true}
-    style={{ backgroundColor: "white" }}>
+    contentContainerStyle={stackView} style={{backgroundColor: 'white'}}
+  >
     {/* <View style={stackView}> */}
       <View style={styles.centeredView}>
         <ThemedText darkColor="black" style={styles.title} type="title">
