@@ -1,4 +1,4 @@
-import {  useContext } from "react";
+import {  useContext, useState } from "react";
 import {  SafeAreaView, ScrollView } from "react-native";
 import React from "react";
 import { getAllBonds } from "@/assets/db/BondRepo";
@@ -12,10 +12,12 @@ import { InTouchContext } from "@/context/InTouchContext";
 import { useSQLiteContext } from "expo-sqlite";
 import { getAllSchedules } from "@/assets/db/ScheduleRepo";
 import { getAllScheduledNotifications, cancelAllNotifications } from "@/context/NotificationUtils";
+import ConfirmationMessage from "@/components/ConfirmationMessage";
 
    
    export default function statScreen() {
     const {peopleList, getBondPersonMap, getPersonBondMap, bondList } = useContext(InTouchContext)
+    const [isVisible, setIsVisible] = useState(false);
     const db = useSQLiteContext();
 
     async function onDisplaySchedules() {
@@ -89,7 +91,7 @@ import { getAllScheduledNotifications, cancelAllNotifications } from "@/context/
        <SafeAreaView>
           <ScrollView>
 
-       
+{/*        
          
             <ThemedText type= 'title'> Testing Reminder Screen </ThemedText>
             <StandardButton title="getAllBondMembersMember" onPress={onTestAddMember}/>
@@ -108,13 +110,14 @@ import { getAllScheduledNotifications, cancelAllNotifications } from "@/context/
 
             <StandardButton title="show bondPersonMap" onPress={onPressShowBondPersonMap}/>
 
-            <StandardButton title="show personBondMap" onPress={onPressShowPersonBondMap}/>
+            <StandardButton title="show personBondMap" onPress={onPressShowPersonBondMap}/> */}
 
-            <StandardButton title="show tables" onPress={tableNames}/>
-
+            <StandardButton title="show tables" onPress={() => {setIsVisible(old => !old); tableNames()}}/>
+            <ConfirmationMessage message={"Added member"} show={isVisible}/>
+{/* 
               <StandardButton title="Display Schedules from DB" onPress={onDisplaySchedules}></StandardButton>
         <StandardButton title="Display scheudleNotificaions" onPress={onDisplayNotifications}></StandardButton>
-        <StandardButton title="cancel all Notifications" onPress={clearScheduledNotifications}></StandardButton>
+        <StandardButton title="cancel all Notifications" onPress={clearScheduledNotifications}></StandardButton> */}
         </ScrollView>
 
        </SafeAreaView>

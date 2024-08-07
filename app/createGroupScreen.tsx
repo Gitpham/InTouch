@@ -18,6 +18,7 @@ import {
   getScheduleType,
 } from "@/context/ScheduleUtils";
 import { useSQLiteContext } from "expo-sqlite";
+import { updatePersonBond } from "@/assets/db/PersonBondRepo";
 
 export default function createGroupScreen() {
   // Data to be stored in record
@@ -87,6 +88,8 @@ export default function createGroupScreen() {
     }
     try {
       createBondMember(tempBondMembers, bondID);
+      const nextToCall = tempBondMembers.values().next().value;
+      await updatePersonBond(db, nextToCall, bondID, 1)
     } catch (e) {
       console.error(e);
       throw Error("failed to call createBondMember()");

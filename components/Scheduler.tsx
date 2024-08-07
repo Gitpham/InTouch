@@ -244,7 +244,7 @@ export default function Scheduler({
         "Replace Schedule",
         "Clicking 'confirm' will replace your old schedule with the one you just made",
         [
-          { text: "Confirm", onPress: () => onConfirmPress(pSchedule) },
+          { text: "Confirm", onPress: () => {onConfirmPress(pSchedule)} },
           { text: "Cancel" },
         ]
       );

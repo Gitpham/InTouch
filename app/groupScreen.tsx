@@ -1,6 +1,5 @@
 import { ThemedText } from "@/components/ThemedText";
 import {
-  FlatList,
   Pressable,
   ScrollView,
   View,
@@ -11,7 +10,7 @@ import { Card, ListItem, Button } from "@rneui/themed";
 import { useLocalSearchParams } from "expo-router";
 import { useContext, useEffect, useState } from "react";
 import { InTouchContext } from "@/context/InTouchContext";
-import { Bond, Person, Reminder } from "@/constants/types";
+import { Bond,  Person, Reminder } from "@/constants/types";
 import { router } from "expo-router";
 import React from "react";
 import { StandardButton } from "@/components/ButtonStandard";
@@ -22,10 +21,12 @@ import { DeleteIcon } from "@/components/DeleteIcon";
 import { stackViews, styles } from "@/constants/Stylesheet";
 import {
   sendSMS,
-  getNextToCallUtil,
+  displayNextToCall,
   callUtil,
+  getNextToCallUtil,
 } from "@/context/PhoneNumberUtils";
 import CallTextButton from "@/components/CallTextButton";
+import DeleteMessage from "@/components/DeleteMessage";
 import ReminderDisplayCard from "@/components/ReminderDisplayCard";
 
 export default function groupScreen() {
@@ -43,6 +44,8 @@ export default function groupScreen() {
   const [members, setMembers] = useState<Array<Person>>();
   const [reminders, setReminders] = useState<Array<Reminder>>();
   const [nextToCall, setNextToCall] = useState<Person>();
+  const [isDeleteVisible, setDeleteVisible] = useState(false)
+  const [name, setName] = useState("")
   const db = useSQLiteContext();
   const stackView = stackViews();
 
@@ -57,7 +60,10 @@ export default function groupScreen() {
         setMembers(p);
         const r = getRemindersOfBond(bondId);
         setReminders(r);
-        const n = await getNextToCallUtil(b.bond_id, db);
+        let n = await displayNextToCall(b.bond_id, db);
+        if (!n) {
+          n = await getNextToCallUtil(b.bond_id, db);
+        }
         setNextToCall(n);
       }
     };
@@ -68,7 +74,7 @@ export default function groupScreen() {
       console.error(e);
       console.log("Could not get Next to call");
     }
-  }, [bondPersonMap, reminderList]);
+  }, [bondPersonMap, reminderList, bondList]);
 
   const renderMembers = (members: Person[]) => {
     const memberList: React.JSX.Element[] = [];
@@ -106,6 +112,8 @@ export default function groupScreen() {
 
     return memberList;
   };
+  
+  
   const onDelete = async () => {
     if (bond) {
       await cancelNotificationsForBond(db, bond.bond_id);
@@ -114,12 +122,27 @@ export default function groupScreen() {
     router.back();
   };
 
+  const onDeleteAlert = () => {
+    Alert.alert(`Delete ${bond?.bondName} from your bonds?`, "This will delete all associated reminders and schedule",
+     [{
+        text: "Cancel",
+        onPress: () => {},
+        style: "cancel",
+      },
+      {
+        text: "OK",
+        onPress: () => onDelete(),
+        isPreferred: true,
+      },
+    ]);
+  }
+
   const deletePersonAlert = (person: Person) => {
-    let name = person.firstName + " ";
+    let name = person.firstName.trim() + " ";
     if (person.lastName) {
       name += person.lastName + " ";
     }
-    Alert.alert(`Remove ${name} from ${bond?.bondName}?`, "", [
+    Alert.alert(`Remove ${name} from ${bond?.bondName.trim()}?`, "", [
       {
         text: "Cancel",
         onPress: () => console.log("Cancel Pressed"),
@@ -127,9 +150,18 @@ export default function groupScreen() {
       },
       {
         text: "OK",
-        onPress: () => {
+        onPress: async () => {
           if (bond) {
             removeBondMember(bond, person);
+            // Display delete message
+            let name = person.firstName.trim();
+            if (person.lastName) {
+              name += " ";
+              name += person.lastName.trim();
+            }
+            setName(name);
+            setDeleteVisible(true);
+            setTimeout(() => setDeleteVisible(false), 100);
           }
         },
         isPreferred: true,
@@ -147,6 +179,11 @@ export default function groupScreen() {
           {bond?.bondName}
         </ThemedText>
       </View>
+      <DeleteMessage message = {`Removed ${name} from ${bond?.bondName}`} show = {isDeleteVisible}/>
+
+      <CallTextButton person={nextToCall as Person}></CallTextButton>
+
+      {bond ? <ScheduleCard bond={bond}></ScheduleCard> : <></>}
       <View style={styles.centeredView}>
         <ThemedText
           style={{
@@ -198,7 +235,7 @@ export default function groupScreen() {
             borderWidth: 2,
           }}
           titleStyle={styles.redTitle}
-          onPress={onDelete}
+          onPress={() => onDeleteAlert()}
         />
       </View>
     </ScrollView>

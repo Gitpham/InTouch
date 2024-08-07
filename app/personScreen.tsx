@@ -75,6 +75,25 @@ export default function PersonScreen() {
 
 
   // Delete functions
+  const onDeleteAlert = () => {
+    let name = person?.firstName.trim()
+    if (person?.lastName) {
+      name += " "
+      name += person.lastName
+    }
+    Alert.alert(`Delete ${name} from your inTouch contacts?`, "This will delete all associated reminders and remove them from any bond",
+     [{
+        text: "Cancel",
+        onPress: () => {},
+        style: "cancel",
+      },
+      {
+        text: "OK",
+        onPress: () => deletePerson(),
+        isPreferred: true,
+      },
+    ]);
+  }
   const deletePerson = () => {
     if (person) {
       removePerson(person);
@@ -137,7 +156,7 @@ export default function PersonScreen() {
             borderWidth: 2,
           }}
           titleStyle={styles.redTitle}
-          onPress={() => deletePerson()}
+          onPress={() => onDeleteAlert()}
         />
       </View>
     </ScrollView>

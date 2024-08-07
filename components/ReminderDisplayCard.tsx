@@ -107,11 +107,16 @@ export default function ReminderDisplayCard({
   };
 
   const deleteReminderAlert = (reminder: Reminder) => {
+
     let alertMessage: string;
     if (isFromBond) {
-      alertMessage = `Delete reminder for ${bond?.bondName}?`;
+      alertMessage = `Delete reminder for ${bond?.bondName.trim()}?`;
     } else {
-      alertMessage = `Delete reminder for ${person?.firstName}?`;
+      let name = person?.firstName.trim() + " "
+      if (person?.lastName) {
+        name += person.lastName.trim()
+      }
+      alertMessage = `Delete reminder for ${name}?`;
     }
 
     Alert.alert(alertMessage, "", [

@@ -2,7 +2,7 @@ import { Card } from "@rneui/themed"
 import React, { useContext, useEffect, useState } from "react"
 import { ThemedText } from "./ThemedText"
 import { StandardButton } from "./ButtonStandard"
-import { deleteScheduleOfBond, displayPotentialSchedule, displaySchedule } from "@/context/ScheduleUtils";
+import { deleteScheduleOfBond, displayPotentialSchedule, displaySchedule, getScheduleType } from "@/context/ScheduleUtils";
 import { router } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
 import { getScheduleOfBond } from "@/assets/db/ScheduleRepo";
@@ -43,7 +43,7 @@ export default function ScheduleCard({bond}: ScheduleCardInterface) {
     
 
     return (   <Card containerStyle={{flex: 2}}>
-        <Card.Title>Schedule: {bond?.schedule}</Card.Title>
+        <Card.Title>Schedule: {bond.schedule}</Card.Title>
         <Card.Divider></Card.Divider>
         {viewSchedule()}
 
