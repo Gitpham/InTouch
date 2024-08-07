@@ -138,8 +138,6 @@ export default function groupScreen() {
     ]);
   };
 
-
-
   return (
     <ScrollView
       contentContainerStyle={stackView}

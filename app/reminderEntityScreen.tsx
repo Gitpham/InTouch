@@ -163,6 +163,9 @@ export default function ReminderBondScreen() {
     <View style={{flex: 1, backgroundColor: 'white'}} >
       <Stack.Screen
         options={{
+          headerTitleStyle: {
+            color: 'black'
+          },
           headerTitle: isFromBond
             ? ` ${bondName} Reminders`
             : ` ${personName} Reminders`,
