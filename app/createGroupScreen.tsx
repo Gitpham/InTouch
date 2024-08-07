@@ -53,11 +53,10 @@ export default function createGroupScreen() {
     title = bondName;
   }
 
-
   useEffect(() => {
     setSchedule(displayPotentialSchedule(potentialSchedule));
-    if (potentialSchedule != undefined){
-    setHasCreatedSchedule(true)
+    if (potentialSchedule != undefined) {
+      setHasCreatedSchedule(true);
     }
   }, [potentialSchedule]);
 
@@ -73,7 +72,7 @@ export default function createGroupScreen() {
     }
 
     if (!potentialSchedule) {
-      Alert.alert("Invalid Bond", "Please choose a schedule")
+      Alert.alert("Invalid Bond", "Please choose a schedule");
       return;
     }
 
@@ -105,15 +104,14 @@ export default function createGroupScreen() {
     });
   }
 
-
-  const showBondMembers = (tempBondMembers: Set<number>) => {
+  const showTempBondMembers = (tempBondMembers: Set<number>) => {
     const bondMemberList: React.JSX.Element[] = [];
     let personToShow: Person = peopleList[0];
-      peopleList.forEach((person: Person) => {
-        if (tempBondMembers.has(person.person_id as number)) {
-          personToShow = person;
-          bondMemberList.push(
-            <ListItem bottomDivider>
+    peopleList.forEach((person: Person) => {
+      if (tempBondMembers.has(person.person_id as number)) {
+        personToShow = person;
+        bondMemberList.push(
+          <ListItem bottomDivider>
             <ListItem.Content id={person.person_id?.toString()}>
               <ListItem.Title>
                 {personToShow.firstName} {personToShow.lastName}
@@ -123,98 +121,84 @@ export default function createGroupScreen() {
               </ListItem.Title>
             </ListItem.Content>
           </ListItem>
-          )
-        }
-    })
-    return bondMemberList
-  }
-
-
-  const renderPotentialSchedule = ({ item }: { item: any }) => {
-    return item;
+        );
+      }
+    });
+    return bondMemberList;
   };
 
   return (
-    <ScrollView contentContainerStyle={stackView}>
-    {/* <SafeAreaView style={styles.stepContainer}> */}
+    <ScrollView
+      contentContainerStyle={stackView}
+      style={{ backgroundColor: "white" }}
+    >
+      {/* <SafeAreaView style={styles.stepContainer}> */}
+      <View style={styles.centeredView}>
+        <ThemedText type="title" style={styles.title}>
+          Bond Name: {title}
+        </ThemedText>
+      </View>
+
+      <TextInput
+        onChangeText={groupNameChange}
+        value={bondName}
+        placeholder="Enter Group Name"
+        style={styles.textInput}
+      ></TextInput>
+
+      <Card>
         <View style={styles.centeredView}>
-          <ThemedText type="title" style={styles.title}>
-            Bond Name: {title}
+          <ThemedText type="subtitle" style={styles.title}>
+            Members
           </ThemedText>
         </View>
 
-        <TextInput
-          onChangeText={groupNameChange}
-          value={bondName}
-          placeholder="Enter Group Name"
-          style={styles.textInput}
-        ></TextInput>
-
-        <Card>
-          <View style={styles.centeredView}>
-            <ThemedText type="subtitle" style={styles.title}>
-              Members
-            </ThemedText>
-          </View>
-
-          {
-            tempBondMembers.size > 0 ? 
-            showBondMembers(tempBondMembers) :
-            <Text>No Members Yet</Text>
+        {tempBondMembers.size > 0 ? (
+          showTempBondMembers(tempBondMembers)
+        ) : (
+          <Text>No Members Yet</Text>
+        )}
+        <StandardButton
+          title="Add Bond Member"
+          onPress={() =>
+            router.navigate({
+              pathname: "./addMemberScreen",
+              params: { bond_id: bondID },
+            })
           }
-          {/* {tempBondMembers.size > 0 ? (
-            <FlatList
-              nestedScrollEnabled={true}
-              data={[...tempBondMembers]}
-              renderItem={renderGroupMembers}
-              keyExtractor={(item) => item.toString()}
-            />
-          ) : (
-            <View style={styles.centeredView}>
-              <ThemedText darkColor="black">No members set</ThemedText>
-            </View>
-          )} */}
+        />
+      </Card>
 
-          <StandardButton
-            title="Add Bond Member"
-            onPress={() =>
-              router.navigate({
-                pathname: "./addMemberScreen",
-                params: { bond_id: bondID },
-              })
-            }
-          />
-        </Card>
-
-        <Card>
+      <Card>
         <View style={styles.centeredView}>
           <ThemedText type="subtitle" style={styles.title}>
             Schedule
           </ThemedText>
 
-          <FlatList
+          {schedule != undefined ? schedule : <Text>No Schedule Set</Text>}
+
+          {/* <FlatList
             data={[schedule]}
             renderItem={renderPotentialSchedule}
             keyExtractor={(item) => item}
-          />
+          /> */}
         </View>
 
-          { hasCreatedSchedule ?
-            <StandardButton title="Edit Schedule" onPress={onCreateSchedule}></StandardButton> :
-            <StandardButton
+        {hasCreatedSchedule ? (
+          <StandardButton
+            title="Edit Schedule"
+            onPress={onCreateSchedule}
+          ></StandardButton>
+        ) : (
+          <StandardButton
             title="Create Schedule"
             onPress={onCreateSchedule}
           ></StandardButton>
-          
+        )}
+      </Card>
 
-
-          }
-      
-        </Card>
-
-            <View style={styles.btnOrientation}>
-          
-        <StandardButton title="Submit Bond" onPress={onDonePress}/>
+      <View style={styles.btnOrientation}>
+        <StandardButton title="Submit Bond" onPress={onDonePress} />
 
         <StandardButton
           title="Cancel"
@@ -224,9 +208,8 @@ export default function createGroupScreen() {
             router.back();
           }}
         ></StandardButton>
-          </View>
-    {/* </SafeAreaView> */}
+      </View>
+      {/* </SafeAreaView> */}
     </ScrollView>
-
   );
 }
