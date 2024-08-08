@@ -62,7 +62,7 @@ export default function addMemberScreen() {
           name += p.lastName;
         }
 
-        if (name.includes(search)) {
+        if (name.toLowerCase().includes(search.toLowerCase())) {
           console.log(name)
           return p;
         }
