@@ -136,6 +136,11 @@ export default function addMemberScreen() {
     router.back()
   }
 
+  const onCancelPress = () => {
+    router.back()
+    clearTempBondMembers()
+  }
+
   const updateSearch = (search: string) => {
     setSearch(search);
   };
@@ -207,7 +212,8 @@ export default function addMemberScreen() {
 
       <StandardButton
         title="Cancel"
-        onPress={() => router.back()}
+        onPress={onCancelPress}
+        
 
       /> 
       </SafeAreaView>

@@ -117,7 +117,8 @@ import ConfirmationMessage from "@/components/ConfirmationMessage";
 {/* 
               <StandardButton title="Display Schedules from DB" onPress={onDisplaySchedules}></StandardButton>
         <StandardButton title="Display scheudleNotificaions" onPress={onDisplayNotifications}></StandardButton>
-        <StandardButton title="cancel all Notifications" onPress={clearScheduledNotifications}></StandardButton> */}
+       */}
+         <StandardButton title="cancel all Notifications" onPress={clearScheduledNotifications}></StandardButton>
         </ScrollView>
 
        </SafeAreaView>
