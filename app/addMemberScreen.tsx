@@ -150,11 +150,35 @@ export default function addMemberScreen() {
     <SafeAreaView style={styles.stepContainer}>
       <View style = {styles.centeredView}>
         <ThemedText type = "title" style = {styles.title}>Add Member</ThemedText>
+
         
       </View>
+
       <ConfirmationMessage message={`Added ${name}`} show={isConfirmationVisible}/>
+      {((bondId !== -1) && (peopleList.length !== 0)) ?
+      (
+      <Card>
+      <Card.Title>Choose From inTouch Contacts</Card.Title>
+    
+      <View style={styles.centeredView}>
+      <SearchBar
+        placeholder ="Search inTouch Contacts"
+        onChangeText={updateSearch}
+        value={search}
+        containerStyle={{ height: 50, width: 300 }} // Adjust outer container height
+        inputContainerStyle={{ height: 30, width: 280 }} // Adjust input container height
+        inputStyle={{ fontSize: 14 }} // Adjust font size
+      />
+      <FlatList
+        data={membersToShow}
+        style = {styles.flatList}
+        renderItem={renderInTouchContacts}
+        keyExtractor={(item) => item.person_id.toString()}
+      />
+      </View>
+      </Card>) :  null}
       <StandardButton
-        title="Create New Contact"
+        title="Add New Person Manually"
         onPress={() => {
           const newVisible = !isVisible;
           setIsVisible(newVisible);
@@ -178,34 +202,13 @@ export default function addMemberScreen() {
       </View>}
 
       <StandardButton
-        title="Import from Contacts"
+        title="Import New Person from Contacts"
         onPress={importFromContacts}
       />
 
-      {((bondId !== -1) && (peopleList.length !== 0)) ?
-      (
-      <Card>
-      <Card.Title>Choose From inTouch Contacts</Card.Title>
-    
-      <View style={styles.centeredView}>
-      <SearchBar
-        placeholder ="Search inTouch Contacts"
-        onChangeText={updateSearch}
-        value={search}
-        containerStyle={{ height: 50, width: 300 }} // Adjust outer container height
-        inputContainerStyle={{ height: 30, width: 280 }} // Adjust input container height
-        inputStyle={{ fontSize: 14 }} // Adjust font size
-      />
-      <FlatList
-        data={membersToShow}
-        style = {styles.flatList}
-        renderItem={renderInTouchContacts}
-        keyExtractor={(item) => item.person_id.toString()}
-      />
-      </View>
-      </Card>) :  null}
-
-      <StandardButton
+     
+     <View style={styles.btnOrientation}>
+     <StandardButton
         title="Save"
         onPress={() => onSavePress()}
       />
@@ -216,6 +219,10 @@ export default function addMemberScreen() {
         
 
       /> 
+
+     </View>
+
+    
       </SafeAreaView>
   );
 }

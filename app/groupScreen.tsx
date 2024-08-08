@@ -96,15 +96,12 @@ export default function groupScreen() {
         if (callLength.current > minCallLength){
 
           if (bond){
-            console.log("callHandler: bid: ", bond?.bond_id)
             getNextToCallUtil(bond?.bond_id, db)
             await getNextToCallUtil(bond?.bond_id, db)
             const nextPerson = await displayNextToCall(bond.bond_id, db);
-
             setNextToCall(nextPerson)
           }
         }
-        console.log("length of call: ", callLength.current)
 
       }
       appState.current = nextAppState;

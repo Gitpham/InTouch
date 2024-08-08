@@ -6,7 +6,7 @@ import {
 import { useFonts } from "expo-font";
 import { router, Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import {  createContext, MutableRefObject, useEffect, useRef, useState } from "react";
+import {  createContext, MutableRefObject, StrictMode, useEffect, useRef, useState } from "react";
 import "react-native-reanimated";
 import * as Notifications from "expo-notifications";
 import { useColorScheme } from "@/hooks/useColorScheme";
@@ -201,6 +201,8 @@ export default function RootLayout() {
   }
 
   return (
+    <StrictMode>
+
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
       {/* <CallContext.Provider value={{
         changeIsCalling,
@@ -256,5 +258,7 @@ export default function RootLayout() {
       </SQLiteProvider>
       {/* </CallContext.Provider> */}
     </ThemeProvider>
+    </StrictMode>
+
   );
 }

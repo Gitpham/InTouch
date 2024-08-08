@@ -104,7 +104,7 @@ export const styles = StyleSheet.create({
       alignItems: 'center',
     },
     btnOrientation: {
-      flex: .3,
+      // flex: .3,
       flexDirection: "row",
       justifyContent: 'center',
       alignItems: 'center',
