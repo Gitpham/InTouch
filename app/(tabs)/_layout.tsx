@@ -21,9 +21,29 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Home',
+          title: 'Bonds',
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon name={focused ? 'home' : 'home-outline'} color={color} />
+          ),
+        }}
+      />
+
+<Tabs.Screen
+        name="peopleScreen"
+        options={{
+          title: 'People',
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon name={focused ? 'people-circle' : 'people-circle-outline'} color={color} />
+          ),
+        }}
+      />
+
+<Tabs.Screen
+        name="reminderScreen"
+        options={{
+          title: 'Reminders',
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon name={focused ? 'library' : 'library-outline'} color={color} />
           ),
         }}
       />

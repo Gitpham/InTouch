@@ -56,6 +56,7 @@ export default function groupScreen() {
   const timeOfStartCall = useRef<Date>();
   const timeOfEndCall = useRef<Date>();
   const callLength = useRef(0);
+  const minCallLength = 45;
 
 
   function changeIsCalling(bool: boolean){
@@ -91,7 +92,7 @@ export default function groupScreen() {
         timeOfEndCall.current = new Date();
         callLength.current = ((timeOfEndCall.current as Date).getTime() - (timeOfStartCall.current as Date).getTime()) / 1000;
 
-        if (callLength.current > 2){
+        if (callLength.current > minCallLength){
 
           if (bond){
             console.log("callHandler: bid: ", bond?.bond_id)
