@@ -63,7 +63,6 @@ export default function addMemberScreen() {
         }
 
         if (name.includes(search)) {
-          console.log(name)
           return p;
         }
         else {
@@ -128,7 +127,6 @@ export default function addMemberScreen() {
   };
 
   const onSavePress = () => {
-    console.log("group_screen: ", group_screen)
     if (group_screen === 1) {
       createBondMember(tempBondMembers, bondId);
       clearTempBondMembers();

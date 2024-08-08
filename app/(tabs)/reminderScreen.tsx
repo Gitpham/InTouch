@@ -58,7 +58,7 @@ export default function ReminderScreen() {
     const name = getReminderName(reminder, bondList, peopleList)
     Alert.alert(`Delete reminder for ${name}?`, "",[
       {text: 'Cancel',
-        onPress: () => console.log('Cancel Pressed'),
+        onPress: () => {},
         style: 'cancel',},
       {text: 'OK',
         onPress: () => {{deleteReminder(reminder.reminder_id)}},

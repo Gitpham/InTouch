@@ -149,31 +149,53 @@ export default function groupScreen() {
   }
 
   const deletePersonAlert = (person: Person) => {
+
     let name = person.firstName.trim() + " ";
     if (person.lastName) {
-      name += person.lastName + " ";
+      name += person.lastName.trim() + " ";
     }
-    Alert.alert(`Remove ${name} from ${bond?.bondName.trim()}?`, "", [
-      {
+
+    // If last member, delete whole group
+    if (members.length === 1) {
+      Alert.alert(`Warning! Removing ${name} will delete ${bond?.bondName.trim()} entirely`,"", [
+      { 
         text: "Cancel",
-        onPress: () => console.log("Cancel Pressed"),
+        onPress: () => {},
         style: "cancel",
       },
       {
         text: "OK",
         onPress: async () => {
           if (bond) {
-            removeBondMember(bond, person);
-            // Display delete message
-            const name = trimName(person);
-            setName(name as string);
-            setDeleteVisible(true);
-            setTimeout(() => setDeleteVisible(false), 100);
+            onDelete();
           }
+        }
+      }
+      ]);
+    }
+    else {
+      Alert.alert(`Remove ${name} from ${bond?.bondName.trim()}?`, "", [
+        {
+          text: "Cancel",
+          onPress: () => {},
+          style: "cancel",
         },
-        isPreferred: true,
-      },
-    ]);
+        {
+          text: "OK",
+          onPress: async () => {
+            if (bond) {
+              removeBondMember(bond, person);
+              // Display delete message
+              const name = trimName(person);
+              setName(name as string);
+              setDeleteVisible(true);
+              setTimeout(() => setDeleteVisible(false), 100);
+            }
+          },
+          isPreferred: true,
+        },
+      ]);
+    };
   };
 
   return (

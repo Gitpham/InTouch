@@ -125,7 +125,7 @@ export default function ReminderBondScreen() {
     Alert.alert(alertMessage, "", [
       {
         text: "Cancel",
-        onPress: () => console.log("Cancel Pressed"),
+        onPress: () => {},
         style: "cancel",
       },
       {
