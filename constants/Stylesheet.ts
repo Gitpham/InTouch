@@ -148,7 +148,7 @@ export const styles = StyleSheet.create({
         borderWidth: 1,
         padding: 10,
         color: "white",
-        backgroundColor: "gray",
+        backgroundColor: "lightsteelblue",
     },
     indentedView: {
         paddingLeft: 10,

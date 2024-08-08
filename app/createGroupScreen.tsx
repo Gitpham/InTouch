@@ -140,6 +140,7 @@ export default function createGroupScreen() {
       </View>
 
       <TextInput
+        containerStyle={{}}
         onChangeText={groupNameChange}
         value={bondName}
         placeholder="Enter Group Name"
