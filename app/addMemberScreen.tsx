@@ -1,9 +1,6 @@
 import { ThemedText } from "@/components/ThemedText";
-import { Alert, FlatList, Pressable, ScrollView } from "react-native";
-import {
-  SafeAreaView,
-  useSafeAreaInsets,
-} from "react-native-safe-area-context";
+import { Alert, FlatList, Pressable, } from "react-native";
+
 import { View } from "react-native";
 import { useContext, useEffect, useState } from "react";
 import { ListItem, Card, SearchBar } from "@rneui/themed";
@@ -19,7 +16,7 @@ import ConfirmationMessage from "@/components/ConfirmationMessage";
 
 export default function addMemberScreen() {
   const { createPerson, addTempBondMember, tempBondMembers, peopleList, bondPersonMap, createBondMember, clearTempBondMembers } = useContext(InTouchContext);
-  const [ refresh, setRefresh ] = useState(false)
+  const [  setRefresh ] = useState(false)
   const [memberFirstName, memFirstNameChange] = useState("");
   const [memberLastName, memLastNameChange] = useState("");
   const [ name, setName ] = useState("")
@@ -32,7 +29,6 @@ export default function addMemberScreen() {
   
   const localParams = useLocalSearchParams();
   const group_screen = +localParams.group_screen;
-  const stackView = stackViews();
 
 
   useEffect(() => {
@@ -118,10 +114,7 @@ export default function addMemberScreen() {
               <ListItem.Title>
                 {item.firstName} {item.lastName}
               </ListItem.Title>
-              <ListItem.Title>
-                Phone Number: {item.phoneNumber} id:{" "}
-                {item.person_id?.toString()}
-              </ListItem.Title>
+      
             </ListItem.Content>
           </Pressable>
         </ListItem>
@@ -161,7 +154,6 @@ export default function addMemberScreen() {
       <Card>
       <Card.Title>Choose From inTouch Contacts</Card.Title>
     
-      <View style={styles.centeredView}>
       <SearchBar
         placeholder ="Search inTouch Contacts"
         onChangeText={updateSearch}
@@ -174,9 +166,8 @@ export default function addMemberScreen() {
         data={membersToShow}
         style = {styles.flatList}
         renderItem={renderInTouchContacts}
-        keyExtractor={(item) => item.person_id.toString()}
+        keyExtractor={(item) => (item.person_id as number).toString()}
       />
-      </View>
       </Card>) :  null}
       <StandardButton
         title="Add New Person Manually"
