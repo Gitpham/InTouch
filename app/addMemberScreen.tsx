@@ -152,16 +152,17 @@ export default function addMemberScreen() {
       <ConfirmationMessage message={`Added ${name}`} show={isConfirmationVisible}/>
       {((bondId !== -1) && (peopleList.length !== 0)) ?
       (
-      <Card>
+      <Card containerStyle={{borderColor: 'darkorchid'}}>
       <Card.Title>Choose From inTouch Contacts</Card.Title>
     
       <SearchBar
+       
         placeholder ="Search inTouch Contacts"
         onChangeText={updateSearch}
         value={search}
-        containerStyle={{ height: 50, width: 300 }} // Adjust outer container height
-        inputContainerStyle={{ height: 30, width: 280 }} // Adjust input container height
-        inputStyle={{ fontSize: 14 }} // Adjust font size
+        containerStyle={{ height: 50, width: 300 , backgroundColor: 'lightsteelblue', borderRadius: 10}} // Adjust outer container height
+        inputContainerStyle={{ height: 30, width: 280, backgroundColor: 'lightsteelblue' }} // Adjust input container height
+        inputStyle={{ fontSize: 14, color: 'black' }} // Adjust font size
       />
       <FlatList
         data={membersToShow}
