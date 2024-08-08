@@ -66,6 +66,7 @@ export const styles = StyleSheet.create({
       marginBottom: 0,
       flexDirection: "column",
       paddingTop: 10,
+      justifyContent: 'center'
     },
     entityContainer: {
       flex: 1,

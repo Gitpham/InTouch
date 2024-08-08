@@ -5,7 +5,7 @@ import {  ListItem } from "@rneui/themed";
 import {  View, FlatList, Pressable, Text } from "react-native";
 import { router } from "expo-router";
 import { InTouchContext } from "@/context/InTouchContext";
-import { StandardButton } from "@/components/ButtonStandard";
+import { AddBondtButton, AddButton, AddContactButton, StandardButton } from "@/components/ButtonStandard";
 import { Bond } from "@/constants/types";
 import { styles } from "@/constants/Stylesheet"
 import { ScheduleContext } from "@/context/ScheduleContext";
@@ -44,13 +44,15 @@ export default function homeScreen() {
         keyExtractor={(item) => item.bond_id.toString()}
       />
 
-      <StandardButton
-      title={"+Add Bond"}
-      onPress={() => {
+  
+
+      <AddBondtButton 
+      title={"New Bond"} onPress={() => {
         createPotentialSchedule(undefined)
         router.push("../createGroupScreen")}
-        }>
-      </StandardButton>
+        }/>
+
+     
 
     </SafeAreaView>
   );

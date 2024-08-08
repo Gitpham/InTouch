@@ -1,24 +1,44 @@
-import { Button } from "@rneui/themed";
+import { Button, Icon } from "@rneui/themed";
 import { router } from "expo-router";
-import { StyleSheet} from "react-native";
+import { ColorValue, StyleSheet, View} from "react-native";
+import React from "react";
 import { PropsWithChildren } from "react"
+
+const styles = StyleSheet.create({
+  button: {
+    margin: 10,
+    backgroundColor: "white",
+    borderColor: "black",
+    borderWidth: 2,
+  },
+  addContactButton: {
+    margin: 10,
+    backgroundColor: "white",
+    borderColor: "darkorchid",
+    borderWidth: 2,
+    borderRadius: 5,
+  },
+  addBondButton: {
+    margin: 10,
+    backgroundColor: "white",
+    borderColor: "forestgreen",
+    borderWidth: 2,
+    borderRadius: 5,
+  },
+
+
+  title: {
+    color: "black",
+  },
+});
+
 
 
 export const StandardButton= ({title, onPress}) => {
 
-    const styles = StyleSheet.create({
-        button: {
-          margin: 10,
-          backgroundColor: "white",
-          borderColor: "black",
-          borderWidth: 2,
-        },
-        title: {
-          color: "black",
-        },
-      });
 
     return (
+
         <Button
         title = {title}
         buttonStyle={styles.button}
@@ -26,10 +46,53 @@ export const StandardButton= ({title, onPress}) => {
         onPress={onPress}
         />
 
+
     )
 
-
 }
+
+export const AddContactButton = ({title, onPress}) => {
+
+
+return (
+
+  <View style={{alignSelf: 'center'}}>
+    <Button
+    containerStyle={{width: 'auto'}}
+    buttonStyle={
+     styles.addContactButton
+  }
+    titleStyle={styles.title}
+    onPress={onPress}
+    >
+    <Icon name='add-circle-outline'></Icon>
+    {title}
+    </Button>
+    </View>
+)
+}
+
+
+export const AddBondtButton = ({title, onPress}) => {
+
+
+  return (
+  
+    <View style={{alignSelf: 'center'}}>
+      <Button
+      containerStyle={{width: 'auto'}}
+      buttonStyle={
+       styles.addBondButton
+    }
+      titleStyle={styles.title}
+      onPress={onPress}
+      >
+      <Icon name='add-circle-outline'></Icon>
+      {title}
+      </Button>
+      </View>
+  )
+  }
 
 
 
