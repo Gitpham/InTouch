@@ -5,7 +5,7 @@ import {  ListItem } from "@rneui/themed";
 import {  View, FlatList, Pressable, Text } from "react-native";
 import { router } from "expo-router";
 import { InTouchContext } from "@/context/InTouchContext";
-import { AddBondtButton, AddButton, AddContactButton, StandardButton } from "@/components/ButtonStandard";
+import { AddBondButton, AddBondtButton, AddButton, AddContactButton, StandardButton } from "@/components/ButtonStandard";
 import { Bond } from "@/constants/types";
 import { styles } from "@/constants/Stylesheet"
 import { ScheduleContext } from "@/context/ScheduleContext";
@@ -46,7 +46,7 @@ export default function homeScreen() {
 
   
 
-      <AddBondtButton 
+      <AddButton color={'forestgreen'}
       title={"New Bond"} onPress={() => {
         createPotentialSchedule(undefined)
         router.push("../createGroupScreen")}

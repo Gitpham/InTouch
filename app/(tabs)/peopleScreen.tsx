@@ -50,7 +50,8 @@ export default function PeopleScreen() {
         keyExtractor={(item) => (item.person_id as number).toString()}
       />
 
-      <AddContactButton
+      <AddButton
+      color={'darkorchid'}
         title="New Contact"
         onPress={() =>
           router.navigate({

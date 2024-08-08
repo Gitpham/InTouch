@@ -232,7 +232,7 @@ export default function RootLayout() {
             />
             <Stack.Screen
               name="addMemberScreen"
-              options={{ headerTitle: "" }}
+              options={{ headerTitle: "", headerBackTitleVisible: false }}
             />
      
             <Stack.Screen
