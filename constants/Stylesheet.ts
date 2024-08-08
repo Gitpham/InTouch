@@ -7,6 +7,7 @@ export function stackViews(): StyleProp<ViewStyle>{
     backgroundColor: "white",
     gap: 2,
     paddingBottom: insets.bottom,
+    
 
     // alignItems: 'center',
   })
@@ -95,7 +96,7 @@ export const styles = StyleSheet.create({
       alignItems: "center",
     },
     flatList: {
-      height: 200,
+      height: 300,
     },
     rowOrientation: {
       flex: .3,

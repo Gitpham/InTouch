@@ -32,6 +32,7 @@ export default function addMemberScreen() {
   
   const localParams = useLocalSearchParams();
   const group_screen = +localParams.group_screen;
+  const stackView = stackViews();
 
 
   useEffect(() => {
@@ -147,7 +148,7 @@ export default function addMemberScreen() {
 
 
   return (
-    <SafeAreaView style={styles.stepContainer}>
+    <View style={{flex: 1, backgroundColor: 'white'}}>
       <View style = {styles.centeredView}>
         <ThemedText type = "title" style = {styles.title}>Add Member</ThemedText>
 
@@ -223,6 +224,6 @@ export default function addMemberScreen() {
      </View>
 
     
-      </SafeAreaView>
+      </View>
   );
 }
