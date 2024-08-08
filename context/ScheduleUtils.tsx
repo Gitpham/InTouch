@@ -28,7 +28,7 @@ import {
 } from "./NotificationUtils";
 import * as SQLite from "expo-sqlite";
 import { View } from "react-native";
-import React, { JSXElementConstructor } from "react";
+import React from "react";
 import { ThemedText } from "@/components/ThemedText";
 import { getBond } from "@/assets/db/BondRepo";
 import { Text } from "@rneui/base";

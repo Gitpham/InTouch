@@ -109,13 +109,13 @@ export default function ReminderDisplayCard({
 
     let alertMessage: string;
     if (isFromBond) {
-      alertMessage = `Delete reminder for ${bond?.bondName.trim()}?`;
+      alertMessage = `Delete note for ${bond?.bondName.trim()}?`;
     } else {
       let name = person?.firstName.trim() + " "
       if (person?.lastName) {
         name += person.lastName.trim()
       }
-      alertMessage = `Delete reminder for ${name}?`;
+      alertMessage = `Delete note for ${name}?`;
     }
 
     Alert.alert(alertMessage, "", [
@@ -138,27 +138,27 @@ export default function ReminderDisplayCard({
 
   return (
     <Card containerStyle={{ flex: 3 }}>
-      <Card.Title>Reminders</Card.Title>
+      <Card.Title>Notes</Card.Title>
       <Card.Divider/>
 
 
       {remindersForEntity.length != 0 ? (
         showRemindersForEntity()
       ) : (
-        <Text style={{alignSelf: 'center'}}>No Reminders Set</Text>
+        <Text style={{alignSelf: 'center'}}>No Notes Created</Text>
       )}
 
       {
         remindersForEntity.length > 3 ?
         <StandardButton
-        title="See All Reminders"
+        title="See All Notes"
         onPress={onSeeAllReminders}
       ></StandardButton> :
       <></>
       }
 
 
-      <StandardButton title="+Add Reminder" onPress={onAddReminder} />
+      <StandardButton title="+Add Note" onPress={onAddReminder} />
     </Card>
   );
 }

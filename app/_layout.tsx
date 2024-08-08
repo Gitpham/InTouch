@@ -4,9 +4,9 @@ import {
   ThemeProvider,
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { router, Stack } from "expo-router";
+import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import {  createContext, MutableRefObject, StrictMode, useEffect, useRef, useState } from "react";
+import {  StrictMode, useEffect, useRef, useState } from "react";
 import "react-native-reanimated";
 import * as Notifications from "expo-notifications";
 import { useColorScheme } from "@/hooks/useColorScheme";
@@ -17,7 +17,7 @@ import * as SQLite from 'expo-sqlite';
 import { createDB } from "@/assets/db/db";
 import { ScheduleContextProvider } from "@/context/ScheduleContext";
 import { Platform, AppState } from "react-native";
-import { callPersonUtil, getNextToCallUtil, } from "@/context/PhoneNumberUtils";
+import { callPersonUtil,  } from "@/context/PhoneNumberUtils";
 
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
@@ -245,7 +245,7 @@ export default function RootLayout() {
             />
             <Stack.Screen
               name="addReminderModal"
-              options={{ headerTitle: "Add Reminders", presentation: "modal"}}
+              options={{ headerTitle: "Add Notes", presentation: "modal"}}
             />
             <Stack.Screen
               name="reminderEntityScreen"

@@ -1,7 +1,6 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
 import { TabBarIcon } from '@/components/navigation/TabBarIcon';
-import { useColorScheme } from '@/hooks/useColorScheme';
 import { View } from 'react-native';
 
 export default function TabLayout() {
@@ -41,7 +40,7 @@ export default function TabLayout() {
 <Tabs.Screen
         name="reminderScreen"
         options={{
-          title: 'Reminders',
+          title: 'Notes',
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon name={focused ? 'library' : 'library-outline'} color={color} />
           ),

@@ -1,11 +1,9 @@
-import { StandardButton } from "@/components/ButtonStandard";
 import { ThemedText } from "@/components/ThemedText";
-import { ScrollView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { InTouchContext } from "@/context/InTouchContext";
 import { useContext } from "react";
-import { Pressable, StyleSheet, FlatList, View, Alert } from "react-native";
-import { Bond, Person, Reminder } from "@/constants/types";
+import { Pressable,  FlatList, View, Alert } from "react-native";
+import {  Reminder } from "@/constants/types";
 import React from "react";
 import { ListItem } from "@rneui/base";
 import { styles } from "@/constants/Stylesheet"
@@ -56,7 +54,7 @@ export default function ReminderScreen() {
 
   const deleteReminderAlert = (reminder: Reminder) => {
     const name = getReminderName(reminder, bondList, peopleList)
-    Alert.alert(`Delete reminder for ${name}?`, "",[
+    Alert.alert(`Delete notes for ${name}?`, "",[
       {text: 'Cancel',
         onPress: () => console.log('Cancel Pressed'),
         style: 'cancel',},
@@ -64,17 +62,16 @@ export default function ReminderScreen() {
         onPress: () => {{deleteReminder(reminder.reminder_id)}},
         isPreferred: true
       },
-    ]);
+    ])
   }
 
   const deleteReminder = (reminder_id: number) => {
         removeReminder(reminder_id);
       }
-
      return (
           <SafeAreaView style = {styles.stepContainer}>
                <View style = {styles.centeredView}>
-               <ThemedText type = "title" style = {styles.title}>All Reminders</ThemedText>
+               <ThemedText type = "title" style = {styles.title}>All Notes</ThemedText>
                </View>
                
                <FlatList
