@@ -6,7 +6,7 @@ import {
 import { useFonts } from "expo-font";
 import { router, Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import {  createContext, useEffect, useRef, useState } from "react";
+import {  createContext, MutableRefObject, useEffect, useRef, useState } from "react";
 import "react-native-reanimated";
 import * as Notifications from "expo-notifications";
 import { useColorScheme } from "@/hooks/useColorScheme";
@@ -33,11 +33,13 @@ Notifications.setNotificationHandler({
 
 type CallContextType = {
   changeIsCalling: (b: boolean) => void;
+  callLength: MutableRefObject<number>;
 }
 export const CallContext = createContext<CallContextType>({
   changeIsCalling: function (b: boolean): void {
     throw new Error("Function not implemented.");
-  }
+  },
+  callLength: undefined
 });
 
 
@@ -76,7 +78,7 @@ export default function RootLayout() {
 
   const timeOfStartCall = useRef<Date>();
   const timeOfEndCall = useRef<Date>();
-  
+  const callLength = useRef<number>(0);
 
 
 
@@ -140,7 +142,7 @@ export default function RootLayout() {
         changeIsCalling(false);
 
         timeOfEndCall.current = new Date();
-        const callLength: number = ((timeOfEndCall.current as Date).getTime() - (timeOfStartCall.current as Date).getTime()) / 1000;
+        callLength.current = ((timeOfEndCall.current as Date).getTime() - (timeOfStartCall.current as Date).getTime()) / 1000;
         console.log("length of call: ", callLength)
       }
 
@@ -168,7 +170,7 @@ export default function RootLayout() {
         console.log('Ended Call from notification!');
 
         timeOfEndCall.current = new Date();
-        const callLength: number = ((timeOfEndCall.current as Date).getTime() - (timeOfStartCall.current as Date).getTime()) / 1000;
+        callLength.current = ((timeOfEndCall.current as Date).getTime() - (timeOfStartCall.current as Date).getTime()) / 1000;
         console.log("length of call: ", callLength)
         return;
       }
@@ -196,7 +198,7 @@ export default function RootLayout() {
         isCallingFromNotificationWhileOnApp.current = false;
         console.log('Ended Call from notification while on app!');
         timeOfEndCall.current = new Date();
-        const callLength: number = ((timeOfEndCall.current as Date).getTime() - (timeOfStartCall.current as Date).getTime()) / 1000;
+        callLength.current = ((timeOfEndCall.current as Date).getTime() - (timeOfStartCall.current as Date).getTime()) / 1000;
         console.log("length of call: ", callLength)
         return;
       }
@@ -230,7 +232,8 @@ export default function RootLayout() {
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
       <CallContext.Provider value={{
-        changeIsCalling
+        changeIsCalling,
+        callLength,
       }}>
       <SQLiteProvider databaseName="July26_ScheduleTable_2.db">
         <ScheduleContextProvider>
