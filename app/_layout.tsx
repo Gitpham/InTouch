@@ -6,7 +6,7 @@ import {
 import { useFonts } from "expo-font";
 import { router, Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import {  useEffect, useRef, useState } from "react";
+import {  createContext, useEffect, useRef, useState } from "react";
 import "react-native-reanimated";
 import * as Notifications from "expo-notifications";
 import { useColorScheme } from "@/hooks/useColorScheme";
@@ -16,9 +16,8 @@ import React from "react";
 import * as SQLite from 'expo-sqlite';
 import { createDB } from "@/assets/db/db";
 import { ScheduleContextProvider } from "@/context/ScheduleContext";
-import { Platform } from "react-native";
+import { Platform, AppState } from "react-native";
 import { callPersonUtil, } from "@/context/PhoneNumberUtils";
-import { styles } from "@/constants/Stylesheet";
 
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
@@ -32,6 +31,16 @@ Notifications.setNotificationHandler({
   }),
 });
 
+type CallContextType = {
+  changeIsCalling: (b: boolean) => void;
+}
+export const CallContext = createContext<CallContextType>({
+  changeIsCalling: function (b: boolean): void {
+    throw new Error("Function not implemented.");
+  }
+});
+
+
 
 export default function RootLayout() {
 
@@ -43,8 +52,31 @@ export default function RootLayout() {
 
   let db: SQLite.SQLiteDatabase;
 
+  const [channels, setChannels] = useState<Notifications.NotificationChannel[]>(
+    []
+  );
+  const [notification, setNotification] = useState<
+    Notifications.Notification | undefined
+  >(undefined);
+  const notificationListener = useRef<Notifications.Subscription>();
+  const responseListener = useRef<Notifications.Subscription>();
+  const appState = useRef(AppState.currentState);
+  const [appStateVisible, setAppStateVisible] = useState(appState.current);
+  const isCalling = useRef(false);
+  const changeIsCalling = (bool: boolean) => {
+    isCalling.current = bool;
+  }
+
+  const recievedCallNotification = useRef(false);
+  const isCallingFromNotification = useRef(false);
+
+  const isCallingFromNotificationWhileOnApp = useRef(false);
+  
+
+
 
   useEffect(() => {
+    // INITIALIZE DB
     const initDB = async () => {
       db = await SQLite.openDatabaseAsync("July26_ScheduleTable_2.db");
       createDB(db);
@@ -56,6 +88,7 @@ export default function RootLayout() {
       console.log("failed to initDB()")
     }
 
+    // INITIALIZE NOTIFICAITON HANDLERS
     if (Platform.OS === "android") {
       Notifications.getNotificationChannelsAsync().then((value) =>
         setChannels(value ?? [])
@@ -72,6 +105,7 @@ export default function RootLayout() {
           console.log("Recieved Response!")
           try {
             callPersonUtil(response.notification, db)
+            recievedCallNotification.current = true;
           } catch (e) {
             console.error(e);
             throw Error("failed to navigate away");
@@ -79,7 +113,84 @@ export default function RootLayout() {
         }
       );
 
+    // INITIALIZE APP STATE HANDLERS
+    const subscription = AppState.addEventListener('change', nextAppState => {
+
+      //USER PRESSES CALL FROM GROUP SCREEN
+      if (
+        (appState.current.match(/active|inactive/)) &&
+        (isCalling.current == true) &&
+        (nextAppState === 'background')
+      ) {
+        console.log('started call from app!');
+      }
+     
+      if (
+        (appState.current.match(/background/)) &&
+        (isCalling.current == true) &&
+        (nextAppState === 'active')
+      ) {
+        console.log('Ended Call from app!');
+        changeIsCalling(false);
+      }
+
+      //USER RECIEVES NOTIFICATION WHILE AWAY FROM APP
+      if (
+        (appState.current.match(/background/)) &&
+        (recievedCallNotification.current == true) &&
+        (nextAppState === 'active')
+      ) {
+        recievedCallNotification.current = false;
+        isCallingFromNotification.current = true;
+        console.log('started call from notification!');
+        return;
+      }
+     
+      if (
+        (appState.current.match(/background/)) &&
+        (isCallingFromNotification.current == true) &&
+        (nextAppState === 'active')
+      ) {
+        isCallingFromNotification.current = false;
+        console.log('Ended Call from notification!');
+        return;
+      }
+
+      //USER RECEIVES NOTIICATION WHILE ON APP
+
+      if (
+        (appState.current.match(/active|inactive/)) &&
+        (recievedCallNotification.current == true) &&
+        (nextAppState === 'background')
+      ) {
+        recievedCallNotification.current = false;
+        isCallingFromNotificationWhileOnApp.current = true;
+        console.log('started call from notification while on app!');
+        return;
+      }
+
+      if (
+        (appState.current.match(/background|inactive/)) &&
+        (isCallingFromNotificationWhileOnApp.current == true) &&
+        (nextAppState === 'active')
+      ) {
+        isCallingFromNotificationWhileOnApp.current = false;
+        console.log('Ended Call from notification while on app!');
+        return;
+      }
+
+  
+
+      appState.current = nextAppState;
+      console.log('AppState', appState.current);
+
+      // setAppStateVisible(appState.current);
+
+    });
+
+
     return () => {
+      subscription.remove();
       notificationListener.current &&
         Notifications.removeNotificationSubscription(
           notificationListener.current
@@ -89,14 +200,6 @@ export default function RootLayout() {
     };
   }, []);
 
-  const [channels, setChannels] = useState<Notifications.NotificationChannel[]>(
-    []
-  );
-  const [notification, setNotification] = useState<
-    Notifications.Notification | undefined
-  >(undefined);
-  const notificationListener = useRef<Notifications.Subscription>();
-  const responseListener = useRef<Notifications.Subscription>();
   useEffect(() => {
     if (loaded) {
       SplashScreen.hideAsync();
@@ -109,9 +212,11 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+      <CallContext.Provider value={{
+        changeIsCalling
+      }}>
       <SQLiteProvider databaseName="July26_ScheduleTable_2.db">
         <ScheduleContextProvider>
-
         <InTouchContextProvider>
           <Stack screenOptions={{
             headerShadowVisible: false,
@@ -158,6 +263,7 @@ export default function RootLayout() {
         </InTouchContextProvider>
         </ScheduleContextProvider>
       </SQLiteProvider>
+      </CallContext.Provider>
     </ThemeProvider>
   );
 }

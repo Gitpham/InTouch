@@ -1,9 +1,10 @@
 import { Pressable, View , Text} from "react-native";
-import React from "react";
+import React, { useContext } from "react";
 import { styles } from "@/constants/Stylesheet";
 import { callUtil, sendSMS } from "@/context/PhoneNumberUtils";
 import { Person } from "@/constants/types";
 import { useSQLiteContext } from "expo-sqlite";
+import { CallContext } from "@/app/_layout";
 
 
 interface CallTextBtnInterface {
@@ -12,6 +13,7 @@ interface CallTextBtnInterface {
 export default function CallTextButton({person}: CallTextBtnInterface){
 
     const db = useSQLiteContext();
+    const {changeIsCalling} = useContext(CallContext)
     return (
         <View
         style={{
@@ -24,7 +26,12 @@ export default function CallTextButton({person}: CallTextBtnInterface){
         <View
           style={styles.callBtn}
         >
-          <Pressable onPress={() => callUtil(person, db)}>
+          <Pressable onPress={() => 
+          {
+            changeIsCalling(true);
+            callUtil(person, db)
+          }
+            }>
             <Text style={{color: 'purple' }}>Call</Text>
           </Pressable>
         </View>
