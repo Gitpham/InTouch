@@ -86,7 +86,13 @@ export const createDB = async (db: SQLite.SQLiteDatabase) => {
             FOREIGN KEY (person_id)
                 REFERENCES person (person_id)
                 ON DELETE CASCADE
-                ON UPDATE NO ACTION);`;
+                ON UPDATE NO ACTION
+            FOREIGN KEY (bond_id)
+                REFERENCES bond (bond_id)
+                ON DELETE CASCADE
+                ON UPDATE NO ACTION
+        );
+      `;
 
   const scheduleQuery = `
                 CREATE TABLE IF NOT EXISTS schedule (

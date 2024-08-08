@@ -20,7 +20,7 @@ const ConfirmationMessage = ({ message , show} ) => {
                         duration: 300,
                         useNativeDriver: true,
                     }).start(() => setVisible(false));
-                }, 1000); // Show message for 2 seconds
+                }, 2000); // Show message for 2 seconds
             });
         }
     }, [show]);

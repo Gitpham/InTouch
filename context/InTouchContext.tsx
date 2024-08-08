@@ -325,11 +325,12 @@ export const InTouchContextProvider: React.FC<{
 
       //UPDATE REMINDER LIST
       setReminderList((prevReminders) => {
-        const newReminders = [...prevReminders]
-        newReminders.filter((reminder) => {
-          reminder.person_id !== personID
+        let newReminders = [...prevReminders]
+        return newReminders.filter((reminder) => {
+          if (reminder.person_id !== personID) {
+            return reminder;
+          }
         });
-        return newReminders;
       })
 
      
@@ -405,6 +406,19 @@ export const InTouchContextProvider: React.FC<{
         });
         return newPersonBondMap;
       });
+
+      // Delete reminders
+      console.log("bondID", bond.bond_id)
+      setReminderList((old) => {
+        let newList = [...old];
+        return newList.filter((r) => {
+          if (r.bond_id !== bond.bond_id) {
+            console.log("reminder", r);
+            return r;
+          }
+        })
+      });
+      console.log("the list", reminderList);
     } catch (e) {
       console.error(e);
       throw Error("Could not remove bond");

@@ -2,7 +2,7 @@ import {  useContext, useState } from "react";
 import {  SafeAreaView, ScrollView } from "react-native";
 import React from "react";
 import { getAllBonds } from "@/assets/db/BondRepo";
-import { clearDB, getTableNames } from "@/assets/db/db";
+import { clearDB, getTableNames, removeTable, Table } from "@/assets/db/db";
 import { getAllPersonBonds } from "@/assets/db/PersonBondRepo";
 import { getAllPersons } from "@/assets/db/PersonRepo";
 import { getAllReminders } from "@/assets/db/ReminderRepo";
@@ -34,9 +34,6 @@ import ConfirmationMessage from "@/components/ConfirmationMessage";
       await cancelAllNotifications()
     }
   
-
-
-
 
     async function onTestAddMember() {
          const personBonds = await getAllPersonBonds(db)
@@ -72,7 +69,9 @@ import ConfirmationMessage from "@/components/ConfirmationMessage";
     }
 
     async function onPressClearDB() {
-         clearDB(db)
+     //     clearDB(db)
+     const reminder : Table = "reminder"
+     removeTable(db, reminder);
     }
 
     async function tableNames() {
@@ -91,7 +90,7 @@ import ConfirmationMessage from "@/components/ConfirmationMessage";
        <SafeAreaView>
           <ScrollView>
 
-{/*        
+       
          
             <ThemedText type= 'title'> Testing Reminder Screen </ThemedText>
             <StandardButton title="getAllBondMembersMember" onPress={onTestAddMember}/>
@@ -110,10 +109,9 @@ import ConfirmationMessage from "@/components/ConfirmationMessage";
 
             <StandardButton title="show bondPersonMap" onPress={onPressShowBondPersonMap}/>
 
-            <StandardButton title="show personBondMap" onPress={onPressShowPersonBondMap}/> */}
+            <StandardButton title="show personBondMap" onPress={onPressShowPersonBondMap}/>
 
             <StandardButton title="show tables" onPress={() => {setIsVisible(old => !old); tableNames()}}/>
-            <ConfirmationMessage message={"Added member"} show={isVisible}/>
 {/* 
               <StandardButton title="Display Schedules from DB" onPress={onDisplaySchedules}></StandardButton>
         <StandardButton title="Display scheudleNotificaions" onPress={onDisplayNotifications}></StandardButton>
