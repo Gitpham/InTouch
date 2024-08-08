@@ -35,6 +35,12 @@ const formatPhoneNumber = (phoneNumber: string): string => {
   };
 
 
+  /**
+   * Returns current person
+   * @param bondID 
+   * @param db 
+   * @returns 
+   */
   const getNextToCallUtil = async (bondID: number, db: SQLite.SQLiteDatabase): Promise<Person> => {
     try {
       const members: BondPerson[] = await getPersonsOfBondDB(db, bondID);

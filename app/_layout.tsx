@@ -17,7 +17,7 @@ import * as SQLite from 'expo-sqlite';
 import { createDB } from "@/assets/db/db";
 import { ScheduleContextProvider } from "@/context/ScheduleContext";
 import { Platform, AppState } from "react-native";
-import { callPersonUtil, } from "@/context/PhoneNumberUtils";
+import { callPersonUtil, getNextToCallUtil, } from "@/context/PhoneNumberUtils";
 
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
@@ -31,16 +31,12 @@ Notifications.setNotificationHandler({
   }),
 });
 
-type CallContextType = {
-  changeIsCalling: (b: boolean) => void;
-  callLength: MutableRefObject<number>;
-}
-export const CallContext = createContext<CallContextType>({
-  changeIsCalling: function (b: boolean): void {
-    throw new Error("Function not implemented.");
-  },
-  callLength: undefined
-});
+// type CallContextType = {
+//   callLength: MutableRefObject<number>;
+// }
+// export const CallContext = createContext<CallContextType>({
+//   callLength: number;
+// });
 
 
 
@@ -65,11 +61,10 @@ export default function RootLayout() {
 
   //TRACKING CALL VARIABLES
   const appState = useRef(AppState.currentState);
-  const [appStateVisible, setAppStateVisible] = useState(appState.current);
-  const isCalling = useRef(false);
-  const changeIsCalling = (bool: boolean) => {
-    isCalling.current = bool;
-  }
+  // const isCalling = useRef(false);
+  // const changeIsCalling = (bool: boolean) => {
+  //   isCalling.current = bool;
+  // }
 
   const recievedCallNotification = useRef(false);
   const isCallingFromNotification = useRef(false);
@@ -122,29 +117,6 @@ export default function RootLayout() {
 
     // INITIALIZE APP STATE HANDLERS
     const subscription = AppState.addEventListener('change', nextAppState => {
-
-      //USER PRESSES CALL FROM GROUP SCREEN
-      if (
-        (appState.current.match(/active|inactive/)) &&
-        (isCalling.current == true) &&
-        (nextAppState === 'background')
-      ) {
-        console.log('started call from app!');
-        timeOfStartCall.current = new Date();
-      }
-     
-      if (
-        (appState.current.match(/background/)) &&
-        (isCalling.current == true) &&
-        (nextAppState === 'active')
-      ) {
-        console.log('Ended Call from app!');
-        changeIsCalling(false);
-
-        timeOfEndCall.current = new Date();
-        callLength.current = ((timeOfEndCall.current as Date).getTime() - (timeOfStartCall.current as Date).getTime()) / 1000;
-        console.log("length of call: ", callLength)
-      }
 
       //USER RECIEVES NOTIFICATION WHILE AWAY FROM APP
       if (
@@ -202,7 +174,6 @@ export default function RootLayout() {
         console.log("length of call: ", callLength)
         return;
       }
-
       appState.current = nextAppState;
 
     });
@@ -231,10 +202,10 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <CallContext.Provider value={{
+      {/* <CallContext.Provider value={{
         changeIsCalling,
         callLength,
-      }}>
+      }}> */}
       <SQLiteProvider databaseName="July26_ScheduleTable_2.db">
         <ScheduleContextProvider>
         <InTouchContextProvider>
@@ -283,7 +254,7 @@ export default function RootLayout() {
         </InTouchContextProvider>
         </ScheduleContextProvider>
       </SQLiteProvider>
-      </CallContext.Provider>
+      {/* </CallContext.Provider> */}
     </ThemeProvider>
   );
 }
