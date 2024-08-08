@@ -19,7 +19,6 @@ export default function ReminderDisplayCard({
 }: ReminderDisplayCardIterface) {
   const { removeReminder, reminderList, getRemindersOfBond, getRemindersOfPerson } = useContext(InTouchContext);
   const isFromBond: boolean = bond != undefined ? true : false;
-  const [showSeeAllReminders, setShowSeeAllReminders] = useState(false);
 
   const [remindersForEntity, setRemindersForEntity] = useState<Reminder[]>([])
 
@@ -140,11 +139,13 @@ export default function ReminderDisplayCard({
   return (
     <Card containerStyle={{ flex: 3 }}>
       <Card.Title>Reminders</Card.Title>
+      <Card.Divider/>
+
 
       {remindersForEntity.length != 0 ? (
         showRemindersForEntity()
       ) : (
-        <Text>No Reminders Set</Text>
+        <Text style={{alignSelf: 'center'}}>No Reminders Set</Text>
       )}
 
       {

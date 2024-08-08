@@ -29,6 +29,7 @@ import {
 import CallTextButton from "@/components/CallTextButton";
 import DeleteMessage from "@/components/DeleteMessage";
 import ReminderDisplayCard from "@/components/ReminderDisplayCard";
+import { Divider } from "@rneui/base";
 
 export default function groupScreen() {
   const {
@@ -274,6 +275,7 @@ export default function groupScreen() {
 
       <Card containerStyle={{ flex: 2 }}>
         <Card.Title>Members</Card.Title>
+       <Card.Divider/>
         {members != undefined ? (
           renderMembers(members)
         ) : (
