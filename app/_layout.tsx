@@ -60,6 +60,8 @@ export default function RootLayout() {
   >(undefined);
   const notificationListener = useRef<Notifications.Subscription>();
   const responseListener = useRef<Notifications.Subscription>();
+
+  //TRACKING CALL VARIABLES
   const appState = useRef(AppState.currentState);
   const [appStateVisible, setAppStateVisible] = useState(appState.current);
   const isCalling = useRef(false);
@@ -71,6 +73,9 @@ export default function RootLayout() {
   const isCallingFromNotification = useRef(false);
 
   const isCallingFromNotificationWhileOnApp = useRef(false);
+
+  const timeOfStartCall = useRef<Date>();
+  const timeOfEndCall = useRef<Date>();
   
 
 
@@ -123,6 +128,7 @@ export default function RootLayout() {
         (nextAppState === 'background')
       ) {
         console.log('started call from app!');
+        timeOfStartCall.current = new Date();
       }
      
       if (
@@ -132,6 +138,10 @@ export default function RootLayout() {
       ) {
         console.log('Ended Call from app!');
         changeIsCalling(false);
+
+        timeOfEndCall.current = new Date();
+        const callLength: number = ((timeOfEndCall.current as Date).getTime() - (timeOfStartCall.current as Date).getTime()) / 1000;
+        console.log("length of call: ", callLength)
       }
 
       //USER RECIEVES NOTIFICATION WHILE AWAY FROM APP
@@ -142,6 +152,8 @@ export default function RootLayout() {
       ) {
         recievedCallNotification.current = false;
         isCallingFromNotification.current = true;
+
+        timeOfStartCall.current = new Date();
         console.log('started call from notification!');
         return;
       }
@@ -152,7 +164,12 @@ export default function RootLayout() {
         (nextAppState === 'active')
       ) {
         isCallingFromNotification.current = false;
+
         console.log('Ended Call from notification!');
+
+        timeOfEndCall.current = new Date();
+        const callLength: number = ((timeOfEndCall.current as Date).getTime() - (timeOfStartCall.current as Date).getTime()) / 1000;
+        console.log("length of call: ", callLength)
         return;
       }
 
@@ -165,6 +182,8 @@ export default function RootLayout() {
       ) {
         recievedCallNotification.current = false;
         isCallingFromNotificationWhileOnApp.current = true;
+        timeOfStartCall.current = new Date();
+
         console.log('started call from notification while on app!');
         return;
       }
@@ -176,15 +195,13 @@ export default function RootLayout() {
       ) {
         isCallingFromNotificationWhileOnApp.current = false;
         console.log('Ended Call from notification while on app!');
+        timeOfEndCall.current = new Date();
+        const callLength: number = ((timeOfEndCall.current as Date).getTime() - (timeOfStartCall.current as Date).getTime()) / 1000;
+        console.log("length of call: ", callLength)
         return;
       }
 
-  
-
       appState.current = nextAppState;
-      console.log('AppState', appState.current);
-
-      // setAppStateVisible(appState.current);
 
     });
 
