@@ -516,6 +516,14 @@ export const InTouchContextProvider: React.FC<{
     });
   }
 
+  function getBondPersonMap() {
+    const iter = personBondMap.entries();
+    console.log("personBondMap: ");
+    personBondMap.forEach(() => {
+      console.log(iter.next().value);
+    });
+  }
+
   async function removeBondMember(bond: Bond, person: Person) {
     try {
       await deletePersonBond(db, person.person_id, bond.bond_id);

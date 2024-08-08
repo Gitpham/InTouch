@@ -11,6 +11,7 @@ import { ListItem } from "@rneui/base";
 import { styles } from "@/constants/Stylesheet"
 import { DeleteIcon } from "@/components/DeleteIcon";
 import { getReminderName } from "@/context/ReminderUtils";
+import { router } from "expo-router";
 
 
 export default function ReminderScreen() {
@@ -81,6 +82,11 @@ export default function ReminderScreen() {
                data = {reminderList}
                renderItem = {renderReminder}
                keyExtractor={(item) => item.reminder_id.toString()}
+               />
+
+               <StandardButton
+                title = "Add Note"
+                onPress = {() => {router.push("../addReminderModal")}}
                />
 
           </SafeAreaView>
