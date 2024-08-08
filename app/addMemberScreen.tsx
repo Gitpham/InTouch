@@ -16,7 +16,7 @@ import ConfirmationMessage from "@/components/ConfirmationMessage";
 
 export default function addMemberScreen() {
   const { createPerson, addTempBondMember, tempBondMembers, peopleList, bondPersonMap, createBondMember, clearTempBondMembers } = useContext(InTouchContext);
-  const [  setRefresh ] = useState(false)
+  const [ refresh,  setRefresh ] = useState(false)
   const [memberFirstName, memFirstNameChange] = useState("");
   const [memberLastName, memLastNameChange] = useState("");
   const [ name, setName ] = useState("")
@@ -26,6 +26,7 @@ export default function addMemberScreen() {
   const [isVisible, setIsVisible] = useState(false);
   const [isConfirmationVisible, setConfirmationVisible ] = useState(false);
   const [membersToShow, setMembersToShow] = useState<Array<Person>>([])
+  
   
   const localParams = useLocalSearchParams();
   const group_screen = +localParams.group_screen;
