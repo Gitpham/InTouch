@@ -53,8 +53,6 @@ export default function AddMemberManual({
   // Member information
 
   async function savePerson() {
-    const personID = generatePersonId();
-
     const newContact: Person = {
       firstName: memberFirstName,
       lastName: memberLastName,
@@ -63,10 +61,6 @@ export default function AddMemberManual({
     };
 
     await createPerson(newContact);
-    const bond_id = +(localParams.bond_id as string);
-    if (bond_id !== -1) {
-      addTempBondMember(personID);
-    }
   }
 
   return (

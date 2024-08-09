@@ -10,7 +10,7 @@ import { InTouchContext } from "@/context/InTouchContext";
 import { AddButton, StandardButton } from "@/components/ButtonStandard";
 import AddMemberManual from "@/components/AddMemberManual";
 import { Person } from "@/constants/types";
-import { stackViews, styles } from "@/constants/Stylesheet";
+import {  styles } from "@/constants/Stylesheet";
 import React from "react";
 import ConfirmationMessage from "@/components/ConfirmationMessage";
 import { Dialog } from "@rneui/base";
@@ -37,10 +37,10 @@ export default function addMemberScreen() {
   const [membersToShow, setMembersToShow] = useState<Array<Person>>([]);
 
   const localParams = useLocalSearchParams();
-  const group_screen = +localParams.group_screen;
+  const group_screen = +localParams.group_screen === 1 ? true : false;
 
   useEffect(() => {
-    setBondID(+localParams.bond_id);
+    setBondID(localParams.bond_id != undefined ? +localParams.bond_id : -1);
 
     let peopleToShow = peopleList.filter((p) => {
       if (!tempBondMembers.has(p.person_id as number)) {
@@ -121,7 +121,7 @@ export default function addMemberScreen() {
   };
 
   const onSavePress = () => {
-    if (group_screen === 1) {
+    if (group_screen) {
       createBondMember(tempBondMembers, bondId);
       clearTempBondMembers();
     }
@@ -218,30 +218,6 @@ export default function addMemberScreen() {
         </View>
     </Dialog>
 
-      {/* {isVisible && (
-        <View
-          style={{
-            paddingTop: 10,
-            paddingBottom: 10,
-            borderColor: "black",
-            borderWidth: 2,
-            borderRadius: 10,
-          }}
-        >
-          <AddMemberManual
-            memberFirstName={memberFirstName}
-            memFirstNameChange={memFirstNameChange}
-            memberLastName={memberLastName}
-            memLastNameChange={memLastNameChange}
-            memberNumber={memberNumber}
-            memNumberChange={memNumberChange}
-            bondId={bondId}
-            setBondID={setBondID}
-            isVisible={isVisible}
-            setIsVisible={setIsVisible}
-          />
-        </View>
-      )} */}
 
       <AddButton
         color={"darkorchid"}

@@ -19,8 +19,8 @@ export default function addReminderModal() {
   const [reminder, setReminder] = useState("");
   const [segment, setSegment] = useState("Person");
   const localParams = useLocalSearchParams();
-  const person_id = localParams.person_id != undefined ? +localParams.person_id : false;;
-  const bond_id = localParams.bond_id != undefined ? +localParams.bond_id : false;
+  const person_id = localParams.person_id != undefined ? +localParams.person_id : -1;
+  const bond_id = localParams.bond_id != undefined ? +localParams.bond_id : -1;
   const reminder_screen = +localParams.reminder_screen == 1 ? true : false
 
 
@@ -32,16 +32,15 @@ export default function addReminderModal() {
       return;
     }
 
-    if (!bid && !pid) {
+    if ((bid < 0) && (pid < 0)) {
       Alert.alert("Please choose a bond or person");
       return;
     }
 
     if (pid > 0) {
-
-      createReminder(reminder, pid as number, -1);
+      createReminder(reminder, pid, -1);
     } else {
-      createReminder(reminder, -1, bid as number);
+      createReminder(reminder, -1, bid);
     }
     router.back();
   };

@@ -28,7 +28,7 @@ export default function ReminderBondScreen() {
 
     const fetchData = async () => {
       if (isFromBond) {
-        const bid = parseInt(localSearchParams.bid);
+        const bid = +localSearchParams.bid;
         try {
           const b = await getBond(db, bid);
           setBond(b);
@@ -37,7 +37,7 @@ export default function ReminderBondScreen() {
           throw new Error("reminderBondScreen(): failed to call getBond()");
         }
       } else {
-        const pid = parseInt(localSearchParams.pid);
+        const pid = +localSearchParams.pid;
         try {
           const p = await getPerson(db, pid);
           setPerson(p);

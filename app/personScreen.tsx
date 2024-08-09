@@ -32,7 +32,7 @@ export default function PersonScreen() {
 
   useEffect(() => {
     const personId: number = Number(localParams.id);
-    let person_index = peopleList.findIndex(
+    const person_index = peopleList.findIndex(
       (item) => item.person_id === personId
     );
     if (person_index !== -1) {

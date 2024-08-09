@@ -207,7 +207,7 @@ export default function groupScreen() {
     }
 
     // If last member, delete whole group
-    if (members.length === 1) {
+    if (members?.length === 1) {
       Alert.alert(`Warning! Removing ${name} will delete ${bond?.bondName.trim()} entirely`,"", [
       { 
         text: "Cancel",
@@ -218,7 +218,7 @@ export default function groupScreen() {
         text: "OK",
         onPress: async () => {
           if (bond) {
-            onDelete();
+            onDeleteBond();
           }
         }
       }
@@ -291,7 +291,7 @@ export default function groupScreen() {
           onPress={() => {
             router.navigate({
               pathname: "./addMemberScreen",
-              params: { bond_id: bond.bond_id, group_screen: 1 },
+              params: { bond_id: bond?.bond_id, group_screen: 1 },
             });
           }}
         />
