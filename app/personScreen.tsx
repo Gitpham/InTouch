@@ -9,13 +9,11 @@ import {
   Alert,
   Pressable,
   View,
-  Linking,
   Text,
   ScrollView,
 } from "react-native";
 import { router } from "expo-router";
 import { stackViews, styles } from "@/constants/Stylesheet";
-import { useSQLiteContext } from "expo-sqlite";
 import CallTextButton from "@/components/CallTextButton";
 import ReminderDisplayCard from "@/components/ReminderDisplayCard";
 export default function PersonScreen() {

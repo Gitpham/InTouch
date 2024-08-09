@@ -2,23 +2,22 @@ import { StandardButton } from "@/components/ButtonStandard";
 
 import { InTouchContext } from "@/context/InTouchContext";
 import { useContext, useEffect, useState } from "react";
-import { Pressable, Text, FlatList, View, Alert } from "react-native";
+import { Pressable,  FlatList, View, Alert } from "react-native";
 import { Bond, Person, Reminder } from "@/constants/types";
 import React from "react";
 import { ListItem } from "@rneui/base";
-import { stackViews, styles } from "@/constants/Stylesheet";
+import { styles } from "@/constants/Stylesheet";
 import { DeleteIcon } from "@/components/DeleteIcon";
 import { router, Stack, useLocalSearchParams } from "expo-router";
 import { getBond } from "@/assets/db/BondRepo";
 import { useSQLiteContext } from "expo-sqlite";
 import { getPerson } from "@/assets/db/PersonRepo";
-import { getReminderName } from "@/context/ReminderUtils";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function ReminderBondScreen() {
   const localSearchParams = useLocalSearchParams();
   const db = useSQLiteContext();
-  const { reminderList, removeReminder, bondList, peopleList } = useContext(InTouchContext);
+  const { reminderList, removeReminder, } = useContext(InTouchContext);
   const [bond, setBond] = useState<Bond>();
   const [person, setPerson] = useState<Person>();
   const bondName = localSearchParams.bondName;
@@ -108,6 +107,7 @@ export default function ReminderBondScreen() {
         }
       } 
     }
+    return null;
   };
 
   const deleteReminderAlert = (reminder: Reminder) => {
@@ -144,7 +144,7 @@ export default function ReminderBondScreen() {
     if (isFromBond){
       router.navigate({
         pathname: "./addReminderModal",
-        params: { person_id: -1, bond_id: bond.bond_id },
+        params: { person_id: -1, bond_id: bond?.bond_id },
       })
     } else {
       router.navigate({

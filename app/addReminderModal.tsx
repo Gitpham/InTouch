@@ -14,36 +14,34 @@ import { CheckBox, ListItem } from "@rneui/base";
 import { Bond, Person, trimName } from "@/constants/types";
 
 export default function addReminderModal() {
-  const { reminderList, createReminder, peopleList, bondList } =
+  const {  createReminder, peopleList, bondList } =
     useContext(InTouchContext);
   const [reminder, setReminder] = useState("");
   const [segment, setSegment] = useState("Person");
   const localParams = useLocalSearchParams();
-  let person_id = +localParams.person_id;
-  let bond_id = +localParams.bond_id;
-  let reminder_screen = false;
-  if (+localParams.reminder_screen === 1) {
-    reminder_screen = true;
-  }
+  const person_id = localParams.person_id != undefined ? +localParams.person_id : false;;
+  const bond_id = localParams.bond_id != undefined ? +localParams.bond_id : false;
+  const reminder_screen = +localParams.reminder_screen == 1 ? true : false
 
-  const [bond, setBond] = useState(bond_id);
-  const [person, setPerson] = useState(person_id);
+
+  const [bid, setBid] = useState(bond_id);
+  const [pid, setPid] = useState(person_id);
   const onDonePress = () => {
     if (!reminder) {
       Alert.alert("Please write a note");
       return;
     }
 
-    if (!bond && !person) {
+    if (!bid && !pid) {
       Alert.alert("Please choose a bond or person");
       return;
     }
 
-    if (person > 0) {
+    if (pid > 0) {
 
-      createReminder(reminder, person, -1);
+      createReminder(reminder, pid as number, -1);
     } else {
-      createReminder(reminder, -1, bond);
+      createReminder(reminder, -1, bid as number);
     }
     router.back();
   };
@@ -67,10 +65,10 @@ export default function addReminderModal() {
           <View style={{ ...styles.rowOrientation, ...styles.nameContainer }}>
             <ListItem.Title>{name}</ListItem.Title>
             <CheckBox
-              checked={person === item.person_id}
+              checked={pid === item.person_id}
               onPress={() => {
-                setPerson(item.person_id);
-                setBond(-0);
+                setPid(item.person_id);
+                setBid(-0);
               }}
               containerStyle={{ margin: 0, padding: 0 }} // Remove extra padding/margin
             />
@@ -90,10 +88,10 @@ export default function addReminderModal() {
           <View style={{ ...styles.rowOrientation, ...styles.nameContainer }}>
             <ListItem.Title>{item.bondName}</ListItem.Title>
             <CheckBox
-              checked={bond === item.bond_id}
+              checked={bid === item.bond_id}
               onPress={() => {
-                setPerson(-0);
-                setBond(item.bond_id);
+                setPid(-0);
+                setBid(item.bond_id);
               }}
               containerStyle={{ margin: 0, padding: 0 }} // Remove extra padding/margin
             />
