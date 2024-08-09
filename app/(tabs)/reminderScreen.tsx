@@ -17,6 +17,7 @@ import { router } from "expo-router";
 export default function ReminderScreen() {
   const { reminderList, peopleList, bondList, removeReminder } = useContext(InTouchContext);
 
+
   const renderReminder = ({ item }: { item: Reminder }) => {
     if (item) {
           const name = getReminderName(item, bondList, peopleList)
@@ -86,7 +87,7 @@ export default function ReminderScreen() {
 
                <StandardButton
                 title = "Add Note"
-                onPress = {() => {router.push("../addReminderModal")}}
+                onPress = {() => {router.navigate({pathname: "../addReminderModal", params : {reminder_screen: 1}})}}
                />
 
           </SafeAreaView>

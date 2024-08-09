@@ -10,7 +10,7 @@ import { Card, ListItem, Button } from "@rneui/themed";
 import { useLocalSearchParams } from "expo-router";
 import { useContext, useEffect, useState } from "react";
 import { InTouchContext } from "@/context/InTouchContext";
-import { Bond,  Person, Reminder } from "@/constants/types";
+import { Bond,  Person, Reminder, trimName } from "@/constants/types";
 import { router } from "expo-router";
 import React from "react";
 import { StandardButton } from "@/components/ButtonStandard";
@@ -135,17 +135,6 @@ export default function groupScreen() {
         isPreferred: true,
       },
     ]);
-  }
-
-  const trimName = (person: Person) => {
-    if (person) {let name = person.firstName.trim();
-    if (person.lastName) {
-      name += " ";
-      name += person.lastName.trim();
-    }
-
-    return name;
-  }
   }
 
   const deletePersonAlert = (person: Person) => {
