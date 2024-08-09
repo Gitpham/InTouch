@@ -3,9 +3,7 @@ import {
   addPersonBond,
   deletePersonBond,
   getAllPersonBonds,
-  getPersonsOfBondDB,
 } from "@/assets/db/PersonBondRepo";
-import { removeTable } from "@/assets/db/db";
 import { getAllPersons, addPerson, deletePerson } from "@/assets/db/PersonRepo";
 import { addReminder, deleteReminder, getAllReminders } from "@/assets/db/ReminderRepo";
 import { Person, Bond, BondPerson, Reminder } from "@/constants/types";

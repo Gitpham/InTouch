@@ -66,7 +66,7 @@ export default function addReminderModal() {
             <CheckBox
               checked={pid === item.person_id}
               onPress={() => {
-                setPid(item.person_id);
+                setPid(item.person_id as number);
                 setBid(-0);
               }}
               containerStyle={{ margin: 0, padding: 0 }} // Remove extra padding/margin
