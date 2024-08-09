@@ -210,8 +210,8 @@ export default function addMemberScreen() {
             memLastNameChange={memLastNameChange}
             memberNumber={memberNumber}
             memNumberChange={memNumberChange}
-            bondId={bondId}
-            setBondID={setBondID}
+            // bondId={bondId}
+            // setBondID={setBondID}
             isVisible={isVisible}
             setIsVisible={setIsVisible}
           />

@@ -24,8 +24,8 @@ interface addMemberManualInterface {
   memberNumber: string;
   memNumberChange: (n: string) => void;
 
-  bondId: number;
-  setBondID: (n: number) => void;
+  // bondId: number;
+  // setBondID: (n: number) => void;
 
   isVisible: boolean;
   setIsVisible: (b: boolean) => void;
@@ -41,8 +41,8 @@ export default function AddMemberManual({
   memberNumber,
   memNumberChange,
 
-  bondId,
-  setBondID,
+  // bondId,
+  // setBondID,
 
   isVisible,
   setIsVisible,
