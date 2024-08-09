@@ -1,7 +1,7 @@
 import { ThemedText } from "@/components/ThemedText";
 import { Alert, FlatList, Pressable } from "react-native";
 
-import { View } from "react-native";
+import { View, Text } from "react-native";
 import { useContext, useEffect, useState } from "react";
 import { ListItem, Card, SearchBar } from "@rneui/themed";
 import { router, useLocalSearchParams } from "expo-router";
@@ -174,6 +174,11 @@ export default function addMemberScreen() {
             style={styles.flatList}
             renderItem={renderInTouchContacts}
             keyExtractor={(item) => (item.person_id as number).toString()}
+            ListEmptyComponent={
+            <View style={{justifyContent: 'center'}}>
+           <Text style={styles.title}>There is nobody in your inTouch contacts that arent already in your bond!</Text>  
+            </View>
+            }
           />
         </Card>
       ) : null}

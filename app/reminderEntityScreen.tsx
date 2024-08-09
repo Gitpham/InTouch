@@ -61,9 +61,7 @@ export default function ReminderBondScreen() {
               <ListItem.Content id={item.reminder_id.toString()}>
                 <View style={styles.rowOrientation}>
                   <View style={styles.nameContainer}>
-                    <ListItem.Title style={styles.name}>
-                      {getReminderName(item, bondList, peopleList)}
-                    </ListItem.Title>
+        
                   </View>
                   <ListItem.Title style={styles.date}>
                     {item.date}
@@ -91,9 +89,7 @@ export default function ReminderBondScreen() {
               <ListItem.Content id={item.reminder_id.toString()}>
                 <View style={styles.rowOrientation}>
                   <View style={styles.nameContainer}>
-                    <ListItem.Title style={styles.name}>
-                    {getReminderName(item, bondList, peopleList)}
-                    </ListItem.Title>
+      
                   </View>
                   <ListItem.Title style={styles.date}>
                     {item.date}
@@ -166,8 +162,8 @@ export default function ReminderBondScreen() {
             color: 'black'
           },
           headerTitle: isFromBond
-            ? ` ${bondName} Notes`
-            : ` ${personName} Notes`,
+            ? ` ${bondName}'s Notes`
+            : ` ${personName}'s Notes`,
         }}
       />
       <View style={{flex : 1}}>
