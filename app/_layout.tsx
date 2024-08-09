@@ -4,9 +4,9 @@ import {
   ThemeProvider,
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { router, Stack } from "expo-router";
+import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import {  createContext, useEffect, useRef, useState } from "react";
+import {  StrictMode, useEffect, useRef, useState } from "react";
 import "react-native-reanimated";
 import * as Notifications from "expo-notifications";
 import { useColorScheme } from "@/hooks/useColorScheme";
@@ -17,7 +17,7 @@ import * as SQLite from 'expo-sqlite';
 import { createDB } from "@/assets/db/db";
 import { ScheduleContextProvider } from "@/context/ScheduleContext";
 import { Platform, AppState } from "react-native";
-import { callPersonUtil, } from "@/context/PhoneNumberUtils";
+import { callPersonUtil,  } from "@/context/PhoneNumberUtils";
 
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
@@ -31,14 +31,12 @@ Notifications.setNotificationHandler({
   }),
 });
 
-type CallContextType = {
-  changeIsCalling: (b: boolean) => void;
-}
-export const CallContext = createContext<CallContextType>({
-  changeIsCalling: function (b: boolean): void {
-    throw new Error("Function not implemented.");
-  }
-});
+// type CallContextType = {
+//   callLength: MutableRefObject<number>;
+// }
+// export const CallContext = createContext<CallContextType>({
+//   callLength: number;
+// });
 
 
 
@@ -60,18 +58,22 @@ export default function RootLayout() {
   >(undefined);
   const notificationListener = useRef<Notifications.Subscription>();
   const responseListener = useRef<Notifications.Subscription>();
+
+  //TRACKING CALL VARIABLES
   const appState = useRef(AppState.currentState);
-  const [appStateVisible, setAppStateVisible] = useState(appState.current);
-  const isCalling = useRef(false);
-  const changeIsCalling = (bool: boolean) => {
-    isCalling.current = bool;
-  }
+  // const isCalling = useRef(false);
+  // const changeIsCalling = (bool: boolean) => {
+  //   isCalling.current = bool;
+  // }
 
   const recievedCallNotification = useRef(false);
   const isCallingFromNotification = useRef(false);
 
   const isCallingFromNotificationWhileOnApp = useRef(false);
-  
+
+  const timeOfStartCall = useRef<Date>();
+  const timeOfEndCall = useRef<Date>();
+  const callLength = useRef<number>(0);
 
 
 
@@ -116,24 +118,6 @@ export default function RootLayout() {
     // INITIALIZE APP STATE HANDLERS
     const subscription = AppState.addEventListener('change', nextAppState => {
 
-      //USER PRESSES CALL FROM GROUP SCREEN
-      if (
-        (appState.current.match(/active|inactive/)) &&
-        (isCalling.current == true) &&
-        (nextAppState === 'background')
-      ) {
-        console.log('started call from app!');
-      }
-     
-      if (
-        (appState.current.match(/background/)) &&
-        (isCalling.current == true) &&
-        (nextAppState === 'active')
-      ) {
-        console.log('Ended Call from app!');
-        changeIsCalling(false);
-      }
-
       //USER RECIEVES NOTIFICATION WHILE AWAY FROM APP
       if (
         (appState.current.match(/background/)) &&
@@ -142,6 +126,8 @@ export default function RootLayout() {
       ) {
         recievedCallNotification.current = false;
         isCallingFromNotification.current = true;
+
+        timeOfStartCall.current = new Date();
         console.log('started call from notification!');
         return;
       }
@@ -152,7 +138,12 @@ export default function RootLayout() {
         (nextAppState === 'active')
       ) {
         isCallingFromNotification.current = false;
+
         console.log('Ended Call from notification!');
+
+        timeOfEndCall.current = new Date();
+        callLength.current = ((timeOfEndCall.current as Date).getTime() - (timeOfStartCall.current as Date).getTime()) / 1000;
+        console.log("length of call: ", callLength)
         return;
       }
 
@@ -165,6 +156,8 @@ export default function RootLayout() {
       ) {
         recievedCallNotification.current = false;
         isCallingFromNotificationWhileOnApp.current = true;
+        timeOfStartCall.current = new Date();
+
         console.log('started call from notification while on app!');
         return;
       }
@@ -176,15 +169,12 @@ export default function RootLayout() {
       ) {
         isCallingFromNotificationWhileOnApp.current = false;
         console.log('Ended Call from notification while on app!');
+        timeOfEndCall.current = new Date();
+        callLength.current = ((timeOfEndCall.current as Date).getTime() - (timeOfStartCall.current as Date).getTime()) / 1000;
+        console.log("length of call: ", callLength)
         return;
       }
-
-  
-
       appState.current = nextAppState;
-      console.log('AppState', appState.current);
-
-      // setAppStateVisible(appState.current);
 
     });
 
@@ -211,10 +201,13 @@ export default function RootLayout() {
   }
 
   return (
+    <StrictMode>
+
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <CallContext.Provider value={{
-        changeIsCalling
-      }}>
+      {/* <CallContext.Provider value={{
+        changeIsCalling,
+        callLength,
+      }}> */}
       <SQLiteProvider databaseName="July26_ScheduleTable_2.db">
         <ScheduleContextProvider>
         <InTouchContextProvider>
@@ -239,7 +232,7 @@ export default function RootLayout() {
             />
             <Stack.Screen
               name="addMemberScreen"
-              options={{ headerTitle: "" }}
+              options={{ headerTitle: "", headerBackTitleVisible: false }}
             />
      
             <Stack.Screen
@@ -252,7 +245,7 @@ export default function RootLayout() {
             />
             <Stack.Screen
               name="addReminderModal"
-              options={{ headerTitle: "Add Reminders", presentation: "modal"}}
+              options={{ headerTitle: "Add Notes", presentation: "modal"}}
             />
             <Stack.Screen
               name="reminderEntityScreen"
@@ -263,7 +256,9 @@ export default function RootLayout() {
         </InTouchContextProvider>
         </ScheduleContextProvider>
       </SQLiteProvider>
-      </CallContext.Provider>
+      {/* </CallContext.Provider> */}
     </ThemeProvider>
+    </StrictMode>
+
   );
 }

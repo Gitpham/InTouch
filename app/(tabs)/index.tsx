@@ -1,31 +1,41 @@
 import { ThemedText } from "@/components/ThemedText";
 import React, { useContext } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import {  ListItem } from "@rneui/themed";
-import {  View, FlatList, Pressable, Text } from "react-native";
+import { ListItem } from "@rneui/themed";
+import { View, FlatList, Pressable, Text } from "react-native";
 import { router } from "expo-router";
 import { InTouchContext } from "@/context/InTouchContext";
-import { StandardButton } from "@/components/ButtonStandard";
+import {
+  AddBondButton,
+  AddBondtButton,
+  AddButton,
+  AddContactButton,
+  StandardButton,
+} from "@/components/ButtonStandard";
 import { Bond } from "@/constants/types";
-import { styles } from "@/constants/Stylesheet"
+import { styles } from "@/constants/Stylesheet";
 import { ScheduleContext } from "@/context/ScheduleContext";
+import { Divider } from "@rneui/base";
 
 export default function homeScreen() {
   const { bondList } = useContext(InTouchContext);
-  const {createPotentialSchedule} = useContext(ScheduleContext)
+  const { createPotentialSchedule } = useContext(ScheduleContext);
 
-  function onBondPress (bond: Bond) {
-    router.navigate({pathname: "../groupScreen", params: {id: `${bond.bond_id}`} })
+  function onBondPress(bond: Bond) {
+    router.navigate({
+      pathname: "../groupScreen",
+      params: { id: `${bond.bond_id}` },
+    });
   }
 
   const renderBonds = ({ item }: { item: Bond }) => {
     return (
-      <Pressable onPress = {() => onBondPress(item)}>
-      <ListItem bottomDivider>
-        <ListItem.Content id={item.bond_id.toString()}>
-          <ListItem.Title>{item.bondName} </ListItem.Title>
-        </ListItem.Content>
-      </ListItem>
+      <Pressable onPress={() => onBondPress(item)}>
+        <ListItem bottomDivider>
+          <ListItem.Content id={item.bond_id.toString()}>
+            <ListItem.Title>{item.bondName} </ListItem.Title>
+          </ListItem.Content>
+        </ListItem>
       </Pressable>
     );
   };
@@ -33,10 +43,15 @@ export default function homeScreen() {
   return (
     <SafeAreaView style={styles.stepContainer}>
       <View style={styles.centeredView}>
-        <ThemedText style={styles.title} type="title">
+        <ThemedText style={{ ...styles.title }} type="title">
           My Bonds
         </ThemedText>
       </View>
+      <Divider
+        inset={true}
+        insetType="middle"
+        style={{ borderWidth: 2, borderColor: "forestgreen" }}
+      ></Divider>
 
       <FlatList
         data={bondList}
@@ -44,14 +59,14 @@ export default function homeScreen() {
         keyExtractor={(item) => item.bond_id.toString()}
       />
 
-      <StandardButton
-      title={"+Add Bond"}
-      onPress={() => {
-        createPotentialSchedule(undefined)
-        router.push("../createGroupScreen")}
-        }>
-      </StandardButton>
-
+      <AddButton
+        color={"forestgreen"}
+        title={"New Bond"}
+        onPress={() => {
+          createPotentialSchedule(undefined);
+          router.push("../createGroupScreen");
+        }}
+      />
     </SafeAreaView>
   );
 }

@@ -19,7 +19,7 @@ export default function addReminderModal() {
     const onDonePress = () => {
 
         if (!reminder) {
-            Alert.alert("Please write a reminder")
+            Alert.alert("Please write a note")
             return;
         }
 
@@ -36,7 +36,7 @@ export default function addReminderModal() {
   return (
     <SafeAreaView style = {styles.stepContainer}>
         <View style={styles.centeredView}>
-            <ThemedText type="subtitle" style={styles.title}>Set Reminder</ThemedText>
+            <ThemedText type="subtitle" style={styles.title}>Create Note</ThemedText>
         </View>
 
         <TextInput

@@ -13,6 +13,7 @@ import { getBond } from "@/assets/db/BondRepo";
 import { useSQLiteContext } from "expo-sqlite";
 import { getPerson } from "@/assets/db/PersonRepo";
 import { getReminderName } from "@/context/ReminderUtils";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function ReminderBondScreen() {
   const localSearchParams = useLocalSearchParams();
@@ -20,11 +21,10 @@ export default function ReminderBondScreen() {
   const { reminderList, removeReminder, bondList, peopleList } = useContext(InTouchContext);
   const [bond, setBond] = useState<Bond>();
   const [person, setPerson] = useState<Person>();
-  const stackView = stackViews();
   const bondName = localSearchParams.bondName;
   const personName = localSearchParams.personName;
   const isFromBond: boolean = localSearchParams.bid != undefined ? true : false;
-
+  const insets = useSafeAreaInsets();
   useEffect(() => {
 
     const fetchData = async () => {
@@ -117,9 +117,9 @@ export default function ReminderBondScreen() {
   const deleteReminderAlert = (reminder: Reminder) => {
     let alertMessage: string;
     if (isFromBond) {
-      alertMessage = `Delete reminder for ${bond?.bondName}?`;
+      alertMessage = `Delete note for ${bond?.bondName}?`;
     } else {
-      alertMessage = `Delete reminder for ${person?.firstName}?`;
+      alertMessage = `Delete note for ${person?.firstName}?`;
     }
 
     Alert.alert(alertMessage, "", [
@@ -159,15 +159,15 @@ export default function ReminderBondScreen() {
   }
 
   return (
-    <View style={{flex: 1, backgroundColor: 'white'}} >
+    <View style={{flex: 1, backgroundColor: 'white', paddingBottom: insets.bottom}} >
       <Stack.Screen
         options={{
           headerTitleStyle: {
             color: 'black'
           },
           headerTitle: isFromBond
-            ? ` ${bondName} Reminders`
-            : ` ${personName} Reminders`,
+            ? ` ${bondName} Notes`
+            : ` ${personName} Notes`,
         }}
       />
       <View style={{flex : 1}}>
@@ -179,7 +179,7 @@ export default function ReminderBondScreen() {
         keyExtractor={(item) => item.reminder_id.toString()}
       /> 
       <StandardButton
-        title="+Add Reminder"
+        title="+Add Note"
         onPress={onAddReminder }
       />
     </View>

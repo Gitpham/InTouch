@@ -4,9 +4,10 @@ import { InTouchContext } from "@/context/InTouchContext";
 import { phoneNumberVerifier } from "@/context/PhoneNumberUtils";
 import { Button } from "@rneui/themed";
 import { useContext } from "react";
-import { SafeAreaView, View, TextInput } from "react-native";
-import { StandardButton } from "./ButtonStandard";
+
 import { ThemedText } from "./ThemedText";
+import React from "react";
+import { TextInput, View } from "react-native";
 
 interface addMemberManualInterface {
     memberFirstName: string,

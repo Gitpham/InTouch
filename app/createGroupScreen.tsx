@@ -119,9 +119,6 @@ export default function createGroupScreen() {
               <ListItem.Title>
                 {personToShow.firstName} {personToShow.lastName}
               </ListItem.Title>
-              <ListItem.Title>
-                Phone Number: {personToShow.phoneNumber}
-              </ListItem.Title>
             </ListItem.Content>
           </ListItem>
         );
@@ -143,6 +140,7 @@ export default function createGroupScreen() {
       </View>
 
       <TextInput
+        containerStyle={{}}
         onChangeText={groupNameChange}
         value={bondName}
         placeholder="Enter Group Name"
@@ -180,11 +178,6 @@ export default function createGroupScreen() {
 
           {schedule != undefined ? schedule : <Text>No Schedule Set</Text>}
 
-          {/* <FlatList
-            data={[schedule]}
-            renderItem={renderPotentialSchedule}
-            keyExtractor={(item) => item}
-          /> */}
         </View>
 
         {hasCreatedSchedule ? (

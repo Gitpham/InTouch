@@ -9,11 +9,12 @@ import { CallContext } from "@/app/_layout";
 
 interface CallTextBtnInterface {
     person: Person,
+    changeIsCalling: (b: boolean) => void;
 }
-export default function CallTextButton({person}: CallTextBtnInterface){
+export default function CallTextButton({person, changeIsCalling}: CallTextBtnInterface){
 
     const db = useSQLiteContext();
-    const {changeIsCalling} = useContext(CallContext)
+    // const {changeIsCalling} = useContext(CallContext)
     return (
         <View
         style={{

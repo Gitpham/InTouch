@@ -28,9 +28,10 @@ import {
 } from "./NotificationUtils";
 import * as SQLite from "expo-sqlite";
 import { View } from "react-native";
-import React, { JSXElementConstructor } from "react";
+import React from "react";
 import { ThemedText } from "@/components/ThemedText";
 import { getBond } from "@/assets/db/BondRepo";
+import { Text } from "@rneui/base";
 
 //SCHEDULE FUNCTIONS
 export const generateNotificationSchedule = async (
@@ -335,10 +336,10 @@ export function getScheduleType(schedule: Schedule): string {
 export function displaySchedule(schedule: Schedule_DB): React.JSX.Element {
   if (schedule.type == ScheduleFrequency.DAILY) {
     return (
-      <View>
-        <ThemedText darkColor="black">
+      <View >
+        <Text style={{alignSelf: 'center'}} >
           Time: {convertTo12HourTime(schedule.time)}
-        </ThemedText>
+        </Text>
       </View>
     );
   }
@@ -346,10 +347,10 @@ export function displaySchedule(schedule: Schedule_DB): React.JSX.Element {
   if (schedule.type == ScheduleFrequency.WEEKLY) {
     return (
       <View>
-        <ThemedText darkColor="black">
+        <Text style={{alignSelf: 'center'}} >
           {convertToDayOfWeek(schedule.weekDay as number)}s at{" "}
           {convertTo12HourTime(schedule.time)}
-        </ThemedText>
+        </Text>
       </View>
     );
   }
@@ -358,19 +359,19 @@ export function displaySchedule(schedule: Schedule_DB): React.JSX.Element {
     if(schedule.date != null){
       return (
         <View>
-          <ThemedText darkColor="black">
+          <Text style={{alignSelf: 'center'}}>
             The {convertNumberToOrdinal(+convertDateStringToDayOfMonth(schedule.date))} of the month at {convertTo12HourTime(schedule.time)}
-          </ThemedText>
+          </Text>
         </View>
       );
     }
     return (
       <View>
-        <ThemedText darkColor="black">
+        <Text style={{alignSelf: 'center'}}>
           The {convertNumberToOrdinal(schedule.weekOfMonth as number)}{" "}
           {convertToDayOfWeek(schedule.weekDay as number)} of the month at{" "}
           {convertTo12HourTime(schedule.time)}
-        </ThemedText>
+        </Text>
       </View>
     );
   }
@@ -378,15 +379,15 @@ export function displaySchedule(schedule: Schedule_DB): React.JSX.Element {
   if (schedule.type == ScheduleFrequency.YEARLY) {
     return (
       <View>
-        <ThemedText darkColor="black">
+        <Text style={{alignSelf: 'center'}} >
           {schedule.date} at {convertTo12HourTime(schedule.time)}
-        </ThemedText>
+        </Text>
       </View>
     );
   }
   return (
     <View>
-      <ThemedText>Schedule Type invalid</ThemedText>
+      <Text style={{alignSelf: 'center'}}>Schedule Type invalid</Text>
     </View>
   );
 }

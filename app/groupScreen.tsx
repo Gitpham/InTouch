@@ -5,10 +5,11 @@ import {
   View,
   Alert,
   Text,
+  AppState,
 } from "react-native";
 import { Card, ListItem, Button } from "@rneui/themed";
 import { useLocalSearchParams } from "expo-router";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { InTouchContext } from "@/context/InTouchContext";
 import { Bond,  Person, Reminder } from "@/constants/types";
 import { router } from "expo-router";
@@ -28,6 +29,7 @@ import {
 import CallTextButton from "@/components/CallTextButton";
 import DeleteMessage from "@/components/DeleteMessage";
 import ReminderDisplayCard from "@/components/ReminderDisplayCard";
+import { Divider } from "@rneui/base";
 
 export default function groupScreen() {
   const {
@@ -49,7 +51,69 @@ export default function groupScreen() {
   const db = useSQLiteContext();
   const stackView = stackViews();
 
+  // CALL HANDLER VARIABLES
+  const appState = useRef(AppState.currentState);
+  const isCalling = useRef(false);
+  const timeOfStartCall = useRef<Date>();
+  const timeOfEndCall = useRef<Date>();
+  const callLength = useRef(0);
+  const minCallLength = 45;
+
+
+  function changeIsCalling(bool: boolean){
+    isCalling.current = bool;
+    return;
+  }
+
+
+
+  //CALL HANDLER
   useEffect(() => {
+
+    const callSubscription = AppState.addEventListener('change', async nextAppState => {
+
+      //USER PRESSES CALL FROM GROUP SCREEN
+      if (
+        (appState.current.match(/active|inactive/)) &&
+        (isCalling.current == true) &&
+        (nextAppState === 'background')
+      ) {
+        console.log('started call from app!');
+        timeOfStartCall.current = new Date();
+      }
+     
+      if (
+        (appState.current.match(/background/)) &&
+        (isCalling.current == true) &&
+        (nextAppState === 'active')
+      ) {
+        console.log('Ended Call from app!');
+        isCalling.current = false;
+
+        timeOfEndCall.current = new Date();
+        callLength.current = ((timeOfEndCall.current as Date).getTime() - (timeOfStartCall.current as Date).getTime()) / 1000;
+
+        if (callLength.current > minCallLength){
+
+          if (bond){
+            getNextToCallUtil(bond?.bond_id, db)
+            await getNextToCallUtil(bond?.bond_id, db)
+            const nextPerson = await displayNextToCall(bond.bond_id, db);
+            setNextToCall(nextPerson)
+          }
+        }
+
+      }
+      appState.current = nextAppState;
+    });
+
+    return () => {
+      callSubscription.remove();
+    }
+  }, [bond])
+
+  useEffect(() => {
+
     const fetchData = async () => {
       const bondId: number = +(localParams.id as string);
       const bond_index = bondList.findIndex((item) => item.bond_id === bondId);
@@ -74,7 +138,8 @@ export default function groupScreen() {
       console.error(e);
       console.log("Could not get Next to call");
     }
-  }, [bondPersonMap, reminderList, bondList]);
+
+  }, [bondPersonMap, reminderList, bondList,]);
 
   const renderMembers = (members: Person[]) => {
     const memberList: React.JSX.Element[] = [];
@@ -114,7 +179,7 @@ export default function groupScreen() {
   };
   
   
-  const onDelete = async () => {
+  const onDeleteBond = async () => {
     if (bond) {
       await cancelNotificationsForBond(db, bond.bond_id);
       removeBond(bond);
@@ -122,7 +187,7 @@ export default function groupScreen() {
     router.back();
   };
 
-  const onDeleteAlert = () => {
+  const onDeleteBondAlert = () => {
     Alert.alert(`Delete ${bond?.bondName} from your bonds?`, "This will delete all associated reminders and schedule",
      [{
         text: "Cancel",
@@ -131,7 +196,7 @@ export default function groupScreen() {
       },
       {
         text: "OK",
-        onPress: () => onDelete(),
+        onPress: () => onDeleteBond(),
         isPreferred: true,
       },
     ]);
@@ -199,7 +264,7 @@ export default function groupScreen() {
       </View>
       <DeleteMessage message = {`Removed ${name} from ${bond?.bondName}`} show = {isDeleteVisible}/>
 
-      <CallTextButton person={nextToCall as Person}></CallTextButton>
+      <CallTextButton person={nextToCall as Person} changeIsCalling={changeIsCalling}></CallTextButton>
 
       {bond ? <ScheduleCard bond={bond}></ScheduleCard> : <></>}
 
@@ -207,6 +272,7 @@ export default function groupScreen() {
 
       <Card containerStyle={{ flex: 2 }}>
         <Card.Title>Members</Card.Title>
+       <Card.Divider/>
         {members != undefined ? (
           renderMembers(members)
         ) : (
@@ -238,7 +304,7 @@ export default function groupScreen() {
             borderWidth: 2,
           }}
           titleStyle={styles.redTitle}
-          onPress={() => onDeleteAlert()}
+          onPress={() => onDeleteBondAlert()}
         />
       </View>
     </ScrollView>

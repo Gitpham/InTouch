@@ -7,6 +7,7 @@ export function stackViews(): StyleProp<ViewStyle>{
     backgroundColor: "white",
     gap: 2,
     paddingBottom: insets.bottom,
+    
 
     // alignItems: 'center',
   })
@@ -65,6 +66,7 @@ export const styles = StyleSheet.create({
       marginBottom: 0,
       flexDirection: "column",
       paddingTop: 10,
+      justifyContent: 'center'
     },
     entityContainer: {
       flex: 1,
@@ -95,7 +97,7 @@ export const styles = StyleSheet.create({
       alignItems: "center",
     },
     flatList: {
-      height: 200,
+      height: 300,
     },
     rowOrientation: {
       flex: .3,
@@ -104,7 +106,7 @@ export const styles = StyleSheet.create({
       alignItems: 'center',
     },
     btnOrientation: {
-      flex: .3,
+      // flex: .3,
       flexDirection: "row",
       justifyContent: 'center',
       alignItems: 'center',
@@ -147,7 +149,7 @@ export const styles = StyleSheet.create({
         borderWidth: 1,
         padding: 10,
         color: "white",
-        backgroundColor: "gray",
+        backgroundColor: "lightsteelblue",
     },
     indentedView: {
         paddingLeft: 10,
