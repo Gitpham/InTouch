@@ -3,7 +3,6 @@ import * as SQLite from "expo-sqlite";
 
 export const addReminder = async (db: SQLite.SQLiteDatabase, reminder: Reminder) => {
 
-
     const statement = await db.prepareAsync(`INSERT INTO reminder (reminder_id, person_id, bond_id, reminder, date) VALUES (?, ?, ?, ?, ?)`)
     let value : string[];
    
@@ -19,7 +18,7 @@ export const addReminder = async (db: SQLite.SQLiteDatabase, reminder: Reminder)
 
     } catch (error) {
         console.error(error);
-        throw Error("failed to upload person")
+        throw Error("addReminder(): failed to upload reminder")
     } finally {
         statement.finalizeAsync()
     }

@@ -69,9 +69,9 @@ import ConfirmationMessage from "@/components/ConfirmationMessage";
     }
 
     async function onPressClearDB() {
-     //     clearDB(db)
-     const reminder : Table = "reminder"
-     removeTable(db, reminder);
+         clearDB(db)
+     // const reminder : Table = "reminder"
+     // removeTable(db, reminder);
     }
 
     async function tableNames() {
