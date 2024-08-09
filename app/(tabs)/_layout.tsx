@@ -22,7 +22,7 @@ export default function TabLayout() {
         options={{
           title: 'Bonds',
           tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'home' : 'home-outline'} color={color} />
+            <TabBarIcon name={focused ? 'home' : 'home-outline'} color={'forestgreen'} />
           ),
         }}
       />
@@ -32,7 +32,7 @@ export default function TabLayout() {
         options={{
           title: 'People',
           tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'people-circle' : 'people-circle-outline'} color={color} />
+            <TabBarIcon name={focused ? 'people-circle' : 'people-circle-outline'} color={'darkorchid'} />
           ),
         }}
       />
@@ -42,7 +42,7 @@ export default function TabLayout() {
         options={{
           title: 'Notes',
           tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'library' : 'library-outline'} color={color} />
+            <TabBarIcon name={focused ? 'library' : 'library-outline'} color={'chocolate'} />
           ),
         }}
       />
