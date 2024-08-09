@@ -50,14 +50,14 @@ export default function ReminderDisplayCard({
     if (isFromBond) {
       router.navigate({
         pathname: "./addReminderModal",
-        params: { bond_id: bond?.bond_id, person_id: -1 },
+        params: { bond_id: bond?.bond_id, person_id: -1, reminder_screen: -1},
       });
       return;
     }
 
     router.navigate({
       pathname: "./addReminderModal",
-      params: { person_id: person?.person_id, bond_id: -1 },
+      params: { person_id: person?.person_id, bond_id: -1, reminder_screen: -1},
     });
     return;
   };

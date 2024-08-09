@@ -39,6 +39,16 @@ export function formatDate(date: Date) {
     return `${day}/${month}/${year}`
 }
 
+export const trimName = (person: Person) => {
+    if (person) {let name = person.firstName.trim();
+    if (person.lastName) {
+      name += " ";
+      name += person.lastName.trim();
+    }
+    return name;
+  }
+}
+
 
 export enum ScheduleFrequency {
     DAILY= "daily",

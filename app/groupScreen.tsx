@@ -11,7 +11,7 @@ import { Card, ListItem, Button } from "@rneui/themed";
 import { useLocalSearchParams } from "expo-router";
 import { useContext, useEffect, useRef, useState } from "react";
 import { InTouchContext } from "@/context/InTouchContext";
-import { Bond,  Person, Reminder } from "@/constants/types";
+import { Bond,  Person, Reminder, trimName } from "@/constants/types";
 import { router } from "expo-router";
 import React from "react";
 import { StandardButton } from "@/components/ButtonStandard";
@@ -202,43 +202,54 @@ export default function groupScreen() {
     ]);
   }
 
-  const trimName = (person: Person) => {
-    if (person) {let name = person.firstName.trim();
-    if (person.lastName) {
-      name += " ";
-      name += person.lastName.trim();
-    }
-
-    return name;
-  }
-  }
-
   const deletePersonAlert = (person: Person) => {
+
     let name = person.firstName.trim() + " ";
     if (person.lastName) {
-      name += person.lastName + " ";
+      name += person.lastName.trim() + " ";
     }
-    Alert.alert(`Remove ${name} from ${bond?.bondName.trim()}?`, "", [
-      {
+
+    // If last member, delete whole group
+    if (members.length === 1) {
+      Alert.alert(`Warning! Removing ${name} will delete ${bond?.bondName.trim()} entirely`,"", [
+      { 
         text: "Cancel",
-        onPress: () => console.log("Cancel Pressed"),
+        onPress: () => {},
         style: "cancel",
       },
       {
         text: "OK",
         onPress: async () => {
           if (bond) {
-            removeBondMember(bond, person);
-            // Display delete message
-            const name = trimName(person);
-            setName(name as string);
-            setDeleteVisible(true);
-            setTimeout(() => setDeleteVisible(false), 100);
+            onDelete();
           }
+        }
+      }
+      ]);
+    }
+    else {
+      Alert.alert(`Remove ${name} from ${bond?.bondName.trim()}?`, "", [
+        {
+          text: "Cancel",
+          onPress: () => {},
+          style: "cancel",
         },
-        isPreferred: true,
-      },
-    ]);
+        {
+          text: "OK",
+          onPress: async () => {
+            if (bond) {
+              removeBondMember(bond, person);
+              // Display delete message
+              const name = trimName(person);
+              setName(name as string);
+              setDeleteVisible(true);
+              setTimeout(() => setDeleteVisible(false), 100);
+            }
+          },
+          isPreferred: true,
+        },
+      ]);
+    };
   };
 
   return (

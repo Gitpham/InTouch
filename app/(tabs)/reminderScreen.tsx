@@ -9,10 +9,12 @@ import { Divider, ListItem } from "@rneui/base";
 import { styles } from "@/constants/Stylesheet"
 import { DeleteIcon } from "@/components/DeleteIcon";
 import { getReminderName } from "@/context/ReminderUtils";
+import { router } from "expo-router";
 
 
 export default function ReminderScreen() {
   const { reminderList, peopleList, bondList, removeReminder } = useContext(InTouchContext);
+
 
   const renderReminder = ({ item }: { item: Reminder }) => {
     if (item) {
@@ -56,7 +58,7 @@ export default function ReminderScreen() {
     const name = getReminderName(reminder, bondList, peopleList)
     Alert.alert(`Delete notes for ${name}?`, "",[
       {text: 'Cancel',
-        onPress: () => console.log('Cancel Pressed'),
+        onPress: () => {},
         style: 'cancel',},
       {text: 'OK',
         onPress: () => {{deleteReminder(reminder.reminder_id)}},
@@ -83,6 +85,11 @@ export default function ReminderScreen() {
                data = {reminderList}
                renderItem = {renderReminder}
                keyExtractor={(item) => item.reminder_id.toString()}
+               />
+
+               <StandardButton
+                title = "Add Note"
+                onPress = {() => {router.navigate({pathname: "../addReminderModal", params : {reminder_screen: 1}})}}
                />
 
           </SafeAreaView>

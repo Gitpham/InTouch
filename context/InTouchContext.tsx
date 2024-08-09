@@ -408,17 +408,14 @@ export const InTouchContextProvider: React.FC<{
       });
 
       // Delete reminders
-      console.log("bondID", bond.bond_id)
       setReminderList((old) => {
         let newList = [...old];
         return newList.filter((r) => {
           if (r.bond_id !== bond.bond_id) {
-            console.log("reminder", r);
             return r;
           }
         })
       });
-      console.log("the list", reminderList);
     } catch (e) {
       console.error(e);
       throw Error("Could not remove bond");
@@ -520,9 +517,9 @@ export const InTouchContextProvider: React.FC<{
   }
 
   function getBondPersonMap() {
-    const iter = bondPersonMap.entries();
-    console.log("bondPersonMap: ");
-    bondPersonMap.forEach(() => {
+    const iter = personBondMap.entries();
+    console.log("personBondMap: ");
+    personBondMap.forEach(() => {
       console.log(iter.next().value);
     });
   }

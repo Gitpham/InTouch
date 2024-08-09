@@ -63,7 +63,6 @@ export default function addMemberScreen() {
         }
 
         if (name.toLowerCase().includes(search.toLowerCase())) {
-          console.log(name);
           return p;
         } else {
           return null;
@@ -121,7 +120,6 @@ export default function addMemberScreen() {
   };
 
   const onSavePress = () => {
-    console.log("group_screen: ", group_screen);
     if (group_screen === 1) {
       createBondMember(tempBondMembers, bondId);
       clearTempBondMembers();

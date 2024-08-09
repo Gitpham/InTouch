@@ -49,7 +49,7 @@ export default function createGroupScreen() {
     bond_id: bondID,
   };
 
-  let title = "untitled";
+  let title = "Create Bond";
   if (bondName) {
     title = bondName;
   }
@@ -135,7 +135,7 @@ export default function createGroupScreen() {
       {/* <SafeAreaView style={styles.stepContainer}> */}
       <View style={styles.centeredView}>
         <ThemedText type="title" style={styles.title}>
-          Bond Name: {title}
+          {title}
         </ThemedText>
       </View>
 
