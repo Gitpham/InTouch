@@ -108,7 +108,7 @@ export const styles = StyleSheet.create({
     btnOrientation: {
       // flex: .3,
       flexDirection: "row",
-      justifyContent: 'center',
+      justifyContent: 'space-evenly',
       alignItems: 'center',
     },
     nameContainer: {

@@ -7,82 +7,88 @@ import { useContext } from "react";
 
 import { ThemedText } from "./ThemedText";
 import React from "react";
-import { TextInput, View } from "react-native";
+import {
+  Keyboard,
+  TextInput,
+  View,
+  TouchableWithoutFeedback,
+} from "react-native";
 
 interface addMemberManualInterface {
-    memberFirstName: string,
-    memFirstNameChange: (n: string) => void,
+  memberFirstName: string;
+  memFirstNameChange: (n: string) => void;
 
-    memberLastName: string,
-    memLastNameChange: (n: string) => void
+  memberLastName: string;
+  memLastNameChange: (n: string) => void;
 
-    memberNumber: string,
-    memNumberChange: (n: string) => void,
+  memberNumber: string;
+  memNumberChange: (n: string) => void;
 
-    bondId: number,
-    setBondID: (n: number) => void,
+  bondId: number;
+  setBondID: (n: number) => void;
 
-    isVisible: boolean,
-    setIsVisible: (b: boolean) => void
+  isVisible: boolean;
+  setIsVisible: (b: boolean) => void;
 }
 
 export default function AddMemberManual({
-    memberFirstName, 
-    memFirstNameChange,
+  memberFirstName,
+  memFirstNameChange,
 
-    memberLastName, 
-    memLastNameChange,
+  memberLastName,
+  memLastNameChange,
 
-    memberNumber,
-    memNumberChange,
+  memberNumber,
+  memNumberChange,
 
-    bondId,
-    setBondID,
+  bondId,
+  setBondID,
 
-    isVisible, 
-    setIsVisible,
-    
-} : addMemberManualInterface) {
-    const { createPerson, generatePersonId, addTempBondMember } = useContext(InTouchContext);
-  
-    // Member information
-  
-    async function savePerson() {
-      const personID = generatePersonId();
-  
-      const newContact: Person = {
-        firstName: memberFirstName,
-        lastName: memberLastName,
-        phoneNumber: memberNumber,
-        person_id: undefined,
-      };
-  
-      await createPerson(newContact);
-      const bond_id = +(localParams.bond_id as string)
-      if (bond_id !== -1) {
-          addTempBondMember(personID);
-      }
+  isVisible,
+  setIsVisible,
+}: addMemberManualInterface) {
+  const { createPerson, generatePersonId, addTempBondMember } =
+    useContext(InTouchContext);
+
+  // Member information
+
+  async function savePerson() {
+    const personID = generatePersonId();
+
+    const newContact: Person = {
+      firstName: memberFirstName,
+      lastName: memberLastName,
+      phoneNumber: memberNumber,
+      person_id: undefined,
+    };
+
+    await createPerson(newContact);
+    const bond_id = +(localParams.bond_id as string);
+    if (bond_id !== -1) {
+      addTempBondMember(personID);
     }
-  
-    return (
+  }
+
+  return (
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <>
         <View style={styles.centeredView}>
           <ThemedText type="subtitle" style={styles.title}>
             Enter Contact Information
           </ThemedText>
         </View>
-  
+
         <View style={styles.indentedView}>
           <ThemedText style={styles.title}>First Name</ThemedText>
         </View>
-  
+
         <TextInput
           onChangeText={memFirstNameChange}
           value={memberFirstName}
           placeholder="e.g. John"
           style={styles.textInput}
         ></TextInput>
-  
+
         <View style={styles.indentedView}>
           <ThemedText style={styles.title}>Last Name</ThemedText>
         </View>
@@ -99,29 +105,43 @@ export default function AddMemberManual({
           onChangeText={memNumberChange}
           value={memberNumber}
           placeholder="e.g. (111)-111-1111"
-          keyboardType="numeric"
+          keyboardType="phone-pad"
           style={styles.textInput}
         ></TextInput>
-        <View style = {styles.centeredView}>
-            <Button
+        <View style={styles.btnOrientation}>
+          <Button
             title="Create Contact"
             onPress={() => {
-                if (phoneNumberVerifier(memberNumber.trim())) {
+              if (phoneNumberVerifier(memberNumber.trim())) {
                 savePerson();
-                memFirstNameChange("")
-                memLastNameChange("")
-                memNumberChange("")
+                memFirstNameChange("");
+                memLastNameChange("");
+                memNumberChange("");
                 const newVisible = !isVisible;
                 setIsVisible(newVisible);
-                }
+              }
             }}
-            buttonStyle = {{
-                width: 150,
-                backgroundColor: "black"
+            buttonStyle={{
+
+              backgroundColor: "black",
             }}
-            />
+          />
+
+          <Button
+            title="Cancel"
+            onPress={() => {
+              memFirstNameChange("");
+              memLastNameChange("");
+              memNumberChange("");
+              const newVisible = !isVisible;
+              setIsVisible(newVisible);
+            }}
+            buttonStyle={{
+              backgroundColor: "black",
+            }}
+          />
         </View>
-        </>
-    );
-  }
-  
+      </>
+    </TouchableWithoutFeedback>
+  );
+}

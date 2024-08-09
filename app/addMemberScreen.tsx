@@ -1,5 +1,5 @@
 import { ThemedText } from "@/components/ThemedText";
-import { Alert, FlatList, Pressable } from "react-native";
+import { Alert, FlatList, Keyboard, Pressable } from "react-native";
 
 import { View, Text } from "react-native";
 import { useContext, useEffect, useState } from "react";
@@ -13,6 +13,7 @@ import { Person } from "@/constants/types";
 import { stackViews, styles } from "@/constants/Stylesheet";
 import React from "react";
 import ConfirmationMessage from "@/components/ConfirmationMessage";
+import { Dialog } from "@rneui/base";
 
 export default function addMemberScreen() {
   const {
@@ -191,7 +192,33 @@ export default function addMemberScreen() {
         }}
       />
 
-      {isVisible && (
+<Dialog
+      overlayStyle={{backgroundColor:'white'}}
+      isVisible={isVisible}
+      onBackdropPress={Keyboard.dismiss}
+    >
+      <View
+          style={{
+            paddingTop: 10,
+            paddingBottom: 10,
+          }}
+        >
+          <AddMemberManual
+            memberFirstName={memberFirstName}
+            memFirstNameChange={memFirstNameChange}
+            memberLastName={memberLastName}
+            memLastNameChange={memLastNameChange}
+            memberNumber={memberNumber}
+            memNumberChange={memNumberChange}
+            bondId={bondId}
+            setBondID={setBondID}
+            isVisible={isVisible}
+            setIsVisible={setIsVisible}
+          />
+        </View>
+    </Dialog>
+
+      {/* {isVisible && (
         <View
           style={{
             paddingTop: 10,
@@ -214,7 +241,7 @@ export default function addMemberScreen() {
             setIsVisible={setIsVisible}
           />
         </View>
-      )}
+      )} */}
 
       <AddButton
         color={"darkorchid"}
