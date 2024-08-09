@@ -77,5 +77,5 @@ export const AddButton = ({
         {title}
       </Button>
     </View>
-  );
+  )
 };

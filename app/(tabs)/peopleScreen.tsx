@@ -2,7 +2,7 @@
 import { ThemedText } from "@/components/ThemedText";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FlatList, Pressable } from "react-native";
-import { ListItem } from "@rneui/themed";
+import { Divider, ListItem } from "@rneui/themed";
 import { useContext } from "react";
 import { router } from "expo-router";
 import { InTouchContext } from "@/context/InTouchContext";
@@ -42,7 +42,13 @@ export default function PeopleScreen() {
           {" "}
           inTouch Contacts{" "}
         </ThemedText>
+  
       </View>
+      <Divider
+        inset={true}
+        insetType="middle"
+        style={{ borderWidth: 2, borderColor: "darkorchid" }}
+      ></Divider>
 
       <FlatList
         data={peopleList}
