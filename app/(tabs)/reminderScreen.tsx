@@ -5,7 +5,7 @@ import { useContext } from "react";
 import { Pressable,  FlatList, View, Alert } from "react-native";
 import {  Reminder } from "@/constants/types";
 import React from "react";
-import { ListItem } from "@rneui/base";
+import { Divider, ListItem } from "@rneui/base";
 import { styles } from "@/constants/Stylesheet"
 import { DeleteIcon } from "@/components/DeleteIcon";
 import { getReminderName } from "@/context/ReminderUtils";
@@ -73,6 +73,11 @@ export default function ReminderScreen() {
                <View style = {styles.centeredView}>
                <ThemedText type = "title" style = {styles.title}>All Notes</ThemedText>
                </View>
+               <Divider
+        inset={true}
+        insetType="middle"
+        style={{ borderWidth: 2, borderColor: "chocolate" }}
+      ></Divider>
                
                <FlatList
                data = {reminderList}
