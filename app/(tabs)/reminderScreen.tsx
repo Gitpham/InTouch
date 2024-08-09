@@ -10,6 +10,7 @@ import { styles } from "@/constants/Stylesheet"
 import { DeleteIcon } from "@/components/DeleteIcon";
 import { getReminderName } from "@/context/ReminderUtils";
 import { router } from "expo-router";
+import { AddButton } from "@/components/ButtonStandard";
 
 
 export default function ReminderScreen() {
@@ -87,7 +88,8 @@ export default function ReminderScreen() {
                keyExtractor={(item) => item.reminder_id.toString()}
                />
 
-               <StandardButton
+               <AddButton
+                color={'chocolate'}
                 title = "Add Note"
                 onPress = {() => {router.navigate({pathname: "../addReminderModal", params : {reminder_screen: 1}})}}
                />

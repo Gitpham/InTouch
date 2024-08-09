@@ -64,6 +64,8 @@ export const AddButton = ({
   color,
 }: {
   color: ColorValue | undefined;
+  title: string,
+  onPress: () => void
 }) => {
   return (
     <View style={{ alignSelf: "center" }}>
