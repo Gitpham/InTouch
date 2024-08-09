@@ -1,13 +1,12 @@
 /* eslint-disable react/react-in-jsx-scope */
 import { ThemedText } from "@/components/ThemedText";
-import { Bond, Person, Reminder, formatDate } from "@/constants/types";
+import { Bond, Person, Reminder } from "@/constants/types";
 import { Card, ListItem, Button } from "@rneui/themed";
 import { useLocalSearchParams } from "expo-router";
 import { JSX, useContext, useEffect, useState } from "react";
 import { InTouchContext } from "@/context/InTouchContext";
 import {
   Alert,
-  FlatList,
   Pressable,
   View,
   Linking,
@@ -16,10 +15,8 @@ import {
 } from "react-native";
 import { router } from "expo-router";
 import { stackViews, styles } from "@/constants/Stylesheet";
-import { DeleteIcon } from "@/components/DeleteIcon";
 import { useSQLiteContext } from "expo-sqlite";
 import CallTextButton from "@/components/CallTextButton";
-import { StandardButton } from "@/components/ButtonStandard";
 import ReminderDisplayCard from "@/components/ReminderDisplayCard";
 export default function PersonScreen() {
   const {
@@ -28,13 +25,11 @@ export default function PersonScreen() {
     removePerson,
     reminderList,
     getRemindersOfPerson,
-    removeReminder,
   } = useContext(InTouchContext);
   const localParams = useLocalSearchParams();
   const [person, setPerson] = useState<Person>();
   const [bonds, setBonds] = useState<Array<Bond>>();
   const [reminders, setReminders] = useState<Array<Reminder>>();
-  const db = useSQLiteContext();
   const stackView = stackViews();
 
   useEffect(() => {
@@ -72,28 +67,30 @@ export default function PersonScreen() {
     return bondList;
   };
 
-
-
   // Delete functions
   const onDeleteAlert = () => {
-    let name = person?.firstName.trim()
+    let name = person?.firstName.trim();
     if (person?.lastName) {
-      name += " "
-      name += person.lastName
+      name += " ";
+      name += person.lastName;
     }
-    Alert.alert(`Delete ${name} from your inTouch contacts?`, "This will delete all associated reminders and remove them from any bond",
-     [{
-        text: "Cancel",
-        onPress: () => {},
-        style: "cancel",
-      },
-      {
-        text: "OK",
-        onPress: () => deletePerson(),
-        isPreferred: true,
-      },
-    ]);
-  }
+    Alert.alert(
+      `Delete ${name} from your inTouch contacts?`,
+      "This will delete all associated reminders and remove them from any bond",
+      [
+        {
+          text: "Cancel",
+          onPress: () => {},
+          style: "cancel",
+        },
+        {
+          text: "OK",
+          onPress: () => deletePerson(),
+          isPreferred: true,
+        },
+      ]
+    );
+  };
   const deletePerson = () => {
     if (person) {
       removePerson(person);
@@ -101,16 +98,16 @@ export default function PersonScreen() {
     router.back();
   };
 
-  // For texting and calling user
-  const sendSMS = async (phoneNumber: string) => {
-    const url = `sms:${phoneNumber}`;
-    try {
-      await Linking.openURL(url);
-    } catch (e) {
-      console.error(e);
-      throw new Error("personScreen: sendSMS(): failed");
-    }
-  };
+
+  /**
+   * stub method to get CallTextButton to work. Doesn't atualy do anything becasue ther're are no handlers set up yet. 
+   * @param bool 
+   * @returns 
+   */
+  function changeIsCalling(bool: boolean){
+    return;
+  }
+
 
   return (
     <ScrollView
@@ -123,7 +120,10 @@ export default function PersonScreen() {
         </ThemedText>
       </View>
 
-      <CallTextButton person={person as Person}></CallTextButton>
+      <CallTextButton
+        person={person as Person}
+        changeIsCalling={changeIsCalling}
+      ></CallTextButton>
 
       <Card containerStyle={{ flex: 1 }}>
         <Card.Title>Phone</Card.Title>
@@ -131,9 +131,11 @@ export default function PersonScreen() {
         <ThemedText darkColor="black">{person?.phoneNumber}</ThemedText>
       </Card>
 
-    {person ?       <ReminderDisplayCard person={person} bond={undefined} /> : <></>
-  
-  }
+      {person ? (
+        <ReminderDisplayCard person={person} bond={undefined} />
+      ) : (
+        <></>
+      )}
 
       <Card containerStyle={{ flex: 3 }}>
         <Card.Title>Bonds</Card.Title>

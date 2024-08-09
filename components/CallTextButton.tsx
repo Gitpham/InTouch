@@ -14,7 +14,6 @@ interface CallTextBtnInterface {
 export default function CallTextButton({person, changeIsCalling}: CallTextBtnInterface){
 
     const db = useSQLiteContext();
-    // const {changeIsCalling} = useContext(CallContext)
     return (
         <View
         style={{

@@ -21,15 +21,12 @@ import { cancelNotificationsForBond } from "@/context/NotificationUtils";
 import { DeleteIcon } from "@/components/DeleteIcon";
 import { stackViews, styles } from "@/constants/Stylesheet";
 import {
-  sendSMS,
   displayNextToCall,
-  callUtil,
   getNextToCallUtil,
 } from "@/context/PhoneNumberUtils";
 import CallTextButton from "@/components/CallTextButton";
 import DeleteMessage from "@/components/DeleteMessage";
 import ReminderDisplayCard from "@/components/ReminderDisplayCard";
-import { Divider } from "@rneui/base";
 
 export default function groupScreen() {
   const {

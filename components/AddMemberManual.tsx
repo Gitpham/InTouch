@@ -122,7 +122,6 @@ export default function AddMemberManual({
               }
             }}
             buttonStyle={{
-
               backgroundColor: "black",
             }}
           />
