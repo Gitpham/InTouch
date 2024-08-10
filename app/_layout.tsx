@@ -86,15 +86,6 @@ export default function RootLayout() {
      
     };
 
-    // const initNotifications = async ()  => {
-    //   const allowsNotificaitons = await allowsNotificationsAsync()
-    //   console.log("allowsNotifications: ", allowsNotificaitons)
-    //   if (!allowsNotificaitons ){
-    //     console.log("should request permission")
-    //     await requestNotificationPermission();
-    //   }
-
-    // }
     try {
       initDB();     
     } catch (e) {
@@ -102,15 +93,6 @@ export default function RootLayout() {
       console.log("failed to initDB()")
     }
 
-    // try {
-    //   initNotifications();
-    // }catch (e) {
-    //   console.error(e);
-    //   console.log("failed to initNotifications()")
-    // }
-
-
-   
 
     // INITIALIZE NOTIFICAITON HANDLERS
     if (Platform.OS === "android") {
@@ -197,6 +179,7 @@ export default function RootLayout() {
         return;
       }
       appState.current = nextAppState;
+      console.log("appState: " , appState.current)
 
     });
 
