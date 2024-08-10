@@ -34,14 +34,25 @@ export async function redirect(notification: Notifications.Notification) {
 }
 
 export async function requestNotificationPermission() {
-  return await Notifications.requestPermissionsAsync({
-    ios: {
-      allowAlert: true,
-      allowBadge: true,
-      allowSound: true,
-      allowAnnouncements: true,
-    },
-  });
+
+  if (Device.isDevice) {
+    console.log("requestNOtificationPermission(): device ")
+    const { status: existingStatus } = await Notifications.getPermissionsAsync();
+    console.log("requestNOtificationPermission(): passed: getPermissionAsync() status ", existingStatus)
+
+    let finalStatus = existingStatus;
+    if (existingStatus !== 'granted') {
+      console.log("existing status is not granted")
+      const { status } = await Notifications.requestPermissionsAsync();
+      console.log("requested prmission")
+      finalStatus = status;
+    }
+    if (finalStatus !== 'granted') {
+      alert('Failed to request notification!');
+      return;
+    }
+  }
+
 }
 
 export async function cancelAllNotifications() {

@@ -23,10 +23,10 @@ export default function CallTextButton({person, changeIsCalling}: CallTextBtnInt
           alignItems: "center",
         }}
       >
-        <View
+
+          <Pressable
           style={styles.callBtn}
-        >
-          <Pressable onPress={() => 
+           onPress={() => 
           {
             changeIsCalling(true);
             callUtil(person, db)
@@ -34,16 +34,13 @@ export default function CallTextButton({person, changeIsCalling}: CallTextBtnInt
             }>
             <Text style={{color: 'purple' }}>Call</Text>
           </Pressable>
-        </View>
-        <View
-          style={styles.textBtn}
-        >
-          <Pressable              
+
+          <Pressable   
+          style={styles.textBtn}           
            onPress={() => sendSMS(person?.phoneNumber.toString() as string)}
           >
             <Text style={{color: 'green', fontWeight: 'bold' }}>Text</Text>
           </Pressable>
-        </View>
       </View>
     )
 

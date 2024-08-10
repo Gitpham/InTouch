@@ -6,7 +6,7 @@ import { Divider, ListItem } from "@rneui/themed";
 import { useContext } from "react";
 import { router } from "expo-router";
 import { InTouchContext } from "@/context/InTouchContext";
-import { AddButton, AddContactButton, StandardButton } from "@/components/ButtonStandard";
+import { AddButton, } from "@/components/ButtonStandard";
 import { Person } from "@/constants/types";
 import { View } from "react-native";
 import { styles } from "@/constants/Stylesheet";

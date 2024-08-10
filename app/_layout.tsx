@@ -18,6 +18,7 @@ import { createDB } from "@/assets/db/db";
 import { ScheduleContextProvider } from "@/context/ScheduleContext";
 import { Platform, AppState } from "react-native";
 import { callPersonUtil,  } from "@/context/PhoneNumberUtils";
+import { allowsNotificationsAsync, requestNotificationPermission } from "@/context/NotificationUtils";
 
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
@@ -82,13 +83,34 @@ export default function RootLayout() {
     const initDB = async () => {
       db = await SQLite.openDatabaseAsync("July26_ScheduleTable_2.db");
       createDB(db);
+     
     };
+
+    // const initNotifications = async ()  => {
+    //   const allowsNotificaitons = await allowsNotificationsAsync()
+    //   console.log("allowsNotifications: ", allowsNotificaitons)
+    //   if (!allowsNotificaitons ){
+    //     console.log("should request permission")
+    //     await requestNotificationPermission();
+    //   }
+
+    // }
     try {
-      initDB();
+      initDB();     
     } catch (e) {
       console.error(e);
       console.log("failed to initDB()")
     }
+
+    // try {
+    //   initNotifications();
+    // }catch (e) {
+    //   console.error(e);
+    //   console.log("failed to initNotifications()")
+    // }
+
+
+   
 
     // INITIALIZE NOTIFICAITON HANDLERS
     if (Platform.OS === "android") {

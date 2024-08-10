@@ -19,6 +19,7 @@ import {
 } from "@/context/ScheduleUtils";
 import { useSQLiteContext } from "expo-sqlite";
 import { updatePersonBond } from "@/assets/db/PersonBondRepo";
+import { allowsNotificationsAsync, requestNotificationPermission } from "@/context/NotificationUtils";
 
 export default function createGroupScreen() {
   // Data to be stored in record
@@ -55,6 +56,16 @@ export default function createGroupScreen() {
   }
 
   useEffect(() => {
+    const initNotifications = async ()  => {
+      const allowsNotificaitons = await allowsNotificationsAsync()
+      console.log("allowsNotifications: ", allowsNotificaitons)
+      if (!allowsNotificaitons ){
+        console.log("should request permission")
+        await requestNotificationPermission();
+      }
+
+    }
+    initNotifications();
     setSchedule(displayPotentialSchedule(potentialSchedule));
     if (potentialSchedule != undefined) {
       setHasCreatedSchedule(true);
