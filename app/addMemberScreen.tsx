@@ -1,5 +1,5 @@
 import { ThemedText } from "@/components/ThemedText";
-import { Alert, FlatList, Keyboard, Pressable } from "react-native";
+import { Alert, FlatList, Keyboard, Pressable, TouchableWithoutFeedback } from "react-native";
 
 import { View, Text } from "react-native";
 import { useContext, useEffect, useState } from "react";
@@ -138,6 +138,7 @@ export default function addMemberScreen() {
   };
 
   return (
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
     <View style={{ flex: 1, backgroundColor: "white" }}>
       <View style={styles.centeredView}>
         <ThemedText type="title" style={styles.title}>
@@ -231,5 +232,6 @@ export default function addMemberScreen() {
         <StandardButton title="Cancel" onPress={onCancelPress} />
       </View>
     </View>
+    </TouchableWithoutFeedback>
   );
 }
