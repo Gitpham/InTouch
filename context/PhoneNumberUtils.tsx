@@ -123,7 +123,7 @@ const callPersonUtil = async (
   const phoneURL: string = `tel:${phoneNumber}`;
   const canOpen = await Linking.canOpenURL(phoneURL);
   router.navigate({
-    pathname: "./personScreen",
+    pathname: "../personScreen",
     params: { id: `${toCall.person_id}` },
   });
 
