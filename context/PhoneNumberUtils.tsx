@@ -29,13 +29,7 @@ const formatPhoneNumber = (phoneNumber: string): string => {
   return e164PhoneNumber;
 };
 
-const isE164PhoneNumber = (phoneNumber: string): boolean => {
-  const pattern = /^\(\d{3}\)\s\d{3}-\d{4}$/;
-  return pattern.test(phoneNumber);
-};
-
 const validateAndFormatPhoneNumber = (phoneNumber: string): string => {
-
     return formatPhoneNumber(phoneNumber);
 };
 
