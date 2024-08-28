@@ -35,11 +35,8 @@ const isE164PhoneNumber = (phoneNumber: string): boolean => {
 };
 
 const validateAndFormatPhoneNumber = (phoneNumber: string): string => {
-  if (isE164PhoneNumber(phoneNumber)) {
-    return phoneNumber;
-  } else {
+
     return formatPhoneNumber(phoneNumber);
-  }
 };
 
 /**
@@ -134,10 +131,12 @@ const callPersonUtil = async (
   }
 };
 
-const callUtil = async (person: Person, db: SQLite.SQLiteDatabase) => {
+const callUtil = async (person: Person) => {
   const phoneNumber: string = validateAndFormatPhoneNumber(person.phoneNumber);
   const phoneURL: string = `tel:${phoneNumber}`;
+  console.log("Phone Number: ", phoneNumber)
   const canOpen = await Linking.canOpenURL(phoneURL);
+  
 
   if (canOpen) {
     Linking.openURL(phoneURL);
