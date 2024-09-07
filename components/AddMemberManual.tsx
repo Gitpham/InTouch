@@ -1,10 +1,13 @@
 import { styles } from "@/constants/Stylesheet";
-import { Person } from "@/constants/types";
+import { CountryCode, Person } from "@/constants/types";
 import { InTouchContext } from "@/context/InTouchContext";
 import { phoneNumberVerifier } from "@/context/PhoneNumberUtils";
 import { Button } from "@rneui/themed";
-import { useContext } from "react";
-
+import { useContext, useState } from "react";
+import PhoneInput 
+    from 'react-native-phone-input';
+import CountryPicker 
+    from 'react-native-country-picker-modal';
 import { ThemedText } from "./ThemedText";
 import React from "react";
 import {
@@ -12,6 +15,7 @@ import {
   TextInput,
   View,
   TouchableWithoutFeedback,
+  StyleSheet
 } from "react-native";
 
 interface addMemberManualInterface {
@@ -49,6 +53,25 @@ export default function AddMemberManual({
 }: addMemberManualInterface) {
   const { createPerson, generatePersonId, addTempBondMember } =
     useContext(InTouchContext);
+    const [countryCode, setCountryCode] = useState<CountryCode>("US");
+    const [selectedCountry, setSelectedCountry] =
+        useState(null);
+    const [countryPickerVisible, setCountryPickerVisible] = 
+        useState(false);
+
+  // Phone Number Functions 
+  
+  const onSelectCountry = (country: any) => {
+    setCountryCode(country.cca2);
+    this.phone.selectCountry(country.cca2.toLowerCase())
+    setSelectedCountry(country);
+    setCountryPickerVisible(false);
+};
+  
+  const toggleCountryPicker = () => {
+    setCountryPickerVisible(!countryPickerVisible);
+};
+
 
   // Member information
 
@@ -64,7 +87,6 @@ export default function AddMemberManual({
   }
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <>
         <View style={styles.centeredView}>
           <ThemedText type="subtitle" style={styles.title}>
@@ -95,13 +117,28 @@ export default function AddMemberManual({
         <View style={styles.indentedView}>
           <ThemedText style={styles.title}>Phone Number</ThemedText>
         </View>
-        <TextInput
-          onChangeText={memNumberChange}
-          value={memberNumber}
-          placeholder="e.g. (111)-111-1111"
-          keyboardType="phone-pad"
-          style={styles.textInput}
-        ></TextInput>
+        <PhoneInput
+                ref={(ref) => { this.phone = ref; }}
+                initialValue={memberNumber}
+                onChangePhoneNumber={(number: any) => memNumberChange(number)}
+                onPressFlag={toggleCountryPicker}
+                style={styles.textInput}
+                editable={false}
+        />
+        {countryPickerVisible && (
+        <CountryPicker
+                    withFilter={true}
+                    withFlagButton={true}
+                    withCountryNameButton={true}
+                    withCallingCodeButton={true}
+                    withCallingCode={true}
+                    countryCode={countryCode}
+                    onSelect={onSelectCountry}
+                    onClose={() => setCountryPickerVisible(false)}
+                    visible={countryPickerVisible}
+                    containerButtonStyle={tmpStyle.countryPickerButton}
+                />
+            )}
         <View style={styles.btnOrientation}>
           <Button
             title="Create Contact"
@@ -135,6 +172,22 @@ export default function AddMemberManual({
           />
         </View>
       </>
-    </TouchableWithoutFeedback>
   );
 }
+
+
+const tmpStyle = StyleSheet.create({    
+  phoneInput: {
+  height: 50,
+  width: '100%',
+  borderWidth: 1,
+  borderColor: '#ccc',
+  marginBottom: 20,
+  paddingHorizontal: 10,
+},
+countryPickerButton: {
+  borderRadius: 5,
+  backgroundColor: '#fff',
+  marginBottom: 20,
+},
+})
