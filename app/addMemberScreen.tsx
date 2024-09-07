@@ -82,11 +82,12 @@ export default function addMemberScreen() {
       if (person) {
 
         try {
-          // const phoneNumber = validateAndFormatPhoneNumber(person?.phoneNumbers?.[0]?.number as string);
+          const phoneNumber = validateAndFormatPhoneNumber(person?.phoneNumbers?.[0]?.number as string);
+          console.log(person?.phoneNumbers?.[0]?.number as string);
           const newContact: Person = {
-            firstName: person?.firstName as string,
-            lastName: person?.lastName as string,
-            phoneNumber: person?.phoneNumbers?.[0]?.number as string,
+            firstName: (person?.firstName as string).trim(),
+            lastName: (person?.lastName as string).trim(),
+            phoneNumber: phoneNumber,
             person_id: undefined,
           };
           await createPerson(newContact);
@@ -110,7 +111,7 @@ export default function addMemberScreen() {
             let name = item.firstName.trim();
             if (item.lastName) {
               name += " ";
-              name += item.lastName;
+              name += item.lastName.trim();
             }
             setName(name);
             setConfirmationVisible(true);

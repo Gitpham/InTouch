@@ -17,10 +17,10 @@ const DeleteMessage = ({ message , show} ) => {
                 setTimeout(() => {
                     Animated.timing(opacity, {
                         toValue: 0,
-                        duration: 300,
+                        duration: 500,
                         useNativeDriver: true,
                     }).start(() => setVisible(false));
-                }, 2000); // Show message for 2 seconds
+                }, 1000); // Show message for 2 seconds
             });
         }
     }, [show]);

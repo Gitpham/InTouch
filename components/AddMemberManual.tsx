@@ -76,9 +76,11 @@ export default function AddMemberManual({
   // Member information
 
   async function savePerson() {
+    const firstName = memberFirstName.trim();
+    const lastName = memberLastName.trim();
     const newContact: Person = {
-      firstName: memberFirstName,
-      lastName: memberLastName,
+      firstName: firstName,
+      lastName: lastName,
       phoneNumber: memberNumber,
       person_id: undefined,
     };
