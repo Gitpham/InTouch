@@ -14,6 +14,7 @@ import {  styles } from "@/constants/Stylesheet";
 import React from "react";
 import ConfirmationMessage from "@/components/ConfirmationMessage";
 import { Dialog } from "@rneui/base";
+import { validateAndFormatPhoneNumber } from "@/context/PhoneNumberUtils";
 
 export default function addMemberScreen() {
   const {
@@ -79,14 +80,20 @@ export default function addMemberScreen() {
     if (status === "granted") {
       const person = await Contacts.presentContactPickerAsync();
       if (person) {
-        // Generate unique person id
-        const newContact: Person = {
-          firstName: person?.firstName as string,
-          lastName: person?.lastName as string,
-          phoneNumber: person?.phoneNumbers?.[0]?.number as string,
-          person_id: undefined,
-        };
-        await createPerson(newContact);
+
+        try {
+          // const phoneNumber = validateAndFormatPhoneNumber(person?.phoneNumbers?.[0]?.number as string);
+          const newContact: Person = {
+            firstName: person?.firstName as string,
+            lastName: person?.lastName as string,
+            phoneNumber: person?.phoneNumbers?.[0]?.number as string,
+            person_id: undefined,
+          };
+          await createPerson(newContact);
+        } catch(e) {
+          Alert.alert("Phone number is not formatted correctly")
+        }
+       
       } else {
         Alert.alert("unable to add from contacts");
       }

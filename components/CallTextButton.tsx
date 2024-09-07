@@ -3,8 +3,6 @@ import React, { useContext } from "react";
 import { styles } from "@/constants/Stylesheet";
 import { callUtil, sendSMS } from "@/context/PhoneNumberUtils";
 import { Person } from "@/constants/types";
-import { useSQLiteContext } from "expo-sqlite";
-import { CallContext } from "@/app/_layout";
 
 
 interface CallTextBtnInterface {
@@ -12,8 +10,6 @@ interface CallTextBtnInterface {
     changeIsCalling: (b: boolean) => void;
 }
 export default function CallTextButton({person, changeIsCalling}: CallTextBtnInterface){
-
-    const db = useSQLiteContext();
     return (
         <View
         style={{
@@ -29,7 +25,7 @@ export default function CallTextButton({person, changeIsCalling}: CallTextBtnInt
            onPress={() => 
           {
             changeIsCalling(true);
-            callUtil(person, db)
+            callUtil(person)
           }
             }>
             <Text style={{color: 'purple' }}>Call</Text>
