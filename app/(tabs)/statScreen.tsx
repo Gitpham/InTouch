@@ -93,7 +93,7 @@ import ConfirmationMessage from "@/components/ConfirmationMessage";
        
          
             <ThemedText type= 'title'> Testing Reminder Screen </ThemedText>
-            <StandardButton title="getAllBondMembersMember" onPress={onTestAddMember}/>
+            {/* <StandardButton title="getAllBondMembersMember" onPress={onTestAddMember}/>
 
             <StandardButton title="display people from db" onPress={onShowPeople}/>
 
@@ -111,9 +111,12 @@ import ConfirmationMessage from "@/components/ConfirmationMessage";
 
             <StandardButton title="show personBondMap" onPress={onPressShowPersonBondMap}/>
 
-            <StandardButton title="show tables" onPress={() => {setIsVisible(old => !old); tableNames()}}/>
+            <StandardButton title="show tables" onPress={() => {setIsVisible(old => !old); tableNames()}}/> */}
 
           <StandardButton title = "clear notifications" onPress={clearScheduledNotifications}></StandardButton>
+          <StandardButton title = "display notifications" onPress={onDisplayNotifications}></StandardButton>
+
+
 {/* 
               <StandardButton title="Display Schedules from DB" onPress={onDisplaySchedules}></StandardButton>
         <StandardButton title="Display scheudleNotificaions" onPress={onDisplayNotifications}></StandardButton>
