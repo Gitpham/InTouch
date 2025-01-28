@@ -1,5 +1,5 @@
 import { ThemedText } from "@/components/ThemedText";
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ListItem } from "@rneui/themed";
 import { View, FlatList, Pressable, Text } from "react-native";
@@ -16,9 +16,32 @@ import { Bond } from "@/constants/types";
 import { styles } from "@/constants/Stylesheet";
 import { ScheduleContext } from "@/context/ScheduleContext";
 import { Divider } from "@rneui/base";
+import { useSQLiteContext } from "expo-sqlite";
+import { getAllBonds } from "@/assets/db/BondRepo";
 
 export default function homeScreen() {
-  const { bondList } = useContext(InTouchContext);
+  const db = useSQLiteContext();
+  let bondList;
+  
+  let hasRendered = false;
+   useEffect(() => {
+      const initalize = async () => {
+        if (!hasRendered) {
+          try {
+            bondList = await getAllBonds(db);
+            hasRendered = true;
+          } catch (error) {
+            console.error(error);
+            throw Error("failed to initialize db");
+          }
+        }
+      };
+  
+      initalize();
+    }, []);
+
+
+  // const { bondList } = useContext(InTouchContext);
   const { createPotentialSchedule } = useContext(ScheduleContext);
 
   function onBondPress(bond: Bond) {
