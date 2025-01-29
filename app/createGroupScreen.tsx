@@ -31,6 +31,7 @@ export default function createGroupScreen() {
     clearTempBondMembers,
     createBondMember,
     peopleList,
+    refresh,
   } = useContext(InTouchContext);
   const { potentialSchedule, createPotentialSchedule } =
     useContext(ScheduleContext);
@@ -101,6 +102,7 @@ export default function createGroupScreen() {
       createBondMember(tempBondMembers, bondID);
       const nextToCall = tempBondMembers.values().next().value;
       await updatePersonBond(db, nextToCall, bondID, 1)
+      refresh() // TODO
     } catch (e) {
       console.error(e);
       throw Error("failed to call createBondMember()");

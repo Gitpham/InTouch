@@ -12,6 +12,8 @@ import { createContext, useEffect, useState } from "react";
 import React from "react";
 type InTouchContextType = {
   tempBondMembers: Set<number>;
+  isRefreshed: boolean;
+  refresh: () => void;
   peopleList: Person[];
   bondList: Bond[];
   reminderList: Reminder[];
@@ -45,12 +47,16 @@ type InTouchContextType = {
  */
 
 export const InTouchContext = createContext<InTouchContextType>({
+  isRefreshed: false,
   peopleList: [],
   bondList: [],
   reminderList: [],
   personBondMap: new Map<number, Set<number>>(),
   bondPersonMap: new Map<number, Set<number>>(),
   tempBondMembers: new Set<number>(),
+  refresh: function(): void {
+    throw new Error("Function not implemented.");
+  },
   generatePersonId: function (): number {
     throw new Error("Function not implemented.");
   },
@@ -118,6 +124,13 @@ export const InTouchContextProvider: React.FC<{
   // eslint-disable-next-line react/prop-types
 }> = ({ children }) => {
   
+  const [isRefreshed, setIsRefreshed] = useState(false);
+
+  function refresh(){
+    console.log("refresh()")
+    setIsRefreshed(true);
+  }
+
   const [peopleList, setPeopleList] = React.useState<Person[]>([]);
   const [bondList, setBondList] = useState<Bond[]>([]);
   const [reminderList, setReminderList] = useState<Reminder[]>([]);
@@ -683,6 +696,8 @@ export const InTouchContextProvider: React.FC<{
     <>
       <InTouchContext.Provider
         value={{
+          isRefreshed, 
+          refresh,
           tempBondMembers,
           peopleList,
           bondList,
