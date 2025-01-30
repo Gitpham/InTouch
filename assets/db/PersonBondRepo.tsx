@@ -2,6 +2,7 @@ import { Person, Bond, BondPerson } from "@/constants/types";
 import * as SQLite from "expo-sqlite";
 
 
+
 export const addPersonBond = async (db: SQLite.SQLiteDatabase, person_id: number, bond_id: number) => {
 
     const statement = await db.prepareAsync(`INSERT INTO person_bond (person_id, bond_id) VALUES (?, ?)`)
@@ -86,6 +87,26 @@ export const getPersonsOfBondDB = async (db: SQLite.SQLiteDatabase, bondID: numb
     } catch (e) {
         console.error(e);
         throw Error("getPersonsOfBondDB: failed to get persons of Bond")
+    } finally {
+        await statement.finalizeAsync();
+    }
+}
+
+export const getBondsOfPersonDB = async (db: SQLite.SQLiteDatabase, pid: number) => {
+    const statement = await db.prepareAsync(`
+        SELECT * FROM person_bond
+        WHERE person_id = ?
+         ;`);
+
+    const value: string[] = [pid.toString()]
+    try {
+        const result =  await statement.executeAsync<BondPerson>(value);
+        const rows = await result.getAllAsync<BondPerson>(value);
+        return rows;
+
+    } catch (e) {
+        console.error(e);
+        throw Error("getBondsOfPersonDB: failed to get persons of Bond")
     } finally {
         await statement.finalizeAsync();
     }

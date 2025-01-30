@@ -52,3 +52,23 @@ export const getAllReminders = async (db: SQLite.SQLiteDatabase) : Promise<Remin
         throw Error("Failed to getAllReminders()")
     }
 }
+
+export const getRemindersOfPerson = async (db: SQLite.SQLiteDatabase, pid: number) : Promise<Reminder[]> => {
+    const statement = await db.prepareAsync(`
+        SELECT * FROM reminderd
+        WHERE person_id = ?
+         ;`);
+
+    const value: string[] = [pid.toString()]
+    try {
+        const result =  await statement.executeAsync<Reminder>(value);
+        const rows = await result.getAllAsync<Reminder>(value);
+        return rows;
+
+    } catch (e) {
+        console.error(e);
+        throw Error("getRemindersOfPerson: failed to get persons of Bond")
+    } finally {
+        await statement.finalizeAsync();
+    }
+}
