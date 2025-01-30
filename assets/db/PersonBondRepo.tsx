@@ -111,3 +111,23 @@ export const getBondsOfPersonDB = async (db: SQLite.SQLiteDatabase, pid: number)
         await statement.finalizeAsync();
     }
 }
+
+export const getPersonBondsOfBondDB = async (db: SQLite.SQLiteDatabase, bid: number) => {
+    const statement = await db.prepareAsync(`
+        SELECT * FROM person_bond
+        WHERE bond_id = ?
+         ;`);
+
+    const value: string[] = [bid.toString()]
+    try {
+        const result =  await statement.executeAsync<BondPerson>(value);
+        const rows = await result.getAllAsync<BondPerson>(value);
+        return rows;
+
+    } catch (e) {
+        console.error(e);
+        throw Error("getBondsOfPersonDB: failed to get persons of Bond")
+    } finally {
+        await statement.finalizeAsync();
+    }
+}

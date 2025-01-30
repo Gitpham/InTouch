@@ -1,9 +1,9 @@
 /* eslint-disable react/react-in-jsx-scope */
 import { ThemedText } from "@/components/ThemedText";
-import { Bond, BondPerson, Person, Reminder } from "@/constants/types";
+import { Bond, BondPerson, Person,  } from "@/constants/types";
 import { Card, ListItem, Button } from "@rneui/themed";
 import { useFocusEffect, useLocalSearchParams } from "expo-router";
-import { JSX, useCallback, useContext, useEffect, useState } from "react";
+import { JSX, useCallback, useContext,  useState } from "react";
 import { InTouchContext } from "@/context/InTouchContext";
 import {
   Alert,
@@ -16,16 +16,11 @@ import { router } from "expo-router";
 import { stackViews, styles } from "@/constants/Stylesheet";
 import CallTextButton from "@/components/CallTextButton";
 import ReminderDisplayCard from "@/components/ReminderDisplayCard";
-import { useSQLiteContext } from "expo-sqlite";
+import { SQLiteDatabase, useSQLiteContext } from "expo-sqlite";
 import { deletePerson, getPerson } from "@/assets/db/PersonRepo";
-import { getBondsOfPersonDB } from "@/assets/db/PersonBondRepo";
-import { getRemindersOfPersonDB } from "@/assets/db/ReminderRepo";
-import { getBond } from "@/assets/db/BondRepo";
+import { getBondsOfPersonDB, getPersonBondsOfBondDB } from "@/assets/db/PersonBondRepo";
+import { deleteBond, getBond } from "@/assets/db/BondRepo";
 export default function PersonScreen() {
-  const {
-    removePerson,
-  } = useContext(InTouchContext);
-
   const localParams = useLocalSearchParams();
   const [person, setPerson] = useState<Person>();
   const [bonds, setBonds] = useState<Array<Bond>>();
@@ -35,6 +30,7 @@ export default function PersonScreen() {
   // REFACTORED
   useFocusEffect(
       useCallback(() => {
+        console.log("personScreen: useCallBack()")
         // Do something when the screen is focused
         const init = async () => {
           const pid: number = Number(localParams.id);
@@ -54,8 +50,32 @@ export default function PersonScreen() {
           }
         }
         init();
+
       }, [])
     );
+
+
+  const newDeletePerson = async (db: SQLiteDatabase, pid: number) => {
+    console.log("newDeletePerson()")
+    try {
+      const bondPersons = await getBondsOfPersonDB(db, pid)
+      await deletePerson(db, pid);
+      console.log("deleted person")
+      // must delete bond if the bond has no other members
+      for(let i = 0; i < bondPersons.length; i++){
+        const bid = bondPersons[i].bond_id;
+        const numPeopleInBond: BondPerson[] = await getPersonBondsOfBondDB(db, bid);
+        if(numPeopleInBond.length == 0){
+          await deleteBond(db, bid)
+        }
+      }
+
+    } catch (e) {
+      console.error(e)
+      throw Error("Failed to newDeletePerson()")
+    }
+
+  }
 
 
   // Rendering functions for flatlists
@@ -97,15 +117,15 @@ export default function PersonScreen() {
         },
         {
           text: "OK",
-          onPress: () => deleteThisPerson(),
+          onPress: async () => await deleteThisPerson(),
           isPreferred: true,
         },
       ]
     );
   };
-  const deleteThisPerson = () => {
+  const deleteThisPerson = async () => {
     if (person) {
-      deletePerson(db, person)
+      await newDeletePerson(db, person.person_id as number)
     }
     router.back();
   };

@@ -22,6 +22,7 @@ export default function PeopleScreen() {
 
   useFocusEffect(
     useCallback(() => {
+      console.log("peopleScreen() rerender")
       // Do something when the screen is focused
       const init = async () => {
         const pList = await getAllPersons(db)

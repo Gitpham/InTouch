@@ -43,14 +43,14 @@ export const updatePerson = async (db: SQLite.SQLiteDatabase, updatedPerson: Per
     }
 }
 
-export const deletePerson = async (db: SQLite.SQLiteDatabase, person: Person) => {
+export const deletePerson = async (db: SQLite.SQLiteDatabase, pid: number) => {
 
     const statement = await db.prepareAsync(`
        DELETE FROM person
       WHERE person_id = ?
         `);
 
-    const value: string[] = [person.person_id.toString()]
+    const value: string[] = [pid.toString()]
 
     try {
         return await statement.executeAsync(value)

@@ -40,13 +40,13 @@ export const updateBond = async (
     }
 }
 
-export const deleteBond = async (db: SQLite.SQLiteDatabase, bond: Bond) => {
+export const deleteBond = async (db: SQLite.SQLiteDatabase, bid: number) => {
   const statement = await db.prepareAsync(`
        DELETE FROM bond
       WHERE bond_id = ?
         `);
 
-    const value: string[] = [bond.bond_id.toString()]
+    const value: string[] = [bid.toString()]
     
     try {
         return await statement.executeAsync(value)
