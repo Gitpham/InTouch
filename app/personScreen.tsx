@@ -1,9 +1,9 @@
 /* eslint-disable react/react-in-jsx-scope */
 import { ThemedText } from "@/components/ThemedText";
-import { Bond, Person, Reminder } from "@/constants/types";
+import { Bond, BondPerson, Person, Reminder } from "@/constants/types";
 import { Card, ListItem, Button } from "@rneui/themed";
-import { useLocalSearchParams } from "expo-router";
-import { JSX, useContext, useEffect, useState } from "react";
+import { useFocusEffect, useLocalSearchParams } from "expo-router";
+import { JSX, useCallback, useContext, useEffect, useState } from "react";
 import { InTouchContext } from "@/context/InTouchContext";
 import {
   Alert,
@@ -16,6 +16,11 @@ import { router } from "expo-router";
 import { stackViews, styles } from "@/constants/Stylesheet";
 import CallTextButton from "@/components/CallTextButton";
 import ReminderDisplayCard from "@/components/ReminderDisplayCard";
+import { useSQLiteContext } from "expo-sqlite";
+import { getPerson } from "@/assets/db/PersonRepo";
+import { getBondsOfPersonDB } from "@/assets/db/PersonBondRepo";
+import { getRemindersOfPersonDB } from "@/assets/db/ReminderRepo";
+import { getBond } from "@/assets/db/BondRepo";
 export default function PersonScreen() {
   const {
     peopleList,
@@ -24,30 +29,67 @@ export default function PersonScreen() {
     reminderList,
     getRemindersOfPerson,
   } = useContext(InTouchContext);
+
   const localParams = useLocalSearchParams();
   const [person, setPerson] = useState<Person>();
   const [bonds, setBonds] = useState<Array<Bond>>();
   const [reminders, setReminders] = useState<Array<Reminder>>();
   const stackView = stackViews();
 
-  useEffect(() => {
-    const personId: number = Number(localParams.id);
-    const person_index = peopleList.findIndex(
-      (item) => item.person_id === personId
+  // useEffect(() => {
+  //   const personId: number = Number(localParams.id);
+  //   const person_index = peopleList.findIndex(
+  //     (item) => item.person_id === personId
+  //   );
+  //   if (person_index !== -1) {
+  //     const p: Person = peopleList[person_index];
+  //     setPerson(p);
+  //     const b = getBondsOfPerson(p);
+  //     setBonds(b);
+  //     const r = getRemindersOfPerson(personId);
+  //     setReminders(r);
+  //   }
+  // }, [reminderList]);
+
+
+  const db = useSQLiteContext();
+  // REFACTORED
+  useFocusEffect(
+      useCallback(() => {
+        // Do something when the screen is focused
+        const init = async () => {
+          const pid: number = Number(localParams.id);
+          try {
+            const p = await getPerson(db, pid);
+            const bondPersons = await getBondsOfPersonDB(db, pid);
+            const r = await getRemindersOfPersonDB(db, pid);
+            console.log("reminders: ", r);
+
+           
+            const bondList: Bond[] = []
+            for(let i = 0; i < bondPersons.length; i++){
+              const bond = await getBond(db, bondPersons[i].bond_id);
+              bondList.push(bond as Bond)
+            }
+            setPerson(p as Person)
+            // setReminders(r as Reminder[])
+            setBonds(bondList)
+          } catch (e) {
+            alert("error");
+            console.log(e)
+          }
+         
+       
+        }
+        init();
+      }, [])
     );
-    if (person_index !== -1) {
-      const p: Person = peopleList[person_index];
-      setPerson(p);
-      const b = getBondsOfPerson(p);
-      setBonds(b);
-      const r = getRemindersOfPerson(personId);
-      setReminders(r);
-    }
-  }, [reminderList]);
+
 
   // Rendering functions for flatlists
 
   const showBonds = (bonds: Bond[]) => {
+    console.log("showBonds()")
     const bondList: JSX.Element[] = [];
 
     bonds.forEach((b) => {
@@ -137,7 +179,7 @@ export default function PersonScreen() {
 
       <Card containerStyle={{ flex: 3 }}>
         <Card.Title>Bonds</Card.Title>
-        {bonds != undefined ? showBonds(bonds) : <Text>No Bonds Yet!</Text>}
+        {(bonds != undefined && bonds != null) ? showBonds(bonds) : <Text>No Bonds Yet!</Text>}
       </Card>
 
       <View

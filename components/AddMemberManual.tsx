@@ -44,15 +44,10 @@ export default function AddMemberManual({
 
   memberNumber,
   memNumberChange,
-
-  // bondId,
-  // setBondID,
-
   isVisible,
   setIsVisible,
 }: addMemberManualInterface) {
-  const { createPerson, generatePersonId, addTempBondMember } =
-    useContext(InTouchContext);
+  const { createPerson } =useContext(InTouchContext);
     const [countryCode, setCountryCode] = useState<CountryCode>("US");
     const [selectedCountry, setSelectedCountry] =
         useState(null);
@@ -144,9 +139,9 @@ export default function AddMemberManual({
         <View style={styles.btnOrientation}>
           <Button
             title="Create Contact"
-            onPress={() => {
+            onPress={async () => {
               if (phoneNumberVerifier(memberNumber.trim())) {
-                savePerson();
+                await savePerson();
                 memFirstNameChange("");
                 memLastNameChange("");
                 memNumberChange("");

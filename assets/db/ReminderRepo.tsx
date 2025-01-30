@@ -53,9 +53,9 @@ export const getAllReminders = async (db: SQLite.SQLiteDatabase) : Promise<Remin
     }
 }
 
-export const getRemindersOfPerson = async (db: SQLite.SQLiteDatabase, pid: number) : Promise<Reminder[]> => {
+export const getRemindersOfPersonDB = async (db: SQLite.SQLiteDatabase, pid: number) : Promise<Reminder[]> => {
     const statement = await db.prepareAsync(`
-        SELECT * FROM reminderd
+        SELECT * FROM reminder
         WHERE person_id = ?
          ;`);
 
