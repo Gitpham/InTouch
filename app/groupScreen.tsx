@@ -8,8 +8,8 @@ import {
   AppState,
 } from "react-native";
 import { Card, ListItem, Button } from "@rneui/themed";
-import { useLocalSearchParams } from "expo-router";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useFocusEffect, useLocalSearchParams } from "expo-router";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { InTouchContext } from "@/context/InTouchContext";
 import { Bond,  Person, Reminder, trimName } from "@/constants/types";
 import { router } from "expo-router";
@@ -27,6 +27,9 @@ import {
 import CallTextButton from "@/components/CallTextButton";
 import DeleteMessage from "@/components/DeleteMessage";
 import ReminderDisplayCard from "@/components/ReminderDisplayCard";
+import { getBond } from "@/assets/db/BondRepo";
+import { getPersonsOfBondDB } from "@/assets/db/PersonBondRepo";
+import { getPerson } from "@/assets/db/PersonRepo";
 
 export default function groupScreen() {
   const {
@@ -45,7 +48,6 @@ export default function groupScreen() {
   const [nextToCall, setNextToCall] = useState<Person>();
   const [isDeleteVisible, setDeleteVisible] = useState(false)
   const [name, setName] = useState("")
-  const db = useSQLiteContext();
   const stackView = stackViews();
 
   // CALL HANDLER VARIABLES
@@ -109,34 +111,70 @@ export default function groupScreen() {
     }
   }, [bond])
 
-  useEffect(() => {
+  // useEffect(() => {
 
-    const fetchData = async () => {
-      const bondId: number = +(localParams.id as string);
-      const bond_index = bondList.findIndex((item) => item.bond_id === bondId);
-      if (bond_index !== -1) {
-        const b: Bond = bondList[bond_index];
-        setBond(b);
-        const p = getMembersOfBond(b);
-        setMembers(p);
-        const r = getRemindersOfBond(bondId);
-        setReminders(r);
-        let n = await displayNextToCall(b.bond_id, db);
-        if (!n) {
-          n = await getNextToCallUtil(b.bond_id, db);
-        }
-        setNextToCall(n);
-      }
-    };
+  //   const fetchData = async () => {
+  //     const bondId: number = +(localParams.id as string);
+  //     const bond_index = bondList.findIndex((item) => item.bond_id === bondId);
+  //     if (bond_index !== -1) {
+  //       const b: Bond = bondList[bond_index];
+  //       setBond(b);
+  //       const p = getMembersOfBond(b);
+  //       setMembers(p);
+  //       const r = getRemindersOfBond(bondId);
+  //       setReminders(r);
+  //       let n = await displayNextToCall(b.bond_id, db);
+  //       if (!n) {
+  //         n = await getNextToCallUtil(b.bond_id, db);
+  //       }
+  //       setNextToCall(n);
+  //     }
+  //   };
 
-    try {
-      fetchData();
-    } catch (e) {
-      console.error(e);
-      console.log("Could not get Next to call");
-    }
+  //   try {
+  //     fetchData();
+  //   } catch (e) {
+  //     console.error(e);
+  //     console.log("Could not get Next to call");
+  //   }
 
-  }, [bondPersonMap, reminderList, bondList,]);
+  // }, [bondPersonMap, reminderList, bondList,]);
+
+  const db = useSQLiteContext();
+    // REFACTORED
+    useFocusEffect(
+        useCallback(() => {
+          console.log("bondScreen: useCallBack()")
+          // Do something when the screen is focused
+          const fetchData = async () => {
+            const bid: number = Number(localParams.id);
+
+            try {
+              const b = await getBond(db, bid);
+              setBond(b)
+              console.log(b)
+              const bondPersons = await getPersonsOfBondDB(db, bid);
+              const personList: Person[] = []
+              for(let i = 0; i < bondPersons.length; i++){
+                const person = await getPerson(db, bondPersons[i].person_id);
+                personList.push(person as Person)
+              }
+              setMembers(personList)
+
+              let n = await displayNextToCall(b.bond_id, db);
+              if (!n) {
+                n = await getNextToCallUtil(b.bond_id, db);
+              }
+              // setNextToCall(n);
+            } catch (e) {
+              alert("error");
+              console.log(e)
+            }
+          }
+          fetchData();
+  
+        }, [])
+      );
 
   const renderMembers = (members: Person[]) => {
     const memberList: React.JSX.Element[] = [];
