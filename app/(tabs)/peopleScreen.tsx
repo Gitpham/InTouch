@@ -3,32 +3,33 @@ import { ThemedText } from "@/components/ThemedText";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FlatList, Pressable } from "react-native";
 import { Divider, ListItem } from "@rneui/themed";
-import { useContext, useEffect, useState } from "react";
-import { router } from "expo-router";
+import { useCallback, useContext, useEffect, useState } from "react";
+import { router, useFocusEffect } from "expo-router";
 import { InTouchContext } from "@/context/InTouchContext";
 import { AddButton, } from "@/components/ButtonStandard";
 import { Person } from "@/constants/types";
 import { View, Text } from "react-native";
 import { styles } from "@/constants/Stylesheet";
+import { useSQLiteContext } from "expo-sqlite";
+import { getAllPersons } from "@/assets/db/PersonRepo";
 
 export default function PeopleScreen() {
-  const { peopleList } = useContext(InTouchContext);
-  const [ sortedList, changeSortedList ] = useState<Array<Person>>([]);
 
-  useEffect(() => {
-    const sortedPeopleList: Array<Person> = peopleList.sort((a,b) => {
-      let aName = a.lastName;
-      let bName = b.lastName;
-      if (!a.lastName) {
-        aName = a.firstName;
+  const db = useSQLiteContext();
+
+
+  const [peopleList, setPeopleList] = useState<Person[]>();
+
+  useFocusEffect(
+    useCallback(() => {
+      // Do something when the screen is focused
+      const init = async () => {
+        const pList = await getAllPersons(db)
+        setPeopleList(pList);
       }
-      if (!b.lastName) {
-        bName = b.firstName;
-      }
-      return aName.toLowerCase().localeCompare(bName.toLowerCase())
-    })
-    changeSortedList(sortedPeopleList);
-  },[peopleList]);
+      init();
+    }, [])
+  );
 
   function onPersonPress(person_id: number) {
     router.navigate({
