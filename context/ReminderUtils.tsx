@@ -1,7 +1,9 @@
-import { Bond, Person, Reminder } from "@/constants/types";
+import { getBond } from "@/assets/db/BondRepo";
+import { getPerson } from "@/assets/db/PersonRepo";
+import { Reminder } from "@/constants/types";
+import { SQLiteDatabase } from "expo-sqlite";
 
-export function getReminderName(reminder: Reminder, bondList: Bond[], peopleList: Person[]) {
-    let toBeReturned = ""
+export async function getReminderName(db: SQLiteDatabase, reminder: Reminder) {
     let isBond = false; 
     if (reminder.bond_id) {
           isBond = true;
@@ -9,24 +11,11 @@ export function getReminderName(reminder: Reminder, bondList: Bond[], peopleList
     
     // Bond reminder
     if (isBond) {
-      for (const bond of bondList) {
-        if (bond.bond_id === reminder.bond_id) {
-          toBeReturned = bond.bondName;
-          return toBeReturned;
-        }
-      }
-    }
-    // Person Reminder
-    else {
-      for (const person of peopleList) {
-        if (person.person_id === reminder.person_id) {
-          if (person.lastName != undefined) {
-           return toBeReturned = person.firstName + " " + person.lastName?.trim()
-          }
-          return person.firstName
-        }
-      }
+      const bond = await getBond(db, reminder.bond_id as number);
+      return bond?.bondName;
+    } else {
+      const person = await getPerson(db, reminder.person_id as number);
+      return (`${person?.firstName} ${person?.lastName}` )
     }
 
-    return toBeReturned;
 }

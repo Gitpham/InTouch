@@ -1,7 +1,7 @@
 import { ThemedText } from "@/components/ThemedText";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { InTouchContext } from "@/context/InTouchContext";
-import { useContext } from "react";
+import { useCallback, useContext, useState } from "react";
 import { Pressable,  FlatList, View, Alert } from "react-native";
 import {  Reminder } from "@/constants/types";
 import React from "react";
@@ -9,17 +9,35 @@ import { Divider, ListItem } from "@rneui/base";
 import { styles } from "@/constants/Stylesheet"
 import { DeleteIcon } from "@/components/DeleteIcon";
 import { getReminderName } from "@/context/ReminderUtils";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import { AddButton } from "@/components/ButtonStandard";
+import { SQLiteDatabase, useSQLiteContext } from "expo-sqlite";
+import { getAllReminders } from "@/assets/db/ReminderRepo";
 
 
 export default function ReminderScreen() {
-  const { reminderList, peopleList, bondList, removeReminder } = useContext(InTouchContext);
+  // const { reminderList, peopleList, bondList, removeReminder } = useContext(InTouchContext);
+
+  
+    const db = useSQLiteContext();
+  
+
+    const [reminderList, setReminderList] = useState<Reminder[]>();
+  
+    useFocusEffect(
+      useCallback(() => {
+        const fetchData = async () => {
+          const rList = await getAllReminders(db)
+          setReminderList(rList);
+        }
+        fetchData();
+      }, [])
+    );
 
 
-  const renderReminder = ({ item }: { item: Reminder }) => {
+  const renderReminder = async ({ item }: { item: Reminder }) => {
     if (item) {
-          const name = getReminderName(item, bondList, peopleList)
+          const name = await getReminderName(db, item)
       return (
         <ListItem bottomDivider>
           <ListItem.Content id={item.reminder_id.toString()}>
@@ -99,3 +117,4 @@ export default function ReminderScreen() {
 
 
 }
+
