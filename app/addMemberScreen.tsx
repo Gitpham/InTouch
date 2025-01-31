@@ -20,7 +20,7 @@ import { addPerson, getAllPersons } from "@/assets/db/PersonRepo";
 
 export default function addMemberScreen() {
   const {
-    createPerson,
+    // createPerson,
     addTempBondMember,
     tempBondMembers,
     // peopleList,
@@ -43,11 +43,13 @@ export default function addMemberScreen() {
   const group_screen = +localParams.group_screen === 1 ? true : false;
 
 
+
     const db = useSQLiteContext();
     // REFACTORED
     
     useFocusEffect(
       useCallback(() => {
+
         console.log("addMemberScreen() rerender")
         // Do something when the screen is focused
         const fetchData = async () => {
@@ -59,43 +61,12 @@ export default function addMemberScreen() {
 
           setPeopleToShow(filteredPeople);
         }
+        // TODO: redo search
+
         fetchData();
-      }, [tempBondMembers])
+      }, [tempBondMembers, refresh])
     );
 
-  // useEffect(() => {
-  //   setBondID(localParams.bond_id != undefined ? +localParams.bond_id : -1);
-
-  //   let peopleToShow = peopleList.filter((p) => {
-  //     if (!tempBondMembers.has(p.person_id as number)) {
-  //       const bond_members = bondPersonMap.get(+localParams.bond_id);
-  //       if (!bond_members) {
-  //         return p;
-  //       } else if (!bond_members.has(p.person_id as number)) {
-  //         return p;
-  //       } else {
-  //         return null;
-  //       }
-  //     }
-  //   });
-
-  //   if (search !== "") {
-  //     peopleToShow = peopleToShow.filter((p) => {
-  //       let name = p.firstName;
-  //       if (p.lastName) {
-  //         name += " ";
-  //         name += p.lastName;
-  //       }
-
-  //       if (name.toLowerCase().includes(search.toLowerCase())) {
-  //         return p;
-  //       } else {
-  //         return null;
-  //       }
-  //     });
-  //   }
-  //   setPeopleToShow(peopleToShow);
-  // }, [tempBondMembers, peopleList, search]);
 
   async function importFromContacts() {
     const { status } = await Contacts.requestPermissionsAsync();
@@ -103,19 +74,17 @@ export default function addMemberScreen() {
     if (status === "granted") {
       const person = await Contacts.presentContactPickerAsync();
       if (person) {
-
         try {
           const phoneNumber = validateAndFormatPhoneNumber(person?.phoneNumbers?.[0]?.number as string);
-          console.log(person?.phoneNumbers?.[0]?.number as string);
           const newContact: Person = {
             firstName: (person?.firstName as string).trim(),
             lastName: (person?.lastName as string).trim(),
             phoneNumber: phoneNumber,
             person_id: undefined
           };
-          console.log(newContact);
+
           await addPerson(db, newContact);
-          // await createPerson(newContact);
+          setRefresh(true);
         } catch(e) {
           Alert.alert("Phone number is not formatted correctly")
         }
@@ -131,7 +100,6 @@ export default function addMemberScreen() {
         <Pressable
           onPress={() => {
             addTempBondMember(item.person_id as number);
-            setRefresh((oldValue) => !oldValue);
 
             let name = item.firstName.trim();
             if (item.lastName) {
@@ -155,7 +123,7 @@ export default function addMemberScreen() {
 
   const onSavePress = () => {
     if (group_screen) {
-      createBondMember(tempBondMembers, bondId);
+      // createBondMember(tempBondMembers, bondId);
       clearTempBondMembers();
     }
     router.back();
