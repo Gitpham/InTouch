@@ -2,9 +2,9 @@ import { ThemedText } from "@/components/ThemedText";
 import { Alert, FlatList, Keyboard, Pressable, TouchableWithoutFeedback } from "react-native";
 
 import { View, Text } from "react-native";
-import { useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { ListItem, Card, SearchBar } from "@rneui/themed";
-import { router, useLocalSearchParams } from "expo-router";
+import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import * as Contacts from "expo-contacts";
 import { InTouchContext } from "@/context/InTouchContext";
 import { AddButton, StandardButton } from "@/components/ButtonStandard";
@@ -15,15 +15,17 @@ import React from "react";
 import ConfirmationMessage from "@/components/ConfirmationMessage";
 import { Dialog } from "@rneui/base";
 import { validateAndFormatPhoneNumber } from "@/context/PhoneNumberUtils";
+import { useSQLiteContext } from "expo-sqlite";
+import { getAllPersons } from "@/assets/db/PersonRepo";
 
 export default function addMemberScreen() {
   const {
     createPerson,
     addTempBondMember,
     tempBondMembers,
-    peopleList,
-    bondPersonMap,
-    createBondMember,
+    // peopleList,
+    // bondPersonMap,
+    // createBondMember,
     clearTempBondMembers,
   } = useContext(InTouchContext);
   const [refresh, setRefresh] = useState(false);
@@ -35,44 +37,65 @@ export default function addMemberScreen() {
   const [bondId, setBondID] = useState<number>(-1);
   const [isVisible, setIsVisible] = useState(false);
   const [isConfirmationVisible, setConfirmationVisible] = useState(false);
-  const [membersToShow, setMembersToShow] = useState<Array<Person>>([]);
+  const [peopleToShow, setPeopleToShow] = useState<Array<Person>>([]);
 
   const localParams = useLocalSearchParams();
   const group_screen = +localParams.group_screen === 1 ? true : false;
 
-  useEffect(() => {
-    setBondID(localParams.bond_id != undefined ? +localParams.bond_id : -1);
 
-    let peopleToShow = peopleList.filter((p) => {
-      if (!tempBondMembers.has(p.person_id as number)) {
-        const bond_members = bondPersonMap.get(+localParams.bond_id);
-        if (!bond_members) {
-          return p;
-        } else if (!bond_members.has(p.person_id as number)) {
-          return p;
-        } else {
-          return null;
-        }
-      }
-    });
+    const db = useSQLiteContext();
+    // REFACTORED
+    
+    useFocusEffect(
+      useCallback(() => {
+        console.log("addMemberScreen() rerender")
+        // Do something when the screen is focused
+        const fetchData = async () => {
+          const pList = await getAllPersons(db)
+          const filteredPeople = pList.filter(p => {
+            return !tempBondMembers.has(p.person_id as number)
+          })
+          console.log(tempBondMembers)
 
-    if (search !== "") {
-      peopleToShow = membersToShow.filter((p) => {
-        let name = p.firstName;
-        if (p.lastName) {
-          name += " ";
-          name += p.lastName;
+          setPeopleToShow(filteredPeople);
         }
+        fetchData();
+      }, [tempBondMembers])
+    );
 
-        if (name.toLowerCase().includes(search.toLowerCase())) {
-          return p;
-        } else {
-          return null;
-        }
-      });
-    }
-    setMembersToShow(peopleToShow);
-  }, [tempBondMembers, peopleList, search]);
+  // useEffect(() => {
+  //   setBondID(localParams.bond_id != undefined ? +localParams.bond_id : -1);
+
+  //   let peopleToShow = peopleList.filter((p) => {
+  //     if (!tempBondMembers.has(p.person_id as number)) {
+  //       const bond_members = bondPersonMap.get(+localParams.bond_id);
+  //       if (!bond_members) {
+  //         return p;
+  //       } else if (!bond_members.has(p.person_id as number)) {
+  //         return p;
+  //       } else {
+  //         return null;
+  //       }
+  //     }
+  //   });
+
+  //   if (search !== "") {
+  //     peopleToShow = peopleToShow.filter((p) => {
+  //       let name = p.firstName;
+  //       if (p.lastName) {
+  //         name += " ";
+  //         name += p.lastName;
+  //       }
+
+  //       if (name.toLowerCase().includes(search.toLowerCase())) {
+  //         return p;
+  //       } else {
+  //         return null;
+  //       }
+  //     });
+  //   }
+  //   setPeopleToShow(peopleToShow);
+  // }, [tempBondMembers, peopleList, search]);
 
   async function importFromContacts() {
     const { status } = await Contacts.requestPermissionsAsync();
@@ -158,7 +181,9 @@ export default function addMemberScreen() {
         message={`Added ${name}`}
         show={isConfirmationVisible}
       />
-      {bondId !== -1 && peopleList.length !== 0 ? (
+      {
+      // bondId !== -1 &&
+       peopleToShow != undefined && peopleToShow != null? (
         <Card containerStyle={{ borderColor: "darkorchid" }}>
           <Card.Title>Choose From inTouch Contacts</Card.Title>
 
@@ -180,7 +205,7 @@ export default function addMemberScreen() {
             inputStyle={{ fontSize: 14, color: "black" }} // Adjust font size
           />
           <FlatList
-            data={membersToShow}
+            data={peopleToShow}
             style={styles.flatList}
             renderItem={renderInTouchContacts}
             keyExtractor={(item) => (item.person_id as number).toString()}
