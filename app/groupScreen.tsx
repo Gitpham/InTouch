@@ -11,7 +11,7 @@ import { Card, ListItem, Button } from "@rneui/themed";
 import { useFocusEffect, useLocalSearchParams } from "expo-router";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { InTouchContext } from "@/context/InTouchContext";
-import { Bond,  Person, Reminder, trimName } from "@/constants/types";
+import { Bond, Person, Reminder, trimName } from "@/constants/types";
 import { router } from "expo-router";
 import React from "react";
 import { StandardButton } from "@/components/ButtonStandard";
@@ -27,27 +27,21 @@ import {
 import CallTextButton from "@/components/CallTextButton";
 import DeleteMessage from "@/components/DeleteMessage";
 import ReminderDisplayCard from "@/components/ReminderDisplayCard";
-import { getBond } from "@/assets/db/BondRepo";
-import { getPersonsOfBondDB } from "@/assets/db/PersonBondRepo";
+import { deleteBond, getBond } from "@/assets/db/BondRepo";
+import {
+  deletePersonBond,
+  getPersonsOfBondDB,
+} from "@/assets/db/PersonBondRepo";
 import { getPerson } from "@/assets/db/PersonRepo";
 
 export default function groupScreen() {
-  const {
-    removeBondMember,
-    bondList,
-    getMembersOfBond,
-    removeBond,
-    bondPersonMap,
-    getRemindersOfBond,
-    reminderList,
-  } = useContext(InTouchContext);
+  const { removeBondMember } = useContext(InTouchContext);
   const localParams = useLocalSearchParams();
   const [bond, setBond] = useState<Bond>();
   const [members, setMembers] = useState<Array<Person>>();
-  const [reminders, setReminders] = useState<Array<Reminder>>();
   const [nextToCall, setNextToCall] = useState<Person>();
-  const [isDeleteVisible, setDeleteVisible] = useState(false)
-  const [name, setName] = useState("")
+  const [isDeleteVisible, setDeleteVisible] = useState(false);
+  const [name, setName] = useState("");
   const stackView = stackViews();
 
   // CALL HANDLER VARIABLES
@@ -58,123 +52,93 @@ export default function groupScreen() {
   const callLength = useRef(0);
   const minCallLength = 45;
 
-
-  function changeIsCalling(bool: boolean){
+  function changeIsCalling(bool: boolean) {
     isCalling.current = bool;
     return;
   }
 
 
-
   //CALL HANDLER
   useEffect(() => {
-
-    const callSubscription = AppState.addEventListener('change', async nextAppState => {
-
-      //USER PRESSES CALL FROM GROUP SCREEN
-      if (
-        (appState.current.match(/active|inactive/)) &&
-        (isCalling.current == true) &&
-        (nextAppState === 'background')
-      ) {
-        console.log('started call from app!');
-        timeOfStartCall.current = new Date();
-      }
-     
-      if (
-        (appState.current.match(/background/)) &&
-        (isCalling.current == true) &&
-        (nextAppState === 'active')
-      ) {
-        console.log('Ended Call from app!');
-        isCalling.current = false;
-
-        timeOfEndCall.current = new Date();
-        callLength.current = ((timeOfEndCall.current as Date).getTime() - (timeOfStartCall.current as Date).getTime()) / 1000;
-
-        if (callLength.current > minCallLength){
-
-          if (bond){
-            getNextToCallUtil(bond?.bond_id, db)
-            await getNextToCallUtil(bond?.bond_id, db)
-            const nextPerson = await displayNextToCall(bond.bond_id, db);
-            setNextToCall(nextPerson)
-          }
+    const callSubscription = AppState.addEventListener(
+      "change",
+      async (nextAppState) => {
+        //USER PRESSES CALL FROM GROUP SCREEN
+        if (
+          appState.current.match(/active|inactive/) &&
+          isCalling.current == true &&
+          nextAppState === "background"
+        ) {
+          console.log("started call from app!");
+          timeOfStartCall.current = new Date();
         }
 
+        if (
+          appState.current.match(/background/) &&
+          isCalling.current == true &&
+          nextAppState === "active"
+        ) {
+          console.log("Ended Call from app!");
+          isCalling.current = false;
+
+          timeOfEndCall.current = new Date();
+          callLength.current =
+            ((timeOfEndCall.current as Date).getTime() -
+              (timeOfStartCall.current as Date).getTime()) /
+            1000;
+
+          if (callLength.current > minCallLength) {
+            if (bond) {
+              getNextToCallUtil(bond?.bond_id, db);
+              await getNextToCallUtil(bond?.bond_id, db);
+              const nextPerson = await displayNextToCall(bond.bond_id, db);
+              setNextToCall(nextPerson);
+            }
+          }
+        }
+        appState.current = nextAppState;
       }
-      appState.current = nextAppState;
-    });
+    );
 
     return () => {
       callSubscription.remove();
-    }
-  }, [bond])
-
-  // useEffect(() => {
-
-  //   const fetchData = async () => {
-  //     const bondId: number = +(localParams.id as string);
-  //     const bond_index = bondList.findIndex((item) => item.bond_id === bondId);
-  //     if (bond_index !== -1) {
-  //       const b: Bond = bondList[bond_index];
-  //       setBond(b);
-  //       const p = getMembersOfBond(b);
-  //       setMembers(p);
-  //       const r = getRemindersOfBond(bondId);
-  //       setReminders(r);
-  //       let n = await displayNextToCall(b.bond_id, db);
-  //       if (!n) {
-  //         n = await getNextToCallUtil(b.bond_id, db);
-  //       }
-  //       setNextToCall(n);
-  //     }
-  //   };
-
-  //   try {
-  //     fetchData();
-  //   } catch (e) {
-  //     console.error(e);
-  //     console.log("Could not get Next to call");
-  //   }
-
-  // }, [bondPersonMap, reminderList, bondList,]);
+    };
+  }, [bond]);
 
   const db = useSQLiteContext();
-    // REFACTORED
-    useFocusEffect(
-        useCallback(() => {
-          console.log("bondScreen: useCallBack()")
-          // Do something when the screen is focused
-          const fetchData = async () => {
-            const bid: number = Number(localParams.id);
+  // REFACTORED
+  useFocusEffect(
+    useCallback(() => {
+      console.log("bondScreen: useCallBack()");
+      // Do something when the screen is focused
+      const fetchData = async () => {
+        const bid: number = Number(localParams.id);
 
-            try {
-              const b = await getBond(db, bid);
-              setBond(b)
-              console.log(b)
-              const bondPersons = await getPersonsOfBondDB(db, bid);
-              const personList: Person[] = []
-              for(let i = 0; i < bondPersons.length; i++){
-                const person = await getPerson(db, bondPersons[i].person_id);
-                personList.push(person as Person)
-              }
-              setMembers(personList)
-
-              let n = await displayNextToCall(b.bond_id, db);
-              if (!n) {
-                n = await getNextToCallUtil(b.bond_id, db);
-              }
-              // setNextToCall(n);
-            } catch (e) {
-              alert("error");
-              console.log(e)
-            }
+        try {
+          const b = await getBond(db, bid);
+          setBond(b);
+          console.log(b);
+          const bondPersons = await getPersonsOfBondDB(db, bid);
+          const personList: Person[] = [];
+          for (let i = 0; i < bondPersons.length; i++) {
+            const person = await getPerson(db, bondPersons[i].person_id);
+            personList.push(person as Person);
           }
-          fetchData();
-  
-        }, [])
-      );
+          setMembers(personList);
+
+          let n = await displayNextToCall(b.bond_id, db);
+          if (!n) {
+            n = await getNextToCallUtil(b.bond_id, db);
+          }
+          // setNextToCall(n);
+        } catch (e) {
+          alert("error");
+          console.log(e);
+        }
+      };
+      fetchData();
+    }, [])
+  );
 
   const renderMembers = (members: Person[]) => {
     const memberList: React.JSX.Element[] = [];
@@ -212,33 +176,35 @@ export default function groupScreen() {
 
     return memberList;
   };
-  
-  
+
   const onDeleteBond = async () => {
     if (bond) {
       await cancelNotificationsForBond(db, bond.bond_id);
-      removeBond(bond);
+      await deleteBond(db, bond.bond_id);
     }
     router.back();
   };
 
   const onDeleteBondAlert = () => {
-    Alert.alert(`Delete ${bond?.bondName} from your bonds?`, "This will delete all associated reminders and schedule",
-     [{
-        text: "Cancel",
-        onPress: () => {},
-        style: "cancel",
-      },
-      {
-        text: "OK",
-        onPress: () => onDeleteBond(),
-        isPreferred: true,
-      },
-    ]);
-  }
+    Alert.alert(
+      `Delete ${bond?.bondName} from your bonds?`,
+      "This will delete all associated reminders and schedule",
+      [
+        {
+          text: "Cancel",
+          onPress: () => {},
+          style: "cancel",
+        },
+        {
+          text: "OK",
+          onPress: () => onDeleteBond(),
+          isPreferred: true,
+        },
+      ]
+    );
+  };
 
   const deletePersonAlert = (person: Person) => {
-
     let name = person.firstName.trim() + " ";
     if (person.lastName) {
       name += person.lastName.trim() + " ";
@@ -246,23 +212,26 @@ export default function groupScreen() {
 
     // If last member, delete whole group
     if (members?.length === 1) {
-      Alert.alert(`Warning! Removing ${name} will delete ${bond?.bondName.trim()} entirely`,"", [
-      { 
-        text: "Cancel",
-        onPress: () => {},
-        style: "cancel",
-      },
-      {
-        text: "OK",
-        onPress: async () => {
-          if (bond) {
-            onDeleteBond();
-          }
-        }
-      }
-      ]);
-    }
-    else {
+      Alert.alert(
+        `Warning! Removing ${name} will delete ${bond?.bondName.trim()} entirely`,
+        "",
+        [
+          {
+            text: "Cancel",
+            onPress: () => {},
+            style: "cancel",
+          },
+          {
+            text: "OK",
+            onPress: async () => {
+              if (bond) {
+                onDeleteBond();
+              }
+            },
+          },
+        ]
+      );
+    } else {
       Alert.alert(`Remove ${name} from ${bond?.bondName.trim()}?`, "", [
         {
           text: "Cancel",
@@ -273,6 +242,13 @@ export default function groupScreen() {
           text: "OK",
           onPress: async () => {
             if (bond) {
+
+              await deletePersonBond(db, person.person_id, bond.bond_id);
+              const updatedMembers = members?.filter((m) => {
+                return m.person_id != person.person_id;
+              })
+
+              setMembers(updatedMembers);
               removeBondMember(bond, person);
               // Display delete message
               const name = trimName(person);
@@ -284,7 +260,7 @@ export default function groupScreen() {
           isPreferred: true,
         },
       ]);
-    };
+    }
   };
 
   return (
@@ -308,9 +284,15 @@ export default function groupScreen() {
           Next to Call {`${trimName(nextToCall as Person)}`}
         </ThemedText>
       </View>
-      <DeleteMessage message = {`Removed ${name} from ${bond?.bondName}`} show = {isDeleteVisible}/>
+      <DeleteMessage
+        message={`Removed ${name} from ${bond?.bondName}`}
+        show={isDeleteVisible}
+      />
 
-      <CallTextButton person={nextToCall as Person} changeIsCalling={changeIsCalling}></CallTextButton>
+      <CallTextButton
+        person={nextToCall as Person}
+        changeIsCalling={changeIsCalling}
+      ></CallTextButton>
 
       {bond ? <ScheduleCard bond={bond}></ScheduleCard> : <></>}
 
@@ -318,7 +300,7 @@ export default function groupScreen() {
 
       <Card containerStyle={{ flex: 2 }}>
         <Card.Title>Members</Card.Title>
-       <Card.Divider/>
+        <Card.Divider />
         {members != undefined ? (
           renderMembers(members)
         ) : (
