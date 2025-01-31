@@ -67,7 +67,11 @@ export const deletePerson = async (db: SQLite.SQLiteDatabase, pid: number) => {
 
 export const getAllPersons = async (db: SQLite.SQLiteDatabase) => {
     try {
-        return await db.getAllAsync<Person>(`SELECT * FROM person`)
+        return await db.getAllAsync<Person>(`
+            SELECT * FROM person
+            ORDER BY 
+                lastName ASC
+            `)
     } catch (error) {
         console.error(error)
         throw Error("getAllPersons(): Failed to getAllPersons()")
