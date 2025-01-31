@@ -11,7 +11,7 @@ import { Card, ListItem, Button } from "@rneui/themed";
 import { useFocusEffect, useLocalSearchParams } from "expo-router";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { InTouchContext } from "@/context/InTouchContext";
-import { Bond, Person, Reminder, trimName } from "@/constants/types";
+import { Bond, Person, trimName } from "@/constants/types";
 import { router } from "expo-router";
 import React from "react";
 import { StandardButton } from "@/components/ButtonStandard";
@@ -35,7 +35,6 @@ import {
 import { getPerson } from "@/assets/db/PersonRepo";
 
 export default function groupScreen() {
-  const { removeBondMember } = useContext(InTouchContext);
   const localParams = useLocalSearchParams();
   const [bond, setBond] = useState<Bond>();
   const [members, setMembers] = useState<Array<Person>>();
@@ -117,7 +116,6 @@ export default function groupScreen() {
         try {
           const b = await getBond(db, bid);
           setBond(b);
-          console.log(b);
           const bondPersons = await getPersonsOfBondDB(db, bid);
           const personList: Person[] = [];
           for (let i = 0; i < bondPersons.length; i++) {
@@ -249,7 +247,6 @@ export default function groupScreen() {
               })
 
               setMembers(updatedMembers);
-              removeBondMember(bond, person);
               // Display delete message
               const name = trimName(person);
               setName(name as string);
