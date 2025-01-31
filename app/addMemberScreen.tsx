@@ -16,7 +16,7 @@ import ConfirmationMessage from "@/components/ConfirmationMessage";
 import { Dialog } from "@rneui/base";
 import { validateAndFormatPhoneNumber } from "@/context/PhoneNumberUtils";
 import { useSQLiteContext } from "expo-sqlite";
-import { getAllPersons } from "@/assets/db/PersonRepo";
+import { addPerson, getAllPersons } from "@/assets/db/PersonRepo";
 
 export default function addMemberScreen() {
   const {
@@ -111,9 +111,11 @@ export default function addMemberScreen() {
             firstName: (person?.firstName as string).trim(),
             lastName: (person?.lastName as string).trim(),
             phoneNumber: phoneNumber,
-            person_id: undefined,
+            person_id: undefined
           };
-          await createPerson(newContact);
+          console.log(newContact);
+          await addPerson(db, newContact);
+          // await createPerson(newContact);
         } catch(e) {
           Alert.alert("Phone number is not formatted correctly")
         }
