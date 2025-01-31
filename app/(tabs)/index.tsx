@@ -2,15 +2,10 @@ import { ThemedText } from "@/components/ThemedText";
 import React, { useCallback, useContext, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ListItem } from "@rneui/themed";
-import { View, FlatList, Pressable, Text } from "react-native";
+import { View, FlatList, Pressable } from "react-native";
 import { router, useFocusEffect } from "expo-router";
-import { InTouchContext } from "@/context/InTouchContext";
 import {
-  AddBondButton,
-  AddBondtButton,
-  AddButton,
-  AddContactButton,
-  StandardButton,
+  AddButton
 } from "@/components/ButtonStandard";
 import { Bond } from "@/constants/types";
 import { styles } from "@/constants/Stylesheet";
@@ -20,21 +15,19 @@ import { getAllBonds } from "@/assets/db/BondRepo";
 import { useSQLiteContext } from "expo-sqlite";
 
 export default function homeScreen() {
-  // const { bondList } = useContext(InTouchContext);
  
   const { createPotentialSchedule } = useContext(ScheduleContext);
 
   const db = useSQLiteContext();
   const [bondList, setBondList] = useState<Bond[]>();
   useFocusEffect(
+
       useCallback(() => {
-        console.log("bondScreen() rerender")
-        // Do something when the screen is focused
-        const init = async () => {
+        const fetchData = async () => {
           const pList = await getAllBonds(db)
           setBondList(pList);
         }
-        init();
+        fetchData();
       }, [])
     );
 

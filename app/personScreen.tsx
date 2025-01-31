@@ -3,8 +3,7 @@ import { ThemedText } from "@/components/ThemedText";
 import { Bond, BondPerson, Person,  } from "@/constants/types";
 import { Card, ListItem, Button } from "@rneui/themed";
 import { useFocusEffect, useLocalSearchParams } from "expo-router";
-import { JSX, useCallback, useContext,  useState } from "react";
-import { InTouchContext } from "@/context/InTouchContext";
+import { JSX, useCallback, useState } from "react";
 import {
   Alert,
   Pressable,
@@ -30,9 +29,8 @@ export default function PersonScreen() {
   // REFACTORED
   useFocusEffect(
       useCallback(() => {
-        console.log("personScreen: useCallBack()")
         // Do something when the screen is focused
-        const init = async () => {
+        const fetchData = async () => {
           const pid: number = Number(localParams.id);
           try {
             const p = await getPerson(db, pid);
@@ -49,7 +47,7 @@ export default function PersonScreen() {
             console.log(e)
           }
         }
-        init();
+        fetchData();
 
       }, [])
     );

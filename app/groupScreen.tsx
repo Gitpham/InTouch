@@ -9,8 +9,7 @@ import {
 } from "react-native";
 import { Card, ListItem, Button } from "@rneui/themed";
 import { useFocusEffect, useLocalSearchParams } from "expo-router";
-import { useCallback, useContext, useEffect, useRef, useState } from "react";
-import { InTouchContext } from "@/context/InTouchContext";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Bond, Person, trimName } from "@/constants/types";
 import { router } from "expo-router";
 import React from "react";

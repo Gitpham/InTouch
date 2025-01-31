@@ -1,5 +1,11 @@
 import { ThemedText } from "@/components/ThemedText";
-import { Alert, FlatList, Keyboard, Pressable, TouchableWithoutFeedback } from "react-native";
+import {
+  Alert,
+  FlatList,
+  Keyboard,
+  Pressable,
+  TouchableWithoutFeedback,
+} from "react-native";
 
 import { View, Text } from "react-native";
 import { useCallback, useContext, useEffect, useState } from "react";
@@ -10,7 +16,7 @@ import { InTouchContext } from "@/context/InTouchContext";
 import { AddButton, StandardButton } from "@/components/ButtonStandard";
 import AddMemberManual from "@/components/AddMemberManual";
 import { Person } from "@/constants/types";
-import {  styles } from "@/constants/Stylesheet";
+import { styles } from "@/constants/Stylesheet";
 import React from "react";
 import ConfirmationMessage from "@/components/ConfirmationMessage";
 import { Dialog } from "@rneui/base";
@@ -19,22 +25,15 @@ import { useSQLiteContext } from "expo-sqlite";
 import { addPerson, getAllPersons } from "@/assets/db/PersonRepo";
 
 export default function addMemberScreen() {
-  const {
-    // createPerson,
-    addTempBondMember,
-    tempBondMembers,
-    // peopleList,
-    // bondPersonMap,
-    // createBondMember,
-    clearTempBondMembers,
-  } = useContext(InTouchContext);
+  const { addTempBondMember, tempBondMembers, clearTempBondMembers } =
+    useContext(InTouchContext);
+
   const [refresh, setRefresh] = useState(false);
   const [memberFirstName, memFirstNameChange] = useState("");
   const [memberLastName, memLastNameChange] = useState("");
   const [name, setName] = useState("");
   const [search, setSearch] = useState("");
   const [memberNumber, memNumberChange] = useState("");
-  const [bondId, setBondID] = useState<number>(-1);
   const [isVisible, setIsVisible] = useState(false);
   const [isConfirmationVisible, setConfirmationVisible] = useState(false);
   const [peopleToShow, setPeopleToShow] = useState<Array<Person>>([]);
@@ -42,31 +41,25 @@ export default function addMemberScreen() {
   const localParams = useLocalSearchParams();
   const group_screen = +localParams.group_screen === 1 ? true : false;
 
+  const db = useSQLiteContext();
+  // REFACTORED
 
+  useFocusEffect(
+    useCallback(() => {
+      const fetchData = async () => {
+        const pList = await getAllPersons(db);
+        const filteredPeople = pList.filter((p) => {
+          return !tempBondMembers.has(p.person_id as number);
+        });
+        console.log(tempBondMembers);
 
-    const db = useSQLiteContext();
-    // REFACTORED
-    
-    useFocusEffect(
-      useCallback(() => {
+        setPeopleToShow(filteredPeople);
+      };
+      // TODO: redo search
 
-        console.log("addMemberScreen() rerender")
-        // Do something when the screen is focused
-        const fetchData = async () => {
-          const pList = await getAllPersons(db)
-          const filteredPeople = pList.filter(p => {
-            return !tempBondMembers.has(p.person_id as number)
-          })
-          console.log(tempBondMembers)
-
-          setPeopleToShow(filteredPeople);
-        }
-        // TODO: redo search
-
-        fetchData();
-      }, [tempBondMembers, refresh])
-    );
-
+      fetchData();
+    }, [tempBondMembers, refresh])
+  );
 
   async function importFromContacts() {
     const { status } = await Contacts.requestPermissionsAsync();
@@ -75,20 +68,21 @@ export default function addMemberScreen() {
       const person = await Contacts.presentContactPickerAsync();
       if (person) {
         try {
-          const phoneNumber = validateAndFormatPhoneNumber(person?.phoneNumbers?.[0]?.number as string);
+          const phoneNumber = validateAndFormatPhoneNumber(
+            person?.phoneNumbers?.[0]?.number as string
+          );
           const newContact: Person = {
             firstName: (person?.firstName as string).trim(),
             lastName: (person?.lastName as string).trim(),
             phoneNumber: phoneNumber,
-            person_id: undefined
+            person_id: undefined,
           };
 
           await addPerson(db, newContact);
           setRefresh(true);
-        } catch(e) {
-          Alert.alert("Phone number is not formatted correctly")
+        } catch (e) {
+          Alert.alert("Phone number is not formatted correctly");
         }
-       
       } else {
         Alert.alert("unable to add from contacts");
       }
@@ -123,7 +117,6 @@ export default function addMemberScreen() {
 
   const onSavePress = () => {
     if (group_screen) {
-      // createBondMember(tempBondMembers, bondId);
       clearTempBondMembers();
     }
     router.back();
@@ -140,101 +133,102 @@ export default function addMemberScreen() {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-    <View style={{ flex: 1, backgroundColor: "white" }}>
-      <View style={styles.centeredView}>
-        <ThemedText type="title" style={styles.title}>
-          Add Member
-        </ThemedText>
-      </View>
-
-      <ConfirmationMessage
-        message={`Added ${name}`}
-        show={isConfirmationVisible}
-      />
-      {
-      // bondId !== -1 &&
-       peopleToShow != undefined && peopleToShow != null? (
-        <Card containerStyle={{ borderColor: "darkorchid" }}>
-          <Card.Title>Choose From inTouch Contacts</Card.Title>
-
-          <SearchBar
-            placeholder="Search inTouch Contacts"
-            onChangeText={updateSearch}
-            value={search}
-            containerStyle={{
-              height: 50,
-              width: 300,
-              backgroundColor: "lightsteelblue",
-              borderRadius: 10,
-            }} // Adjust outer container height
-            inputContainerStyle={{
-              height: 30,
-              width: 280,
-              backgroundColor: "lightsteelblue",
-            }} // Adjust input container height
-            inputStyle={{ fontSize: 14, color: "black" }} // Adjust font size
-          />
-          <FlatList
-            data={peopleToShow}
-            style={styles.flatList}
-            renderItem={renderInTouchContacts}
-            keyExtractor={(item) => (item.person_id as number).toString()}
-            ListEmptyComponent={
-            <View style={{justifyContent: 'center'}}>
-           <Text style={styles.title}>There is nobody in your inTouch contacts that arent already in your bond!</Text>  
-            </View>
-            }
-          />
-        </Card>
-      ) : null}
-      <AddButton
-        color={"darkorchid"}
-        title="Add New Person Manually"
-        onPress={() => {
-          const newVisible = !isVisible;
-          setIsVisible(newVisible);
-        }}
-      />
-
-<Dialog
-      overlayStyle={{backgroundColor:'white'}}
-      isVisible={isVisible}
-      onBackdropPress={Keyboard.dismiss}
-    >
-      <View
-          style={{
-            paddingTop: 10,
-            paddingBottom: 10,
-          }}
-        >
-          <AddMemberManual
-            memberFirstName={memberFirstName}
-            memFirstNameChange={memFirstNameChange}
-            memberLastName={memberLastName}
-            memLastNameChange={memLastNameChange}
-            memberNumber={memberNumber}
-            memNumberChange={memNumberChange}
-            // bondId={bondId}
-            // setBondID={setBondID}
-            isVisible={isVisible}
-            setIsVisible={setIsVisible}
-          />
+      <View style={{ flex: 1, backgroundColor: "white" }}>
+        <View style={styles.centeredView}>
+          <ThemedText type="title" style={styles.title}>
+            Add Member
+          </ThemedText>
         </View>
-    </Dialog>
 
+        <ConfirmationMessage
+          message={`Added ${name}`}
+          show={isConfirmationVisible}
+        />
+        {
+          // bondId !== -1 &&
+          peopleToShow != undefined && peopleToShow != null ? (
+            <Card containerStyle={{ borderColor: "darkorchid" }}>
+              <Card.Title>Choose From inTouch Contacts</Card.Title>
 
-      <AddButton
-        color={"darkorchid"}
-        title="Import Person from Contacts"
-        onPress={importFromContacts}
-      />
+              <SearchBar
+                placeholder="Search inTouch Contacts"
+                onChangeText={updateSearch}
+                value={search}
+                containerStyle={{
+                  height: 50,
+                  width: 300,
+                  backgroundColor: "lightsteelblue",
+                  borderRadius: 10,
+                }} // Adjust outer container height
+                inputContainerStyle={{
+                  height: 30,
+                  width: 280,
+                  backgroundColor: "lightsteelblue",
+                }} // Adjust input container height
+                inputStyle={{ fontSize: 14, color: "black" }} // Adjust font size
+              />
+              <FlatList
+                data={peopleToShow}
+                style={styles.flatList}
+                renderItem={renderInTouchContacts}
+                keyExtractor={(item) => (item.person_id as number).toString()}
+                ListEmptyComponent={
+                  <View style={{ justifyContent: "center" }}>
+                    <Text style={styles.title}>
+                      There is nobody in your inTouch contacts that arent
+                      already in your bond!
+                    </Text>
+                  </View>
+                }
+              />
+            </Card>
+          ) : null
+        }
+        <AddButton
+          color={"darkorchid"}
+          title="Add New Person Manually"
+          onPress={() => {
+            const newVisible = !isVisible;
+            setIsVisible(newVisible);
+          }}
+        />
 
-      <View style={styles.btnOrientation}>
-        <StandardButton title="Save" onPress={() => onSavePress()} />
+        <Dialog
+          overlayStyle={{ backgroundColor: "white" }}
+          isVisible={isVisible}
+          onBackdropPress={Keyboard.dismiss}
+        >
+          <View
+            style={{
+              paddingTop: 10,
+              paddingBottom: 10,
+            }}
+          >
+            <AddMemberManual
+              memberFirstName={memberFirstName}
+              memFirstNameChange={memFirstNameChange}
+              memberLastName={memberLastName}
+              memLastNameChange={memLastNameChange}
+              memberNumber={memberNumber}
+              memNumberChange={memNumberChange}
+              isVisible={isVisible}
+              setIsVisible={setIsVisible}
+            />
+          </View>
+        </Dialog>
 
-        <StandardButton title="Cancel" onPress={onCancelPress} />
+        <AddButton
+          color={"darkorchid"}
+          title="Import Person from Contacts"
+          onPress={importFromContacts}
+        />
+
+        <View style={styles.btnOrientation}>
+          <StandardButton title="Save" onPress={() => onSavePress()} />
+
+          <StandardButton title="Cancel" onPress={onCancelPress} />
+        </View>
       </View>
-    </View>
     </TouchableWithoutFeedback>
   );
 }

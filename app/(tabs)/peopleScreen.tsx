@@ -3,9 +3,8 @@ import { ThemedText } from "@/components/ThemedText";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FlatList, Pressable } from "react-native";
 import { Divider, ListItem } from "@rneui/themed";
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { router, useFocusEffect } from "expo-router";
-import { InTouchContext } from "@/context/InTouchContext";
 import { AddButton, } from "@/components/ButtonStandard";
 import { Person } from "@/constants/types";
 import { View, Text } from "react-native";
@@ -22,13 +21,11 @@ export default function PeopleScreen() {
 
   useFocusEffect(
     useCallback(() => {
-      console.log("peopleScreen() rerender")
-      // Do something when the screen is focused
-      const init = async () => {
+      const fetchData = async () => {
         const pList = await getAllPersons(db)
         setPeopleList(pList);
       }
-      init();
+      fetchData();
     }, [])
   );
 
