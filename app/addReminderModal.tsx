@@ -1,6 +1,6 @@
 import { View, TextInput, FlatList } from "react-native";
-import { router } from "expo-router";
-import React from "react";
+import { router, useFocusEffect } from "expo-router";
+import React, { useCallback } from "react";
 import { useContext, useState } from "react";
 import { useLocalSearchParams } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -14,23 +14,40 @@ import { CheckBox, ListItem } from "@rneui/base";
 import { Bond, Person, trimName } from "@/constants/types";
 import { createReminderUtil } from "@/context/ReminderUtils";
 import { useSQLiteContext } from "expo-sqlite";
+import { getAllPersons } from "@/assets/db/PersonRepo";
+import { getAllBonds } from "@/assets/db/BondRepo";
 
 export default function addReminderModal() {
-  const {  createReminder, peopleList, bondList } =
-    useContext(InTouchContext);
 
 
-  const db = useSQLiteContext();
-  const [reminder, setReminder] = useState("");
-  const [segment, setSegment] = useState("Person");
   const localParams = useLocalSearchParams();
+  const db = useSQLiteContext();
+
   const person_id = localParams.person_id != undefined ? +localParams.person_id : -1;
   const bond_id = localParams.bond_id != undefined ? +localParams.bond_id : -1;
   const reminder_screen = +localParams.reminder_screen == 1 ? true : false
 
-
+  //--------------STATE VARIABLES--------------
+  const [reminder, setReminder] = useState("");
+  const [segment, setSegment] = useState("Person");
   const [bid, setBid] = useState(bond_id);
   const [pid, setPid] = useState(person_id);
+
+  //refactoring DB
+  const [peopleList, setPeopleList] = useState<Person[]>();
+  const [bondList, setBondList] = useState<Bond[]>();
+
+  useFocusEffect(
+      useCallback(() => {
+        const fetchData = async () => {
+          const pList = await getAllPersons(db)
+          setPeopleList(pList);
+          const bList = await getAllBonds(db);
+          setBondList(bList);
+        }
+        fetchData();
+      }, [])
+    );
   const onDonePress = async () => {
     if (!reminder) {
       Alert.alert("Please write a note");
