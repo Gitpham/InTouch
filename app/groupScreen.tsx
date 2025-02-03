@@ -292,7 +292,7 @@ export default function groupScreen() {
 
       {bond ? <ScheduleCard bond={bond}></ScheduleCard> : <></>}
 
-      {bond ? <ReminderDisplayCard person={undefined} bond={bond} /> : <></>}
+      {bond ? <ReminderDisplayCard pid={undefined} bid={bond.bond_id} /> : <></>}
 
       <Card containerStyle={{ flex: 2 }}>
         <Card.Title>Members</Card.Title>

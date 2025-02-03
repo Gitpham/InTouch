@@ -13,48 +13,41 @@ import { getBond } from "@/assets/db/BondRepo";
 import { useSQLiteContext } from "expo-sqlite";
 import { getPerson } from "@/assets/db/PersonRepo";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { deleteReminder, getRemindersOfBondDB, getRemindersOfPersonDB } from "@/assets/db/ReminderRepo";
 
 export default function ReminderBondScreen() {
   const localSearchParams = useLocalSearchParams();
   const db = useSQLiteContext();
-  const { reminderList, removeReminder, } = useContext(InTouchContext);
-  const [bond, setBond] = useState<Bond>();
-  const [person, setPerson] = useState<Person>();
+
   const bondName = localSearchParams.bondName;
   const personName = localSearchParams.personName;
   const isFromBond: boolean = localSearchParams.bid != undefined ? true : false;
   const insets = useSafeAreaInsets();
+
+  const [reminderList, setReminderList] = useState<Reminder[]>();
   useEffect(() => {
 
     const fetchData = async () => {
-      if (isFromBond) {
-        const bid = +localSearchParams.bid;
-        try {
-          const b = await getBond(db, bid);
-          setBond(b);
-        } catch (e) {
-          console.error(e);
-          throw new Error("reminderBondScreen(): failed to call getBond()");
+      let r
+      try {
+        if (isFromBond) {
+          const bid = +localSearchParams.bid;
+          r = await getRemindersOfBondDB(db, bid);
+        } else {
+          const pid = +localSearchParams.pid;
+          r = await getRemindersOfPersonDB(db, pid);
         }
-      } else {
-        const pid = +localSearchParams.pid;
-        try {
-          const p = await getPerson(db, pid);
-          setPerson(p);
-        } catch (e) {
-          console.error(e);
-          throw new Error("reminderBondScreen(): failed to call getPerson()");
-        }
+
+      } catch (e) {
+        console.error(e);
+        throw Error("reminderDisplayCard(): failed to fetch data")
       }
+      setReminderList(r);
     };
     fetchData();
   }, []);
 
   const renderReminder = ({ item }: { item: Reminder }) => {
-    if (isFromBond) {
-
-      if (item.bond_id) {
-        if (item.bond_id == bond?.bond_id) {
           return (
             <ListItem bottomDivider>
               <ListItem.Content id={item.reminder_id.toString()}>
@@ -77,47 +70,11 @@ export default function ReminderBondScreen() {
               </Pressable>
             </ListItem>
           );
-        }
-      } 
-
-    } else {
-      if (item.person_id) {
-        if (item.person_id == person?.person_id) {
-          return (
-            <ListItem bottomDivider>
-              <ListItem.Content id={item.reminder_id.toString()}>
-                <View style={styles.rowOrientation}>
-                  <View style={styles.nameContainer}>
-      
-                  </View>
-                  <ListItem.Title style={styles.date}>
-                    {item.date}
-                  </ListItem.Title>
-                </View>
-                <ListItem.Title>{item.reminder}</ListItem.Title>
-              </ListItem.Content>
-              <Pressable
-                onPress={() => deleteReminderAlert(item)}
-                style={styles.touchable}
-              >
-                <DeleteIcon></DeleteIcon>
-              </Pressable>
-            </ListItem>
-          );
-        }
-      } 
-    }
-    return null;
   };
 
   const deleteReminderAlert = (reminder: Reminder) => {
-    let alertMessage: string;
-    if (isFromBond) {
-      alertMessage = `Delete note for ${bond?.bondName}?`;
-    } else {
-      alertMessage = `Delete note for ${person?.firstName}?`;
-    }
-
+    const alertMessage = `Delete note for ${reminder.owner}?`;
+ 
     Alert.alert(alertMessage, "", [
       {
         text: "Cancel",
@@ -126,9 +83,9 @@ export default function ReminderBondScreen() {
       },
       {
         text: "OK",
-        onPress: () => {
+        onPress: async () => {
           {
-            deleteReminder(reminder.reminder_id);
+            await removeReminder(reminder.reminder_id);
           }
         },
         isPreferred: true,
@@ -136,8 +93,13 @@ export default function ReminderBondScreen() {
     ]);
   };
 
-  const deleteReminder = (reminder_id: number) => {
-    removeReminder(reminder_id);
+  const removeReminder = async (rid: number) => {
+    await deleteReminder(db, rid);
+    const updatedReminderList = reminderList.filter(r => {
+      return r.reminder_id != rid;
+    })
+    setReminderList(updatedReminderList);
+
   };
 
   const onAddReminder = () => {

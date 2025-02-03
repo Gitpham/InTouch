@@ -1,10 +1,9 @@
 import { Card, ListItem } from "@rneui/base";
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import React, { useCallback,  useState } from "react";
 import { StandardButton } from "./ButtonStandard";
 import { router, useFocusEffect } from "expo-router";
-import { Reminder, Bond, Person } from "@/constants/types";
+import { Reminder} from "@/constants/types";
 import { Text } from "@rneui/themed";
-import { InTouchContext } from "@/context/InTouchContext";
 import { Alert, Pressable, View } from "react-native";
 import { styles } from "@/constants/Stylesheet";
 import { DeleteIcon } from "./DeleteIcon";
@@ -20,7 +19,6 @@ export default function ReminderDisplayCard({
   bid,
 }: ReminderDisplayCardIterface) {
 
-  // const { removeReminder, reminderList, getRemindersOfBond, getRemindersOfPerson } = useContext(InTouchContext);
   const isFromBond: boolean = bid != undefined ? true : false;
 
   const db = useSQLiteContext();
@@ -41,8 +39,6 @@ export default function ReminderDisplayCard({
         setReminderList(rList);
       };
       fetchData();
-      console.log("reminderDisplayCard()")
-      console.log("reminderList: ", reminderList);
     }, [])
   );
 
@@ -130,14 +126,10 @@ export default function ReminderDisplayCard({
 
   const deleteReminderAlert = (reminder: Reminder) => {
 
-    let alertMessage: string;
-    if (isFromBond) {
-      alertMessage = `Delete note for ${bond?.bondName.trim()}?`;
-    } else {
-      const name = reminder.owner;
-      alertMessage = `Delete note for ${name}?`;
-    }
-
+   
+    const name = reminder.owner;
+    const alertMessage = `Delete note for ${name}?`;
+  
     Alert.alert(alertMessage, "", [
       {
         text: "Cancel",
