@@ -1,9 +1,8 @@
 import { styles } from "@/constants/Stylesheet";
 import { CountryCode, Person } from "@/constants/types";
-import { InTouchContext } from "@/context/InTouchContext";
 import { phoneNumberVerifier } from "@/context/PhoneNumberUtils";
 import { Button } from "@rneui/themed";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import PhoneInput 
     from 'react-native-phone-input';
 import CountryPicker 
@@ -11,12 +10,12 @@ import CountryPicker
 import { ThemedText } from "./ThemedText";
 import React from "react";
 import {
-  Keyboard,
   TextInput,
   View,
-  TouchableWithoutFeedback,
   StyleSheet
 } from "react-native";
+import { addPerson } from "@/assets/db/PersonRepo";
+import { useSQLiteContext } from "expo-sqlite";
 
 interface addMemberManualInterface {
   memberFirstName: string;
@@ -47,7 +46,9 @@ export default function AddMemberManual({
   isVisible,
   setIsVisible,
 }: addMemberManualInterface) {
-  const { createPerson } =useContext(InTouchContext);
+
+
+  const db = useSQLiteContext();
     const [countryCode, setCountryCode] = useState<CountryCode>("US");
     const [selectedCountry, setSelectedCountry] =
         useState(null);
@@ -80,7 +81,7 @@ export default function AddMemberManual({
       person_id: undefined,
     };
 
-    await createPerson(newContact);
+    await addPerson( db, newContact)
   }
 
   return (
