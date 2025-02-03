@@ -1,13 +1,13 @@
 import { StandardButton } from "@/components/ButtonStandard";
 
-import {  useEffect, useState } from "react";
+import {  useCallback, useEffect, useState } from "react";
 import { Pressable,  FlatList, View, Alert } from "react-native";
 import { Reminder } from "@/constants/types";
 import React from "react";
 import { ListItem } from "@rneui/base";
 import { styles } from "@/constants/Stylesheet";
 import { DeleteIcon } from "@/components/DeleteIcon";
-import { router, Stack, useLocalSearchParams } from "expo-router";
+import { router, Stack, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { deleteReminder, getRemindersOfBondDB, getRemindersOfPersonDB } from "@/assets/db/ReminderRepo";
@@ -25,28 +25,26 @@ export default function ReminderBondScreen() {
   const insets = useSafeAreaInsets();
 
   const [reminderList, setReminderList] = useState<Reminder[]>();
-  useEffect(() => {
 
-    const fetchData = async () => {
-      console.log("fetchData():")
-      let r
-      try {
-        if (isFromBond) {
-          console.log("bid: ", bid)
-          r = await getRemindersOfBondDB(db, bid);
-        } else {
-          console.log("pid: ", pid)
-          r = await getRemindersOfPersonDB(db, pid);
-        }
-        console.log("----")
-      } catch (e) {
-        console.error(e);
-        throw Error("reminderDisplayCard(): failed to fetch data")
-      }
-      setReminderList(r);
-    };
-    fetchData();
-  }, []);
+    useFocusEffect(
+      useCallback(() => {
+        const fetchData = async () => {
+          let r
+          try {
+            if (isFromBond) {
+              r = await getRemindersOfBondDB(db, bid);
+            } else {
+              r = await getRemindersOfPersonDB(db, pid);
+            }
+          } catch (e) {
+            console.error(e);
+          }
+          setReminderList(r);
+        };
+        fetchData();
+      }, [])
+    );
+
 
   const renderReminder = ({ item }: { item: Reminder }) => {
           return (
