@@ -16,7 +16,6 @@ import ConfirmationMessage from "@/components/ConfirmationMessage";
 
    
    export default function statScreen() {
-    const {peopleList, getBondPersonMap, getPersonBondMap, bondList } = useContext(InTouchContext)
     const [isVisible, setIsVisible] = useState(false);
     const db = useSQLiteContext();
 
@@ -53,10 +52,6 @@ import ConfirmationMessage from "@/components/ConfirmationMessage";
 
     }
 
-    function onPeopleList() {
-         console.log("peopleList ", peopleList);
-
-    }
 
     async function onPressShowBonds() {
          const personBonds = await getAllBonds(db)
@@ -64,9 +59,7 @@ import ConfirmationMessage from "@/components/ConfirmationMessage";
 
     }
 
-    function onPressShowBondList() {
-     console.log("bondList: ", bondList)
-    }
+
 
     async function onPressClearDB() {
          clearDB(db)
@@ -78,13 +71,7 @@ import ConfirmationMessage from "@/components/ConfirmationMessage";
          getTableNames(db);
     }
 
-    function onPressShowBondPersonMap() {
-         console.log(getBondPersonMap())
-    }
-
-    function onPressShowPersonBondMap(){
-         console.log("personBondMap: ", getPersonBondMap())
-    }
+ 
 
      async function dropReminder() {
           try {
@@ -117,17 +104,10 @@ import ConfirmationMessage from "@/components/ConfirmationMessage";
 
             <StandardButton title="display reminders from db" onPress={onShowReminders}/>
 
-            <StandardButton title="display peopleList" onPress={onPeopleList}/>
 
             <StandardButton title="clear db" onPress={onPressClearDB}/>
 
             <StandardButton title="print bonds from db" onPress={onPressShowBonds}/>
-            <StandardButton title="print bondList" onPress={onPressShowBondList}/>
-
-
-            <StandardButton title="show bondPersonMap" onPress={onPressShowBondPersonMap}/>
-
-            <StandardButton title="show personBondMap" onPress={onPressShowPersonBondMap}/>
 
             <StandardButton title="show tables" onPress={() => {setIsVisible(old => !old); tableNames()}}/>
 

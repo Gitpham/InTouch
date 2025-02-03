@@ -18,7 +18,6 @@ import { createDB, getTableNames } from "@/assets/db/db";
 import { ScheduleContextProvider } from "@/context/ScheduleContext";
 import { Platform, AppState } from "react-native";
 import { callPersonUtil,  } from "@/context/PhoneNumberUtils";
-import { allowsNotificationsAsync, requestNotificationPermission } from "@/context/NotificationUtils";
 
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
