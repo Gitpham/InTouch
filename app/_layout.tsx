@@ -14,7 +14,7 @@ import { SQLiteProvider } from "expo-sqlite";
 import { InTouchContextProvider } from "@/context/InTouchContext";
 import React from "react";
 import * as SQLite from 'expo-sqlite';
-import { createDB } from "@/assets/db/db";
+import { createDB, getTableNames } from "@/assets/db/db";
 import { ScheduleContextProvider } from "@/context/ScheduleContext";
 import { Platform, AppState } from "react-native";
 import { callPersonUtil,  } from "@/context/PhoneNumberUtils";
@@ -81,13 +81,15 @@ export default function RootLayout() {
   useEffect(() => {
     // INITIALIZE DB
     const initDB = async () => {
-      db = await SQLite.openDatabaseAsync("July26_ScheduleTable_2.db");
-      createDB(db);
-     
+      db = await SQLite.openDatabaseAsync("July26_ScheduleTable_5.db");
+      await createDB(db);
+      console.log(getTableNames(db))
+
     };
 
     try {
       initDB();     
+      console.log("init db()")
     } catch (e) {
       console.error(e);
       console.log("failed to initDB()")

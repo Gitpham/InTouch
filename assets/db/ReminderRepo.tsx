@@ -3,14 +3,15 @@ import * as SQLite from "expo-sqlite";
 
 export const addReminder = async (db: SQLite.SQLiteDatabase, reminder: Reminder) => {
 
-    const statement = await db.prepareAsync(`INSERT INTO reminder (reminder_id, person_id, bond_id, reminder, date) VALUES (?, ?, ?, ?, ?)`)
+    const statement = await db.prepareAsync(`INSERT INTO reminder (person_id, bond_id, reminder, date, owner) VALUES (?, ?, ?, ?, ?)`)
     let value : string[];
+    console.log("addReminder after statement")
    
     if (!reminder.bond_id) {
-        value = [`${reminder.reminder_id}`, `${reminder.person_id}`, null, reminder.reminder, reminder.date]
+        value = [ `${reminder.person_id}`, null, reminder.reminder, reminder.date, reminder.owner]
     }
     else {
-        value = [`${reminder.reminder_id}`, null, `${reminder.bond_id}`, reminder.reminder, reminder.date]
+        value = [null, `${reminder.bond_id}`, reminder.reminder, reminder.date, reminder.owner]
     }
 
     try {

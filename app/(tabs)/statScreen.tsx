@@ -2,7 +2,7 @@ import {  useContext, useState } from "react";
 import {  SafeAreaView, ScrollView } from "react-native";
 import React from "react";
 import { getAllBonds } from "@/assets/db/BondRepo";
-import { clearDB, getTableNames, removeTable, Table } from "@/assets/db/db";
+import { clearDB, createDB, getTableNames, removeTable, Table } from "@/assets/db/db";
 import { getAllPersonBonds } from "@/assets/db/PersonBondRepo";
 import { getAllPersons } from "@/assets/db/PersonRepo";
 import { getAllReminders } from "@/assets/db/ReminderRepo";
@@ -86,6 +86,24 @@ import ConfirmationMessage from "@/components/ConfirmationMessage";
          console.log("personBondMap: ", getPersonBondMap())
     }
 
+     async function dropReminder() {
+          try {
+          await removeTable(db, "reminder")
+
+          } catch (e){
+               console.log("failed dropReminder()")
+          }
+     }
+
+     async function recreateDB() {
+          try {
+          await createDB(db);
+
+          } catch (e){
+               console.log("failed dropReminder()")
+          }
+     }
+
       return (
        <SafeAreaView>
           <ScrollView>
@@ -112,6 +130,10 @@ import ConfirmationMessage from "@/components/ConfirmationMessage";
             <StandardButton title="show personBondMap" onPress={onPressShowPersonBondMap}/>
 
             <StandardButton title="show tables" onPress={() => {setIsVisible(old => !old); tableNames()}}/>
+
+            <StandardButton title="drop reminder tables" onPress={() => {dropReminder()}}/>
+            <StandardButton title="createDB" onPress={() => {recreateDB()}}/>
+
 
           <StandardButton title = "clear notifications" onPress={clearScheduledNotifications}></StandardButton>
 {/* 

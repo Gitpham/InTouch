@@ -40,6 +40,7 @@ export const clearDB = async (db: SQLite.SQLiteDatabase) => {
 };
 
 export const createDB = async (db: SQLite.SQLiteDatabase) => {
+  console.log("createDB");
   const groupQuery = `
         CREATE TABLE IF NOT EXISTS bond (
             bond_id INTEGER PRIMARY KEY,
@@ -77,12 +78,12 @@ export const createDB = async (db: SQLite.SQLiteDatabase) => {
 
   const reminderQuery = `
         CREATE TABLE IF NOT EXISTS reminder (
-            reminder_id INTEGER,
+            reminder_id INTEGER PRIMARY KEY,
             person_id INTEGER NULL,
             bond_id INTEGER NULL,
             reminder TEXT,
             date DATE,
-            PRIMARY KEY (reminder_id),
+            owner TEXT,
             FOREIGN KEY (person_id)
                 REFERENCES person (person_id)
                 ON DELETE CASCADE
@@ -212,7 +213,12 @@ export const getTableNames = async (
       const r = result as table;
       tableNames.push(r.name as string);
     });
-    console.log("tablename", tableNames);
+
+
+    // const reminderTable = await db.getAllAsync("PRAGMA table_info(reminder)");
+
+    console.log("tablename", tableNames,);
+    // console.log("reminders: ", reminderTable)
     return tableNames;
   } catch (error) {
     console.error(error);

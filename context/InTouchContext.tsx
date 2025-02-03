@@ -1,10 +1,10 @@
-import { getAllBonds, addBond, deleteBond, updateBond } from "@/assets/db/BondRepo";
+import { getAllBonds, addBond, deleteBond, updateBond, getBond } from "@/assets/db/BondRepo";
 import {
   addPersonBond,
   deletePersonBond,
   getAllPersonBonds,
 } from "@/assets/db/PersonBondRepo";
-import { getAllPersons, addPerson, deletePerson } from "@/assets/db/PersonRepo";
+import { getAllPersons, addPerson, deletePerson, getPerson } from "@/assets/db/PersonRepo";
 import { addReminder, deleteReminder, getAllReminders } from "@/assets/db/ReminderRepo";
 import { Person, Bond, BondPerson, Reminder } from "@/constants/types";
 import { useSQLiteContext } from "expo-sqlite";
@@ -630,16 +630,22 @@ export const InTouchContextProvider: React.FC<{
 
     const reminderID = generateReminderId();
     let reminderToAdd : Reminder;
+
     if (bond_id === -1) {
-      reminderToAdd = {reminder_id: reminderID, person_id: person_id, reminder: reminder, date: formattedDate}
+      const personOwner = await getPerson(db, person_id);
+      const ownerName = `${personOwner?.firstName} ${personOwner?.lastName}`
+      reminderToAdd = {reminder_id: reminderID, person_id: person_id, reminder: reminder, date: formattedDate, owner: ownerName }
     }
     else {
-      reminderToAdd = {reminder_id: reminderID, bond_id: bond_id, reminder: reminder, date:formattedDate}
+      const bondOwner = await getBond(db, bond_id);
+      const ownerName = `${bondOwner?.bondName}`
+      reminderToAdd = {reminder_id: reminderID, bond_id: bond_id, reminder: reminder, date:formattedDate, owner: ownerName}
     }
 
     setReminderList([...reminderList, reminderToAdd])
     try {
-    await addReminder(db, reminderToAdd)
+      console.log("aboout to addReminder()");
+      await addReminder(db, reminderToAdd)
     } catch (e) {
       console.error(e);
       throw new Error("createReminder(): Failed to create reminder")

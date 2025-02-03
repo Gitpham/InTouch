@@ -28,6 +28,7 @@ export type Reminder = {
     bond_id?: number;
     reminder: string;
     date: string;
+    owner: string;
 }
 
 export function formatDate(date: Date) {

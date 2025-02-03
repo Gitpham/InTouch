@@ -26,7 +26,7 @@ export default function addReminderModal() {
 
   const [bid, setBid] = useState(bond_id);
   const [pid, setPid] = useState(person_id);
-  const onDonePress = () => {
+  const onDonePress = async () => {
     if (!reminder) {
       Alert.alert("Please write a note");
       return;
@@ -38,9 +38,9 @@ export default function addReminderModal() {
     }
 
     if (pid > 0) {
-      createReminder(reminder, pid, -1);
+      await createReminder(reminder, pid, -1);
     } else {
-      createReminder(reminder, -1, bid);
+      await createReminder(reminder, -1, bid);
     }
     router.back();
   };
