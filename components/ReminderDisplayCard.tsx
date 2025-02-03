@@ -10,24 +10,24 @@ import { styles } from "@/constants/Stylesheet";
 import { DeleteIcon } from "./DeleteIcon";
 
 interface ReminderDisplayCardIterface {
-  person: Person | undefined;
-  bond: Bond | undefined;
+  pid: number;
+  bid: number;
 }
 export default function ReminderDisplayCard({
-  person,
-  bond,
+  pid,
+  bid,
 }: ReminderDisplayCardIterface) {
   const { removeReminder, reminderList, getRemindersOfBond, getRemindersOfPerson } = useContext(InTouchContext);
-  const isFromBond: boolean = bond != undefined ? true : false;
+  const isFromBond: boolean = bid != undefined ? true : false;
 
   const [remindersForEntity, setRemindersForEntity] = useState<Reminder[]>([])
 
 
   useEffect(() => {
     if (isFromBond) {
-       setRemindersForEntity(getRemindersOfBond(bond?.bond_id as number))
+       setRemindersForEntity(getRemindersOfBond(bid as number))
       } else {
-        setRemindersForEntity(getRemindersOfPerson(person?.person_id as number))
+        setRemindersForEntity(getRemindersOfPerson(pid as number))
       }
   }, [reminderList])
 
@@ -35,14 +35,14 @@ export default function ReminderDisplayCard({
     if (isFromBond) {
       router.navigate({
         pathname: "./reminderEntityScreen",
-        params: { bid: bond?.bond_id, bondName: `${bond?.bondName}` },
+        params: { bid: bid },
       });
 
       return;
     }
     router.navigate({
       pathname: "./reminderEntityScreen",
-      params: { pid: person?.person_id, personName: `${person?.firstName}` },
+      params: { pid: pid },
     });
   };
 
@@ -50,14 +50,14 @@ export default function ReminderDisplayCard({
     if (isFromBond) {
       router.navigate({
         pathname: "./addReminderModal",
-        params: { bond_id: bond?.bond_id, person_id: -1, reminder_screen: -1},
+        params: { bond_id: bid, person_id: -1, reminder_screen: -1},
       });
       return;
     }
 
     router.navigate({
       pathname: "./addReminderModal",
-      params: { person_id: person?.person_id, bond_id: -1, reminder_screen: -1},
+      params: { person_id: pid, bond_id: -1, reminder_screen: -1},
     });
     return;
   };

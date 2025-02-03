@@ -7,14 +7,12 @@ import React from "react";
 import { Divider, ListItem } from "@rneui/base";
 import { styles } from "@/constants/Stylesheet";
 import { DeleteIcon } from "@/components/DeleteIcon";
-import { getReminderName } from "@/context/ReminderUtils";
 import { router, useFocusEffect } from "expo-router";
 import { AddButton } from "@/components/ButtonStandard";
 import { useSQLiteContext } from "expo-sqlite";
 import { deleteReminder, getAllReminders } from "@/assets/db/ReminderRepo";
 
 export default function ReminderScreen() {
-  // const { reminderList, peopleList, bondList, removeReminder } = useContext(InTouchContext);
 
   const db = useSQLiteContext();
 
@@ -75,11 +73,6 @@ export default function ReminderScreen() {
         isPreferred: true,
       },
     ]);
-
-    // const updatedReminderList = reminderList?.filter(r => {
-    //   return r.reminder_id != reminder.reminder_id;
-    // })
-    // setReminderList(updatedReminderList);
   };
 
   return (

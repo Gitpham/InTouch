@@ -162,7 +162,7 @@ export default function PersonScreen() {
       </Card>
 
       {person ? (
-        <ReminderDisplayCard person={person} bond={undefined} />
+        <ReminderDisplayCard pid={person.person_id} bid={undefined} />
       ) : (
         <></>
       )}
