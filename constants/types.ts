@@ -1,6 +1,6 @@
 export type Bond = {
     bondName: string,
-    bond_id: number,
+    bond_id?: number,
     schedule: string, 
     typeOfCall: string,
 }

@@ -1,11 +1,10 @@
 import { ThemedText } from "@/components/ThemedText";
-import { useContext, useEffect, useState } from "react";
-import { Alert, FlatList, ScrollView, TextInput } from "react-native";
+import { useCallback, useContext, useEffect, useState } from "react";
+import { Alert, ScrollView, TextInput } from "react-native";
 import {} from "react-native-gesture-handler";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { Text, Card, ListItem } from "@rneui/themed";
 import { View } from "react-native";
-import { router, useLocalSearchParams, useNavigation } from "expo-router";
+import { router, useFocusEffect,  } from "expo-router";
 import { InTouchContext } from "@/context/InTouchContext";
 import { Bond, Person } from "@/constants/types";
 import { StandardButton } from "@/components/ButtonStandard";
@@ -20,34 +19,33 @@ import {
 import { useSQLiteContext } from "expo-sqlite";
 import { updatePersonBond } from "@/assets/db/PersonBondRepo";
 import { allowsNotificationsAsync, requestNotificationPermission } from "@/context/NotificationUtils";
+import { addBond } from "@/assets/db/BondRepo";
+import { getAllPersons } from "@/assets/db/PersonRepo";
 
 export default function createGroupScreen() {
+  const db = useSQLiteContext();
+  const stackView = stackViews();
+
   // Data to be stored in record
   const [bondName, groupNameChange] = useState("");
   const {
-    createBond,
-    generateBondId,
     tempBondMembers,
     clearTempBondMembers,
     createBondMember,
-    peopleList,
   } = useContext(InTouchContext);
-  const { potentialSchedule, createPotentialSchedule } =
-    useContext(ScheduleContext);
-  const bondID = generateBondId();
-  const db = useSQLiteContext();
-  const stackView = stackViews();
-  const [schedule, setSchedule] = useState(
-    displayPotentialSchedule(potentialSchedule)
-  );
 
+
+  //----state variables------
+  const [peopleList, setPeopleList] = useState<Person[]>();
+  const { potentialSchedule, createPotentialSchedule } = useContext(ScheduleContext);
+  const [schedule, setSchedule] = useState( displayPotentialSchedule(potentialSchedule));
   const [hasCreatedSchedule, setHasCreatedSchedule] = useState(false);
 
   const bondToAdd: Bond = {
     bondName: bondName,
     typeOfCall: "",
     schedule: "",
-    bond_id: bondID,
+    bond_id: undefined,
   };
 
   let title = "Create Bond";
@@ -70,9 +68,21 @@ export default function createGroupScreen() {
     if (potentialSchedule != undefined) {
       setHasCreatedSchedule(true);
     }
+
   }, [potentialSchedule]);
 
+    useFocusEffect(
+      useCallback(() => {
+        const fetchData = async () => {
+          const pList = await getAllPersons(db)
+          setPeopleList(pList);
+        }
+        fetchData();
+      }, [])
+    );
+
   async function onDonePress() {
+    let bid: number;
     if (!bondName) {
       Alert.alert("Invalid Bond", "Please enter a name for this bond");
       return;
@@ -88,9 +98,12 @@ export default function createGroupScreen() {
       return;
     }
 
+
     try {
       bondToAdd.schedule = getScheduleType(potentialSchedule);
-      await createBond(bondToAdd);
+      const bond_meta = await addBond(db, bondToAdd);
+      bid = bond_meta.lastInsertRowId;
+      bondToAdd.bond_id = bid;
     } catch (e) {
       console.error(e);
       throw Error(
@@ -98,9 +111,9 @@ export default function createGroupScreen() {
       );
     }
     try {
-      createBondMember(tempBondMembers, bondID);
+      await createBondMember(tempBondMembers, bid);
       const nextToCall = tempBondMembers.values().next().value;
-      await updatePersonBond(db, nextToCall, bondID, 1)
+      await updatePersonBond(db, nextToCall, bid, 1)
     } catch (e) {
       console.error(e);
       throw Error("failed to call createBondMember()");
@@ -175,7 +188,6 @@ export default function createGroupScreen() {
           onPress={() =>
             router.navigate({
               pathname: "./addMemberScreen",
-              params: { bond_id: bondID },
             })
           }
         />
@@ -216,7 +228,6 @@ export default function createGroupScreen() {
           }}
         ></StandardButton>
       </View>
-      {/* </SafeAreaView> */}
     </ScrollView>
   );
 }

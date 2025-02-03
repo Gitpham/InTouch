@@ -456,8 +456,8 @@ export const InTouchContextProvider: React.FC<{
         throw Error("createBondMember(): bondID is undefined")
       }
 
-      setBondPersonMap(addToBondPersonMap(person_ids, bond_id));
-      setPersonBondMap(addToPersonBondMap(person_ids, bond_id));
+      // setBondPersonMap(addToBondPersonMap(person_ids, bond_id));
+      // setPersonBondMap(addToPersonBondMap(person_ids, bond_id));
 
       for (const pid of person_ids) {
         try {

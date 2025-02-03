@@ -3,10 +3,10 @@ import * as SQLite from "expo-sqlite";
 
 export const addBond = async (db: SQLite.SQLiteDatabase, bond: Bond) => {
   const statement =
-    await db.prepareAsync(`INSERT INTO bond (bond_id, bondName, schedule, type_of_call)
-         VALUES (?, ?, ?, ?);`);
+    await db.prepareAsync(`INSERT INTO bond ( bondName, schedule, type_of_call)
+         VALUES (?, ?, ?);`);
 
-  const value: string[] = [bond.bond_id.toString(), bond.bondName, bond.schedule, bond.typeOfCall];
+  const value: string[] = [bond.bondName, bond.schedule, bond.typeOfCall];
 
   try {
     return await statement.executeAsync(value);
