@@ -20,13 +20,12 @@ import DailySchedulePicker from "./DailySchedulePicker";
 import WeeklySchedulePicker from "./WeeklySchedulePicker";
 import MonthlySchedulePicker from "./MonthlySchedulePicker";
 import YearlySchedulePicker from "./YearlySchedulePicker";
-import { router, useLocalSearchParams } from "expo-router";
+import { router, } from "expo-router";
 import {
   getScheduleType,
   replaceScheduleOfBond,
 } from "@/context/ScheduleUtils";
-import { getBond } from "@/assets/db/BondRepo";
-import { InTouchContext } from "@/context/InTouchContext";
+import { getBond, updateBond } from "@/assets/db/BondRepo";
 import { styles } from "@/constants/Stylesheet";
 
 interface SchedulerInterface {
@@ -42,7 +41,6 @@ export default function Scheduler({
   );
   const { createPotentialSchedule, hasEditedSchedule, markHasEditedSchedule } =
     useContext(ScheduleContext);
-  const { updateBondCache } = useContext(InTouchContext);
   const db = useSQLiteContext();
   //DAILY STATE VARIABLES AND SETTERS
   const [dailyTime, setDailyTime] = useState(new Date());
@@ -262,7 +260,7 @@ export default function Scheduler({
       schedule: getScheduleType(schedule),
       typeOfCall: "",
     };
-    await updateBondCache(newBond);
+    await updateBond(db, newBond);
     router.back();
   }
 
