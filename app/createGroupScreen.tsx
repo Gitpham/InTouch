@@ -17,7 +17,7 @@ import {
   getScheduleType,
 } from "@/context/ScheduleUtils";
 import { useSQLiteContext } from "expo-sqlite";
-import { updatePersonBond } from "@/assets/db/PersonBondRepo";
+import { addBondMembers, updatePersonBond } from "@/assets/db/PersonBondRepo";
 import { allowsNotificationsAsync, requestNotificationPermission } from "@/context/NotificationUtils";
 import { addBond } from "@/assets/db/BondRepo";
 import { getAllPersons } from "@/assets/db/PersonRepo";
@@ -31,7 +31,6 @@ export default function createGroupScreen() {
   const {
     tempBondMembers,
     clearTempBondMembers,
-    createBondMember,
   } = useContext(InTouchContext);
 
 
@@ -111,7 +110,7 @@ export default function createGroupScreen() {
       );
     }
     try {
-      await createBondMember(tempBondMembers, bid);
+      await addBondMembers(db, tempBondMembers, bid);
       const nextToCall = tempBondMembers.values().next().value;
       await updatePersonBond(db, nextToCall, bid, 1)
     } catch (e) {

@@ -9,7 +9,6 @@ type InTouchContextType = {
   tempBondMembers: Set<number>;
   addTempBondMember: (personID: number) => void;
   clearTempBondMembers: () => void;
-  createBondMember: (person_ids: Set<number>, bondID: number) => Promise<void>;
 };
 
 /**
@@ -26,9 +25,7 @@ export const InTouchContext = createContext<InTouchContextType>({
   clearTempBondMembers: function (): void {
     throw new Error("Function not implemented.");
   },
-  createBondMember: function (person_ids: Set<number>, bondID: number): Promise<void> {
-    throw new Error("Function not implemented.");
-  }
+
 });
 
 export const InTouchContextProvider: React.FC<{
@@ -52,32 +49,6 @@ export const InTouchContextProvider: React.FC<{
     setTempBondMembers(new Set<number>())
   }
 
-  async function createBondMember(person_ids: Set<number>, bond_id: number) {
-    try {
-      if (!bond_id) {
-        throw Error("createBondMember(): bondID is undefined")
-      }
-
-      // setBondPersonMap(addToBondPersonMap(person_ids, bond_id));
-      // setPersonBondMap(addToPersonBondMap(person_ids, bond_id));
-
-      for (const pid of person_ids) {
-        try {
-        await addPersonBond(db, pid, bond_id);
-        } catch (e) {
-          console.error(e);
-          throw new Error("creatBondMEmber(): failed for-loop calling addPersonBond")
-        }
-      }
-
-
-    } catch (e) {
-      console.error(e);
-      throw Error("createBondMember(): Could not create bond member");
-    }
-  }
-
-
   // Initializes user's people list and bond list upon initial render
 
   return (
@@ -85,7 +56,6 @@ export const InTouchContextProvider: React.FC<{
       <InTouchContext.Provider
         value={{
           tempBondMembers,
-          createBondMember,
           addTempBondMember,
           clearTempBondMembers,
         

@@ -1,5 +1,6 @@
 import { Bond } from "@/constants/types";
 import * as SQLite from "expo-sqlite";
+import { addPersonBond } from "./PersonBondRepo";
 
 export const addBond = async (db: SQLite.SQLiteDatabase, bond: Bond) => {
   const statement =
@@ -81,5 +82,5 @@ export const getBond = async (db: SQLite.SQLiteDatabase, bid: number): Promise<B
     console.error(e);
     throw new Error("getAllBonds() failed")
   }
-
 }
+

@@ -131,3 +131,23 @@ export const getPersonBondsOfBondDB = async (db: SQLite.SQLiteDatabase, bid: num
         await statement.finalizeAsync();
     }
 }
+
+export async function addBondMembers(db: SQLite.SQLiteDatabase, person_ids: Set<number>, bond_id: number) {
+    try {
+      if (!bond_id) {
+        throw Error("createBondMember(): bondID is undefined")
+      }
+      for (const pid of person_ids) {
+        try {
+        await addPersonBond(db, pid, bond_id);
+        } catch (e) {
+          console.error(e);
+          throw new Error("creatBondMEmber(): failed for-loop calling addPersonBond")
+        }
+      }
+
+    } catch (e) {
+      console.error(e);
+      throw Error("createBondMember(): Could not create bond member");
+    }
+  }
