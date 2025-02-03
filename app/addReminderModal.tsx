@@ -1,12 +1,11 @@
 import { View, TextInput, FlatList } from "react-native";
 import { router, useFocusEffect } from "expo-router";
 import React, { useCallback } from "react";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { useLocalSearchParams } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ThemedText } from "@/components/ThemedText";
 import { StandardButton } from "@/components/ButtonStandard";
-import { InTouchContext } from "@/context/InTouchContext";
 import { Alert } from "react-native";
 import { styles } from "@/constants/Stylesheet";
 import SegmentedControl from "@react-native-segmented-control/segmented-control";
@@ -23,8 +22,8 @@ export default function addReminderModal() {
   const localParams = useLocalSearchParams();
   const db = useSQLiteContext();
 
-  const person_id = localParams.person_id != undefined ? +localParams.person_id : -1;
-  const bond_id = localParams.bond_id != undefined ? +localParams.bond_id : -1;
+  const person_id = localParams.person_id != undefined ? +localParams.person_id : -2;
+  const bond_id = localParams.bond_id != undefined ? +localParams.bond_id : -2;
   const reminder_screen = +localParams.reminder_screen == 1 ? true : false
 
   //--------------STATE VARIABLES--------------
@@ -46,8 +45,16 @@ export default function addReminderModal() {
           setBondList(bList);
         }
         fetchData();
+        console.log("pid: ", pid)
+        console.log("bid: ", bid)
+
       }, [])
     );
+
+
+
+
+  
   const onDonePress = async () => {
     if (!reminder) {
       Alert.alert("Please write a note");

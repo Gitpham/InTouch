@@ -1,17 +1,14 @@
 import { StandardButton } from "@/components/ButtonStandard";
 
-import { InTouchContext } from "@/context/InTouchContext";
-import { useContext, useEffect, useState } from "react";
+import {  useEffect, useState } from "react";
 import { Pressable,  FlatList, View, Alert } from "react-native";
-import { Bond, Person, Reminder } from "@/constants/types";
+import { Reminder } from "@/constants/types";
 import React from "react";
 import { ListItem } from "@rneui/base";
 import { styles } from "@/constants/Stylesheet";
 import { DeleteIcon } from "@/components/DeleteIcon";
 import { router, Stack, useLocalSearchParams } from "expo-router";
-import { getBond } from "@/assets/db/BondRepo";
 import { useSQLiteContext } from "expo-sqlite";
-import { getPerson } from "@/assets/db/PersonRepo";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { deleteReminder, getRemindersOfBondDB, getRemindersOfPersonDB } from "@/assets/db/ReminderRepo";
 
@@ -22,22 +19,26 @@ export default function ReminderBondScreen() {
   const bondName = localSearchParams.bondName;
   const personName = localSearchParams.personName;
   const isFromBond: boolean = localSearchParams.bid != undefined ? true : false;
+  const pid = +localSearchParams.pid;
+  const bid = +localSearchParams.bid;
+
   const insets = useSafeAreaInsets();
 
   const [reminderList, setReminderList] = useState<Reminder[]>();
   useEffect(() => {
 
     const fetchData = async () => {
+      console.log("fetchData():")
       let r
       try {
         if (isFromBond) {
-          const bid = +localSearchParams.bid;
+          console.log("bid: ", bid)
           r = await getRemindersOfBondDB(db, bid);
         } else {
-          const pid = +localSearchParams.pid;
+          console.log("pid: ", pid)
           r = await getRemindersOfPersonDB(db, pid);
         }
-
+        console.log("----")
       } catch (e) {
         console.error(e);
         throw Error("reminderDisplayCard(): failed to fetch data")
@@ -103,15 +104,19 @@ export default function ReminderBondScreen() {
   };
 
   const onAddReminder = () => {
+    console.log("onAddReminder()")
+    console.log("Bid: ", bid)
+    console.log("pid: ", pid)
+    console.log("--b--")
     if (isFromBond){
       router.navigate({
         pathname: "./addReminderModal",
-        params: { person_id: -1, bond_id: bond?.bond_id },
+        params: { person_id: undefined, bond_id: bid },
       })
     } else {
       router.navigate({
         pathname: "./addReminderModal",
-        params: { person_id: person?.person_id, bond_id: -1 },
+        params: { person_id: pid, bond_id: undefined },
       })
     }
   }
