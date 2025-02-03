@@ -12,10 +12,15 @@ import { styles } from "@/constants/Stylesheet";
 import SegmentedControl from "@react-native-segmented-control/segmented-control";
 import { CheckBox, ListItem } from "@rneui/base";
 import { Bond, Person, trimName } from "@/constants/types";
+import { createReminderUtil } from "@/context/ReminderUtils";
+import { useSQLiteContext } from "expo-sqlite";
 
 export default function addReminderModal() {
   const {  createReminder, peopleList, bondList } =
     useContext(InTouchContext);
+
+
+  const db = useSQLiteContext();
   const [reminder, setReminder] = useState("");
   const [segment, setSegment] = useState("Person");
   const localParams = useLocalSearchParams();
@@ -38,9 +43,9 @@ export default function addReminderModal() {
     }
 
     if (pid > 0) {
-      await createReminder(reminder, pid, -1);
+      await createReminderUtil(db, reminder, pid, -1);
     } else {
-      await createReminder(reminder, -1, bid);
+      await createReminderUtil(db, reminder, -1, bid);
     }
     router.back();
   };

@@ -23,7 +23,7 @@ export type BondPerson = {
   }
 
 export type Reminder = {
-    reminder_id: number
+    reminder_id?: number
     person_id?: number;
     bond_id?: number;
     reminder: string;
