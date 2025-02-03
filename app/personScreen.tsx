@@ -47,7 +47,9 @@ export default function PersonScreen() {
             console.log(e)
           }
         }
+
         fetchData();
+        console.log("personScreen");
 
       }, [])
     );

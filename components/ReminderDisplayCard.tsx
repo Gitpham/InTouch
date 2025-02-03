@@ -1,13 +1,15 @@
 import { Card, ListItem } from "@rneui/base";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { StandardButton } from "./ButtonStandard";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import { Reminder, Bond, Person } from "@/constants/types";
 import { Text } from "@rneui/themed";
 import { InTouchContext } from "@/context/InTouchContext";
 import { Alert, Pressable, View } from "react-native";
 import { styles } from "@/constants/Stylesheet";
 import { DeleteIcon } from "./DeleteIcon";
+import { useSQLiteContext } from "expo-sqlite";
+import { deleteReminder, getRemindersOfBondDB, getRemindersOfPersonDB } from "@/assets/db/ReminderRepo";
 
 interface ReminderDisplayCardIterface {
   pid: number;
@@ -17,20 +19,35 @@ export default function ReminderDisplayCard({
   pid,
   bid,
 }: ReminderDisplayCardIterface) {
-  const { removeReminder, reminderList, getRemindersOfBond, getRemindersOfPerson } = useContext(InTouchContext);
+
+  // const { removeReminder, reminderList, getRemindersOfBond, getRemindersOfPerson } = useContext(InTouchContext);
   const isFromBond: boolean = bid != undefined ? true : false;
 
-  const [remindersForEntity, setRemindersForEntity] = useState<Reminder[]>([])
+  const db = useSQLiteContext();
+
+  const [reminderList, setReminderList] = useState<Reminder[]>([])
+
+  useFocusEffect(
+    useCallback(() => {
+      const fetchData = async () => {
+        let rList: Reminder[]
+        if(bid){
+          rList = await getRemindersOfBondDB(db, bid);
+        } else if (pid) {
+          rList = await getRemindersOfPersonDB(db, pid);
+        } else {
+          throw Error("reminderDisplayCard: failed to get reminders from db")
+        }
+        setReminderList(rList);
+      };
+      fetchData();
+      console.log("reminderDisplayCard()")
+      console.log("reminderList: ", reminderList);
+    }, [])
+  );
 
 
-  useEffect(() => {
-    if (isFromBond) {
-       setRemindersForEntity(getRemindersOfBond(bid as number))
-      } else {
-        setRemindersForEntity(getRemindersOfPerson(pid as number))
-      }
-  }, [reminderList])
-
+  
   const onSeeAllReminders = () => {
     if (isFromBond) {
       router.navigate({
@@ -85,12 +102,12 @@ export default function ReminderDisplayCard({
     );
   };
 
-  const showRemindersForEntity = () => {
-    const reminderList = [];
+  const showreminderList = () => {
+    const displayList = [];
     let index = 0;
-      for (const reminder of remindersForEntity) {
+      for (const reminder of reminderList) {
         if (index < 3) {
-            reminderList.push(reminderListItem(reminder));
+            displayList.push(reminderListItem(reminder));
             index++;
         }
       }
@@ -98,11 +115,17 @@ export default function ReminderDisplayCard({
     if (index == 0) {
       return <Text>No Reminders</Text>;
     }
-    return reminderList;
+    return displayList;
   };
 
-  const deleteReminder = (reminder_id: number) => {
-    removeReminder(reminder_id);
+  const removeReminder = async (rid: number) => {
+
+    await deleteReminder(db, rid )
+    const updatedReminderList = reminderList.filter(r => {
+      return r.reminder_id != rid;
+    })
+    setReminderList(updatedReminderList);
+
   };
 
   const deleteReminderAlert = (reminder: Reminder) => {
@@ -111,10 +134,7 @@ export default function ReminderDisplayCard({
     if (isFromBond) {
       alertMessage = `Delete note for ${bond?.bondName.trim()}?`;
     } else {
-      let name = person?.firstName.trim() + " "
-      if (person?.lastName) {
-        name += person.lastName.trim()
-      }
+      const name = reminder.owner;
       alertMessage = `Delete note for ${name}?`;
     }
 
@@ -126,9 +146,9 @@ export default function ReminderDisplayCard({
       },
       {
         text: "OK",
-        onPress: () => {
+        onPress: async () => {
           {
-            deleteReminder(reminder.reminder_id);
+            await removeReminder(reminder.reminder_id!);
           }
         },
         isPreferred: true,
@@ -142,14 +162,14 @@ export default function ReminderDisplayCard({
       <Card.Divider/>
 
 
-      {remindersForEntity.length != 0 ? (
-        showRemindersForEntity()
+      {reminderList.length != 0 ? (
+        showreminderList()
       ) : (
         <Text style={{alignSelf: 'center'}}>No Notes Created</Text>
       )}
 
       {
-        remindersForEntity.length > 3 ?
+        reminderList.length > 3 ?
         <StandardButton
         title="See All Notes"
         onPress={onSeeAllReminders}
