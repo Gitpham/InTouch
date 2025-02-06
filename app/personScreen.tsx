@@ -125,6 +125,7 @@ export default function PersonScreen() {
   };
   const deleteThisPerson = async () => {
     if (person) {
+      console.log("pid to delete: ", person.person_id)
       await newDeletePerson(db, person.person_id as number)
     }
     router.back();

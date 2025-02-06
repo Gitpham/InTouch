@@ -56,7 +56,7 @@ export default function groupScreen() {
   }
 
 
-  //CALL HANDLER
+ // CALL HANDLER
   useEffect(() => {
     const callSubscription = AppState.addEventListener(
       "change",
@@ -123,11 +123,12 @@ export default function groupScreen() {
           }
           setMembers(personList);
 
-          let n = await displayNextToCall(b.bond_id, db);
+          let n = await displayNextToCall(Number(b.bond_id), db);
+          console.log("n: ", n);
           if (!n) {
             n = await getNextToCallUtil(b.bond_id, db);
           }
-          // setNextToCall(n);
+          setNextToCall(n);
         } catch (e) {
           alert("error");
           console.log(e);

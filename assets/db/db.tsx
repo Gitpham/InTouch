@@ -33,6 +33,7 @@ export const clearDB = async (db: SQLite.SQLiteDatabase) => {
     await db.execAsync("DELETE FROM person;");
     await db.execAsync("DELETE FROM bond;");
     await db.execAsync("DELETE FROM person_bond;");
+    await db.execAsync("DELETE FROM reminder;");
   } catch (e) {
     console.error(e);
     throw Error("failed to clearDB()");
@@ -179,12 +180,13 @@ export const createDB = async (db: SQLite.SQLiteDatabase) => {
   //   `;
 
   try {
-    await db.execAsync("PRAGMA foreign_keys = ON");
     await db.execAsync(personQuery);
     await db.execAsync(groupQuery);
     await db.execAsync(personBondQuery);
     await db.execAsync(reminderQuery);
     await db.execAsync(scheduleQuery)
+    await db.execAsync("PRAGMA foreign_keys = ON");
+
     // await db.execAsync(notificationQuery);
     // await db.execAsync(dailyQuery);
     // await db.execAsync(weeklyQuery);

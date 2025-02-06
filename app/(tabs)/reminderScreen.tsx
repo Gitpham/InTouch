@@ -67,7 +67,11 @@ export default function ReminderScreen() {
         text: "OK",
         onPress: async () => {
           {
-            await deleteReminder(db, reminder.reminder_id);
+            await deleteReminder(db, Number(reminder.reminder_id));
+            const updatedReminderList = reminderList.filter(r => {
+              return r.reminder_id != reminder.reminder_id;
+            })
+            setReminderList(updatedReminderList);
           }
         },
         isPreferred: true,
