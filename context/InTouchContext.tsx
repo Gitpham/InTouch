@@ -1,8 +1,3 @@
-import {
-  addPersonBond,
-
-} from "@/assets/db/PersonBondRepo";
-
 import { createContext, useState } from "react";
 import React from "react";
 type InTouchContextType = {
@@ -36,9 +31,6 @@ export const InTouchContextProvider: React.FC<{
 
   const [tempBondMembers, setTempBondMembers] = useState<Set<number>>(new Set<number>());
 
-
-
-
   function addTempBondMember(personID: number) {
     const newTempMembers = new Set<number>(tempBondMembers)
     newTempMembers.add(personID)
@@ -49,8 +41,6 @@ export const InTouchContextProvider: React.FC<{
     setTempBondMembers(new Set<number>())
   }
 
-  // Initializes user's people list and bond list upon initial render
-
   return (
     <>
       <InTouchContext.Provider
@@ -58,7 +48,6 @@ export const InTouchContextProvider: React.FC<{
           tempBondMembers,
           addTempBondMember,
           clearTempBondMembers,
-        
         }}
       >
         {children}
