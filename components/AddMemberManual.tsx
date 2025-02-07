@@ -27,8 +27,8 @@ interface addMemberManualInterface {
   memberNumber: string;
   memNumberChange: (n: string) => void;
 
-  // bondId: number;
-  // setBondID: (n: number) => void;
+  refresh: boolean
+  setRefresh: (b: boolean) => void;
 
   isVisible: boolean;
   setIsVisible: (b: boolean) => void;
@@ -45,6 +45,10 @@ export default function AddMemberManual({
   memNumberChange,
   isVisible,
   setIsVisible,
+
+  refresh,
+  setRefresh,
+
 }: addMemberManualInterface) {
 
 
@@ -82,6 +86,8 @@ export default function AddMemberManual({
     };
 
     await addPerson( db, newContact)
+    const updatedRefresh = !refresh;
+    setRefresh(updatedRefresh);
   }
 
   return (

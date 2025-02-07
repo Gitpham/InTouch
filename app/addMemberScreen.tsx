@@ -213,6 +213,8 @@ export default function addMemberScreen() {
               memNumberChange={memNumberChange}
               isVisible={isVisible}
               setIsVisible={setIsVisible}
+              refresh = {refresh}
+              setRefresh={setRefresh}
             />
           </View>
         </Dialog>
