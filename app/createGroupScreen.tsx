@@ -70,7 +70,7 @@ export default function createGroupScreen() {
 
   }, [potentialSchedule]);
 
-    useFocusEffect(
+  useFocusEffect(
       useCallback(() => {
         const fetchData = async () => {
           const pList = await getAllPersons(db)
