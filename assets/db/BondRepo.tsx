@@ -44,6 +44,7 @@ export const updateBond = async (
 }
 
 export const deleteBond = async (db: SQLite.SQLiteDatabase, bid: number) => {
+  // needed because PRAGMA foreing_keys = ON only happens at runtime
   await db.execAsync('PRAGMA foreign_keys = ON');
   
   const statement = await db.prepareAsync(`

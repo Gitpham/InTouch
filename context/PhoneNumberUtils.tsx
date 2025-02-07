@@ -34,7 +34,7 @@ const validateAndFormatPhoneNumber = (phoneNumber: string): string => {
 };
 
 /**
- * Returns current person
+ * Returns current person to call
  * @param bondID
  * @param db
  * @returns
@@ -44,13 +44,17 @@ const getNextToCallUtil = async (
   db: SQLite.SQLiteDatabase
 ): Promise<Person> => {
   try {
+    console.log("getNextToCallUtil()");
+    console.log("bondID: ", bondID);
+    console.log("db: ", db)
     const members: BondPerson[] = await getPersonsOfBondDB(db, bondID);
+    console.log("members: ", members);
     // IF SOMEBODY IS MARKED AND IS NOT END
     for (let i = 0; i < members.length; i++) {
       if (members[i].nextToCall == 1) {
         const persToCall = await getPerson(db, members[i].person_id);
         await updatePersonBond(db, members[i].person_id, members[i].bond_id, 0);
-
+        
         if (i + 1 < members.length) {
           await updatePersonBond(
             db,
@@ -108,8 +112,10 @@ const callPersonUtil = async (
   notification: Notifications.Notification,
   db: SQLite.SQLiteDatabase
 ) => {
-  const bondID: number = +notification.request.content.data?.bondID;
+  console.log("callPersonUtil()");
+  const bondID: number = Number(notification.request.content.data?.bondID);
   const toCall: Person = await getNextToCallUtil(bondID, db);
+  console.log("toCall: ", toCall);
   const phoneNumber: string = validateAndFormatPhoneNumber(toCall.phoneNumber);
   const phoneURL: string = `tel:${phoneNumber}`;
   const canOpen = await Linking.canOpenURL(phoneURL);

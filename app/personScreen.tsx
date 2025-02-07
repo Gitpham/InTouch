@@ -17,7 +17,7 @@ import CallTextButton from "@/components/CallTextButton";
 import ReminderDisplayCard from "@/components/ReminderDisplayCard";
 import { SQLiteDatabase, useSQLiteContext } from "expo-sqlite";
 import { deletePerson, getPerson } from "@/assets/db/PersonRepo";
-import { getBondsOfPersonDB, getPersonBondsOfBondDB } from "@/assets/db/PersonBondRepo";
+import { getBondsOfPersonDB, getPersonBondsOfBondDB, getPersonsOfBondDB } from "@/assets/db/PersonBondRepo";
 import { deleteBond, getBond } from "@/assets/db/BondRepo";
 export default function PersonScreen() {
   const localParams = useLocalSearchParams();
@@ -64,7 +64,7 @@ export default function PersonScreen() {
       // must delete bond if the bond has no other members
       for(let i = 0; i < bondPersons.length; i++){
         const bid = bondPersons[i].bond_id;
-        const numPeopleInBond: BondPerson[] = await getPersonBondsOfBondDB(db, bid);
+        const numPeopleInBond: BondPerson[] = await getPersonsOfBondDB(db, bid);
         if(numPeopleInBond.length == 0){
           await deleteBond(db, bid)
         }

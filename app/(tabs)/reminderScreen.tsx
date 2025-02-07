@@ -22,11 +22,9 @@ export default function ReminderScreen() {
     useCallback(() => {
       const fetchData = async () => {
         const rList = await getAllReminders(db);
-        console.log("fetched reminder data")
         setReminderList(rList);
       };
       fetchData();
-      console.log("useFocuseEffeect reminders");
     }, [])
   );
 

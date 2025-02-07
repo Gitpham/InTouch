@@ -81,7 +81,6 @@ export default function RootLayout() {
     // INITIALIZE DB
     const initDB = async () => {
       db = await SQLite.openDatabaseAsync("July26_ScheduleTable_5.db");
-      await db.execAsync('PRAGMA foreign_keys = ON');
       await createDB(db);
       console.log(getTableNames(db))
 
@@ -110,9 +109,10 @@ export default function RootLayout() {
     responseListener.current =
       Notifications.addNotificationResponseReceivedListener(
         async (response) => {
-          console.log("Recieved Response!")
+          console.log("Notification Response Handler: ")
           try {
-            callPersonUtil(response.notification, db)
+            console.log("response: ", response)
+            await callPersonUtil(response.notification, db)
             recievedCallNotification.current = true;
           } catch (e) {
             console.error(e);

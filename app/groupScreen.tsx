@@ -115,7 +115,8 @@ export default function groupScreen() {
         try {
           const b = await getBond(db, bid);
           setBond(b);
-          const bondPersons = await getPersonsOfBondDB(db, bid);
+          const bondPersons = [{"bond_id": 1, "nextToCall": 1, "person_id": 1}]
+          // await getPersonsOfBondDB(db, bid);
           const personList: Person[] = [];
           for (let i = 0; i < bondPersons.length; i++) {
             const person = await getPerson(db, bondPersons[i].person_id);

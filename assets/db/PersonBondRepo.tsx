@@ -73,25 +73,7 @@ export const getAllPersonBonds = async (db: SQLite.SQLiteDatabase) => {
     } 
 }
 
-export const getPersonsOfBondDB = async (db: SQLite.SQLiteDatabase, bondID: number) => {
-    const statement = await db.prepareAsync(`
-        SELECT * FROM person_bond
-        WHERE bond_id = ?
-         ;`);
 
-    const value: string[] = [bondID.toString()]
-    try {
-        const result =  await statement.executeAsync<BondPerson>(value);
-        const rows = await result.getAllAsync<BondPerson>(value);
-        return rows;
-
-    } catch (e) {
-        console.error(e);
-        throw Error("getPersonsOfBondDB: failed to get persons of Bond")
-    } finally {
-        await statement.finalizeAsync();
-    }
-}
 
 export const getBondsOfPersonDB = async (db: SQLite.SQLiteDatabase, pid: number) => {
     const statement = await db.prepareAsync(`
@@ -108,6 +90,31 @@ export const getBondsOfPersonDB = async (db: SQLite.SQLiteDatabase, pid: number)
     } catch (e) {
         console.error(e);
         throw Error("getBondsOfPersonDB: failed to get persons of Bond")
+    } finally {
+        await statement.finalizeAsync();
+    }
+}
+
+export const getPersonsOfBondDB = async (db: SQLite.SQLiteDatabase, bondID: number) => {
+    console.log("getPersonsOfBondDB(): bid: ", bondID)
+
+    const statement = await db.prepareAsync(`
+        SELECT * FROM person_bond
+        WHERE bond_id = ?
+         ;`);
+
+    const value: string[] = [bondID.toString()]
+    try {
+        console.log("inside try")
+        const result =  await statement.executeAsync<BondPerson>(value);
+        console.log("after result: ", result)
+        const rows = await result.getAllAsync<BondPerson>(value);
+        console.log("rows: ", rows);
+        return rows;
+
+    } catch (e) {
+        console.error(e);
+        throw Error("getPersonsOfBondDB: failed to get persons of Bond")
     } finally {
         await statement.finalizeAsync();
     }

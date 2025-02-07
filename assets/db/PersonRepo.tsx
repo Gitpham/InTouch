@@ -44,8 +44,8 @@ export const updatePerson = async (db: SQLite.SQLiteDatabase, updatedPerson: Per
 }
 
 export const deletePerson = async (db: SQLite.SQLiteDatabase, pid: number) => {
+    // needed because PRAGMA foreing_keys = ON only happens at runtime
     await db.execAsync('PRAGMA foreign_keys = ON');
-
     const statement = await db.prepareAsync(`
        DELETE FROM person
       WHERE person_id = ?
@@ -59,7 +59,6 @@ export const deletePerson = async (db: SQLite.SQLiteDatabase, pid: number) => {
         console.error(error)
         throw Error("Failed to delete person")
     } finally {
-        // console.log("finalize updatePerson async")
         statement.finalizeAsync()
     }
 }
