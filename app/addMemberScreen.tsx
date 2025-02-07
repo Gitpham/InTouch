@@ -79,7 +79,7 @@ export default function addMemberScreen() {
           };
 
           await addPerson(db, newContact);
-          setRefresh(true);
+          setRefresh((r) => !r);
         } catch (e) {
           Alert.alert("Phone number is not formatted correctly");
         }
