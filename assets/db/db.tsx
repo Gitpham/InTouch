@@ -34,6 +34,7 @@ export const clearDB = async (db: SQLite.SQLiteDatabase) => {
     await db.execAsync("DELETE FROM bond;");
     await db.execAsync("DELETE FROM person_bond;");
     await db.execAsync("DELETE FROM reminder;");
+    await db.execAsync("DELETE FROM schedule;")
   } catch (e) {
     console.error(e);
     throw Error("failed to clearDB()");
