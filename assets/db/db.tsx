@@ -18,9 +18,7 @@ export const loadDB = async () => {
         `${FileSystem.documentDirectory}SQLite`
         // { intermediates: true }
       );
-      console.log("b");
       await FileSystem.downloadAsync(dbUri, dbFilePath);
-      console.log("c");
     }
   } catch (e) {
     console.error(e);
@@ -43,6 +41,8 @@ export const clearDB = async (db: SQLite.SQLiteDatabase) => {
 
 export const createDB = async (db: SQLite.SQLiteDatabase) => {
   console.log("createDB");
+  await db.execAsync('PRAGMA foreign_keys = ON');
+  
   const groupQuery = `
         CREATE TABLE IF NOT EXISTS bond (
             bond_id INTEGER PRIMARY KEY,
@@ -107,92 +107,19 @@ export const createDB = async (db: SQLite.SQLiteDatabase) => {
                     weekOfMonth INTEGER DEFAULT NULL,
                     date TEXT DEFAULT NULL,
                     PRIMARY KEY (notification_id),
-                    FOREIGN KEY (bond_id)
-                        REFERENCES bond (bond_id)
-                        ON DELETE CASCADE
-                        ON UPDATE NO ACTION
+                    FOREIGN KEY (bond_id) REFERENCES bond (bond_id) ON DELETE CASCADE ON UPDATE NO ACTION
                 );`;
 
-  // const notificationQuery = `
-  //       CREATE TABLE IF NOT EXISTS notifications (
-  //           notification_id INTEGER,
-  //           bond_id INTEGER,
-  //           PRIMARY KEY (notification_id),
-  //           FOREIGN KEY (bond_id)
-  //               REFERENCES bond (bond_id)
-  //               ON DELETE CASCADE
-  //               ON UPDATE NO ACTION
-  //       );`;
-
-  // const dailyQuery = `
-  //       CREATE TABLE IF NOT EXISTS dailySchedule (
-  //           time TEXT,
-  //           bond_id INTEGER,
-  //           notification_ID TEXT,
-  //           PRIMARY KEY (notification_ID),
-  //           FOREIGN KEY (bond_id)
-  //               REFERENCES bond (bond_id)
-  //               ON DELETE CASCADE
-  //               ON UPDATE NO ACTION
-  //       );
-  //   `;
-
-  // const weeklyQuery = `
-  //       CREATE TABLE IF NOT EXISTS weeklySchedule (
-  //           time TEXT,
-  //           dayOfWeek INTEGER,
-  //           bond_id INTEGER,
-  //           notification_ID TEXT,
-  //           PRIMARY KEY (notification_ID),
-  //           FOREIGN KEY (bond_id)
-  //               REFERENCES bond (bond_id)
-  //               ON DELETE CASCADE
-  //               ON UPDATE NO ACTION
-  //       );
-  //   `;
-
-  // const monthlyQuery = `
-  //       CREATE TABLE IF NOT EXISTS monthlySchedule (
-  //           time TEXT,
-  //           dayOfWeek INTEGER,
-  //           weekOfMonth INTEGER,
-  //           bond_id INTEGER,
-  //           notification_ID TEXT,
-  //           PRIMARY KEY (notification_ID),
-  //           FOREIGN KEY (bond_id)
-  //               REFERENCES bond (bond_id)
-  //               ON DELETE CASCADE
-  //               ON UPDATE NO ACTION
-  //       );
-  //   `;
-
-  // const yearlyQuery = `
-  //       CREATE TABLE IF NOT EXISTS yearlySchedule (
-  //           time TEXT,
-  //           date TEXT,
-  //           bond_id INTEGER,
-  //           notification_ID TEXT,
-  //           PRIMARY KEY (notification_ID),
-  //           FOREIGN KEY (bond_id)
-  //               REFERENCES bond (bond_id)
-  //               ON DELETE CASCADE
-  //               ON UPDATE NO ACTION
-  //       );
-  //   `;
-
   try {
+    // await db.execAsync("PRAGMA foreign_keys = ON");
+    // await db.execAsync("SQLITE_DEFAULT_FOREIGN_KEYS=1")
     await db.execAsync(personQuery);
     await db.execAsync(groupQuery);
     await db.execAsync(personBondQuery);
     await db.execAsync(reminderQuery);
     await db.execAsync(scheduleQuery)
-    await db.execAsync("PRAGMA foreign_keys = ON");
+    console.log("created DB")
 
-    // await db.execAsync(notificationQuery);
-    // await db.execAsync(dailyQuery);
-    // await db.execAsync(weeklyQuery);
-    // await db.execAsync(monthlyQuery);
-    // await db.execAsync(yearlyQuery);
   } catch (error) {
     console.error(error);
     throw Error(`failed to create tables`);

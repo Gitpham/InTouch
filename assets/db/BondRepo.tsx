@@ -3,6 +3,8 @@ import * as SQLite from "expo-sqlite";
 import { addPersonBond } from "./PersonBondRepo";
 
 export const addBond = async (db: SQLite.SQLiteDatabase, bond: Bond) => {
+  await db.execAsync('PRAGMA foreign_keys = ON');
+  
   const statement =
     await db.prepareAsync(`INSERT INTO bond ( bondName, schedule, type_of_call)
          VALUES (?, ?, ?);`);
@@ -42,6 +44,8 @@ export const updateBond = async (
 }
 
 export const deleteBond = async (db: SQLite.SQLiteDatabase, bid: number) => {
+  await db.execAsync('PRAGMA foreign_keys = ON');
+  
   const statement = await db.prepareAsync(`
        DELETE FROM bond
       WHERE bond_id = ?

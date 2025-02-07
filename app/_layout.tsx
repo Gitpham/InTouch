@@ -81,6 +81,7 @@ export default function RootLayout() {
     // INITIALIZE DB
     const initDB = async () => {
       db = await SQLite.openDatabaseAsync("July26_ScheduleTable_5.db");
+      await db.execAsync('PRAGMA foreign_keys = ON');
       await createDB(db);
       console.log(getTableNames(db))
 

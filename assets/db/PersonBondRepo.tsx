@@ -22,6 +22,7 @@ export const addPersonBond = async (db: SQLite.SQLiteDatabase, person_id: number
 }
 
 export const deletePersonBond = async (db: SQLite.SQLiteDatabase, person_id: number, bond_id: number) => {
+    await db.execAsync('PRAGMA foreign_keys = ON');
 
     const statement = await db.prepareAsync(`
        DELETE FROM person_bond

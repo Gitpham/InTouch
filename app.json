@@ -42,7 +42,11 @@
           "contactsPermission": "Allow inTouch to access your contacts."
         }
       ],
-      "expo-asset"
+      [
+        "expo-asset"
+      ]
+   
+    
     ],
     "experiments": {
       "typedRoutes": true

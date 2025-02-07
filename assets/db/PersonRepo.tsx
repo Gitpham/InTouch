@@ -44,6 +44,7 @@ export const updatePerson = async (db: SQLite.SQLiteDatabase, updatedPerson: Per
 }
 
 export const deletePerson = async (db: SQLite.SQLiteDatabase, pid: number) => {
+    await db.execAsync('PRAGMA foreign_keys = ON');
 
     const statement = await db.prepareAsync(`
        DELETE FROM person

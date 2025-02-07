@@ -48,6 +48,8 @@ export async function uploadScheduleToDB(db: SQLite.SQLiteDatabase,
 
 export const deleteScheduleByBond = async (db: SQLite.SQLiteDatabase, bid: number) => {
 
+    await db.execAsync('PRAGMA foreign_keys = ON');
+    
     const statement = await db.prepareAsync(`
        DELETE FROM schedule
       WHERE bond_id = ?
@@ -67,6 +69,8 @@ export const deleteScheduleByBond = async (db: SQLite.SQLiteDatabase, bid: numbe
 
 export const deleteScheduleByNotificationID = async (db: SQLite.SQLiteDatabase, nid: string) => {
 
+    await db.execAsync('PRAGMA foreign_keys = ON');
+    
     const statement = await db.prepareAsync(`
        DELETE FROM schedule
       WHERE notification_id = ?

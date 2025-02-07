@@ -26,7 +26,8 @@ export const addReminder = async (db: SQLite.SQLiteDatabase, reminder: Reminder)
 }
 
 export const deleteReminder = async (db: SQLite.SQLiteDatabase, reminder_id: number) => {
-
+    await db.execAsync('PRAGMA foreign_keys = ON');
+    
     const statement = await db.prepareAsync(`
        DELETE FROM reminder
       WHERE reminder_id = ?
