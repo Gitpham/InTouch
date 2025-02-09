@@ -4,7 +4,7 @@ import {
   ThemeProvider,
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { Stack } from "expo-router";
+import { router, Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import {  StrictMode, useEffect, useRef, useState } from "react";
 import "react-native-reanimated";
@@ -106,13 +106,22 @@ export default function RootLayout() {
         });
     }
 
+    // refactor so it just navigates to the bondscreen
     responseListener.current =
       Notifications.addNotificationResponseReceivedListener(
         async (response) => {
           console.log("Notification Response Handler: ")
           try {
             console.log("response: ", response)
-            await callPersonUtil(response.notification, db)
+            const bid: number = Number(response.notification.request.content.data?.bondID);
+
+            router.navigate({
+                  pathname: "../groupScreen",
+                  params: { id: `${bid}` },
+                });
+            
+            
+            // await callPersonUtil(response.notification, db)
             recievedCallNotification.current = true;
           } catch (e) {
             console.error(e);
