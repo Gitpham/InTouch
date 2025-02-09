@@ -23,6 +23,7 @@ import { Dialog } from "@rneui/base";
 import { validateAndFormatPhoneNumber } from "@/context/PhoneNumberUtils";
 import { useSQLiteContext } from "expo-sqlite";
 import { addPerson, getAllPersons } from "@/assets/db/PersonRepo";
+import { addBondMembers, addPersonBond } from "@/assets/db/PersonBondRepo";
 
 export default function addMemberScreen() {
   const { addTempBondMember, tempBondMembers, clearTempBondMembers } =
@@ -40,6 +41,7 @@ export default function addMemberScreen() {
 
   const localParams = useLocalSearchParams();
   const group_screen = +localParams.group_screen === 1 ? true : false;
+  const bid = +localParams.bond_id;
 
   const db = useSQLiteContext();
   // REFACTORED
@@ -92,7 +94,7 @@ export default function addMemberScreen() {
     return (
       <ListItem bottomDivider>
         <Pressable
-          onPress={() => {
+          onPress={async () => {
             addTempBondMember(item.person_id as number);
 
             let name = item.firstName.trim();
@@ -115,9 +117,10 @@ export default function addMemberScreen() {
     );
   };
 
-  const onSavePress = () => {
+  const onSavePress = async () => {
     if (group_screen) {
-      clearTempBondMembers();
+        await addBondMembers(db, tempBondMembers, bid);
+        clearTempBondMembers();
     }
     router.back();
   };
@@ -213,7 +216,7 @@ export default function addMemberScreen() {
               memNumberChange={memNumberChange}
               isVisible={isVisible}
               setIsVisible={setIsVisible}
-              refresh = {refresh}
+              refresh={refresh}
               setRefresh={setRefresh}
             />
           </View>

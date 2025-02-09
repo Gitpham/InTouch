@@ -96,7 +96,6 @@ export const getBondsOfPersonDB = async (db: SQLite.SQLiteDatabase, pid: number)
 }
 
 export const getPersonsOfBondDB = async (db: SQLite.SQLiteDatabase, bondID: number) => {
-    console.log("getPersonsOfBondDB(): bid: ", bondID)
 
     const statement = await db.prepareAsync(`
         SELECT * FROM person_bond
@@ -105,9 +104,7 @@ export const getPersonsOfBondDB = async (db: SQLite.SQLiteDatabase, bondID: numb
 
     const value: string[] = [bondID.toString()]
     try {
-        console.log("inside try")
         const result =  await statement.executeAsync<BondPerson>(value);
-        console.log("after result: ", result)
         const rows = await result.getAllAsync<BondPerson>(value);
         console.log("rows: ", rows);
         return rows;

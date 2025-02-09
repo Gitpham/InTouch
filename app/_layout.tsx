@@ -88,7 +88,6 @@ export default function RootLayout() {
 
     try {
       initDB();     
-      console.log("init db()")
     } catch (e) {
       console.error(e);
       console.log("failed to initDB()")
@@ -110,9 +109,7 @@ export default function RootLayout() {
     responseListener.current =
       Notifications.addNotificationResponseReceivedListener(
         async (response) => {
-          console.log("Notification Response Handler: ")
           try {
-            console.log("response: ", response)
             const bid: number = Number(response.notification.request.content.data?.bondID);
 
             router.navigate({

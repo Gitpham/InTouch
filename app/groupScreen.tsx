@@ -57,57 +57,56 @@ export default function groupScreen() {
 
 
  // CALL HANDLER
-  useEffect(() => {
-    const callSubscription = AppState.addEventListener(
-      "change",
-      async (nextAppState) => {
-        //USER PRESSES CALL FROM GROUP SCREEN
-        if (
-          appState.current.match(/active|inactive/) &&
-          isCalling.current == true &&
-          nextAppState === "background"
-        ) {
-          console.log("started call from app!");
-          timeOfStartCall.current = new Date();
-        }
+  // useEffect(() => {
+  //   const callSubscription = AppState.addEventListener(
+  //     "change",
+  //     async (nextAppState) => {
+  //       //USER PRESSES CALL FROM GROUP SCREEN
+  //       if (
+  //         appState.current.match(/active|inactive/) &&
+  //         isCalling.current == true &&
+  //         nextAppState === "background"
+  //       ) {
+  //         console.log("started call from app!");
+  //         timeOfStartCall.current = new Date();
+  //       }
 
-        if (
-          appState.current.match(/background/) &&
-          isCalling.current == true &&
-          nextAppState === "active"
-        ) {
-          console.log("Ended Call from app!");
-          isCalling.current = false;
+  //       if (
+  //         appState.current.match(/background/) &&
+  //         isCalling.current == true &&
+  //         nextAppState === "active"
+  //       ) {
+  //         console.log("Ended Call from app!");
+  //         isCalling.current = false;
 
-          timeOfEndCall.current = new Date();
-          callLength.current =
-            ((timeOfEndCall.current as Date).getTime() -
-              (timeOfStartCall.current as Date).getTime()) /
-            1000;
+  //         timeOfEndCall.current = new Date();
+  //         callLength.current =
+  //           ((timeOfEndCall.current as Date).getTime() -
+  //             (timeOfStartCall.current as Date).getTime()) /
+  //           1000;
 
-          if (callLength.current > minCallLength) {
-            if (bond) {
-              getNextToCallUtil(bond?.bond_id, db);
-              await getNextToCallUtil(bond?.bond_id, db);
-              const nextPerson = await displayNextToCall(bond.bond_id, db);
-              setNextToCall(nextPerson);
-            }
-          }
-        }
-        appState.current = nextAppState;
-      }
-    );
+  //         if (callLength.current > minCallLength) {
+  //           if (bond) {
+  //             getNextToCallUtil(bond?.bond_id, db);
+  //             await getNextToCallUtil(bond?.bond_id, db);
+  //             const nextPerson = await displayNextToCall(bond.bond_id, db);
+  //             setNextToCall(nextPerson);
+  //           }
+  //         }
+  //       }
+  //       appState.current = nextAppState;
+  //     }
+  //   );
 
-    return () => {
-      callSubscription.remove();
-    };
-  }, [bond]);
+  //   return () => {
+  //     callSubscription.remove();
+  //   };
+  // }, [bond]);
 
   const db = useSQLiteContext();
   // REFACTORED
   useFocusEffect(
     useCallback(() => {
-      console.log("bondScreen: useCallBack()");
       // Do something when the screen is focused
       const fetchData = async () => {
         const bid: number = Number(localParams.id);
@@ -115,8 +114,7 @@ export default function groupScreen() {
         try {
           const b = await getBond(db, bid);
           setBond(b);
-          const bondPersons = [{"bond_id": 1, "nextToCall": 1, "person_id": 1}]
-          // await getPersonsOfBondDB(db, bid);
+          const bondPersons =  await getPersonsOfBondDB(db, bid);
           const personList: Person[] = [];
           for (let i = 0; i < bondPersons.length; i++) {
             const person = await getPerson(db, bondPersons[i].person_id);
