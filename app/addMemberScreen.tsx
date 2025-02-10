@@ -15,7 +15,7 @@ import * as Contacts from "expo-contacts";
 import { InTouchContext } from "@/context/InTouchContext";
 import { AddButton, StandardButton } from "@/components/ButtonStandard";
 import AddMemberManual from "@/components/AddMemberManual";
-import { Person } from "@/constants/types";
+import { BondPerson, Person } from "@/constants/types";
 import { styles } from "@/constants/Stylesheet";
 import React from "react";
 import ConfirmationMessage from "@/components/ConfirmationMessage";
@@ -23,7 +23,7 @@ import { Dialog } from "@rneui/base";
 import { validateAndFormatPhoneNumber } from "@/context/PhoneNumberUtils";
 import { useSQLiteContext } from "expo-sqlite";
 import { addPerson, getAllPersons } from "@/assets/db/PersonRepo";
-import { addBondMembers, addPersonBond } from "@/assets/db/PersonBondRepo";
+import { addBondMembers, addPersonBond, getPersonsOfBondDB } from "@/assets/db/PersonBondRepo";
 
 export default function addMemberScreen() {
   const { addTempBondMember, tempBondMembers, clearTempBondMembers } =
@@ -50,11 +50,32 @@ export default function addMemberScreen() {
     useCallback(() => {
       const fetchData = async () => {
         const pList = await getAllPersons(db);
-        const filteredPeople = pList.filter((p) => {
-          return !tempBondMembers.has(p.person_id as number);
-        });
-        console.log(tempBondMembers);
+        let currBondMembers: BondPerson[];
+        if(group_screen){
+          currBondMembers = await getPersonsOfBondDB(db, bid);
+        }
+        const filteredPeople = pList.filter( (p) => {
 
+          if(!group_screen){
+            return !tempBondMembers.has(p.person_id as number);
+          }
+
+          if(group_screen){
+            let isPartOfBond = false;
+            currBondMembers.forEach(pers => {
+              if(pers.person_id == p.person_id){
+                isPartOfBond = true;
+              }
+            })
+            return !isPartOfBond
+
+          }
+
+
+        });
+        console.log("filteredPeople: ", filteredPeople);
+
+    
         setPeopleToShow(filteredPeople);
       };
       // TODO: redo search

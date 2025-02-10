@@ -106,7 +106,6 @@ export const getPersonsOfBondDB = async (db: SQLite.SQLiteDatabase, bondID: numb
     try {
         const result =  await statement.executeAsync<BondPerson>(value);
         const rows = await result.getAllAsync<BondPerson>(value);
-        console.log("rows: ", rows);
         return rows;
 
     } catch (e) {
