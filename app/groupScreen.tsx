@@ -39,6 +39,9 @@ export default function groupScreen() {
   const [members, setMembers] = useState<Array<Person>>();
   const [nextToCall, setNextToCall] = useState<Person>();
   const [isDeleteVisible, setDeleteVisible] = useState(false);
+
+  const [streak, setStreak] = useState<number>(0);
+
   const [name, setName] = useState("");
   const stackView = stackViews();
 
@@ -48,63 +51,63 @@ export default function groupScreen() {
   const timeOfStartCall = useRef<Date>();
   const timeOfEndCall = useRef<Date>();
   const callLength = useRef(0);
-  const minCallLength = 45;
+  const minCallLength = 15;
 
   function changeIsCalling(bool: boolean) {
     isCalling.current = bool;
     return;
   }
 
-
  // CALL HANDLER
-  // useEffect(() => {
-  //   const callSubscription = AppState.addEventListener(
-  //     "change",
-  //     async (nextAppState) => {
-  //       //USER PRESSES CALL FROM GROUP SCREEN
-  //       if (
-  //         appState.current.match(/active|inactive/) &&
-  //         isCalling.current == true &&
-  //         nextAppState === "background"
-  //       ) {
-  //         console.log("started call from app!");
-  //         timeOfStartCall.current = new Date();
-  //       }
+  useEffect(() => {
 
-  //       if (
-  //         appState.current.match(/background/) &&
-  //         isCalling.current == true &&
-  //         nextAppState === "active"
-  //       ) {
-  //         console.log("Ended Call from app!");
-  //         isCalling.current = false;
+    const callSubscription = AppState.addEventListener(
+      "change",
+      async (nextAppState) => {
+        //USER PRESSES CALL FROM GROUP SCREEN
+        if (
+          appState.current.match(/active|inactive/) &&
+          isCalling.current == true &&
+          nextAppState === "background"
+        ) {
+          console.log("started call from app!");
+          timeOfStartCall.current = new Date();
+        }
 
-  //         timeOfEndCall.current = new Date();
-  //         callLength.current =
-  //           ((timeOfEndCall.current as Date).getTime() -
-  //             (timeOfStartCall.current as Date).getTime()) /
-  //           1000;
+        if (
+          appState.current.match(/background/) &&
+          isCalling.current == true &&
+          nextAppState === "active"
+        ) {
+          console.log("Ended Call from app!");
+          isCalling.current = false;
 
-  //         if (callLength.current > minCallLength) {
-  //           if (bond) {
-  //             getNextToCallUtil(bond?.bond_id, db);
-  //             await getNextToCallUtil(bond?.bond_id, db);
-  //             const nextPerson = await displayNextToCall(bond.bond_id, db);
-  //             setNextToCall(nextPerson);
-  //           }
-  //         }
-  //       }
-  //       appState.current = nextAppState;
-  //     }
-  //   );
+          timeOfEndCall.current = new Date();
+          callLength.current =
+            ((timeOfEndCall.current as Date).getTime() -
+              (timeOfStartCall.current as Date).getTime()) /
+            1000;
 
-  //   return () => {
-  //     callSubscription.remove();
-  //   };
-  // }, [bond]);
+          if (callLength.current > minCallLength) {
+            if (bond) {
+              getNextToCallUtil(bond?.bond_id, db);
+              await getNextToCallUtil(bond?.bond_id, db);
+              const nextPerson = await displayNextToCall(bond.bond_id, db);
+              setNextToCall(nextPerson);
+              setStreak((s) => s + 1);
+            }
+          }
+        }
+        appState.current = nextAppState;
+      }
+    );
+    return () => {
+      callSubscription.remove();
+    };
+  }, [bond]);
 
   const db = useSQLiteContext();
-  // REFACTORED
+
   useFocusEffect(
     useCallback(() => {
       // Do something when the screen is focused
@@ -259,6 +262,7 @@ export default function groupScreen() {
     }
   };
 
+
   return (
     <ScrollView
       contentContainerStyle={stackView}
@@ -268,6 +272,10 @@ export default function groupScreen() {
         <ThemedText darkColor="black" style={styles.title} type="title">
           {bond?.bondName}
         </ThemedText>
+        <ThemedText darkColor="black" style={styles.title} type="title">
+          {"Streak: " + streak}
+        </ThemedText>
+
       </View>
       <View style={styles.centeredView}>
         <ThemedText

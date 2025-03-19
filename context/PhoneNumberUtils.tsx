@@ -100,8 +100,6 @@ const displayNextToCall = async (
         return persToCall as Person;
       }
     }
-
-    console.log("No nextToCall found!");
   } catch (e) {
     console.error(e);
     console.log("Could not display next to Call");
@@ -112,7 +110,7 @@ const callPersonUtil = async (
   notification: Notifications.Notification,
   db: SQLite.SQLiteDatabase
 ) => {
-  console.log("callPersonUtil()");
+
   const bondID: number = Number(notification.request.content.data?.bondID);
   const toCall: Person = await getNextToCallUtil(bondID, db);
   console.log("toCall: ", toCall);
@@ -130,6 +128,7 @@ const callPersonUtil = async (
     Alert.alert("could not open url");
   }
 };
+
 
 const callUtil = async (person: Person) => {
   const phoneNumber: string = validateAndFormatPhoneNumber(person.phoneNumber);

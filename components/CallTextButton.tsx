@@ -10,6 +10,7 @@ interface CallTextBtnInterface {
     changeIsCalling: (b: boolean) => void;
 }
 export default function CallTextButton({person, changeIsCalling}: CallTextBtnInterface){
+  
     return (
         <View
         style={{
